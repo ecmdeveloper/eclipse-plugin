@@ -25,8 +25,10 @@ public class Folder extends ObjectStoreItem {
 		super(parent);
 		
 		this.folder = (com.filenet.api.core.Folder) folder;
-		this.folder.fetchProperties( new String[] { PropertyNames.FOLDER_NAME } );
+		this.folder.fetchProperties( new String[] { PropertyNames.FOLDER_NAME, PropertyNames.ID } );
 		this.name = this.folder.get_FolderName();
+		this.id = this.folder.get_Id().toString();
+
 		System.out.println( "Loaded '" + this.name + "'" );
 	}
 	

@@ -19,8 +19,9 @@ public class Document extends ObjectStoreItem {
 		super(parent);
 		
 		this.document = (com.filenet.api.core.Document) document;
-		this.document.fetchProperties( new String[] { PropertyNames.NAME } );
+		this.document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
 		this.name = this.document.get_Name();
+		this.id = this.document.get_Id().toString();
 	}
 	
 	/** 

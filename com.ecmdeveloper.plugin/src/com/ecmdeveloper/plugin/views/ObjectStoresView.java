@@ -25,7 +25,6 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 public class ObjectStoresView extends ViewPart {
 	
 	private TreeViewer viewer;
-	private IMemento memento;
 	
 	class NameSorter extends ViewerSorter {
 	}
@@ -73,12 +72,6 @@ public class ObjectStoresView extends ViewPart {
 		manager.add(new Separator("other"));		
 	}
 	
-	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site, memento);
-		this.memento = memento;
-	}
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */

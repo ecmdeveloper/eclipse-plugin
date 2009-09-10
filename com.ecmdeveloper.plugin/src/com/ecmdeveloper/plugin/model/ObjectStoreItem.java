@@ -7,6 +7,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 
 	protected IObjectStoreItem parent;
 	protected String name;
+	protected String id;
 
 	public ObjectStoreItem(IObjectStoreItem parent) {
 		this.parent = parent;
@@ -20,6 +21,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return name;
 	}
 	
+	@Override
+	public String getId() {
+		return id;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.ecmdeveloper.plugin.model.IObjectStoreItem#getParent()
 	 */
