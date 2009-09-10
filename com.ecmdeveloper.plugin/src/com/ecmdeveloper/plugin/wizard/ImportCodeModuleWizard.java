@@ -30,8 +30,6 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

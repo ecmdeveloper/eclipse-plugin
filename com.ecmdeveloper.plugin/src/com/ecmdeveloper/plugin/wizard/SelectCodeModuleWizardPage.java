@@ -1,16 +1,38 @@
 package com.ecmdeveloper.plugin.wizard;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.handlers.HandlerUtil;
+
+import com.ecmdeveloper.plugin.model.CodeModule;
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 public class SelectCodeModuleWizardPage extends WizardPage {
 
+	private Button connectButton;
+	private ComboViewer objectStoresCombo;
+	private ComboViewer codeModulesCombo;
+	private ObjectStore objectStore;
+	
 	public SelectCodeModuleWizardPage() {
 		super( "selectCodeModule" );
 		setTitle("Select Code Module");
@@ -22,43 +44,139 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 
 		Composite container = new Composite(parent, SWT.NULL );
 		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
+		gridLayout.numColumns = 3;
 		container.setLayout(gridLayout);
 		setControl(container);
 		
 		Label selectObjectStoreLabel = new Label(container, SWT.NULL);
 		selectObjectStoreLabel.setText("Select Object Store:");
 
-		final Combo combo1 = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN
-				| SWT.BORDER | SWT.READ_ONLY);
+
+		createObjectStoresCombo( container );
+		createConnectButton( container );
 		
 		Label selectCodeModuleLabel = new Label(container, SWT.NULL);
 		selectCodeModuleLabel.setText("Select Code Module:");
 		
-		final Combo combo2 = new Combo(container, SWT.VERTICAL | SWT.BORDER
+		createCodeModulesCombo(container);
+
+//		combo1.add("Tea");
+//		combo1.add("Coffee");
+//		combo1.add("Cold drink");
+//		combo1.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				if (combo1.getText().equals("Cold drink")) {
+//					String[] drinks = new String[] { "Pepsi", "CocaCola",
+//							"Miranda", "Sprite", "ThumbsUp" };
+//					combo2.setItems(drinks);
+//					combo2.setEnabled(true);
+//					combo2.add("-Select-");
+//					combo2.setText("-Select-");
+//				} else if (combo1.getText().equals("Tea")) {
+//					combo2.add("Not Applicable");
+//					combo2.setText("Not Applicable");
+//				} else {
+//					combo2.add("Not Applicable");
+//					combo2.setText("Not Applicable");
+//				}
+//			}
+//		});
+		
+	}
+
+	private void createCodeModulesCombo(Composite container) {
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		codeModulesCombo = new ComboViewer(container, SWT.VERTICAL | SWT.BORDER
 				| SWT.READ_ONLY);
 
-		combo1.add("Tea");
-		combo1.add("Coffee");
-		combo1.add("Cold drink");
-		combo1.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (combo1.getText().equals("Cold drink")) {
-					String[] drinks = new String[] { "Pepsi", "CocaCola",
-							"Miranda", "Sprite", "ThumbsUp" };
-					combo2.setItems(drinks);
-					combo2.setEnabled(true);
-					combo2.add("-Select-");
-					combo2.setText("-Select-");
-				} else if (combo1.getText().equals("Tea")) {
-					combo2.add("Not Applicable");
-					combo2.setText("Not Applicable");
-				} else {
-					combo2.add("Not Applicable");
-					combo2.setText("Not Applicable");
-				}
+		codeModulesCombo.getCombo().setLayoutData( gd );
+		codeModulesCombo.setContentProvider( new ArrayContentProvider() );
+		codeModulesCombo.getCombo().setEnabled( false );
+		
+		codeModulesCombo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				CodeModule codeModule = (CodeModule) element;
+				return codeModule.getName();
 			}
 		});
+	}
+
+	private void createObjectStoresCombo(Composite container ) {
 		
+		objectStoresCombo = new ComboViewer( container, SWT.VERTICAL | SWT.DROP_DOWN
+				| SWT.BORDER | SWT.READ_ONLY);
+		objectStoresCombo.setContentProvider( new ArrayContentProvider() );
+		objectStoresCombo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				objectStore = (ObjectStore) element;
+				return objectStore.getConnection().getName() + ":" + objectStore.getName();
+			}
+		});
+
+//		combo1.addSelectionListener(new SelectionAdapter() {
+		
+		objectStoresCombo.addSelectionChangedListener( new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				
+				ISelection selection = event.getSelection();
+
+				if (!(selection instanceof IStructuredSelection))
+					return;
+
+				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+				if ( iterator.hasNext() ) {
+					objectStore = (ObjectStore) iterator.next();
+					connectButton.setEnabled( ! objectStore.isConnected() );
+					updateCodeModulesCombo( false );
+				}
+			} 
+		});
+		
+		objectStoresCombo.setInput( ObjectStoresManager.getManager().getObjectStores().getChildren().toArray() );
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		objectStoresCombo.getCombo().setLayoutData( gd );
+	}
+
+	private void createConnectButton( Composite parent ) {
+		
+		connectButton = new Button( parent, SWT.PUSH);
+		connectButton.setText( "Connect..." );
+		connectButton.setEnabled( false );
+		connectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateCodeModulesCombo( true );
+			}
+		});
+
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		connectButton.setLayoutData(gd);
+	}
+
+	protected void updateCodeModulesCombo( boolean connect ) {
+
+		if ( objectStore != null ) {
+			
+			if ( ! objectStore.isConnected() ) {
+				if ( connect ) {
+					objectStore.connect();
+				} else {
+					codeModulesCombo.getCombo().setEnabled( false );
+					codeModulesCombo.setInput( new ArrayList<CodeModule>() );
+					return;
+				}
+			} 
+			codeModulesCombo.setInput( objectStore.getCodeModules() );
+			codeModulesCombo.getCombo().setEnabled( true );
+		} 
+		else 
+		{
+			codeModulesCombo.getCombo().setEnabled( false );
+			codeModulesCombo.setInput( new ArrayList<CodeModule>() );
+		}
 	}
 }

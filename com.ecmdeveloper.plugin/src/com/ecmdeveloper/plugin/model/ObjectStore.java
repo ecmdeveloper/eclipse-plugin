@@ -26,7 +26,7 @@ public class ObjectStore extends ObjectStoreItem
 	public ObjectStore(String objectStoreName, IObjectStoreItem parent) {
 
 		super(parent);
-		this.name = objectStoreName; 
+		this.name = objectStoreName;
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class ObjectStore extends ObjectStoreItem
 
 		return children;
 	}
-
+/*
 	public boolean isConnected() {
 		
 		if ( connection == null ) {
@@ -68,6 +68,22 @@ public class ObjectStore extends ObjectStoreItem
 		connection.connect();
 		
 		objectStore = (com.filenet.api.core.ObjectStore) connection.getObjectStoreObject( name );
+		objectStore.fetchProperties( new String[] { PropertyNames.ID } );
+		id = objectStore.get_Id().toString();
+	}
+*/
+
+	// TODO: remove this offline test stuff
+	
+	private boolean tempConnected = false;
+	
+	public boolean isConnected() {
+		
+		return tempConnected;
+	}
+
+	public void connect() {
+		tempConnected = true;
 	}
 	
 	public ContentEngineConnection getConnection() {
@@ -76,5 +92,15 @@ public class ObjectStore extends ObjectStoreItem
 
 	public void setConnection(ContentEngineConnection connection) {
 		this.connection = connection;
+	}
+
+	public Collection<CodeModule> getCodeModules() {
+		
+		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
+		codeModules.add( new CodeModule( "CodeModule 1 (" + name + ")", "{12345}" ) );
+		codeModules.add( new CodeModule( "CodeModule 2 (" + name + ")", "{23456}" ) );
+		codeModules.add( new CodeModule( "CodeModule 3 (" + name + ")", "{34567}" ) );
+		
+		return codeModules;
 	}
 }

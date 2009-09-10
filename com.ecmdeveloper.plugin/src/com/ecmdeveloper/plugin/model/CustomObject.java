@@ -20,8 +20,9 @@ public class CustomObject extends ObjectStoreItem {
 		super(parent);
 		
 		this.customObject = (com.filenet.api.core.CustomObject) customObject;
-		this.customObject.fetchProperties( new String[] { PropertyNames.NAME } );
+		this.customObject.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
 		this.name = this.customObject.get_Name();
+		this.id = this.customObject.get_Id().toString();
 	}
 	
 	/**
@@ -31,12 +32,6 @@ public class CustomObject extends ObjectStoreItem {
 	 */
 	@Override
 	public Collection<IObjectStoreItem> getChildren() {
-		return null;
-	}
-
-	@Override
-	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

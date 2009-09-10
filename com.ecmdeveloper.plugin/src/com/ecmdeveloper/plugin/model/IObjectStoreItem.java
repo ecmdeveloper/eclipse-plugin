@@ -13,6 +13,8 @@ public interface IObjectStoreItem extends IAdaptable {
 	
 	public String getName();
 	
+	public String getId();
+	
 	public IObjectStoreItem getParent();
 	
 	public Collection<IObjectStoreItem> getChildren();

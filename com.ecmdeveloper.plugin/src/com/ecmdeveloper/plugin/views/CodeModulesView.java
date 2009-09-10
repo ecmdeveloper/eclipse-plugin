@@ -1,10 +1,11 @@
 package com.ecmdeveloper.plugin.views;
 
-import java.io.File;
 import java.util.Iterator;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -15,9 +16,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
@@ -41,6 +44,7 @@ public class CodeModulesView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		createTableViewer(parent);
 		hookMouse();
+		hookContextMenu();
 	}
 
 	private void createTableViewer(Composite parent) {
@@ -87,6 +91,26 @@ public class CodeModulesView extends ViewPart {
 		});
 	}
 
+	private void hookContextMenu() {
+		
+		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				CodeModulesView.this.fillContextMenu(manager);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
+	}
+   
+	private void fillContextMenu(IMenuManager manager) {
+		manager.add(new Separator("edit") );
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		manager.add(new Separator("other"));		
+	}
+	
    	public void openEditor(ISelection selection) {
 
 		// Get the first element.
@@ -99,22 +123,6 @@ public class CodeModulesView extends ViewPart {
 
 		Object elem = iter.next();
 
-//		File file = CodeModulesManager.getManager().getCodeModuleFile(
-//				(CodeModuleFile) elem);
-//
-//		if (file.exists() && file.isFile()) {
-//			IFileStore fileStore = EFS.getLocalFileSystem().getStore(
-//					file.toURI());
-//
-//			try {
-////				IDE.openEditorOnFileStore(getSite().getPage(), fileStore);
-//				IDE.openEditor(page, input, editorId)
-//			} catch (PartInitException e) {
-//				PluginLog.error("Open editor failed: " + file.toString(), e);
-//			}
-//		}
-
-		
 		try {
 			
 			IEditorInput input = new CodeModuleEditorInput( (CodeModuleFile) elem );
@@ -122,8 +130,7 @@ public class CodeModulesView extends ViewPart {
 			IDE.openEditor(getSite().getPage(), input, editorId);
 			
 		} catch (PartInitException e) {
-//			PluginLog.error("Open editor failed: " + file.toString(), e);
+			PluginLog.error("Open editor failed" , e);
 		}
-		
    	}
 }
