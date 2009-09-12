@@ -42,12 +42,9 @@ public class CodeModulesViewContentProvider implements IStructuredContentProvide
 		if ( event.getItemsRemoved() != null ) {
 			viewer.remove( event.getItemsRemoved() );
 		}
-//		viewer.getTable().setRedraw(false);
-//		try {
-//			viewer.remove(event.getItemsRemoved());
-//			viewer.add(event.getItemsAdded());
-//		} finally {
-//			viewer.getTable().setRedraw(true);
-//		}
+		
+		if ( event.getItemsAdded() != null ) {
+			viewer.add( event.getItemsAdded() );
+		}
 	}
 }

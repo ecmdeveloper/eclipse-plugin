@@ -17,10 +17,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -31,7 +29,7 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 	private Button connectButton;
 	private ComboViewer objectStoresCombo;
 	private ComboViewer codeModulesCombo;
-	private ObjectStore objectStore;
+	private ImportCodeModuleWizard wizard;
 	
 	public SelectCodeModuleWizardPage() {
 		super( "selectCodeModule" );
@@ -42,6 +40,8 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 
+		wizard = (ImportCodeModuleWizard) getWizard();
+
 		Composite container = new Composite(parent, SWT.NULL );
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
@@ -51,37 +51,13 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 		Label selectObjectStoreLabel = new Label(container, SWT.NULL);
 		selectObjectStoreLabel.setText("Select Object Store:");
 
-
 		createObjectStoresCombo( container );
 		createConnectButton( container );
 		
 		Label selectCodeModuleLabel = new Label(container, SWT.NULL);
 		selectCodeModuleLabel.setText("Select Code Module:");
 		
-		createCodeModulesCombo(container);
-
-//		combo1.add("Tea");
-//		combo1.add("Coffee");
-//		combo1.add("Cold drink");
-//		combo1.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				if (combo1.getText().equals("Cold drink")) {
-//					String[] drinks = new String[] { "Pepsi", "CocaCola",
-//							"Miranda", "Sprite", "ThumbsUp" };
-//					combo2.setItems(drinks);
-//					combo2.setEnabled(true);
-//					combo2.add("-Select-");
-//					combo2.setText("-Select-");
-//				} else if (combo1.getText().equals("Tea")) {
-//					combo2.add("Not Applicable");
-//					combo2.setText("Not Applicable");
-//				} else {
-//					combo2.add("Not Applicable");
-//					combo2.setText("Not Applicable");
-//				}
-//			}
-//		});
-		
+		createCodeModulesCombo(container);		
 	}
 
 	private void createCodeModulesCombo(Composite container) {
@@ -101,6 +77,22 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 				return codeModule.getName();
 			}
 		});
+
+		codeModulesCombo.addSelectionChangedListener( new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				
+				ISelection selection = event.getSelection();
+
+				if (!(selection instanceof IStructuredSelection))
+					return;
+
+				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+				if ( iterator.hasNext() ) {
+					wizard.setCodeModule( (CodeModule) iterator.next() );
+				}
+			} 
+		});
 	}
 
 	private void createObjectStoresCombo(Composite container ) {
@@ -111,13 +103,11 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 		objectStoresCombo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				objectStore = (ObjectStore) element;
+				ObjectStore objectStore = (ObjectStore) element;
 				return objectStore.getConnection().getName() + ":" + objectStore.getName();
 			}
 		});
 
-//		combo1.addSelectionListener(new SelectionAdapter() {
-		
 		objectStoresCombo.addSelectionChangedListener( new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -129,14 +119,14 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 
 				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 				if ( iterator.hasNext() ) {
-					objectStore = (ObjectStore) iterator.next();
-					connectButton.setEnabled( ! objectStore.isConnected() );
+					wizard.setObjectStore( (ObjectStore) iterator.next() );
+					connectButton.setEnabled( ! wizard.getObjectStore().isConnected() );
 					updateCodeModulesCombo( false );
 				}
 			} 
 		});
 		
-		objectStoresCombo.setInput( ObjectStoresManager.getManager().getObjectStores().getChildren().toArray() );
+		objectStoresCombo.setInput( wizard.getObjectStores() );
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		objectStoresCombo.getCombo().setLayoutData( gd );
 	}
@@ -159,24 +149,29 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 
 	protected void updateCodeModulesCombo( boolean connect ) {
 
+		ObjectStore objectStore = wizard.getObjectStore();
+		
 		if ( objectStore != null ) {
 			
 			if ( ! objectStore.isConnected() ) {
 				if ( connect ) {
-					objectStore.connect();
+					wizard.connectObjectStore();
 				} else {
 					codeModulesCombo.getCombo().setEnabled( false );
 					codeModulesCombo.setInput( new ArrayList<CodeModule>() );
+					wizard.setCodeModule(null);
 					return;
 				}
 			} 
 			codeModulesCombo.setInput( objectStore.getCodeModules() );
 			codeModulesCombo.getCombo().setEnabled( true );
+			wizard.setCodeModule(null);
 		} 
 		else 
 		{
 			codeModulesCombo.getCombo().setEnabled( false );
 			codeModulesCombo.setInput( new ArrayList<CodeModule>() );
+			wizard.setCodeModule(null);
 		}
 	}
 }
