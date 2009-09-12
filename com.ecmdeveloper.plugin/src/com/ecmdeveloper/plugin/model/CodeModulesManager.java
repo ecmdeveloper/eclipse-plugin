@@ -64,6 +64,20 @@ public class CodeModulesManager {
 	    return codeModulefiles;
 	}
 
+	public CodeModuleFile createCodeModuleFile(CodeModule codeModule, ObjectStore objectStore) {
+
+		CodeModuleFile codeModuleFile = new CodeModuleFile(
+				codeModule.getName(), codeModule.getId(), objectStore
+						.getConnection().getName(), objectStore.getName());
+
+		codeModuleFile.setFilename( getCodeModuleFile(codeModuleFile).getPath() );
+		saveCodeModuleFile(codeModuleFile);
+		
+		fireCodeModuleFilesChanged( new CodeModuleFile[] {codeModuleFile} , null, null );
+
+		return codeModuleFile;
+	}
+
 	public void saveCodeModuleFile(CodeModuleFile codeModuleFile ) {
 
 		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.CODE_MODULE);
