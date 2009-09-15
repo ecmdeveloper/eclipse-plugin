@@ -10,8 +10,10 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.model.CodeModuleFileListener;
 import com.ecmdeveloper.plugin.model.CodeModulesManager;
+import com.ecmdeveloper.plugin.model.CodeModulesManagerEvent;
+import com.ecmdeveloper.plugin.model.CodeModulesManagerListener;
 
-public class CodeModuleEditor extends FormEditor {
+public class CodeModuleEditor extends FormEditor implements CodeModulesManagerListener {
 
 	public static final String CODE_MODULE_EDITOR_ID = "com.ecmdeveloper.plugin.editors.codeModuleEditor";
 
@@ -45,6 +47,8 @@ public class CodeModuleEditor extends FormEditor {
 			
 			updateTitle();
 			isPageModified = false;
+			
+			CodeModulesManager.getManager().addCodeModuleManagerListener(this);
 
 		} catch (PartInitException e) {
 			// 
@@ -100,6 +104,19 @@ public class CodeModuleEditor extends FormEditor {
 		isPageModified = true;
 		if (!wasDirty) {
 			firePropertyChange(IEditorPart.PROP_DIRTY);
+		}
+	}
+
+	@Override
+	public void codeModuleFilesItemsChanged(CodeModulesManagerEvent event) {
+		
+		if ( event.getItemsRemoved() != null ) {
+			for ( CodeModuleFile itemRemoved : event.getItemsRemoved() ) {
+				if ( itemRemoved.getId().equalsIgnoreCase( codeModuleFile.getId() ) ) {
+					close( false );
+					return;
+				}
+			}
 		}
 	}
 }

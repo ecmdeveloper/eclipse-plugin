@@ -39,12 +39,7 @@ public class ObjectStoresViewContentProvider implements
 	}
 
 	public Object[] getElements(Object parent) {
-//		if (parent.equals(getViewSite())) {
-//			if (invisibleRoot==null) initialize();
-//			return getChildren(invisibleRoot);
-//		}
-//		return getChildren(parent);
-		
+
 		if ( ! ( parent instanceof IObjectStoreItem ) ) {
 			if ( invisibleRoot == null ) initialize();
 			return getChildren(invisibleRoot);
