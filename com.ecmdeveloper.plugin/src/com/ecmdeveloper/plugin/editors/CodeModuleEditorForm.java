@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-import javax.swing.filechooser.FileView;
-
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -38,11 +35,16 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
+import com.ecmdeveloper.plugin.util.ImageCache;
 
 public class CodeModuleEditorForm extends FormPage {
 
+	private final ImageCache imageCache = new ImageCache();
+
 	private Text nameText;
+	private Label objectStoreLabel;
 	private CodeModuleFile codeModuleFile;
 	private TableViewer filesTableViewer;
 	
@@ -54,7 +56,7 @@ public class CodeModuleEditorForm extends FormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 
 		ScrolledForm form = managedForm.getForm();
-		form.setMessage( "Bla", 2);
+		//form.setMessage( "Bla", 2);
 		FormToolkit toolkit = managedForm.getToolkit();
 
 		GridLayout layout = new GridLayout();
@@ -71,6 +73,7 @@ public class CodeModuleEditorForm extends FormPage {
 		getManagedForm().getForm().setText( "Code Module: " + codeModuleFile.getName() );
 		filesTableViewer.setInput( codeModuleFile.getFiles() );
 		nameText.setText( codeModuleFile.getName() );
+		objectStoreLabel.setText( codeModuleFile.getObjectStoreName() );
 	}
 
 	public void refreshFilesTableContent()
@@ -83,6 +86,7 @@ public class CodeModuleEditorForm extends FormPage {
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR );
 		
+		form.setImage( imageCache.getImage( Activator.getImageDescriptor("icons/script.png") ) );
 		section.setText("Code Module properties");
 		section.setDescription("Specify the properties of this code module");
 
@@ -104,8 +108,20 @@ public class CodeModuleEditorForm extends FormPage {
 			}
 		});
 		nameText.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+
+		addLabel(client, "Object Store:");
+
+		objectStoreLabel = new Label( client, SWT.NONE );
+		objectStoreLabel.setLayoutData( new GridData(GridData.BEGINNING) );
+		objectStoreLabel.setText("");
 		
 		section.setClient(client);
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		super.dispose();
 	}
 
 	private void createTableSection(final ScrolledForm form, FormToolkit toolkit ) {
@@ -183,8 +199,7 @@ public class CodeModuleEditorForm extends FormPage {
 	{
 		FileDialog dialog = new FileDialog( this.getSite().getShell(), SWT.OPEN);
 		dialog.setFilterExtensions(new String [] {"*.class", "*.jar", "*.zip", "*.*"} );
-//		   dialog.setFilterPath("c:\\temp");
-	   String result = dialog.open();
+		String result = dialog.open();
 		
 		codeModuleFile.addFile( new File( result ) );
 	}
@@ -203,8 +218,6 @@ public class CodeModuleEditorForm extends FormPage {
 		createFilesTableColumns(filesTableViewer);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
-//		gd.heightHint = 100;
-//		gd.widthHint = 100;
 		gd.verticalSpan = 2;
 		
 //		viewer.getTable().addListener(SWT.Show, new Listener() {
@@ -243,20 +256,6 @@ public class CodeModuleEditorForm extends FormPage {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 	}
-
-//	private Text addTextField(Composite container) {
-//		Text textField = new Text(container, SWT.BORDER);
-//		textField.addModifyListener(new ModifyListener() {
-//			@Override
-//			public void modifyText(ModifyEvent e) {
-////				
-////				updatePageComplete();
-//			}
-//		});
-//		textField.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-//		
-//		return textField;
-//	}
 	
 	class FilesContentProvider implements IStructuredContentProvider
 	{

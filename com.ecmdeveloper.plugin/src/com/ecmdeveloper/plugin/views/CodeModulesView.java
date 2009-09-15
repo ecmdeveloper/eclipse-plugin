@@ -25,7 +25,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
+import com.ecmdeveloper.plugin.editors.CodeModuleEditor;
 import com.ecmdeveloper.plugin.editors.CodeModuleEditorInput;
+import com.ecmdeveloper.plugin.handlers.EditCodeModuleHandler;
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.util.PluginLog;
@@ -125,9 +127,11 @@ public class CodeModulesView extends ViewPart {
 
 		try {
 			
-			IEditorInput input = new CodeModuleEditorInput( (CodeModuleFile) elem );
-			String editorId = "com.ecmdeveloper.plugin.editors.codeModuleEditor";
-			IDE.openEditor(getSite().getPage(), input, editorId);
+			if ( ! EditCodeModuleHandler.isEditorActive( getSite().getPage(), (CodeModuleFile) elem ) ) {
+				IEditorInput input = new CodeModuleEditorInput( (CodeModuleFile) elem );
+				String editorId = CodeModuleEditor.CODE_MODULE_EDITOR_ID;
+				IDE.openEditor(getSite().getPage(), input, editorId);
+			}
 			
 		} catch (PartInitException e) {
 			PluginLog.error("Open editor failed" , e);

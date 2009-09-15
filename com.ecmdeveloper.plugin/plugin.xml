@@ -10,7 +10,7 @@
       </category>
       <view
             name="Object Stores"
-            icon="icons/sample.gif"
+            icon="icons/database.png"
             category="com.ecmdeveloper.plugin.contentEngine"
             class="com.ecmdeveloper.plugin.views.ObjectStoresView"
             id="com.ecmdeveloper.plugin.views.ObjectStoresView">
@@ -18,7 +18,7 @@
       <view
             category="com.ecmdeveloper.plugin.contentEngine"
             class="com.ecmdeveloper.plugin.views.CodeModulesView"
-            icon="icons/sample.gif"
+            icon="icons/script.png"
             id="com.ecmdeveloper.plugin.views.codeModulesView"
             name="Code Modules"
             restorable="true">
@@ -88,6 +88,29 @@
             id="com.ecmdeveloper.plugin.updateCodeModule"
             name="Update">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Deletes the selected item from the Object Store"
+            id="com.ecmdeveloper.plugin.delete"
+            name="Delete">
+      </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Moves the selected items to another location in the Object Store"
+            id="com.ecmdeveloper.plugin.move"
+            name="Move...">
+      </command>
+      <command
+            description="Paste the clipboard contents into the Object Stores view"
+            id="com.ecmdeveloper.plugin.paste"
+            name="Past">
+      </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Renames the selected items"
+            id="com.ecmdeveloper.plugin.rename"
+            name="Rename...">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -95,8 +118,7 @@
             locationURI="toolbar:com.ecmdeveloper.plugin.views.ObjectStoresView?after=additions">
          <command
                commandId="com.ecmdeveloper.plugin.connectObjectStore"
-               icon="src/com/ecmdeveloper/plugin/resources/connect.gif"
-               label="Connect"
+               icon="icons/database_connect.png"
                style="push"
                tooltip="Connect to the Object Store">
             <visibleWhen
@@ -118,8 +140,7 @@
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=edit">
          <command
                commandId="com.ecmdeveloper.plugin.removeObjectStore"
-               icon="src/com/ecmdeveloper/plugin/resources/remove_from_view.gif"
-               label="Remove from view"
+               icon="icons/database_delete.png"
                style="push"
                tooltip="Removes this Object Store from the view">
             <visibleWhen
@@ -136,13 +157,9 @@
                </with>
             </visibleWhen>
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=edit">
          <command
                commandId="com.ecmdeveloper.plugin.connectObjectStore"
-               icon="src/com/ecmdeveloper/plugin/resources/connect.gif"
-               label="Connect"
+               icon="icons/database_connect.png"
                style="push"
                tooltip="Connect to the Object Store">
             <visibleWhen
@@ -159,23 +176,37 @@
                </with>
             </visibleWhen>
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="toolbar:com.ecmdeveloper.plugin.views.codeModulesView?after=additions">
          <command
-               commandId="com.ecmdeveloper.plugin.removeObjectStore"
+               commandId="com.ecmdeveloper.plugin.delete"
                icon="icons/delete_edit.gif"
-               label="Remove from view"
+               style="push">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.move"
+               style="push">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.paste"
+               icon="icons/paste_edit.gif"
                style="push"
-               tooltip="Remove this Object Store from this view">
+               tooltip="Paste the clipboard contents into the Object Stores view">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.rename"
+               style="push">
          </command>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:com.ecmdeveloper.plugin.views.codeModulesView?after=additions">
          <command
+               commandId="com.ecmdeveloper.plugin.removeCodeModule"
+               icon="icons/script_delete.png"
+               style="push"
+               tooltip="Remove this Code  Module from this view">
+         </command>
+         <command
                commandId="com.ecmdeveloper.plugin.importCodeModule"
-               icon="icons/delete_edit.gif"
-               label="Import"
+               icon="icons/script_add.png"
                style="push"
                tooltip="Import a Code Module">
          </command>
@@ -184,25 +215,20 @@
             locationURI="popup:com.ecmdeveloper.plugin.views.codeModulesView?after=edit">
          <command
                commandId="com.ecmdeveloper.plugin.removeCodeModule"
-               icon="icons/delete_edit.gif"
-               label="Remove from view"
+               icon="icons/script_delete.png"
                style="push"
                tooltip="Remove this Code Module from this view">
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:com.ecmdeveloper.plugin.views.codeModulesView?after=edit">
          <command
                commandId="com.ecmdeveloper.plugin.editCodeModule"
+               icon="icons/script_edit.png"
                label="Edit..."
                style="push"
                tooltip="Edit this Code Module">
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:com.ecmdeveloper.plugin.views.codeModulesView?after=edit">
          <command
                commandId="com.ecmdeveloper.plugin.updateCodeModule"
+               icon="icons/script_go.png"
                label="Update"
                style="push"
                tooltip="Updates the Code Module on the Content Engine">
@@ -277,6 +303,22 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.DeleteObjectStoreItemHandler"
+            commandId="com.ecmdeveloper.plugin.delete">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.MoveObjectStoreItemHandler"
+            commandId="com.ecmdeveloper.plugin.move">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.PastObjectStoreItemHandler"
+            commandId="com.ecmdeveloper.plugin.paste">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.RenameObjectStoreItemHandler"
+            commandId="com.ecmdeveloper.plugin.rename">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -308,7 +350,7 @@
             contributorClass="com.ecmdeveloper.plugin.editors.CodeModuleEditorContributor"
             default="false"
             extensions="codemodule"
-            icon="icons/sample.gif"
+            icon="icons/script_edit.png"
             id="com.ecmdeveloper.plugin.editors.codeModuleEditor"
             name="Code Module Editor">
       </editor>
