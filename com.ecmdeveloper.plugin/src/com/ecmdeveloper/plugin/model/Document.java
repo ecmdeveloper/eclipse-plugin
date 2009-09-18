@@ -15,8 +15,8 @@ public class Document extends ObjectStoreItem {
 
 	protected com.filenet.api.core.Document document;
 	
-	public Document(Object document, IObjectStoreItem parent ) {
-		super(parent);
+	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore ) {
+		super(parent, objectStore);
 		
 		this.document = (com.filenet.api.core.Document) document;
 		this.document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );

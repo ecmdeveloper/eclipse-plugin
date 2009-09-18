@@ -21,8 +21,8 @@ public class Folder extends ObjectStoreItem {
 	protected com.filenet.api.core.Folder folder;
 	protected Boolean hasChildren;
 	
-	public Folder(Object folder, IObjectStoreItem parent ) {
-		super(parent);
+	public Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore ) {
+		super(parent, objectStore );
 		
 		this.folder = (com.filenet.api.core.Folder) folder;
 		this.folder.fetchProperties( new String[] { PropertyNames.FOLDER_NAME, PropertyNames.ID } );
@@ -58,7 +58,7 @@ public class Folder extends ObjectStoreItem {
 		Iterator iterator = folder.get_SubFolders().iterator();
 
 		while (iterator.hasNext()) {
-			children.add( new Folder( iterator.next(), this ) );
+			children.add( new Folder( iterator.next(), this, objectStore ) );
 		}
 		
 		iterator = folder.get_Containees().iterator();
@@ -72,16 +72,16 @@ public class Folder extends ObjectStoreItem {
 
 			if ( object instanceof com.filenet.api.core.Document )
 			{
-				children.add( new Document( object, this ) );
+				children.add( new Document( object, this, objectStore ) );
 			}
 			else if ( object instanceof com.filenet.api.core.Folder )
 			{
 				// TODO: mark this folder as a link instead of a regular child?
-				children.add( new Folder( object, this ) );
+				children.add( new Folder( object, this, objectStore ) );
 			}
 			else if ( object instanceof com.filenet.api.core.CustomObject )
 			{
-				children.add( new CustomObject( object, this ) );
+				children.add( new CustomObject( object, this, objectStore ) );
 			}
 		}
 		

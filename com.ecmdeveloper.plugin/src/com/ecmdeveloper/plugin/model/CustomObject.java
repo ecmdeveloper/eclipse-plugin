@@ -15,9 +15,9 @@ public class CustomObject extends ObjectStoreItem {
 
 	protected com.filenet.api.core.CustomObject customObject;
 	
-	public CustomObject( Object customObject, IObjectStoreItem parent ) {
+	public CustomObject( Object customObject, IObjectStoreItem parent, ObjectStore objectStore ) {
 
-		super(parent);
+		super(parent, objectStore );
 		
 		this.customObject = (com.filenet.api.core.CustomObject) customObject;
 		this.customObject.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );

@@ -26,7 +26,7 @@ public class ObjectStore extends ObjectStoreItem
 
 	public ObjectStore(String objectStoreName, IObjectStoreItem parent) {
 
-		super(parent);
+		super(parent, null);
 		this.name = objectStoreName;
 	}
 
@@ -46,7 +46,7 @@ public class ObjectStore extends ObjectStoreItem
 		if ( objectStore != null && rootFolder == null )
 		{
 			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
-			rootFolder = new Folder( objectStore.get_RootFolder(), this );
+			rootFolder = new Folder( objectStore.get_RootFolder(), this, this );
 			children.addAll( rootFolder.getChildren() );
 		}
 
@@ -105,7 +105,7 @@ public class ObjectStore extends ObjectStoreItem
 		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
 
 		while (iterator.hasNext()) {
-			codeModules.add( new CodeModule( iterator.next(), this ) );
+			codeModules.add( new CodeModule( iterator.next(), this, this ) );
 		}
 		
 		return codeModules;
@@ -114,6 +114,6 @@ public class ObjectStore extends ObjectStoreItem
 	public IObjectStoreItem getObject(String id, String className )
 	{
 		IndependentObject object = objectStore.getObject(className, id);
-		return ObjectStoreItemFactory.getObject( object, this ); 
+		return ObjectStoreItemFactory.getObject( object, this, this ); 
 	}
 }
