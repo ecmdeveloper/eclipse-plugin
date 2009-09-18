@@ -15,8 +15,8 @@ public class Action extends ObjectStoreItem {
 
 	com.filenet.api.events.EventAction eventAction;
 	
-	public Action(Object eventAction, IObjectStoreItem parent) {
-		super(parent);
+	public Action(Object eventAction, IObjectStoreItem parent, ObjectStore objectStore ) {
+		super(parent, objectStore);
 
 		this.eventAction = (com.filenet.api.events.EventAction) eventAction;
 		this.eventAction.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );

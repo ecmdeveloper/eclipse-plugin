@@ -25,8 +25,8 @@ import com.filenet.api.core.Factory;
  */
 public class CodeModule extends Document {
 
-	public CodeModule(Object document, IObjectStoreItem parent) {
-		super(document, parent);
+	public CodeModule(Object document, IObjectStoreItem parent, ObjectStore objectStore ) {
+		super(document, parent, objectStore );
 	}
 
 	public Collection<Action> getActions() {
@@ -38,7 +38,7 @@ public class CodeModule extends Document {
 		Set<Action> actions = new HashSet<Action>();
 
 		while (iterator.hasNext()) {
-			actions.add( new Action( iterator.next(), null) );
+			actions.add( new Action( iterator.next(), null, objectStore ) );
 		}
 		
 		return actions;

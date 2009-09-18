@@ -8,9 +8,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	protected IObjectStoreItem parent;
 	protected String name;
 	protected String id;
+	protected ObjectStore objectStore;
 
-	public ObjectStoreItem(IObjectStoreItem parent) {
+	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore ) {
 		this.parent = parent;
+		this.objectStore = objectStore;
 	}
 	
 	/* (non-Javadoc)
@@ -43,5 +45,10 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	public boolean hasChildren() 
 	{
 		return false;
+	}
+
+	@Override
+	public ObjectStore getObjectStore() {
+		return objectStore;
 	}
 }

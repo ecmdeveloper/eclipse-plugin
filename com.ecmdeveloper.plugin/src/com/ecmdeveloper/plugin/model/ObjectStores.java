@@ -15,7 +15,7 @@ public class ObjectStores extends ObjectStoreItem {
 	private ArrayList<IObjectStoreItem> children;
 	
 	public ObjectStores() {
-		super(null);
+		super(null,null);
 		children = new ArrayList<IObjectStoreItem>();
 	}
 

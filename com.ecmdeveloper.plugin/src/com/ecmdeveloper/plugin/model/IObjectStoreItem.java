@@ -20,4 +20,6 @@ public interface IObjectStoreItem extends IAdaptable {
 	public Collection<IObjectStoreItem> getChildren();
 	
 	public boolean hasChildren();
+	
+	public ObjectStore getObjectStore();
 }

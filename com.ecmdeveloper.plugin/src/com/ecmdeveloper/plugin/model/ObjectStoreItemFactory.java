@@ -25,7 +25,7 @@ public class ObjectStoreItemFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static IObjectStoreItem getObject( IndependentObject object, IObjectStoreItem parent ) 
+	public static IObjectStoreItem getObject( IndependentObject object, IObjectStoreItem parent, ObjectStore objectStore ) 
 	{
 		String className = object.getClassName();
 		
@@ -35,8 +35,8 @@ public class ObjectStoreItemFactory {
 
 			IObjectStoreItem objectStoreItem;
 			try {
-				Constructor constructor = clazz.getConstructor(new Class[] {Object.class, IObjectStoreItem.class } );
-				objectStoreItem = (IObjectStoreItem) constructor.newInstance( new Object[] { object, parent } );
+				Constructor constructor = clazz.getConstructor(new Class[] {Object.class, IObjectStoreItem.class, ObjectStore.class } );
+				objectStoreItem = (IObjectStoreItem) constructor.newInstance( new Object[] { object, parent, objectStore } );
 				return objectStoreItem;
 			} catch (Exception e) {
 				throw new RuntimeException(e);
