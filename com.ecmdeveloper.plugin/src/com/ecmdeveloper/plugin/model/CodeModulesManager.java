@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.util.PluginLog;
@@ -20,6 +21,7 @@ import com.ecmdeveloper.plugin.util.PluginTagNames;
 
 public class CodeModulesManager {
 
+	private static final String CODE_MODULE_CLASS_NAME = "CodeModule";
 	private static final String CODEMODULES_FOLDER = "codemodules";
 	private static final String CODEMODULE_FILE_EXTENSION = "codemodule";
 
@@ -169,6 +171,34 @@ public class CodeModulesManager {
 		codeModuleFile.setFilename( filename );
 		
 		return codeModuleFile;
+	}
+
+	public Collection<Action> getCodeModuleActions( CodeModuleFile codeModuleFile ) {
+		
+		CodeModule codeModule = getCodeModuleFromFile(codeModuleFile);
+		return codeModule.getActions();
+	}
+	
+	public void updateCodeModule(CodeModuleFile codeModuleFile ) {
+		
+		CodeModule codeModule = getCodeModuleFromFile(codeModuleFile);
+		codeModule.update(codeModuleFile);
+	}
+
+	private CodeModule getCodeModuleFromFile(CodeModuleFile codeModuleFile) {
+		
+		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
+		ObjectStore objectStore = objectStoresManager.getObjectStore(
+				codeModuleFile.getConnectionName(), codeModuleFile
+						.getObjectStoreName());
+		
+		if ( objectStore == null ) {
+			throw new NullPointerException( "Object Store not found:" + codeModuleFile.getConnectionName() + ": " + codeModuleFile
+					.getObjectStoreName() );
+		}
+		
+		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), CODE_MODULE_CLASS_NAME );
+		return codeModule;
 	}
 	
 	public static IPath getCodeModulesPath() {

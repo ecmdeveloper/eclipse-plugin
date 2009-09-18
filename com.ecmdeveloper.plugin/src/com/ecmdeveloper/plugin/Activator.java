@@ -1,10 +1,12 @@
 package com.ecmdeveloper.plugin;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.util.ImageCache;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -16,6 +18,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+	
+	private static final ImageCache imageCache = new ImageCache();
 	
 	/**
 	 * The constructor
@@ -39,6 +43,7 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		ObjectStoresManager.getManager().saveObjectStores();
 		plugin = null;
+		imageCache.dispose();
 		super.stop(context);
 	}
 
@@ -60,5 +65,9 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	public static Image getImage( String path ) {
+		return imageCache.getImage( getImageDescriptor( path ) );		
 	}
 }

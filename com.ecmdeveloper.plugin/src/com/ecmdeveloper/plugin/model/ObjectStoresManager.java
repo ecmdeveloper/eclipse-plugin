@@ -120,6 +120,24 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return connection.getObjectStoreNames();
 	}
 
+	public ObjectStore getObjectStore(String connectionName, String objectStoreName) {
+
+		if ( objectStores == null) {
+			loadObjectStores();
+		}
+		
+		for (IObjectStoreItem objectStoreItem : objectStores.getChildren() )
+		{
+			ObjectStore objectStore = (ObjectStore) objectStoreItem;
+			if ( objectStore.getName().equals(objectStoreName) &&
+					objectStore.getConnection().getName().equals(connectionName ) )
+			{
+				return objectStore;
+			}
+		}
+		return null;
+	}
+
 	private void saveObjectStores(XMLMemento memento) 
 	{
 		// First save the connection to the object store
