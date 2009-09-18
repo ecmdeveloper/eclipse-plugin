@@ -41,8 +41,6 @@ import com.ecmdeveloper.plugin.util.ImageCache;
 
 public class CodeModuleEditorForm extends FormPage {
 
-	private final ImageCache imageCache = new ImageCache();
-
 	private Text nameText;
 	private Label objectStoreLabel;
 	private CodeModuleFile codeModuleFile;
@@ -86,7 +84,7 @@ public class CodeModuleEditorForm extends FormPage {
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR );
 		
-		form.setImage( imageCache.getImage( Activator.getImageDescriptor("icons/script.png") ) );
+		form.setImage( Activator.getImage("icons/script.png") );
 		section.setText("Code Module properties");
 		section.setDescription("Specify the properties of this code module");
 
@@ -116,12 +114,6 @@ public class CodeModuleEditorForm extends FormPage {
 		objectStoreLabel.setText("");
 		
 		section.setClient(client);
-	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		super.dispose();
 	}
 
 	private void createTableSection(final ScrolledForm form, FormToolkit toolkit ) {

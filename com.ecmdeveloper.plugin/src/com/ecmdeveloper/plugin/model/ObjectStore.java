@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.filenet.api.collection.ReferentialContainmentRelationshipSet;
+import com.filenet.api.collection.CodeModuleSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentObject;
-import com.filenet.api.core.ReferentialContainmentRelationship;
+import com.filenet.api.query.SearchSQL;
+import com.filenet.api.query.SearchScope;
 
 /**
  * 
@@ -51,7 +52,7 @@ public class ObjectStore extends ObjectStoreItem
 
 		return children;
 	}
-/*
+
 	public boolean isConnected() {
 		
 		if ( connection == null ) {
@@ -71,20 +72,19 @@ public class ObjectStore extends ObjectStoreItem
 		objectStore.fetchProperties( new String[] { PropertyNames.ID } );
 		id = objectStore.get_Id().toString();
 	}
-*/
 
 	// TODO: remove this offline test stuff
 	
-	private boolean tempConnected = false;
-	
-	public boolean isConnected() {
-		
-		return tempConnected;
-	}
-
-	public void connect() {
-		tempConnected = true;
-	}
+//	private boolean tempConnected = false;
+//	
+//	public boolean isConnected() {
+//		
+//		return tempConnected;
+//	}
+//
+//	public void connect() {
+//		tempConnected = true;
+//	}
 	
 	public ContentEngineConnection getConnection() {
 		return connection;
@@ -94,13 +94,26 @@ public class ObjectStore extends ObjectStoreItem
 		this.connection = connection;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection<CodeModule> getCodeModules() {
+	
+		SearchScope scope = new SearchScope(objectStore);
+		String query = "Select This From CodeModule WHERE IsCurrentVersion = TRUE";
+		CodeModuleSet codeModuleSet = (CodeModuleSet) scope.fetchObjects(new SearchSQL( query  ), null, null, null);
+		Iterator iterator = codeModuleSet.iterator();
 		
 		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
-		codeModules.add( new CodeModule( "CodeModule 1 (" + name + ")", "{12345}" ) );
-		codeModules.add( new CodeModule( "CodeModule 2 (" + name + ")", "{23456}" ) );
-		codeModules.add( new CodeModule( "CodeModule 3 (" + name + ")", "{34567}" ) );
+
+		while (iterator.hasNext()) {
+			codeModules.add( new CodeModule( iterator.next(), this ) );
+		}
 		
 		return codeModules;
+	}
+	
+	public IObjectStoreItem getObject(String id, String className )
+	{
+		IndependentObject object = objectStore.getObject(className, id);
+		return ObjectStoreItemFactory.getObject( object, this ); 
 	}
 }
