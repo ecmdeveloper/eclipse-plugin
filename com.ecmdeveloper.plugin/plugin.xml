@@ -180,10 +180,48 @@
                commandId="com.ecmdeveloper.plugin.delete"
                icon="icons/delete_edit.gif"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Folder">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.move"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Folder">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.paste"
@@ -194,6 +232,19 @@
          <command
                commandId="com.ecmdeveloper.plugin.rename"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <not>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.ObjectStore">
+                        </instanceof>
+                     </not>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
@@ -310,6 +361,25 @@
       <handler
             class="com.ecmdeveloper.plugin.handlers.MoveObjectStoreItemHandler"
             commandId="com.ecmdeveloper.plugin.move">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Folder">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="com.ecmdeveloper.plugin.handlers.PastObjectStoreItemHandler"
@@ -318,6 +388,75 @@
       <handler
             class="com.ecmdeveloper.plugin.handlers.RenameObjectStoreItemHandler"
             commandId="com.ecmdeveloper.plugin.rename">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.MoveObjectStoreItemHandler"
+            commandId="org.eclipse.ui.edit.move">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Folder">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.RenameObjectStoreItemHandler"
+            commandId="org.eclipse.ui.edit.rename">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Folder">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.DeleteObjectStoreItemHandler"
+            commandId="org.eclipse.ui.edit.delete">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Folder">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
