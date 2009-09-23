@@ -1,12 +1,15 @@
 package com.ecmdeveloper.plugin.handlers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -43,26 +46,54 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 
-		if (!(selection instanceof IStructuredSelection))
+		if (!(selection instanceof IStructuredSelection) || selection.isEmpty() )
 			return null;
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		while ( iterator.hasNext() ) {
+		Set<String> elementObjectStores = new HashSet<String>();
 
+		while ( iterator.hasNext() ) {
 			IObjectStoreItem elem = (IObjectStoreItem) iterator.next();
-			
-			ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
-			ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
-			ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
-			dialog.setInput( ObjectStoresManager.getManager() );
-			
-			dialog.addFilter( new MoveTargetFilter( elem.getObjectStore().getName() ) );
-			contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
-			dialog.setTitle("Move");
-			dialog.setMessage( "Choose destination for '" + elem.getName() + "'" );
-			dialog.open();
+			elementObjectStores.add( elem.getObjectStore().getName() );
 		}
 		
+		if ( elementObjectStores.size() != 1 ) {
+			throw new UnsupportedOperationException("Moving across Object Stores is not posible" );
+		}
+
+		ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
+		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
+		dialog.setInput( ObjectStoresManager.getManager() );
+		
+		dialog.addFilter( new MoveTargetFilter( elementObjectStores.iterator().next() ) );
+		contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
+		dialog.setTitle("Move");
+		dialog.setMessage( "Choose destination for selected items" );
+		
+		int answer = dialog.open();
+
+		if ( answer != ElementTreeSelectionDialog.OK ) {
+			return null;
+		}
+
+		IObjectStoreItem destination = (IObjectStoreItem) dialog.getFirstResult();
+		if ( destination == null ) {
+			return null;
+		}
+
+		iterator = ((IStructuredSelection) selection).iterator();
+		ArrayList<IObjectStoreItem> elementsMoved = new ArrayList<IObjectStoreItem>();
+		while ( iterator.hasNext() ) {
+
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
+			objectStoreItem.move(destination);
+			elementsMoved.add( objectStoreItem );
+		}
+		
+		ObjectStoresManager.getManager().moveObjectStoreItems(
+				elementsMoved.toArray(new IObjectStoreItem[0]), destination );
+
 		return null;
 	}
 	

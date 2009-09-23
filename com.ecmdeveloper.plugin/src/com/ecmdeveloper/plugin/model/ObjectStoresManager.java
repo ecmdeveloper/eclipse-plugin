@@ -7,8 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
@@ -138,6 +140,42 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return null;
 	}
 
+	public void updateObjectStoreItems(IObjectStoreItem[] objectStoreItems, boolean delete ) {
+		
+		// TODO add updating batch support
+		for (IObjectStoreItem objectStoreItem2 : objectStoreItems) {
+			((ObjectStoreItem)objectStoreItem2).save();
+		}
+
+		if ( delete ) {
+			fireObjectStoreItemsChanged(null, objectStoreItems, null );
+		} else {
+			fireObjectStoreItemsChanged(null, null, objectStoreItems );
+		}
+	}
+	
+	public void refreshObjectStoreItems(IObjectStoreItem[] objectStoreItems ) {
+		fireObjectStoreItemsChanged(null, null, objectStoreItems );
+	}
+
+	public void moveObjectStoreItems( IObjectStoreItem[] objectStoreItems, IObjectStoreItem destination )
+	{
+		fireObjectStoreItemsChanged(null, objectStoreItems, null );
+
+		Set<IObjectStoreItem> updateSet = new HashSet<IObjectStoreItem>();
+		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
+			if ( objectStoreItem.getParent() != null ) {
+				objectStoreItem.getParent().refresh();
+				updateSet.add( objectStoreItem.getParent() );
+			}
+		}
+
+		destination.refresh();
+		updateSet.add( destination );
+		
+		fireObjectStoreItemsChanged(null, null, updateSet.toArray( new IObjectStoreItem[0]) );
+	}
+	
 	private void saveObjectStores(XMLMemento memento) 
 	{
 		// First save the connection to the object store

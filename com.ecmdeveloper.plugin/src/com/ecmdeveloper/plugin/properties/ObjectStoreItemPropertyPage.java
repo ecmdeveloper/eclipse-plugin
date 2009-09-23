@@ -17,21 +17,23 @@ public class ObjectStoreItemPropertyPage extends PropertyPage {
 		
 		Composite panel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+		layout.numColumns = 2;
 		panel.setLayout(layout);
-		Label label = new Label(panel, SWT.NONE);
-		label.setLayoutData(new GridData());
 		
-//		String name = getElement().getClass().getName();
-		label.setText( "Name: " + ((IObjectStoreItem) getElement()).getName() );		
-
-		Label label2 = new Label(panel, SWT.NONE);
-		label2.setLayoutData(new GridData());
-		
-//		String name = getElement().getClass().getName();
-		label2.setText( "Type: " + getElement().toString() );		
+		createPageRow(panel, "Name:", ((IObjectStoreItem) getElement()).getName() );		
+		createPageRow(panel, "Type:", getElement().getClass().getSimpleName() );		
 
 		return panel;
+	}
+
+	private void createPageRow(Composite panel, String name, String value) {
+		
+		Label namelabel = new Label(panel, SWT.NONE);
+		namelabel.setLayoutData( new GridData(GridData.BEGINNING) );
+		namelabel.setText( name );
+		
+		Label nameLabelValue = new Label(panel, SWT.NONE);
+		nameLabelValue.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+		nameLabelValue.setText( value );
 	}
 }

@@ -1,6 +1,18 @@
 package com.ecmdeveloper.plugin.model;
 
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.Platform;
+
+import com.filenet.api.collection.ReferentialContainmentRelationshipSet;
+import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.constants.RefreshMode;
+import com.filenet.api.core.Containable;
+import com.filenet.api.core.IndependentObject;
+import com.filenet.api.core.IndependentlyPersistableObject;
+import com.filenet.api.core.ReferentialContainmentRelationship;
+import com.filenet.api.property.FilterElement;
+import com.filenet.api.property.PropertyFilter;
 
 
 public abstract class ObjectStoreItem implements IObjectStoreItem {
@@ -14,6 +26,8 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		this.parent = parent;
 		this.objectStore = objectStore;
 	}
+	
+	public abstract IndependentlyPersistableObject getObjectStoreObject();
 	
 	/* (non-Javadoc)
 	 * @see com.ecmdeveloper.plugin.model.IObjectStoreItem#getName()
@@ -36,6 +50,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return parent;
 	}
 	
+	@Override
+	public void setParent(IObjectStoreItem parent) {
+		this.parent = parent;
+	}
+
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
@@ -50,5 +69,47 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	@Override
 	public ObjectStore getObjectStore() {
 		return objectStore;
+	}
+	
+	@Override
+	public void delete() {
+		getObjectStoreObject().delete();
+	}
+
+	public void save() {
+		getObjectStoreObject().save(RefreshMode.REFRESH);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public void move( IObjectStoreItem destination ) {
+
+		IndependentlyPersistableObject object = getObjectStoreObject();
+
+		if ( ! ( object instanceof Containable) ) {
+			throw new UnsupportedOperationException( "An object of this type cannot be moved" );
+		}
+
+		object.fetchProperties(new String[] { PropertyNames.CONTAINERS } );
+		PropertyFilter propertyFilter = new PropertyFilter();
+		propertyFilter.addIncludeProperty( new FilterElement(null, null, null, PropertyNames.TAIL, null ) );
+		propertyFilter.addIncludeProperty( new FilterElement(1, null, null, PropertyNames.ID, null ) );
+
+		ReferentialContainmentRelationshipSet relations = ((Containable) object).get_Containers();
+
+		Iterator<ReferentialContainmentRelationship> iterator = relations.iterator();
+		
+		while ( iterator.hasNext() ) {
+			
+			ReferentialContainmentRelationship relationship = iterator.next();
+			relationship.fetchProperties( propertyFilter );
+			com.filenet.api.core.Folder container = (com.filenet.api.core.Folder) relationship.get_Tail();
+			
+			if ( container.get_Id().toString().equals( this.getParent().getId() ) ) {
+				relationship.set_Tail( ((ObjectStoreItem)destination).getObjectStoreObject() );
+				relationship.save(RefreshMode.REFRESH);
+				return;
+			}
+		}
 	}
 }

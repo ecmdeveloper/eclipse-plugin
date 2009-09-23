@@ -6,6 +6,7 @@ package com.ecmdeveloper.plugin.model;
 import java.util.Collection;
 
 import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.core.IndependentlyPersistableObject;
 
 /**
  * @author Ricardo Belfor
@@ -19,11 +20,21 @@ public class Document extends ObjectStoreItem {
 		super(parent, objectStore);
 		
 		this.document = (com.filenet.api.core.Document) document;
+		refresh();
+	}
+	
+	@Override
+	public IndependentlyPersistableObject getObjectStoreObject() {
+		return document;
+	}
+
+	@Override
+	public void refresh() {
 		this.document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
 		this.name = this.document.get_Name();
 		this.id = this.document.get_Id().toString();
 	}
-	
+
 	/** 
 	 * A document has no children.
 	 * 
@@ -32,6 +43,11 @@ public class Document extends ObjectStoreItem {
 	@Override
 	public Collection<IObjectStoreItem> getChildren() 
 	{
+		// TODO: Maybe in the future browsing child document?
 		return null;
+	}
+
+	@Override
+	public void setName(String name) {
 	}
 }

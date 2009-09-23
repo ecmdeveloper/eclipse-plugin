@@ -19,6 +19,7 @@ import com.ecmdeveloper.plugin.editors.CodeModuleEditor;
 import com.ecmdeveloper.plugin.editors.CodeModuleEditorInput;
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.util.PluginLog;
 
 /**
@@ -44,12 +45,19 @@ public class RenameObjectStoreItemHandler extends AbstractHandler implements IHa
 
 			Object elem = iterator.next();
 
-			if ( elem instanceof IObjectStoreItem )
-			{
-				String oldName = ((IObjectStoreItem)elem).getName();
-				InputDialog inputDialog = new InputDialog( window.getShell(), "Rename", "New name:", oldName, new NameValidator() );
-				inputDialog.open();
-				System.out.println( inputDialog.getValue() );
+			if (!(elem instanceof IObjectStoreItem)) {
+				continue;
+			}
+
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem)elem; 
+			String oldName = objectStoreItem.getName();
+			InputDialog inputDialog = new InputDialog( window.getShell(), "Rename", "New name:", oldName, new NameValidator() );
+			int open = inputDialog.open();
+			
+			if ( open == InputDialog.OK ) {
+				objectStoreItem.setName( inputDialog.getValue() );
+				ObjectStoresManager.getManager().updateObjectStoreItems(
+						new IObjectStoreItem[] { objectStoreItem }, false); 
 			}
 		}
 

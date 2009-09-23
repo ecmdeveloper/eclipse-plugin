@@ -193,7 +193,9 @@ public class CodeModuleEditorForm extends FormPage {
 		dialog.setFilterExtensions(new String [] {"*.class", "*.jar", "*.zip", "*.*"} );
 		String result = dialog.open();
 		
-		codeModuleFile.addFile( new File( result ) );
+		if ( result != null ) {
+			codeModuleFile.addFile( new File( result ) );
+		}
 	}
 
 	private void handleNameModified( String newName )

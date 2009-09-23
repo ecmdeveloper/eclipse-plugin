@@ -20,6 +20,10 @@ public class CodeModulesViewLabelProvider extends LabelProvider implements ITabl
 	private static final int TYPE_COLUMN = 0;
 	private static final int NAME_COLUMN = 1;
 	private static final int LOCATION_COLUMN = 2;
+	
+	public CodeModulesViewLabelProvider() {
+		super();
+	}
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {

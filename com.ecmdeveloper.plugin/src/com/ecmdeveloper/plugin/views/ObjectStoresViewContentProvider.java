@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
@@ -92,13 +93,26 @@ public class ObjectStoresViewContentProvider implements
 	@Override
 	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
 
+		if ( event.getItemsRemoved() != null ) {
+			viewer.remove( event.getItemsRemoved() );
+		}
+
 		if ( event.getItemsAdded() != null ) {
 			
 			for ( IObjectStoreItem objectStoreItem : event.getItemsAdded() ) {
 //				viewer.add( invisibleRoot, objectStoreItem );
 			}
+			viewer.refresh(null, false );
 		}
 		
-		viewer.refresh(null, false );
+		if ( event.getItemsUpdated() != null ) {
+			viewer.update( event.getItemsUpdated() , null );
+
+			for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
+				if ( objectStoreItem instanceof Folder ) {
+					viewer.refresh(objectStoreItem);
+				}
+			}
+		}
 	}
 }

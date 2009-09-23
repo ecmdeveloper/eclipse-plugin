@@ -17,6 +17,7 @@ import com.ecmdeveloper.plugin.handlers.RenameObjectStoreItemHandler.NameValidat
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 /**
  * 
@@ -41,14 +42,26 @@ public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHa
 
 			Object elem = iterator.next();
 
-			if ( elem instanceof IObjectStoreItem )
-			{
-				String name = ((IObjectStoreItem)elem).getName();
-				boolean answerTrue = MessageDialog.openQuestion( window.getShell(), "Delete", "Do you want to delete '" +  name + "'?" );
-				if ( answerTrue )
-				{
-				}
+			if ( !( elem instanceof IObjectStoreItem ) ) {
+				continue;
 			}
+			
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem)elem;
+			
+			if ( ! objectStoreItem.hasChildren() ) {
+
+				String name = objectStoreItem.getName();
+				boolean answerTrue = MessageDialog.openQuestion( window.getShell(), "Delete", "Do you want to delete '" +  name + "'?" );
+				if (answerTrue) {
+					objectStoreItem.delete();
+					ObjectStoresManager.getManager().updateObjectStoreItems(
+							new IObjectStoreItem[] { objectStoreItem }, true ); 
+				}
+				
+			} else {
+				// TODO: show a new confirmation dialog
+			}
+				
 		}
 		return null;
 	}

@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentObject;
+import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.core.ReferentialContainmentRelationship;
 
 /**
@@ -25,13 +26,25 @@ public class Folder extends ObjectStoreItem {
 		super(parent, objectStore );
 		
 		this.folder = (com.filenet.api.core.Folder) folder;
-		this.folder.fetchProperties( new String[] { PropertyNames.FOLDER_NAME, PropertyNames.ID } );
-		this.name = this.folder.get_FolderName();
-		this.id = this.folder.get_Id().toString();
-
+		refresh();
 		System.out.println( "Loaded '" + this.name + "'" );
 	}
 	
+	@Override
+	public IndependentlyPersistableObject getObjectStoreObject() {
+		return folder;
+	}
+
+	@Override
+	public void refresh() {
+		
+		folder.fetchProperties( new String[] { PropertyNames.FOLDER_NAME, PropertyNames.ID } );
+		name = this.folder.get_FolderName();
+		id = this.folder.get_Id().toString();
+		children = null;
+		hasChildren = null;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.ecmdeveloper.plugin.model.IObjectStoreItem#getChildren()
 	 */
@@ -109,4 +122,10 @@ public class Folder extends ObjectStoreItem {
 		
 		return hasChildren;
 	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+		folder.set_FolderName( name );
+	}	
 }
