@@ -47,6 +47,7 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 		
 		selectCodeModuleWizardPage = new SelectCodeModuleWizardPage();
 		addPage( selectCodeModuleWizardPage );
+		setWindowTitle( "Import Code Module" );
 	}
 
 	@Override

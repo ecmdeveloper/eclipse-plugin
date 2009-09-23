@@ -13,6 +13,8 @@ public interface IObjectStoreItem extends IAdaptable {
 	
 	public String getName();
 	
+	public void setName(String name);
+	
 	public String getId();
 	
 	public IObjectStoreItem getParent();
@@ -22,4 +24,12 @@ public interface IObjectStoreItem extends IAdaptable {
 	public boolean hasChildren();
 	
 	public ObjectStore getObjectStore();
+	
+	public void delete();
+
+	void move(IObjectStoreItem destination);
+
+	public void setParent(IObjectStoreItem parent);
+	
+	public void refresh();
 }

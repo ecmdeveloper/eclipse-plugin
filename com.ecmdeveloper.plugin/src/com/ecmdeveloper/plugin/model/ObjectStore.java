@@ -7,6 +7,7 @@ import java.util.Iterator;
 import com.filenet.api.collection.CodeModuleSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentObject;
+import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.query.SearchSQL;
 import com.filenet.api.query.SearchScope;
 
@@ -28,6 +29,11 @@ public class ObjectStore extends ObjectStoreItem
 
 		super(parent, null);
 		this.name = objectStoreName;
+	}
+
+	@Override
+	public IndependentlyPersistableObject getObjectStoreObject() {
+		return objectStore;
 	}
 
 	@Override
@@ -115,5 +121,16 @@ public class ObjectStore extends ObjectStoreItem
 	{
 		IndependentObject object = objectStore.getObject(className, id);
 		return ObjectStoreItemFactory.getObject( object, this, this ); 
+	}
+
+	@Override
+	public void setName(String name) {
+		objectStore.set_DisplayName(name);
+	}
+
+	@Override
+	public void refresh() {
+		// TODO Auto-generated method stub
+		
 	}
 }

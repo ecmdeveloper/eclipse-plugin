@@ -29,7 +29,7 @@
       <wizard
             category="com.ecmdeveloper.plugin.category.contentEngine"
             class="com.ecmdeveloper.plugin.wizard.ImportObjectStoreWizard"
-            icon="src/com/ecmdeveloper/plugin/resources/objectstore.gif"
+            icon="icons/database.png"
             id="com.ecmdeveloper.plugin.wizard.importObjectStore"
             name="Object Store">
       </wizard>
@@ -40,7 +40,7 @@
       <wizard
             category="com.ecmdeveloper.plugin.category.contentEngine"
             class="com.ecmdeveloper.plugin.wizard.ImportCodeModuleWizard"
-            icon="icons\sample.gif"
+            icon="icons/script.png"
             id="com.ecmdeveloper.plugin.wizard.importCodeModule"
             name="Code Module">
       </wizard>
@@ -111,6 +111,17 @@
             id="com.ecmdeveloper.plugin.rename"
             name="Rename...">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Refreshes the selected items"
+            id="com.ecmdeveloper.plugin.refresh"
+            name="Refresh">
+      </command>
+      <command
+            description="Import Object Store"
+            id="com.ecmdeveloper.plugin.importObjectStore"
+            name="Import`">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -134,6 +145,12 @@
                   </iterate>
                </with>
             </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.importObjectStore"
+               icon="icons/database_add.png"
+               style="push"
+               tooltip="Imports an Object Store">
          </command>
       </menuContribution>
       <menuContribution
@@ -184,7 +201,8 @@
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <or>
                         <instanceof
                               value="com.ecmdeveloper.plugin.model.Folder">
@@ -224,24 +242,43 @@
             </visibleWhen>
          </command>
          <command
-               commandId="com.ecmdeveloper.plugin.paste"
-               icon="icons/paste_edit.gif"
-               style="push"
-               tooltip="Paste the clipboard contents into the Object Stores view">
-         </command>
-         <command
                commandId="com.ecmdeveloper.plugin.rename"
                style="push">
             <visibleWhen
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <not>
                         <instanceof
                               value="com.ecmdeveloper.plugin.model.ObjectStore">
                         </instanceof>
                      </not>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.refresh"
+               icon="icons/refresh.gif"
+               style="push">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.importObjectStore"
+               icon="icons/database_add.png"
+               style="push"
+               tooltip="Imports an Object Store">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.ObjectStore">
+                     </instanceof>
                   </iterate>
                </with>
             </visibleWhen>
@@ -283,6 +320,13 @@
                label="Update"
                style="push"
                tooltip="Updates the Code Module on the Content Engine">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=other">
+         <command
+               commandId="org.eclipse.ui.file.properties"
+               style="push">
          </command>
       </menuContribution>
    </extension>
@@ -458,6 +502,62 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.RefreshObjectStoreItemHandler"
+            commandId="org.eclipse.ui.file.refresh">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Folder">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.ObjectStore">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.RefreshObjectStoreItemHandler"
+            commandId="com.ecmdeveloper.plugin.refresh">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Folder">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.ObjectStore">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.ImportObjectStoreHandler"
+            commandId="com.ecmdeveloper.plugin.importObjectStore">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -474,7 +574,7 @@
       <page
             class="com.ecmdeveloper.plugin.properties.ObjectStoreItemPropertyPage"
             id="com.ecmdeveloper.plugin.objectStoreItemPropertyPage"
-            name="Object Store Item Property">
+            name="General">
          <enabledWhen>
             <instanceof
                   value="com.ecmdeveloper.plugin.model.IObjectStoreItem">
@@ -493,6 +593,22 @@
             id="com.ecmdeveloper.plugin.editors.codeModuleEditor"
             name="Code Module Editor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            class="com.ecmdeveloper.plugin.decorators.ObjectStoreDecorator"
+            id="com.ecmdeveloper.plugin.decorators.ObjectStoreDecorator"
+            label="Object Store Decorator"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="com.ecmdeveloper.plugin.model.ObjectStore">
+            </objectClass>
+         </enablement>
+      </decorator>
    </extension>
 
 </plugin>

@@ -23,6 +23,8 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		
 		selectObjectStoreWizardPage = new SelectObjectStoreWizardPage();
 		addPage(selectObjectStoreWizardPage);
+
+		setWindowTitle( "Import Object Store" );
 	}
 
 	@Override

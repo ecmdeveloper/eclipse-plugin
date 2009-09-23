@@ -1,7 +1,9 @@
 package com.ecmdeveloper.plugin.views;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -16,19 +18,41 @@ import com.ecmdeveloper.plugin.util.IconFiles;
 
 public class ObjectStoreItemLabelProvider extends LabelProvider {
 
-	@Override
+	final IDecoratorManager decorator;
+
+	
+	public ObjectStoreItemLabelProvider() {
+		super();
+		decorator = PlatformUI.getWorkbench().getDecoratorManager();
+	}
+	
+	public void addListener(ILabelProviderListener listener) {
+		decorator.addListener(listener);
+		super.addListener(listener);
+	}
+
+	public void removeListener(ILabelProviderListener listener) {
+		decorator.removeListener(listener);
+		super.removeListener(listener);
+	}
+	
+   @Override
 	public void dispose() {
 		super.dispose();
 	}
 
-	public String getText(Object obj) {
+	public String getText(Object object) {
 
-		if ( obj instanceof IObjectStoreItem )
+		if ( object instanceof IObjectStoreItem )
 		{
-			String name = ((IObjectStoreItem) obj).getName();
-			return name;
+			if ( object instanceof ObjectStore ) {
+				ObjectStore objectStore = (ObjectStore) object;
+				return objectStore.getConnection().getName() + ":" + objectStore.getName();
+			} else {
+				return ((IObjectStoreItem) object).getName();
+			}
 		}
-		return obj.toString();
+		return object.toString();
 	}
 	
 	public Image getImage(Object obj) {
@@ -36,7 +60,13 @@ public class ObjectStoreItemLabelProvider extends LabelProvider {
 		String imageKey = ISharedImages.IMG_OBJS_INFO_TSK;
 		
 		if (obj instanceof ObjectStore) {
-			return Activator.getImage( IconFiles.ICON_OBJECTSTORE );
+			
+	         Image image = Activator.getImage( IconFiles.ICON_OBJECTSTORE );
+	         Image decorated = decorator.decorateImage(image, obj);
+	         if (decorated != null)
+	            return decorated;
+	         return image;
+
 		} else if ( obj instanceof Action ) {
 			return Activator.getImage( IconFiles.ICON_ACTION );
 		} else if (obj instanceof Folder) {

@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Label;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 public class SelectCodeModuleWizardPage extends WizardPage {
 
