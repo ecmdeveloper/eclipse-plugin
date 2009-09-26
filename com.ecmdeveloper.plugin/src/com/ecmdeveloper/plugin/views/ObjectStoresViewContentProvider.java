@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
@@ -100,9 +101,12 @@ public class ObjectStoresViewContentProvider implements
 		if ( event.getItemsAdded() != null ) {
 			
 			for ( IObjectStoreItem objectStoreItem : event.getItemsAdded() ) {
-//				viewer.add( invisibleRoot, objectStoreItem );
+				if ( objectStoreItem instanceof ObjectStore ) {
+					viewer.refresh(null, false );
+					viewer.add( invisibleRoot, objectStoreItem );
+				} else {
+				}
 			}
-			viewer.refresh(null, false );
 		}
 		
 		if ( event.getItemsUpdated() != null ) {
@@ -111,6 +115,8 @@ public class ObjectStoresViewContentProvider implements
 			for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
 				if ( objectStoreItem instanceof Folder ) {
 					viewer.refresh(objectStoreItem);
+				} else if ( objectStoreItem instanceof ObjectStore ) {
+					viewer.refresh( objectStoreItem, false );
 				}
 			}
 		}

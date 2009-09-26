@@ -1,5 +1,6 @@
 package com.ecmdeveloper.plugin.model;
 
+import java.beans.DesignMode;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Platform;
@@ -81,8 +82,30 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void move( IObjectStoreItem destination ) {
+
+		if ( !(this instanceof Folder) ) { // TODO: add check for contained folder
+			moveContainedObject(destination);
+		} else {
+			moveChildObject( destination );
+		}
+	}
+
+	private void moveChildObject(IObjectStoreItem destination) {
+
+		com.filenet.api.core.Folder folder = (com.filenet.api.core.Folder) getObjectStoreObject();
+
+		if ( destination instanceof Folder ) {
+			folder.set_Parent( (com.filenet.api.core.Folder) ((Folder) destination).getObjectStoreObject() );
+		} else if (destination instanceof ObjectStore ) {
+			Folder rootFolder = ((ObjectStore)destination).getRootFolder();
+			folder.set_Parent( (com.filenet.api.core.Folder) rootFolder.getObjectStoreObject() );
+		}
+		folder.save( RefreshMode.REFRESH );
+	}
+
+	@SuppressWarnings("unchecked")
+	private void moveContainedObject(IObjectStoreItem destination) {
 
 		IndependentlyPersistableObject object = getObjectStoreObject();
 

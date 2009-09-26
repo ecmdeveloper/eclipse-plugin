@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,16 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return objectStoresManager;
 	}
 
+	public Collection<ContentEngineConnection> getConnections() {
+
+		if ( connections == null) {
+			loadObjectStores();
+		}
+		
+		return connections.values();
+//		return new String[0];
+	}
+	
 	public String createConnection(String url, String username, String password) 
 	{
 		if ( connections == null) {
@@ -62,6 +73,15 @@ public class ObjectStoresManager implements IObjectStoresManager
 		connections.put( objectStoreConnection.getName(), objectStoreConnection);
 		
 		return objectStoreConnection.getName();
+	}
+	
+	public void connectConnection( String name ) {
+		
+		if ( connections.containsKey( name ) ) {
+			connections.get( name ).connect();
+		} else {
+			throw new UnsupportedOperationException( "Invalid connection name '" + name + "'" );
+		}
 	}
 	
 	public void addObjectStore(String name, String connectionName)

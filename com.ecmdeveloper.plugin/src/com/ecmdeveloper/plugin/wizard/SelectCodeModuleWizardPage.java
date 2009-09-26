@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 
 public class SelectCodeModuleWizardPage extends WizardPage {
 
@@ -99,14 +100,15 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 		objectStoresCombo = new ComboViewer( container, SWT.VERTICAL | SWT.DROP_DOWN
 				| SWT.BORDER | SWT.READ_ONLY);
 		objectStoresCombo.setContentProvider( new ArrayContentProvider() );
-		objectStoresCombo.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				ObjectStore objectStore = (ObjectStore) element;
-				return objectStore.getConnection().getName() + ":" + objectStore.getName();
-			}
-		});
+//		objectStoresCombo.setLabelProvider(new LabelProvider() {
+//			@Override
+//			public String getText(Object element) {
+//				ObjectStore objectStore = (ObjectStore) element;
+//				return objectStore.getConnection().getName() + ":" + objectStore.getName();
+//			}
+//		});
 
+		objectStoresCombo.setLabelProvider( new ObjectStoreItemLabelProvider() );
 		objectStoresCombo.addSelectionChangedListener( new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
