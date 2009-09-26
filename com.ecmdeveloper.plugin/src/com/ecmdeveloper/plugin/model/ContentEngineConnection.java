@@ -110,4 +110,9 @@ public class ContentEngineConnection
 		
 		return Factory.ObjectStore.getInstance( domain, objectStoreName );
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

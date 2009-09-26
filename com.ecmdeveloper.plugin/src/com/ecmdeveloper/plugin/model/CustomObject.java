@@ -41,6 +41,7 @@ public class CustomObject extends ObjectStoreItem {
 
 	@Override
 	public void setName(String name) {
+		throw new UnsupportedOperationException( "Renaming of Custom Objects is not supported" );
 	}
 
 	@Override

@@ -1,13 +1,18 @@
 package com.ecmdeveloper.plugin.wizard;
 
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
+	
+	private SelectConnectionWizardPage selectConnectionWizardPage;
 	private ConfigureConnectionWizardPage configureConnectionWizardPage;
 	private SelectObjectStoreWizardPage selectObjectStoreWizardPage;
 
@@ -18,6 +23,14 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	@Override
 	public void addPages() 
 	{
+		Collection<ContentEngineConnection> connections = ObjectStoresManager
+		.getManager().getConnections();
+
+		if ( ! connections.isEmpty() ) {
+			selectConnectionWizardPage = new SelectConnectionWizardPage( connections );
+			addPage( selectConnectionWizardPage );
+		}
+
 		configureConnectionWizardPage = new ConfigureConnectionWizardPage();
 		addPage(configureConnectionWizardPage);
 		
@@ -59,6 +72,13 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		return connected;
 	}
 	
+	public void connect( ContentEngineConnection connection ) {
+		objectStoresManager.connectConnection( connection.getName() );
+		connectionName = connection.getName();
+		connected = true;
+		getContainer().updateButtons();
+	}
+	
 	public void connect()
 	{
 		String url = configureConnectionWizardPage.getURL();
@@ -67,7 +87,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		
 		connectionName = objectStoresManager.createConnection( url, username, password );
 		connected = true;
-		
+
 		getContainer().updateButtons();
 	}
 	

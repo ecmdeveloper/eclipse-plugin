@@ -18,7 +18,6 @@ import com.filenet.api.query.SearchScope;
  */
 public class ObjectStore extends ObjectStoreItem 
 {
-	protected boolean connected = false;
 	protected ContentEngineConnection connection;
 	protected com.filenet.api.core.ObjectStore objectStore;
 	protected Folder rootFolder;
@@ -38,7 +37,7 @@ public class ObjectStore extends ObjectStoreItem
 
 	@Override
 	public boolean hasChildren() {
-		return true;
+		return isConnected();
 	}
 
 	@Override
@@ -79,8 +78,8 @@ public class ObjectStore extends ObjectStoreItem
 		id = objectStore.get_Id().toString();
 	}
 
-	// TODO: remove this offline test stuff
-	
+//	// TODO: remove this offline test stuff
+//	
 //	private boolean tempConnected = false;
 //	
 //	public boolean isConnected() {
@@ -117,6 +116,14 @@ public class ObjectStore extends ObjectStoreItem
 		return codeModules;
 	}
 	
+	public Folder getRootFolder() {
+		
+		if ( rootFolder == null ) {
+			getChildren();
+		}
+		return rootFolder;
+	}
+	
 	public IObjectStoreItem getObject(String id, String className )
 	{
 		IndependentObject object = objectStore.getObject(className, id);
@@ -130,7 +137,7 @@ public class ObjectStore extends ObjectStoreItem
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
+		children = null;
+		rootFolder = null;
 	}
 }
