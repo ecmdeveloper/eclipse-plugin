@@ -75,12 +75,26 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return objectStoreConnection.getName();
 	}
 	
-	public void connectConnection( String name ) {
-		
-		if ( connections.containsKey( name ) ) {
-			connections.get( name ).connect();
+	public void connectConnection( String connectionName ) {
+	
+		if ( connections.containsKey( connectionName ) ) {
+
+			connections.get( connectionName ).connect();
+
+			ArrayList<IObjectStoreItem> connectionObjectStores = new ArrayList<IObjectStoreItem>();
+			
+			for ( IObjectStoreItem objectStore : objectStores.getChildren() ) {
+				
+				if (((ObjectStore) objectStore).getConnection().getName()
+						.equals(connectionName)) {
+					connectionObjectStores.add( objectStore );
+				}
+			}
+
+			fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
+			
 		} else {
-			throw new UnsupportedOperationException( "Invalid connection name '" + name + "'" );
+			throw new UnsupportedOperationException( "Invalid connection name '" + connectionName + "'" );
 		}
 	}
 	
@@ -127,7 +141,34 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return objectStores;
 	}
 
-	public String[] getObjectStores(String connectionName )
+	public String[] getNewObjectstoreNames( String connectionName ) {
+
+		String[] objectStoreNames = getObjectStoreNames(connectionName);
+		ArrayList<String> newObjectStoreNames = new ArrayList<String>();
+
+		for (String objectStoreName : objectStoreNames ) {
+		
+			boolean found = false;
+
+			for ( IObjectStoreItem objectStore : objectStores.getChildren() ) {
+			
+				if (objectStore.getName().equals(objectStoreName)
+						&& ((ObjectStore) objectStore).getConnection()
+								.getName().equals(connectionName)) {
+					found = true;
+					break;
+				}
+			}
+			
+			if ( ! found ) {
+				newObjectStoreNames.add( objectStoreName );
+			}
+		}
+		
+		return newObjectStoreNames.toArray( new String[0] );
+	}
+	
+	public String[] getObjectStoreNames(String connectionName )
 	{
 		if ( objectStores == null) {
 			loadObjectStores();

@@ -34,7 +34,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 		super("selectConnection");
 		this.connections = connections;
 		setTitle("Select Connection");
-		setDescription("Select the connection to the Content Engine");
+		setDescription("Select the connection to the Content Engine.");
 	}
 
 	@Override
@@ -149,8 +149,8 @@ public class SelectConnectionWizardPage extends WizardPage {
 			if ( iterator.hasNext() ) {
 				ContentEngineConnection connection = (ContentEngineConnection) iterator.next();
 				enabled = ! connection.isConnected();
+				((ImportObjectStoreWizard) getWizard()).setConnected( connection.isConnected() );
 			}
-			
 		} 
 		
 		connectButton.setEnabled( enabled );
@@ -191,5 +191,6 @@ public class SelectConnectionWizardPage extends WizardPage {
 			throw new UnsupportedOperationException( "Connection is null" );
 		}
 		updatePageComplete();
+		updateConnectButton();
 	}
 }

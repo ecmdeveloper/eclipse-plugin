@@ -3,6 +3,7 @@ package com.ecmdeveloper.plugin.wizard;
 import java.util.Collection;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -21,8 +22,8 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	private String connectionName;
 	
 	@Override
-	public void addPages() 
-	{
+	public void addPages() {
+		
 		Collection<ContentEngineConnection> connections = ObjectStoresManager
 		.getManager().getConnections();
 
@@ -41,8 +42,19 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	}
 
 	@Override
-	public boolean performFinish() 
-	{
+	public IWizardPage getNextPage(IWizardPage page) {
+		
+		if ( page instanceof SelectConnectionWizardPage ) {
+			if ( ! ( (SelectConnectionWizardPage) page).isNewConnection() ) {
+				return selectObjectStoreWizardPage;
+			}
+		}
+
+		return super.getNextPage(page);
+	}
+
+	@Override
+	public boolean performFinish() {
 		for (String objectStoreName : selectObjectStoreWizardPage.getObjectStores() )
 		{
 			objectStoresManager.addObjectStore(objectStoreName, connectionName);
@@ -51,8 +63,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	}
 
 	@Override
-	public boolean canFinish() 
-	{
+	public boolean canFinish() {
 		String[] objectStores = selectObjectStoreWizardPage.getObjectStores();
 		if ( objectStores == null )
 		{
@@ -62,25 +73,30 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	}
 
 	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) 
-	{
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		objectStoresManager = ObjectStoresManager.getManager();
 	}
 
-	public boolean isConnected()
-	{
+	public boolean isConnected() {
 		return connected;
+	}
+
+	public void setConnected(boolean connected ) {
+		this.connected = connected;
 	}
 	
 	public void connect( ContentEngineConnection connection ) {
-		objectStoresManager.connectConnection( connection.getName() );
-		connectionName = connection.getName();
+		
+		if ( ! connection.isConnected() ) {
+			objectStoresManager.connectConnection( connection.getName() );
+			connectionName = connection.getName();
+		}
 		connected = true;
 		getContainer().updateButtons();
 	}
 	
-	public void connect()
-	{
+	public void connect() {
+		
 		String url = configureConnectionWizardPage.getURL();
 		String username = configureConnectionWizardPage.getUsername();
 		String password = configureConnectionWizardPage.getPassword();
@@ -91,8 +107,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		getContainer().updateButtons();
 	}
 	
-	public String[] getObjectStores()
-	{
-		return objectStoresManager.getObjectStores(connectionName);
+	public String[] getObjectStores() {
+		return objectStoresManager.getNewObjectstoreNames(connectionName);
 	}
 }

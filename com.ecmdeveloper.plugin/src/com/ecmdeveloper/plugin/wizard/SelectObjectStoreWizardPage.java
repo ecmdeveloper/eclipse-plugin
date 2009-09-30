@@ -55,6 +55,10 @@ public class SelectObjectStoreWizardPage extends WizardPage
 		objectStoresTable.setContentProvider( new ArrayContentProvider() );
 		objectStoresTable.setInput( ((ImportObjectStoreWizard)getWizard()).getObjectStores() );
 		objectStoresTable.setLabelProvider( new LabelProvider() );
+		if ( objectStoresTable.getTable().getItemCount() == 0 )
+		{
+			setErrorMessage( "There are no more Object Stores left to import from this connection." );
+		}
 	}
 
 	public String[] getObjectStores() {
