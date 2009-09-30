@@ -1,22 +1,11 @@
 package com.ecmdeveloper.plugin.wizard;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -24,11 +13,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.ecmdeveloper.plugin.model.CodeModule;
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-
 public class ConfigureConnectionWizardPage extends WizardPage {
+
 	private Text urlField;
 	private Text usernameField;
 	private Text passwordField;
@@ -37,7 +23,7 @@ public class ConfigureConnectionWizardPage extends WizardPage {
 	public ConfigureConnectionWizardPage() {
 		super("configureConnection");
 		setTitle("Configure Connection");
-		setDescription("Configure the connection to the Content Engine");
+		setDescription("Configure the new connection to the Content Engine.");
 	}
 
 	@Override
@@ -48,7 +34,6 @@ public class ConfigureConnectionWizardPage extends WizardPage {
 		gridLayout.numColumns = 2;
 		container.setLayout(gridLayout);
 		setControl(container);
-
 
 		addLabel(container, "URL:", true);
 		urlField = addTextField(container);
@@ -89,7 +74,6 @@ public class ConfigureConnectionWizardPage extends WizardPage {
 		updateConnectButton();
 	}
 
-
 	protected void performConnect() {
 		((ImportObjectStoreWizard) getWizard()).connect();
 	}
@@ -100,7 +84,7 @@ public class ConfigureConnectionWizardPage extends WizardPage {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				updateConnectButton();				
-				updatePageComplete();
+				updatePageComplete(e);
 			}
 		});
 		textField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -116,24 +100,20 @@ public class ConfigureConnectionWizardPage extends WizardPage {
 		label_1.setEnabled(enabled);
 	}
 
-	protected void updatePageComplete() {
+	protected void updatePageComplete(ModifyEvent event) {
 
 		setPageComplete(false);
 
-		if (getURL() == null) {
-			setMessage(null);
-			setErrorMessage("Please enter a connection url");
+		if ( event.widget.equals( urlField ) && getURL() == null) {
+			setErrorMessage("The connection url cannot be empty");
 			return;
 		}
 
-		if (getUsername() == null) {
-			setMessage(null);
-			setErrorMessage("Please enter an user name");
+		if ( event.widget.equals( usernameField ) && getUsername() == null) {
+			setErrorMessage("The user name cannot be empty" );
 			return;
 		}
 
-		// setPageComplete(true);
-		setMessage(null);
 		setErrorMessage(null);
 	}
 
