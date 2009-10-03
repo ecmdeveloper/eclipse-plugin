@@ -87,17 +87,19 @@ public class ContentEngineConnection
 	
 	public void connect() {
 		
-		connection = Factory.Connection.getConnection(url);
-
-		Subject subject = UserContext.createSubject(connection, username, password, null );
-		UserContext uc = UserContext.get();
-		uc.pushSubject(subject);
-		
-		EntireNetwork entireNetwork = Factory.EntireNetwork.fetchInstance(connection, null);
-		domain = entireNetwork.get_LocalDomain();
-		
-		this.name = domain.get_Name();
-		connected = true;
+		if ( ! connected ) {
+			connection = Factory.Connection.getConnection(url);
+	
+			Subject subject = UserContext.createSubject(connection, username, password, null );
+			UserContext uc = UserContext.get();
+			uc.pushSubject(subject);
+			
+			EntireNetwork entireNetwork = Factory.EntireNetwork.fetchInstance(connection, null);
+			domain = entireNetwork.get_LocalDomain();
+			
+			this.name = domain.get_Name();
+			connected = true;
+		}
 	}
 
 	public Object getObjectStoreObject(String objectStoreName ) 

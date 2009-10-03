@@ -81,17 +81,20 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		return connected;
 	}
 
-	public void setConnected(boolean connected ) {
-		this.connected = connected;
+	public void setConnection( ContentEngineConnection connection ) {
+
+		connected = connection.isConnected();
+		connectionName = connection.getName();
+		getContainer().updateButtons();
 	}
 	
 	public void connect( ContentEngineConnection connection ) {
 		
 		if ( ! connection.isConnected() ) {
 			objectStoresManager.connectConnection( connection.getName() );
-			connectionName = connection.getName();
 		}
 		connected = true;
+		connectionName = connection.getName();
 		getContainer().updateButtons();
 	}
 	
