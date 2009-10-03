@@ -133,7 +133,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						updateConnectButton();
-					}
+						updatePageComplete();					}
 				});
 		
 	}
@@ -149,7 +149,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 			if ( iterator.hasNext() ) {
 				ContentEngineConnection connection = (ContentEngineConnection) iterator.next();
 				enabled = ! connection.isConnected();
-				((ImportObjectStoreWizard) getWizard()).setConnected( connection.isConnected() );
+				((ImportObjectStoreWizard) getWizard()).setConnection( connection );
 			}
 		} 
 		

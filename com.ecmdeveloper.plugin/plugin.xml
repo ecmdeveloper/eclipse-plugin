@@ -50,6 +50,16 @@
             Create a new Document Lifecycle Action Handler class.
          </description>
       </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.wizard.NewDocumentClassifierClassWizard"
+            icon="icons/page_white_code_red.png"
+            id="com.ecmdeveloper.plugin.wizard.newDocumentClassifier"
+            name="Document Classifier Class">
+         <description>
+            Create a new Document Classifier class.
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
@@ -59,6 +69,9 @@
             icon="icons/database.png"
             id="com.ecmdeveloper.plugin.wizard.importObjectStore"
             name="Object Store">
+         <description>
+            Import an Object Store.
+         </description>
       </wizard>
       <category
             id="com.ecmdeveloper.plugin.category.contentEngine"
@@ -70,6 +83,9 @@
             icon="icons/script.png"
             id="com.ecmdeveloper.plugin.wizard.importCodeModule"
             name="Code Module">
+         <description>
+            Import a Code Module from an Object Store.
+         </description>
       </wizard>
    </extension>
    <extension

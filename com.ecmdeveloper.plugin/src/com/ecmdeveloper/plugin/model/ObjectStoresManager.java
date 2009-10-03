@@ -83,10 +83,11 @@ public class ObjectStoresManager implements IObjectStoresManager
 
 			ArrayList<IObjectStoreItem> connectionObjectStores = new ArrayList<IObjectStoreItem>();
 			
-			for ( IObjectStoreItem objectStore : objectStores.getChildren() ) {
+			for ( IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
 				
-				if (((ObjectStore) objectStore).getConnection().getName()
-						.equals(connectionName)) {
+				ObjectStore objectStore = (ObjectStore) objectStoreItem;
+				if ( objectStore.getConnection().getName().equals(connectionName)) {
+					objectStore.connect();
 					connectionObjectStores.add( objectStore );
 				}
 			}
@@ -106,6 +107,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		
 		ObjectStore objectStore = new ObjectStore( name, objectStores );
 		objectStore.setConnection( connections.get( connectionName ) );
+		objectStore.connect();
 		objectStores.add(objectStore);
 		
 		fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
