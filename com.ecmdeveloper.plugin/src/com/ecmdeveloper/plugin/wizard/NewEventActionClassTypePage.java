@@ -17,8 +17,7 @@ public class NewEventActionClassTypePage extends NewClassTypePage {
 	private static final String ID_IMPORT = 
 		"com.filenet.api.util.Id";
 	private static final String ON_EVENT_METHOD = 
-		"public void onEvent(ObjectChangeEvent event, Id subscriptionId) throws EngineRuntimeException { \n " + 
-		"// TODO Auto-generated method stub \n\n }";
+		"public void onEvent(ObjectChangeEvent event, Id subscriptionId) throws EngineRuntimeException" + METHOD_STUB;
 	private static final String EVENT_ACTION_HANDLER_INTERFACE_NAME = 
 		"com.filenet.api.engine.EventActionHandler";
 
