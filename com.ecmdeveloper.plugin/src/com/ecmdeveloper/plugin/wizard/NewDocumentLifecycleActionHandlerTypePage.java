@@ -14,19 +14,17 @@ public class NewDocumentLifecycleActionHandlerTypePage extends NewClassTypePage 
 
 	private static final String DOCUMENT_LIFECYCLE_POLICY_IMPORT = 
 		"com.filenet.api.events.DocumentLifecyclePolicy";
-	private static final String DOCUMENT_IMPORT = 
-		"com.filenet.api.core.Document";
 
 	private static final String ON_DOCUMENT_SET_EXCEPTION_METHOD = 
-		"public void onDocumentSetException(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException { \n// TODO Auto-generated method stub \n\n }";
+		"public void onDocumentSetException(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException" + METHOD_STUB;
 	private static final String ON_DOCUMENT_RESET_LIFECYCLE_DOCUMENT_METHOD = 
-		"public void onDocumentResetLifecycle(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException { \n// TODO Auto-generated method stub \n\n }";
+		"public void onDocumentResetLifecycle(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException" + METHOD_STUB;
 	private static final String ON_DOCUMENT_PROMOTE_METHOD = 
-		"public void onDocumentPromote(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException { \n// TODO Auto-generated method stub \n\n }";
+		"public void onDocumentPromote(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException" + METHOD_STUB;
 	private static final String DOCUMENT_DEMOTE_DOCUMENT_METHOD = 
-		"public void onDocumentDemote(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException { \n// TODO Auto-generated method stub \n\n }";
+		"public void onDocumentDemote(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException" + METHOD_STUB;
 	private static final String ON_DOCUMENT_CLEAR_EXCEPTION_METHOD = 
-		"public void onDocumentClearException(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException { \n // TODO Auto-generated method stub \n\n }";
+		"public void onDocumentClearException(Document document, DocumentLifecyclePolicy documentLifecyclePolicy) throws EngineRuntimeException" + METHOD_STUB;
 	
 	private static final String DOCUMENT_LIFECYCLE_ACTION_HANDLER_INTERFACE_NAME = 
 		"com.filenet.api.engine.DocumentLifecycleActionHandler";

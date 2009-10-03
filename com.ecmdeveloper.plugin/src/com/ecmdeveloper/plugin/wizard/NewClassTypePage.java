@@ -22,6 +22,12 @@ public abstract class NewClassTypePage extends NewTypeWizardPage {
 	protected static final String ENGINE_RUNTIME_EXCEPTION_IMPORT = 
 		"com.filenet.api.exception.EngineRuntimeException";
 	
+	protected static final String DOCUMENT_IMPORT = 
+		"com.filenet.api.core.Document";
+
+	protected static final String METHOD_STUB = 
+		" { \n// TODO Auto-generated method stub \n\n }";
+	
 	protected Button createStubsButton;
 	
 	public NewClassTypePage(boolean isClass, String pageName) {
