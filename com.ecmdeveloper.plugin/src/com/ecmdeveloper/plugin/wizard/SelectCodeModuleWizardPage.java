@@ -100,14 +100,6 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 		objectStoresCombo = new ComboViewer( container, SWT.VERTICAL | SWT.DROP_DOWN
 				| SWT.BORDER | SWT.READ_ONLY);
 		objectStoresCombo.setContentProvider( new ArrayContentProvider() );
-//		objectStoresCombo.setLabelProvider(new LabelProvider() {
-//			@Override
-//			public String getText(Object element) {
-//				ObjectStore objectStore = (ObjectStore) element;
-//				return objectStore.getConnection().getName() + ":" + objectStore.getName();
-//			}
-//		});
-
 		objectStoresCombo.setLabelProvider( new ObjectStoreItemLabelProvider() );
 		objectStoresCombo.addSelectionChangedListener( new ISelectionChangedListener() {
 			@Override

@@ -37,8 +37,12 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
-import com.ecmdeveloper.plugin.util.ImageCache;
 
+/**
+ * 
+ * @author Ricardo Belfor
+ *
+ */
 public class CodeModuleEditorForm extends FormPage {
 
 	private Text nameText;
@@ -48,6 +52,11 @@ public class CodeModuleEditorForm extends FormPage {
 	
 	public CodeModuleEditorForm(FormEditor editor) {
 		super(editor, "first", "Main");
+	}
+
+	@Override
+	public void setFocus() {
+		nameText.setFocus();
 	}
 
 	@Override
@@ -71,7 +80,8 @@ public class CodeModuleEditorForm extends FormPage {
 		getManagedForm().getForm().setText( "Code Module: " + codeModuleFile.getName() );
 		filesTableViewer.setInput( codeModuleFile.getFiles() );
 		nameText.setText( codeModuleFile.getName() );
-		objectStoreLabel.setText( codeModuleFile.getObjectStoreName() );
+		objectStoreLabel.setText(codeModuleFile.getConnectionName() + ":"
+				+ codeModuleFile.getObjectStoreName());
 	}
 
 	public void refreshFilesTableContent()
@@ -110,7 +120,7 @@ public class CodeModuleEditorForm extends FormPage {
 		addLabel(client, "Object Store:");
 
 		objectStoreLabel = new Label( client, SWT.NONE );
-		objectStoreLabel.setLayoutData( new GridData(GridData.BEGINNING) );
+		objectStoreLabel.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
 		objectStoreLabel.setText("");
 		
 		section.setClient(client);

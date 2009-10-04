@@ -48,6 +48,8 @@ public class ObjectStoreItemLabelProvider extends LabelProvider {
 			if ( object instanceof ObjectStore ) {
 				ObjectStore objectStore = (ObjectStore) object;
 				return objectStore.getConnection().getName() + ":" + objectStore.getName();
+			} else if ( object instanceof Action ) {
+				return ((IObjectStoreItem) object).getName() + ((Action) object).getCodeModuleVersion();
 			} else {
 				return ((IObjectStoreItem) object).getName();
 			}

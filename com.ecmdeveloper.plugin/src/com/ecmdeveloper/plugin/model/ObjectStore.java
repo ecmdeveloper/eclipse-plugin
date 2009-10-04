@@ -6,10 +6,13 @@ import java.util.Iterator;
 
 import com.filenet.api.collection.CodeModuleSet;
 import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.core.Document;
+import com.filenet.api.core.Factory;
 import com.filenet.api.core.IndependentObject;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.query.SearchSQL;
 import com.filenet.api.query.SearchScope;
+import com.filenet.api.util.Id;
 
 /**
  * 
@@ -110,7 +113,9 @@ public class ObjectStore extends ObjectStoreItem
 		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
 
 		while (iterator.hasNext()) {
-			codeModules.add( new CodeModule( iterator.next(), this, this ) );
+			com.filenet.api.core.Document document = (Document) iterator.next(); 
+			document.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
+			codeModules.add( new CodeModule( document.get_VersionSeries(), this, this ) );
 		}
 		
 		return codeModules;
@@ -126,8 +131,16 @@ public class ObjectStore extends ObjectStoreItem
 	
 	public IObjectStoreItem getObject(String id, String className )
 	{
-		IndependentObject object = objectStore.getObject(className, id);
-		return ObjectStoreItemFactory.getObject( object, this, this ); 
+		if ( objectStore == null ) {
+			throw new RuntimeException( "Object Store " + connection.getName() + ":" + getName() + " is not connected.\nConnect to the Object Store before updating" );
+		}
+		
+		if ( "VersionSeries".equals( className) ) {
+			return new CodeModule(Factory.VersionSeries.getInstance(objectStore, new Id( id ) ), this, this);
+		} else {
+			IndependentObject object = objectStore.getObject(className, id);
+			return ObjectStoreItemFactory.getObject( object, this, this );
+		}
 	}
 
 	@Override
@@ -140,4 +153,6 @@ public class ObjectStore extends ObjectStoreItem
 		children = null;
 		rootFolder = null;
 	}
+	
+	
 }
