@@ -179,10 +179,16 @@ public class CodeModulesManager {
 		return codeModule.getActions();
 	}
 	
-	public void updateCodeModule(CodeModuleFile codeModuleFile ) {
+	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) {
 		
 		CodeModule codeModule = getCodeModuleFromFile(codeModuleFile);
 		codeModule.update(codeModuleFile);
+		
+		for ( Object objectStoreItem : selectedActions ) {
+			if (objectStoreItem instanceof Action ) {
+				((Action) objectStoreItem).setCodeModule( codeModule );
+			}
+		}
 	}
 
 	private CodeModule getCodeModuleFromFile(CodeModuleFile codeModuleFile) {
@@ -197,7 +203,8 @@ public class CodeModulesManager {
 					.getObjectStoreName() );
 		}
 		
-		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), CODE_MODULE_CLASS_NAME );
+		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), "VersionSeries" );
+//		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), CODE_MODULE_CLASS_NAME );
 		return codeModule;
 	}
 	

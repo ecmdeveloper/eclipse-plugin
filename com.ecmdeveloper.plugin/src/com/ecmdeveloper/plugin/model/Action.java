@@ -6,6 +6,7 @@ package com.ecmdeveloper.plugin.model;
 import java.util.Collection;
 
 import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.IndependentlyPersistableObject;
 
 /**
@@ -15,6 +16,7 @@ import com.filenet.api.core.IndependentlyPersistableObject;
 public class Action extends ObjectStoreItem {
 
 	com.filenet.api.events.EventAction eventAction;
+	protected String codeModuleVersion;
 	
 	public Action(Object eventAction, IObjectStoreItem parent, ObjectStore objectStore ) {
 		super(parent, objectStore);
@@ -43,5 +45,20 @@ public class Action extends ObjectStoreItem {
 		this.eventAction.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
 		this.name = this.eventAction.get_Name();
 		this.id = this.eventAction.get_Id().toString();
+	}
+
+	public void setCodeModule(CodeModule codeModule) {
+		eventAction
+				.set_CodeModule((com.filenet.api.admin.CodeModule) codeModule
+						.getAdapter(com.filenet.api.core.Document.class));
+		eventAction.save( RefreshMode.REFRESH );
+	}
+	
+	public void setCodeModuleVersion(String codeModuleVersion ) {
+		this.codeModuleVersion = codeModuleVersion;
+	}
+	
+	public String getCodeModuleVersion() {
+		return codeModuleVersion;
 	}
 }
