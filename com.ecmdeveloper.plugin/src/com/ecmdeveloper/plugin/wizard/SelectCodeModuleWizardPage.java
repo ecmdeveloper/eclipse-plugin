@@ -1,6 +1,7 @@
 package com.ecmdeveloper.plugin.wizard;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -143,12 +144,14 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 	protected void updateCodeModulesCombo( boolean connect ) {
 
 		ObjectStore objectStore = wizard.getObjectStore();
+		setErrorMessage(null);
 		
 		if ( objectStore != null ) {
 			
 			if ( ! objectStore.isConnected() ) {
 				if ( connect ) {
 					wizard.connectObjectStore();
+					connectButton.setEnabled( ! wizard.getObjectStore().isConnected() );
 				} else {
 					codeModulesCombo.getCombo().setEnabled( false );
 					codeModulesCombo.setInput( new ArrayList<CodeModule>() );
@@ -156,9 +159,15 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 					return;
 				}
 			} 
-			codeModulesCombo.setInput( objectStore.getCodeModules() );
+			
+			Collection<CodeModule> codeModules = wizard.getCodeModules();
+			codeModulesCombo.setInput( codeModules );
 			codeModulesCombo.getCombo().setEnabled( true );
 			wizard.setCodeModule(null);
+
+			if ( codeModules.isEmpty() ) {
+				setErrorMessage( "There are no more Code Modules left to import from this Object Store." );
+			}
 		} 
 		else 
 		{

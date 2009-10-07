@@ -9,7 +9,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -17,12 +16,16 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.util.Messages;
+import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author Ricardo Belfor
  *
  */
 public class ConnectObjectStoreHandler extends AbstractHandler implements IHandler {
+
+	private static final String HANDLER_NAME = Messages.ConnectObjectStoreHandler_HandlerName;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
@@ -48,8 +51,11 @@ public class ConnectObjectStoreHandler extends AbstractHandler implements IHandl
 		while (iter.hasNext()) {
 			Object selectedObject = iter.next();
 			if ( selectedObject instanceof ObjectStore ) {
-				ObjectStoresManager.getManager().connectObjectStore(( ObjectStore)selectedObject );
-//				MessageDialog.openInformation( window.getShell(), "Object Stores", ((ObjectStore)selectedObject).getName() );
+				try {
+					ObjectStoresManager.getManager().connectObjectStore(( ObjectStore)selectedObject );
+				} catch(Exception e ) {
+					PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
+				}
 			}
 		}
 

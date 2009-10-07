@@ -9,13 +9,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -24,10 +21,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.util.Messages;
+import com.ecmdeveloper.plugin.util.PluginMessage;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
 
@@ -37,6 +35,10 @@ import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
  *
  */
 public class MoveObjectStoreItemHandler extends AbstractHandler implements IHandler {
+
+	private static final String MOVING_ACROSS_OBJECT_STORES_ERROR = Messages.MoveObjectStoreItemHandler_MovingAcrossObjectStoresError;
+	private static final String CHOOSE_DESTINATION_MESSAGE = Messages.MoveObjectStoreItemHandler_ChooseDestinationMessage;
+	private static final String HANDLER_NAME = Messages.MoveObjectStoreItemHandler_HandlerName;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -56,44 +58,51 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 			IObjectStoreItem elem = (IObjectStoreItem) iterator.next();
 			elementObjectStores.add( elem.getObjectStore().getName() );
 		}
-		
-		if ( elementObjectStores.size() != 1 ) {
-			throw new UnsupportedOperationException("Moving across Object Stores is not posible" );
-		}
 
-		ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
-		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
-		dialog.setInput( ObjectStoresManager.getManager() );
-		
-		dialog.addFilter( new MoveTargetFilter( elementObjectStores.iterator().next() ) );
-		contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
-		dialog.setTitle("Move");
-		dialog.setMessage( "Choose destination for selected items" );
-		
-		int answer = dialog.open();
-
-		if ( answer != ElementTreeSelectionDialog.OK ) {
-			return null;
-		}
-
-		IObjectStoreItem destination = (IObjectStoreItem) dialog.getFirstResult();
-		if ( destination == null ) {
-			return null;
-		}
-
-		iterator = ((IStructuredSelection) selection).iterator();
 		ArrayList<IObjectStoreItem> elementsMoved = new ArrayList<IObjectStoreItem>();
-		while ( iterator.hasNext() ) {
-
-			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			objectStoreItem.move(destination);
-			elementsMoved.add( objectStoreItem );
+		IObjectStoreItem destination = null;
+		
+		try {
+			if ( elementObjectStores.size() != 1 ) {
+				throw new UnsupportedOperationException(MOVING_ACROSS_OBJECT_STORES_ERROR );
+			}
+	
+			ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
+			ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
+			ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
+			dialog.setInput( ObjectStoresManager.getManager() );
+			
+			dialog.addFilter( new MoveTargetFilter( elementObjectStores.iterator().next() ) );
+			contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
+			dialog.setTitle(HANDLER_NAME);
+			dialog.setMessage( CHOOSE_DESTINATION_MESSAGE );
+			
+			int answer = dialog.open();
+	
+			if ( answer != ElementTreeSelectionDialog.OK ) {
+				return null;
+			}
+	
+			destination = (IObjectStoreItem) dialog.getFirstResult();
+			if ( destination == null ) {
+				return null;
+			}
+	
+			iterator = ((IStructuredSelection) selection).iterator();
+			while ( iterator.hasNext() ) {
+	
+				IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
+				objectStoreItem.move(destination);
+				elementsMoved.add( objectStoreItem );
+			}
+		} catch (Exception e ) {
+			PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
 		}
 		
-		ObjectStoresManager.getManager().moveObjectStoreItems(
-				elementsMoved.toArray(new IObjectStoreItem[0]), destination );
-
+		if ( destination != null && ! elementsMoved.isEmpty() ) {
+			ObjectStoresManager.getManager().moveObjectStoreItems(
+					elementsMoved.toArray(new IObjectStoreItem[0]), destination );
+		}
 		return null;
 	}
 	

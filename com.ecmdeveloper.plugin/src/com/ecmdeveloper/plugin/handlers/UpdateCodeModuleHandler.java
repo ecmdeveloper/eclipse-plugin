@@ -3,6 +3,7 @@
  */
 package com.ecmdeveloper.plugin.handlers;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -23,7 +24,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.ecmdeveloper.plugin.model.Action;
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.model.CodeModulesManager;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginLog;
+import com.ecmdeveloper.plugin.util.PluginMessage;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 
 /**
@@ -31,6 +35,12 @@ import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
  *
  */
 public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler {
+
+	private static final String SELECT_ACTIONS_MESSAGE = Messages.UpdateCodeModuleHandler_SelectActionsMessage;
+	private static final String UPDATE_MESSAGE = Messages.UpdateCodeModuleHandler_UpdateMessage;
+	private static final String HANDLER_NAME = Messages.UpdateCodeModuleHandler_HandlerName;
+	private static final String ACTION_SELECTION_DIALOG_TITLE = Messages.UpdateCodeModuleHandler_ActionSelectionDialogTitle;
+	private static final String ACTION_LABEL = Messages.UpdateCodeModuleHandler_ActionLabel;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -52,22 +62,37 @@ public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler
 
 				CodeModuleFile codeModuleFile = (CodeModuleFile) iterator.next();
 				Collection<Action> actions = codeModulesManager.getCodeModuleActions(codeModuleFile);
-				String message = "Select the actions related to the Code Module '" + codeModuleFile.getName() + "'\nto update:";
-				LabelProvider labelProvider = new ObjectStoreItemLabelProvider();
+				String message = MessageFormat.format( SELECT_ACTIONS_MESSAGE, codeModuleFile.getName() );
+				LabelProvider labelProvider = new CodeModuleActionLabelProvider();
 				ListSelectionDialog dialog = new ListSelectionDialog(window.getShell(), actions, new ArrayContentProvider(), labelProvider, message );
 				dialog.setInitialSelections( actions.toArray() );
-				dialog.setTitle( "Action selection" );
+				dialog.setTitle( ACTION_SELECTION_DIALOG_TITLE );
 
 				if ( dialog.open() == Dialog.OK ) {
 					codeModulesManager.updateCodeModule(codeModuleFile, dialog.getResult() );
+					MessageDialog.openInformation(window.getShell(),
+							HANDLER_NAME, MessageFormat.format(
+									UPDATE_MESSAGE,
+									codeModuleFile.getName()));
 				}
 			}
 		} catch (Exception e) {
 			PluginLog.error(e);
-			MessageDialog.openError( window.getShell(), "Update Code Module", e.getLocalizedMessage() );
+			PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
 		}
-		
 		return null;
 	}
 
+	class CodeModuleActionLabelProvider extends ObjectStoreItemLabelProvider {
+
+		public String getText(Object object) {
+			if ( object instanceof Action ) {
+				String name = ((IObjectStoreItem) object).getName();
+				String codeModuleVersion = ((Action) object).getCodeModuleVersion();
+				return  MessageFormat.format( ACTION_LABEL, name, codeModuleVersion ); 
+			}
+			
+			return super.getText(object);
+		}
+	}
 }
