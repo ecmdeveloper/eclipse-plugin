@@ -130,9 +130,11 @@ public class ObjectStoresManager implements IObjectStoresManager
 			return;
 		}
 		
-		objectStore.connect();
+		if ( objectStore.isConnected() ) {
+			return;
+		}
 		
-		fireObjectStoreItemsChanged(null, null, new IObjectStoreItem[] { objectStore } );
+		connectConnection(objectStore.getConnection().getName() );
 	}
 
 	public ObjectStores getObjectStores()

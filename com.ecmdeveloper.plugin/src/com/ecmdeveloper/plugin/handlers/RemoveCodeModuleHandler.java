@@ -1,11 +1,11 @@
 package com.ecmdeveloper.plugin.handlers;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -15,8 +15,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.model.CodeModulesManager;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.util.Messages;
 
 /**
  * 
@@ -25,6 +24,9 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
  */
 public class RemoveCodeModuleHandler extends AbstractHandler implements
 		IHandler {
+
+	private static final String REMOVE_MESSAGE = Messages.RemoveCodeModuleHandler_RemoveMessage;
+	private static final String HANDLER_NAME = Messages.RemoveCodeModuleHandler_HandlerName;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -48,7 +50,8 @@ public class RemoveCodeModuleHandler extends AbstractHandler implements
 			Object selectedObject = iter.next();
 			if ( selectedObject instanceof CodeModuleFile ) {
 				
-				boolean answerTrue = MessageDialog.openQuestion( window.getShell(), "Remove Object Stores from view", "Do you want to remove the Code Module '" + ((CodeModuleFile)selectedObject).getName() + " from the view?" );
+				boolean answerTrue = MessageDialog.openQuestion( window.getShell(), HANDLER_NAME, 
+						MessageFormat.format( REMOVE_MESSAGE, ((CodeModuleFile)selectedObject).getName() ) );
 				if ( answerTrue )
 				{
 					CodeModulesManager.getManager().removeCodeModuleFile( (CodeModuleFile)selectedObject );

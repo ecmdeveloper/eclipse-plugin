@@ -19,7 +19,9 @@ import org.eclipse.ui.ide.IDE;
 import com.ecmdeveloper.plugin.editors.CodeModuleEditor;
 import com.ecmdeveloper.plugin.editors.CodeModuleEditorInput;
 import com.ecmdeveloper.plugin.model.CodeModuleFile;
+import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginLog;
+import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * 
@@ -27,6 +29,9 @@ import com.ecmdeveloper.plugin.util.PluginLog;
  *
  */
 public class EditCodeModuleHandler extends AbstractHandler implements IHandler {
+
+	private static final String HANDLER_NAME = Messages.EditCodeModuleHandler_HandlerName;
+	private static final String OPEN_CODE_MODULE_EDITOR_ERROR = Messages.EditCodeModuleHandler_OpenCodeModuleEditorError;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -52,7 +57,8 @@ public class EditCodeModuleHandler extends AbstractHandler implements IHandler {
 				}
 				
 			} catch (PartInitException e) {
-				PluginLog.error("Open editor failed" , e);
+				PluginLog.error(OPEN_CODE_MODULE_EDITOR_ERROR , e);
+				PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
 			}
 		}
 		

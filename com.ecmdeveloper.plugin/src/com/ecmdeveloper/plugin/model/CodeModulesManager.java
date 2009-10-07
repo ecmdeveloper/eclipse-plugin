@@ -13,7 +13,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.util.PluginLog;
@@ -38,6 +37,29 @@ public class CodeModulesManager {
 			codeModulesManager = new CodeModulesManager();
 		}
 		return codeModulesManager;
+	}
+
+	public Collection<CodeModule> getNewCodeModules(ObjectStore objectStore ) {
+		
+		Collection<CodeModule> codeModules = objectStore.getCodeModules();
+		ArrayList<CodeModule> newCodeModules = new ArrayList<CodeModule>();
+		
+		for (CodeModule codeModule : codeModules) {
+			
+			boolean found = false;
+			for ( CodeModuleFile codeModuleFile : codeModulefiles ) {
+				if ( codeModule.getId().equalsIgnoreCase( codeModuleFile.getId() ) ) {
+					found = true;
+					break;
+				}
+			}
+			
+			if ( ! found ) {
+				newCodeModules.add( codeModule );
+			}
+		}
+		
+		return newCodeModules;
 	}
 
 	public Collection<CodeModuleFile> getCodeModuleFiles() {
@@ -74,6 +96,7 @@ public class CodeModulesManager {
 
 		codeModuleFile.setFilename( getCodeModuleFile(codeModuleFile).getPath() );
 		saveCodeModuleFile(codeModuleFile);
+		codeModulefiles.add(codeModuleFile);
 		
 		fireCodeModuleFilesChanged( new CodeModuleFile[] {codeModuleFile} , null, null );
 

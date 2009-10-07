@@ -1,6 +1,8 @@
 package com.ecmdeveloper.plugin.wizard;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -76,6 +78,15 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 	public void setCodeModule(CodeModule codeModule) {
 		this.codeModule = codeModule;
 		getContainer().updateButtons();
+	}
+
+	public Collection<CodeModule> getCodeModules() {
+		
+		if ( objectStore != null ) {
+			return CodeModulesManager.getManager().getNewCodeModules(objectStore);
+		} else {
+			return new ArrayList<CodeModule>();
+		}
 	}
 
 	private void openEditor()
