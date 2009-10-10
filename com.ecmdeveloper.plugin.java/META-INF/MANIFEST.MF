@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECM Developer Java Plug-in
+Bundle-SymbolicName: com.ecmdeveloper.plugin.java;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: com.ecmdeveloper.plugin.java.Activator
+Bundle-Vendor: ECMDEVELOPER
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.core;bundle-version="3.4.4",
+ org.eclipse.jdt.ui;bundle-version="3.4.2",
+ org.eclipse.core.resources;bundle-version="3.4.2",
+ org.eclipse.ui.ide;bundle-version="3.4.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

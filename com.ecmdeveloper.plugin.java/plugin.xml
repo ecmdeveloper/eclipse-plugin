@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.java.wizard.NewEventActionClassWizard"
+            icon="icons/script_lightning.png"
+            id="com.ecmdeveloper.plugin.wizard.newEventAction"
+            name="Event Action Class">
+         <description>
+            Create a new Event Action class.
+         </description>
+      </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.java.wizard.NewDocumentLifecycleActionHandlerWizard"
+            icon="icons/page_white_gear.png"
+            id="com.ecmdeveloper.plugin.wizard.newDocumentLifecycleActionHandler"
+            name="Document Lifecycle Action Handler Class">
+         <description>
+            Create a new Document Lifecycle Action Handler class.
+         </description>
+      </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.java.wizard.NewDocumentClassifierClassWizard"
+            icon="icons/page_white_code_red.png"
+            id="com.ecmdeveloper.plugin.wizard.newDocumentClassifier"
+            name="Document Classifier Class">
+         <description>
+            Create a new Document Classifier class.
+         </description>
+      </wizard>
+      <category
+            id="com.ecmdeveloper.plugin.category.contentEngine"
+            name="Content Engine">
+      </category>
+   </extension>
+
+</plugin>
