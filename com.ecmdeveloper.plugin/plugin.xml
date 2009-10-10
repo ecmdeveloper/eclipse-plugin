@@ -307,25 +307,6 @@
                icon="icons/refresh.gif"
                style="push">
          </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.importObjectStore"
-               icon="icons/database_add.png"
-               style="push"
-               tooltip="Imports an Object Store">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false"
-                        operator="or">
-                     <instanceof
-                           value="com.ecmdeveloper.plugin.model.ObjectStore">
-                     </instanceof>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:com.ecmdeveloper.plugin.views.codeModulesView?after=additions">
@@ -340,6 +321,13 @@
                icon="icons/script_add.png"
                style="push"
                tooltip="Import a Code Module">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.updateCodeModule"
+               icon="icons/script_go.png"
+               label="Update"
+               style="push"
+               tooltip="Updates the Code Module on the Content Engine">
          </command>
       </menuContribution>
       <menuContribution

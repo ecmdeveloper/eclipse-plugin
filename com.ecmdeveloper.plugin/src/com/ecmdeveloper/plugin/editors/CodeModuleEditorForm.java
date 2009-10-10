@@ -1,10 +1,13 @@
 package com.ecmdeveloper.plugin.editors;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -18,19 +21,32 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.IMessage;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -49,6 +65,7 @@ public class CodeModuleEditorForm extends FormPage {
 	private Label objectStoreLabel;
 	private CodeModuleFile codeModuleFile;
 	private TableViewer filesTableViewer;
+	private IMessageManager messageManager;
 	
 	public CodeModuleEditorForm(FormEditor editor) {
 		super(editor, "first", "Main");
@@ -62,16 +79,27 @@ public class CodeModuleEditorForm extends FormPage {
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 
-		ScrolledForm form = managedForm.getForm();
+		final ScrolledForm form = managedForm.getForm();
 		//form.setMessage( "Bla", 2);
-		FormToolkit toolkit = managedForm.getToolkit();
-
+		final FormToolkit toolkit = managedForm.getToolkit();
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
+                HyperlinkSettings.UNDERLINE_HOVER);
+		
+		toolkit.decorateFormHeading(form.getForm());
+		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
+		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		form.getBody().setLayout(layout);
 		
 		createInfoSection( form, toolkit );
 		createTableSection(form, toolkit );
+		
+		messageManager = managedForm.getMessageManager();
+		messageManager.addMessage("key1", "Hallo, Error Wereld!", null, IMessageProvider.WARNING );
+		messageManager.addMessage("key2", "Hello, Error World!", null, IMessageProvider.WARNING );
+		
+		//form.setMessage("This is an error message", IMessageProvider.ERROR);	// NEW LINE
 	}
 
 	public void refreshFormContent(CodeModuleFile codeModuleFile)
@@ -131,6 +159,20 @@ public class CodeModuleEditorForm extends FormPage {
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR );
 
+		ToolBar tbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
+		ToolItem titem = new ToolItem(tbar, SWT.NULL);
+		titem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+				ISharedImages.IMG_TOOL_CUT));
+		titem = new ToolItem(tbar, SWT.PUSH);
+		titem.setText("Cut...");
+		titem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+				ISharedImages.IMG_TOOL_NEW_WIZARD));
+		titem = new ToolItem(tbar, SWT.SEPARATOR);
+		titem = new ToolItem(tbar, SWT.PUSH);
+		titem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+				ISharedImages.IMG_TOOL_DELETE));
+		section.setTextClient(tbar);
+		
 		Composite client = toolkit.createComposite( section, SWT.WRAP );
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
