@@ -58,7 +58,7 @@ public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHa
 					String name = objectStoreItem.getName();
 					boolean answerTrue = MessageDialog.openQuestion(window
 							.getShell(), HANDLER_NAME, MessageFormat.format(
-							DELETE_MESSAGE, name));
+							DELETE_MESSAGE, name) );
 					if (answerTrue) {
 						objectStoreItem.delete();
 						ObjectStoresManager

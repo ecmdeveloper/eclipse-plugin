@@ -73,7 +73,7 @@ public class CodeModule extends ObjectStoreItem{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void update(CodeModuleFile codeModuleFile) {
+	public void update(Collection<File> files) {
 		
 		versionSeries.fetchProperties( new String[]  { PropertyNames.CURRENT_VERSION } );
 		Document document = (Document) versionSeries.get_CurrentVersion();
@@ -86,7 +86,7 @@ public class CodeModule extends ObjectStoreItem{
 
 		ContentTransfer content = Factory.ContentTransfer.createInstance();
 
-		for ( File file : codeModuleFile.getFiles() ) {
+		for ( File file : files ) {
 			
 			if ( ! file.exists() ) {
 				continue;
@@ -110,6 +110,7 @@ public class CodeModule extends ObjectStoreItem{
 		
 		reservation.set_ContentElements(contentElementList);
 		reservation.checkin(AutoClassify.DO_NOT_AUTO_CLASSIFY, CheckinType.MAJOR_VERSION );
+		reservation.getProperties().putValue( "DocumentTitle", name );
 		reservation.save(RefreshMode.REFRESH);
 	}
 
@@ -133,8 +134,7 @@ public class CodeModule extends ObjectStoreItem{
 
 	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-		
+		this.name = name;
 	}
 
 	@SuppressWarnings("unchecked")

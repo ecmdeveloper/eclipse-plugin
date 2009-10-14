@@ -15,14 +15,6 @@
             class="com.ecmdeveloper.plugin.views.ObjectStoresView"
             id="com.ecmdeveloper.plugin.views.ObjectStoresView">
       </view>
-      <view
-            category="com.ecmdeveloper.plugin.contentEngine"
-            class="com.ecmdeveloper.plugin.views.CodeModulesView"
-            icon="icons/script.png"
-            id="com.ecmdeveloper.plugin.views.codeModulesView"
-            name="Code Modules"
-            restorable="true">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
@@ -40,16 +32,6 @@
             id="com.ecmdeveloper.plugin.category.contentEngine"
             name="Content Engine">
       </category>
-      <wizard
-            category="com.ecmdeveloper.plugin.category.contentEngine"
-            class="com.ecmdeveloper.plugin.wizard.ImportCodeModuleWizard"
-            icon="icons/script.png"
-            id="com.ecmdeveloper.plugin.wizard.importCodeModule"
-            name="Code Module">
-         <description>
-            Import a Code Module from an Object Store.
-         </description>
-      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -69,30 +51,6 @@
             description="Removes this Object Store from the view"
             id="com.ecmdeveloper.plugin.removeObjectStore"
             name="Remove from view">
-      </command>
-      <command
-            categoryId="com.ecmdeveloper.plugin.category"
-            description="Removes this Code Module from this view"
-            id="com.ecmdeveloper.plugin.removeCodeModule"
-            name="Remove from view">
-      </command>
-      <command
-            categoryId="com.ecmdeveloper.plugin.category"
-            description="Import a Code Module"
-            id="com.ecmdeveloper.plugin.importCodeModule"
-            name="Import">
-      </command>
-      <command
-            categoryId="com.ecmdeveloper.plugin.category"
-            description="Edit this Code Module"
-            id="com.ecmdeveloper.plugin.editCodeModule"
-            name="Edit">
-      </command>
-      <command
-            categoryId="com.ecmdeveloper.plugin.category"
-            description="Updates the Code Module on the Content Engine"
-            id="com.ecmdeveloper.plugin.updateCodeModule"
-            name="Update">
       </command>
       <command
             categoryId="com.ecmdeveloper.plugin.category"
@@ -272,51 +230,6 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="toolbar:com.ecmdeveloper.plugin.views.codeModulesView?after=additions">
-         <command
-               commandId="com.ecmdeveloper.plugin.removeCodeModule"
-               icon="icons/script_delete.png"
-               style="push"
-               tooltip="Remove this Code  Module from this view">
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.importCodeModule"
-               icon="icons/script_add.png"
-               style="push"
-               tooltip="Import a Code Module">
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.updateCodeModule"
-               icon="icons/script_go.png"
-               label="Update"
-               style="push"
-               tooltip="Updates the Code Module on the Content Engine">
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:com.ecmdeveloper.plugin.views.codeModulesView?after=edit">
-         <command
-               commandId="com.ecmdeveloper.plugin.removeCodeModule"
-               icon="icons/script_delete.png"
-               style="push"
-               tooltip="Remove this Code Module from this view">
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.editCodeModule"
-               icon="icons/script_edit.png"
-               label="Edit..."
-               style="push"
-               tooltip="Edit this Code Module">
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.updateCodeModule"
-               icon="icons/script_go.png"
-               label="Update"
-               style="push"
-               tooltip="Updates the Code Module on the Content Engine">
-         </command>
-      </menuContribution>
-      <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=other">
          <command
                commandId="org.eclipse.ui.file.properties"
@@ -342,55 +255,6 @@
       <handler
             class="com.ecmdeveloper.plugin.handlers.RemoveObjectStoreHandler"
             commandId="com.ecmdeveloper.plugin.removeObjectStore">
-      </handler>
-      <handler
-            class="com.ecmdeveloper.plugin.handlers.RemoveCodeModuleHandler"
-            commandId="com.ecmdeveloper.plugin.removeCodeModule">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="com.ecmdeveloper.plugin.model.CodeModuleFile">
-                  </instanceof>
-               </iterate>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="com.ecmdeveloper.plugin.handlers.ImportCodeModuleHandler"
-            commandId="com.ecmdeveloper.plugin.importCodeModule">
-      </handler>
-      <handler
-            class="com.ecmdeveloper.plugin.handlers.EditCodeModuleHandler"
-            commandId="com.ecmdeveloper.plugin.editCodeModule">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="com.ecmdeveloper.plugin.model.CodeModuleFile">
-                  </instanceof>
-               </iterate>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="com.ecmdeveloper.plugin.handlers.UpdateCodeModuleHandler"
-            commandId="com.ecmdeveloper.plugin.updateCodeModule">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="com.ecmdeveloper.plugin.model.CodeModuleFile">
-                  </instanceof>
-               </iterate>
-            </with>
-         </enabledWhen>
       </handler>
       <handler
             class="com.ecmdeveloper.plugin.handlers.DeleteObjectStoreItemHandler"
@@ -569,18 +433,6 @@
             </instanceof>
          </enabledWhen>
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="com.ecmdeveloper.plugin.editors.CodeModuleEditor"
-            contributorClass="com.ecmdeveloper.plugin.editors.CodeModuleEditorContributor"
-            default="false"
-            extensions="codemodule"
-            icon="icons/script_edit.png"
-            id="com.ecmdeveloper.plugin.editors.codeModuleEditor"
-            name="Code Module Editor">
-      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
