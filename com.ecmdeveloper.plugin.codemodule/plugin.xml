@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="com.ecmdeveloper.plugin.contentEngine"
+            class="com.ecmdeveloper.plugin.codemodule.views.CodeModulesView"
+            icon="icons/script.png"
+            id="com.ecmdeveloper.plugin.views.codeModulesView"
+            name="Code Modules"
+            restorable="true">
+      </view>
+      <category
+            id="com.ecmdeveloper.plugin.contentEngine"
+            name="Content Engine">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="com.ecmdeveloper.plugin.category.contentEngine"
+            name="Content Engine">
+      </category>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.codemodule.wizard.NewCodeModuleWizard"
+            icon="icons/script.png"
+            id="com.ecmdeveloper.plugin.wizard.newCodeModule"
+            name="Code Module">
+         <description>
+            Creates a new Code Module in an Object Store.
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            id="com.ecmdeveloper.plugin.category.contentEngine"
+            name="Content Engine">
+      </category>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.codemodule.wizard.ImportCodeModuleWizard"
+            icon="icons/script.png"
+            id="com.ecmdeveloper.plugin.wizard.importCodeModule"
+            name="Code Module">
+         <description>
+            Import a Code Module from an Object Store.
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="Commands related to the Content Engine"
+            id="com.ecmdeveloper.plugin.category"
+            name="Content Engine Commands">
+      </category>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Removes this Code Module from this view"
+            id="com.ecmdeveloper.plugin.removeCodeModule"
+            name="Remove from view">
+      </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Import a Code Module"
+            id="com.ecmdeveloper.plugin.importCodeModule"
+            name="Import">
+      </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Edit this Code Module"
+            id="com.ecmdeveloper.plugin.editCodeModule"
+            name="Edit">
+      </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Updates the Code Module on the Content Engine"
+            id="com.ecmdeveloper.plugin.updateCodeModule"
+            name="Update">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:com.ecmdeveloper.plugin.views.codeModulesView?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.removeCodeModule"
+               icon="icons/script_delete.png"
+               style="push"
+               tooltip="Remove this Code  Module from this view">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.importCodeModule"
+               icon="icons/script_add.png"
+               style="push"
+               tooltip="Import a Code Module">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.updateCodeModule"
+               icon="icons/script_go.png"
+               label="Update"
+               style="push"
+               tooltip="Updates the Code Module on the Content Engine">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.views.codeModulesView?after=edit">
+         <command
+               commandId="com.ecmdeveloper.plugin.removeCodeModule"
+               icon="icons/script_delete.png"
+               style="push"
+               tooltip="Remove this Code Module from this view">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.editCodeModule"
+               icon="icons/script_edit.png"
+               label="Edit..."
+               style="push"
+               tooltip="Edit this Code Module">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.updateCodeModule"
+               icon="icons/script_go.png"
+               label="Update"
+               style="push"
+               tooltip="Updates the Code Module on the Content Engine">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.ecmdeveloper.plugin.codemodule.handlers.RemoveCodeModuleHandler"
+            commandId="com.ecmdeveloper.plugin.removeCodeModule">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.codemodule.handlers.ImportCodeModuleHandler"
+            commandId="com.ecmdeveloper.plugin.importCodeModule">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.codemodule.handlers.EditCodeModuleHandler"
+            commandId="com.ecmdeveloper.plugin.editCodeModule">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.codemodule.handlers.UpdateCodeModuleHandler"
+            commandId="com.ecmdeveloper.plugin.updateCodeModule">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditor"
+            contributorClass="com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorContributor"
+            default="false"
+            extensions="codemodule"
+            icon="icons/script_edit.png"
+            id="com.ecmdeveloper.plugin.editors.codeModuleEditor"
+            name="Code Module Editor">
+      </editor>
+   </extension>
+
+</plugin>
