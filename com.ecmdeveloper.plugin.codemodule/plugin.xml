@@ -81,20 +81,35 @@
             id="com.ecmdeveloper.plugin.updateCodeModule"
             name="Update">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Create a new Code Module"
+            id="com.ecmdeveloper.plugin.newCodeModule"
+            name="New Code Module">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="toolbar:com.ecmdeveloper.plugin.views.codeModulesView?after=additions">
          <command
+               commandId="com.ecmdeveloper.plugin.newCodeModule"
+               icon="icons/script.png"
+               label="New..."
+               style="push"
+               tooltip="Create a new Code Module">
+         </command>
+         <command
                commandId="com.ecmdeveloper.plugin.removeCodeModule"
                icon="icons/script_delete.png"
+               label="Remove"
                style="push"
                tooltip="Remove this Code  Module from this view">
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.importCodeModule"
                icon="icons/script_add.png"
+               label="Import"
                style="push"
                tooltip="Import a Code Module">
          </command>
@@ -109,10 +124,25 @@
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.codeModulesView?after=edit">
          <command
+               commandId="com.ecmdeveloper.plugin.updateCodeModule"
+               icon="icons/script_go.png"
+               label="Update"
+               style="push"
+               tooltip="Updates the Code Module on the Content Engine">
+         </command>
+         <command
                commandId="com.ecmdeveloper.plugin.removeCodeModule"
                icon="icons/script_delete.png"
+               label="Remove"
                style="push"
                tooltip="Remove this Code Module from this view">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.newCodeModule"
+               icon="icons/script.png"
+               label="New..."
+               style="push"
+               tooltip="Create a new Code Module">
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.editCodeModule"
@@ -120,13 +150,6 @@
                label="Edit..."
                style="push"
                tooltip="Edit this Code Module">
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.updateCodeModule"
-               icon="icons/script_go.png"
-               label="Update"
-               style="push"
-               tooltip="Updates the Code Module on the Content Engine">
          </command>
       </menuContribution>
    </extension>
@@ -180,6 +203,10 @@
                </iterate>
             </with>
          </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.codemodule.handlers.NewCodeModuleHandler"
+            commandId="com.ecmdeveloper.plugin.newCodeModule">
       </handler>
    </extension>
    <extension
