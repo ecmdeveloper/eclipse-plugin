@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/activation.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/antlr.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/builtin_serialization.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/core_services_client.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/jaas.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/jaxm.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/jaxrpc.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/jetty.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/runner.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/saaj.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/validator.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/wsdl_api.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/xercesImpl.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/xml-apis.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/xmlParserAPIs.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="wsi/lib/wasp.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/Jace.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/D:/FileNet Development/P8 4.5/ecm_help/ecm_help/developer_help/content_engine_api/javadocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
