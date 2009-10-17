@@ -12,12 +12,15 @@ import com.filenet.api.collection.ActionSet;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.collection.VersionableSet;
 import com.filenet.api.constants.AutoClassify;
+import com.filenet.api.constants.AutoUniqueName;
 import com.filenet.api.constants.CheckinType;
+import com.filenet.api.constants.DefineSecurityParentage;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.constants.ReservationType;
 import com.filenet.api.core.ContentTransfer;
 import com.filenet.api.core.Document;
+import com.filenet.api.core.DynamicReferentialContainmentRelationship;
 import com.filenet.api.core.Factory;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.core.VersionSeries;
@@ -72,7 +75,6 @@ public class CodeModule extends ObjectStoreItem{
 		return actions;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void update(Collection<File> files) {
 		
 		versionSeries.fetchProperties( new String[]  { PropertyNames.CURRENT_VERSION } );
@@ -82,8 +84,18 @@ public class CodeModule extends ObjectStoreItem{
 		document.save(RefreshMode.REFRESH);
 		com.filenet.api.core.Document reservation = (com.filenet.api.core.Document) document.get_Reservation();
 		
-		ContentElementList contentElementList = Factory.ContentElement.createList();
+		ContentElementList contentElementList = createContent(files);
+		
+		reservation.set_ContentElements(contentElementList);
+		reservation.checkin(AutoClassify.DO_NOT_AUTO_CLASSIFY, CheckinType.MAJOR_VERSION );
+		reservation.getProperties().putValue( "DocumentTitle", name );
+		reservation.save(RefreshMode.REFRESH);
+	}
 
+	@SuppressWarnings("unchecked")
+	private static ContentElementList createContent(Collection<File> files) {
+		
+		ContentElementList contentElementList = Factory.ContentElement.createList();
 		ContentTransfer content = Factory.ContentTransfer.createInstance();
 
 		for ( File file : files ) {
@@ -99,7 +111,8 @@ public class CodeModule extends ObjectStoreItem{
 				// Should not happen as only existing files are added...
 			}
 			
-			if ( file.getName().endsWith(".jar") ) {
+			if ( file.getName().toLowerCase().endsWith(".jar") ||
+				 file.getName().toLowerCase().endsWith(".zip") ) {
 				content.set_ContentType( "application/x-zip-compressed" );
 			} else if ( file.getName().endsWith( ".class" ) ) {
 				content.set_ContentType( "application/java" );
@@ -107,11 +120,7 @@ public class CodeModule extends ObjectStoreItem{
 				
 			contentElementList.add(content);
 		}
-		
-		reservation.set_ContentElements(contentElementList);
-		reservation.checkin(AutoClassify.DO_NOT_AUTO_CLASSIFY, CheckinType.MAJOR_VERSION );
-		reservation.getProperties().putValue( "DocumentTitle", name );
-		reservation.save(RefreshMode.REFRESH);
+		return contentElementList;
 	}
 
 	@Override
@@ -146,5 +155,30 @@ public class CodeModule extends ObjectStoreItem{
 			return versionSeries.get_CurrentVersion();
 		}
 		return super.getAdapter(adapter);
+	}
+
+	public static CodeModule createInstance(String name, Collection<File> files, ObjectStore objectStore) {
+
+		com.filenet.api.core.Folder folder = Factory.Folder.fetchInstance(
+				(com.filenet.api.core.ObjectStore) objectStore
+						.getObjectStoreObject(), "/CodeModules", null);
+
+		com.filenet.api.admin.CodeModule codeModule = Factory.CodeModule
+				.createInstance((com.filenet.api.core.ObjectStore) objectStore
+						.getObjectStoreObject(), "CodeModule"); 
+
+		codeModule.getProperties().putValue("DocumentTitle", name);
+		codeModule.set_ContentElements( createContent(files) );
+		codeModule.checkin(AutoClassify.DO_NOT_AUTO_CLASSIFY, CheckinType.MAJOR_VERSION);
+		codeModule.save(RefreshMode.REFRESH);
+
+		DynamicReferentialContainmentRelationship relation = (DynamicReferentialContainmentRelationship) folder
+				.file(  codeModule,
+						AutoUniqueName.AUTO_UNIQUE,
+						name,
+						DefineSecurityParentage.DO_NOT_DEFINE_SECURITY_PARENTAGE) ;
+		relation.save(RefreshMode.NO_REFRESH);
+
+		return new CodeModule( codeModule.get_VersionSeries(), objectStore, objectStore );
 	}
 }
