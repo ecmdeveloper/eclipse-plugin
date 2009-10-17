@@ -92,6 +92,14 @@ public class CodeModulesManager {
 	    return codeModulefiles;
 	}
 
+	public CodeModuleFile createNewCodeModuleFile(ObjectStore objectStore, String name) {
+
+		CodeModuleFile codeModuleFile = new CodeModuleFile(name, null,
+				objectStore.getConnection().getName(), objectStore.getName());
+		
+		return codeModuleFile;
+	}
+
 	public CodeModuleFile createCodeModuleFile(CodeModule codeModule, ObjectStore objectStore) {
 
 		CodeModuleFile codeModuleFile = new CodeModuleFile(
@@ -99,15 +107,17 @@ public class CodeModulesManager {
 						.getConnection().getName(), objectStore.getName());
 
 		codeModuleFile.setFilename( getCodeModuleFile(codeModuleFile).getPath() );
-		saveCodeModuleFile(codeModuleFile);
+		saveCodeModuleFile(codeModuleFile, true);
 		codeModulefiles.add(codeModuleFile);
-		
-		fireCodeModuleFilesChanged( new CodeModuleFile[] {codeModuleFile} , null, null );
 
 		return codeModuleFile;
 	}
 
 	public void saveCodeModuleFile(CodeModuleFile codeModuleFile ) {
+		saveCodeModuleFile(codeModuleFile, false);
+	}
+
+	private void saveCodeModuleFile(CodeModuleFile codeModuleFile, boolean saveNew ) {
 
 		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.CODE_MODULE);
 		boolean saved = false;
@@ -137,9 +147,41 @@ public class CodeModulesManager {
 		}
 		
 		if ( saved) {
-			fireCodeModuleFilesChanged(null, null, new CodeModuleFile[] { codeModuleFile} );
+			if ( saveNew ) {
+				fireCodeModuleFilesChanged(new CodeModuleFile[] { codeModuleFile}, null, null );
+			} else {
+				fireCodeModuleFilesChanged(null, null, new CodeModuleFile[] { codeModuleFile} );
+			}
 		}
+	}
 
+	public void saveNewCodeModuleFile(CodeModuleFile codeModuleFile) {
+
+		ObjectStore objectStore = getObjectStore(codeModuleFile);
+		ObjectStore.assertConnected(objectStore);
+		
+		CodeModule codeModule = CodeModule.createInstance(codeModuleFile
+				.getName(), codeModuleFile.getFiles(), objectStore);
+		codeModuleFile.setId( codeModule.getId() );
+		
+		saveCodeModuleFile(codeModuleFile, true);
+
+		codeModuleFile.setFilename( getCodeModuleFile(codeModuleFile).getPath() );
+		codeModulefiles.add(codeModuleFile);
+	}
+
+	private ObjectStore getObjectStore(CodeModuleFile codeModuleFile) {
+
+		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
+		ObjectStore objectStore = objectStoresManager.getObjectStore(
+				codeModuleFile.getConnectionName(), codeModuleFile
+						.getObjectStoreName());
+		
+		if ( objectStore == null ) {
+			throw new NullPointerException( "Object Store not found:" + codeModuleFile.getConnectionName() + ": " + codeModuleFile
+					.getObjectStoreName() );
+		}
+		return objectStore;
 	}
 
 	private void saveCodeModuleFile(CodeModuleFile codeModuleFile, XMLMemento memento) 
@@ -221,15 +263,7 @@ public class CodeModulesManager {
 
 	private CodeModule getCodeModuleFromFile(CodeModuleFile codeModuleFile) {
 		
-		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
-		ObjectStore objectStore = objectStoresManager.getObjectStore(
-				codeModuleFile.getConnectionName(), codeModuleFile
-						.getObjectStoreName());
-		
-		if ( objectStore == null ) {
-			throw new NullPointerException( "Object Store not found:" + codeModuleFile.getConnectionName() + ": " + codeModuleFile
-					.getObjectStoreName() );
-		}
+		ObjectStore objectStore = getObjectStore(codeModuleFile);
 		
 		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), "VersionSeries" );
 //		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), CODE_MODULE_CLASS_NAME );
@@ -279,5 +313,4 @@ public class CodeModulesManager {
 			listener.codeModuleFilesItemsChanged( event );
 		}
 	}
-	
 }

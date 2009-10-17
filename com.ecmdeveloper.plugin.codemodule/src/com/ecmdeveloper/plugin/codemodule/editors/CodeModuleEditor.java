@@ -12,6 +12,7 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFileListener;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManagerEvent;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManagerListener;
+import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
 
 public class CodeModuleEditor extends FormEditor implements CodeModulesManagerListener {
 
@@ -72,11 +73,21 @@ public class CodeModuleEditor extends FormEditor implements CodeModulesManagerLi
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
+
+		try {
 		
-		CodeModulesManager.getManager().saveCodeModuleFile(codeModuleFile);
-		isPageModified = false;
-		firePropertyChange(IEditorPart.PROP_DIRTY);
-		codeModuleEditorForm.refreshFormContent(codeModuleFile);
+			if ( codeModuleFile.getId() != null ) {
+				CodeModulesManager.getManager().saveCodeModuleFile(codeModuleFile);
+			} else {
+				CodeModulesManager.getManager().saveNewCodeModuleFile(codeModuleFile);
+			}
+			isPageModified = false;
+			firePropertyChange(IEditorPart.PROP_DIRTY);
+			codeModuleEditorForm.refreshFormContent(codeModuleFile);
+		}
+		catch (Exception e ) {
+			PluginMessage.openError( getSite().getShell(), "Code Module Editor", "Save failed", e );
+		}
 	}
 
 	@Override
@@ -91,7 +102,7 @@ public class CodeModuleEditor extends FormEditor implements CodeModulesManagerLi
 
 	@Override
 	public boolean isDirty() {
-		return isPageModified || super.isDirty();
+		return isPageModified || codeModuleFile.getId() == null || super.isDirty();
 	}
 
 	private void updateTitle() {

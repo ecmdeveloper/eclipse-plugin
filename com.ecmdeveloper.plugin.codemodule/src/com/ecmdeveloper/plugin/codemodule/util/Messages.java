@@ -15,6 +15,14 @@ public class Messages extends NLS {
 
 	public static String EditCodeModuleHandler_HandlerName;
 	public static String EditCodeModuleHandler_OpenCodeModuleEditorError;
+	public static String NewCodeModuleWizard_OpenEditorFailedMessage;
+	public static String NewCodeModuleWizard_WizardName;
+	public static String NewCodeModuleWizardPage_ConnectLabel;
+	public static String NewCodeModuleWizardPage_Description;
+	public static String NewCodeModuleWizardPage_NameLabel;
+	public static String NewCodeModuleWizardPage_PageName;
+	public static String NewCodeModuleWizardPage_SelectObjectStoreLabel;
+	public static String NewCodeModuleWizardPage_Title;
 	public static String RemoveCodeModuleHandler_HandlerName;
 	public static String RemoveCodeModuleHandler_RemoveMessage;
 	public static String UpdateCodeModuleHandler_ActionLabel;

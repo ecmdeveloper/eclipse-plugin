@@ -48,6 +48,10 @@ public class CodeModuleFile {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public ArrayList<File> getFiles() {
 		return files;
 	}
