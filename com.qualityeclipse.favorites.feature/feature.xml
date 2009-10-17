@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.qualityeclipse.favorites"
+      label="Favorites Feature"
+      version="1.0.0"
+      provider-name="Quality Eclipse"
+      plugin="com.qualityeclipse.favorites">
+
+   <description url="http://www.example.com/description">
+      The Favorites plug-in, created over the course of this book, will display a list of resources, allow the user to add and remove resources from this list, easily open an editor on a selected resource, update this list automatically as a result of events elsewhere in the system, and more.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      (c) 2003, 2006 Quality Eclipse
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      This product is free
+   </license>
+
+   <url>
+      <update label="Quality Eclipse" url="http://www.qualityeclipse.com/update"/>
+   </url>
+
+   <plugin
+         id="com.qualityeclipse.favorites"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.qualityeclipse.favorites.help"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.qualityeclipse.favorites.help.nl1"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="com.qualityeclipse.favorites.nl1"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true"
+         unpack="false"/>
+
+</feature>
