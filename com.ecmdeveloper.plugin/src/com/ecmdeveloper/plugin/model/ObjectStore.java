@@ -1,9 +1,11 @@
 package com.ecmdeveloper.plugin.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.util.Messages;
 import com.filenet.api.collection.CodeModuleSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Document;
@@ -21,6 +23,8 @@ import com.filenet.api.util.Id;
  */
 public class ObjectStore extends ObjectStoreItem 
 {
+	private static final String VERSION_SERIES_CLASS = "VersionSeries"; //$NON-NLS-1$
+	private static final String NOT_CONNECTED_MESSAGE = Messages.ObjectStore_NotConnectedMessage;
 	protected ContentEngineConnection connection;
 	protected com.filenet.api.core.ObjectStore objectStore;
 	protected Folder rootFolder;
@@ -106,7 +110,7 @@ public class ObjectStore extends ObjectStoreItem
 	public Collection<CodeModule> getCodeModules() {
 	
 		SearchScope scope = new SearchScope(objectStore);
-		String query = "Select This From CodeModule WHERE IsCurrentVersion = TRUE";
+		String query = "Select This From CodeModule WHERE IsCurrentVersion = TRUE"; //$NON-NLS-1$
 		CodeModuleSet codeModuleSet = (CodeModuleSet) scope.fetchObjects(new SearchSQL( query  ), null, null, null);
 		Iterator iterator = codeModuleSet.iterator();
 		
@@ -132,10 +136,11 @@ public class ObjectStore extends ObjectStoreItem
 	public IObjectStoreItem getObject(String id, String className )
 	{
 		if ( objectStore == null ) {
-			throw new RuntimeException( "Object Store " + connection.getName() + ":" + getName() + " is not connected.\nConnect to the Object Store before updating" );
+			throw new RuntimeException(MessageFormat.format(
+					NOT_CONNECTED_MESSAGE, connection.getName(), getName()));
 		}
 		
-		if ( "VersionSeries".equals( className) ) {
+		if ( VERSION_SERIES_CLASS.equals( className) ) {
 			return new CodeModule(Factory.VersionSeries.getInstance(objectStore, new Id( id ) ), this, this);
 		} else {
 			IndependentObject object = objectStore.getObject(className, id);
@@ -153,6 +158,13 @@ public class ObjectStore extends ObjectStoreItem
 		children = null;
 		rootFolder = null;
 	}
-	
-	
+
+	public static void assertConnected(ObjectStore objectStore) {
+
+		if ( ! objectStore.isConnected() ) {
+			throw new RuntimeException(MessageFormat.format(
+					NOT_CONNECTED_MESSAGE, objectStore.getConnection()
+							.getName(), objectStore.getName()));
+		}
+	}
 }
