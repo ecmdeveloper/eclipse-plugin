@@ -3,16 +3,20 @@
  */
 package com.ecmdeveloper.plugin.handlers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.progress.IProgressService;
 
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
@@ -49,10 +53,19 @@ public class ConnectObjectStoreHandler extends AbstractHandler implements IHandl
 
 		Iterator iter = ((IStructuredSelection) selection).iterator();			
 		while (iter.hasNext()) {
-			Object selectedObject = iter.next();
+			final Object selectedObject = iter.next();
 			if ( selectedObject instanceof ObjectStore ) {
 				try {
-					ObjectStoresManager.getManager().connectObjectStore(( ObjectStore)selectedObject );
+					
+					IProgressService progressService = window.getWorkbench().getProgressService();
+					progressService.run( true, false, new IRunnableWithProgress() {
+
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,	InterruptedException {
+							ObjectStoresManager.getManager().connectObjectStore(( ObjectStore)selectedObject, monitor );
+						}
+					} );
+					
 				} catch(Exception e ) {
 					PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
 				}
