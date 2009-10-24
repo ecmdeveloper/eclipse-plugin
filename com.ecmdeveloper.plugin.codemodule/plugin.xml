@@ -152,6 +152,16 @@
                tooltip="Edit this Code Module">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.edit?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.newCodeModule"
+               icon="icons/script.png"
+               label="New..."
+               style="push"
+               tooltip="Create a new Code Module">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

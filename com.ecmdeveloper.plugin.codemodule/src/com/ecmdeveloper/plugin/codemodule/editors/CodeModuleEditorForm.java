@@ -1,8 +1,6 @@
 package com.ecmdeveloper.plugin.codemodule.editors;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -21,20 +19,15 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkSettings;
@@ -45,14 +38,17 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Form;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.codemodule.Activator;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
+import com.ecmdeveloper.plugin.codemodule.util.IconFiles;
+import com.ecmdeveloper.plugin.codemodule.util.Messages;
+import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 
 /**
  * 
@@ -61,8 +57,30 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
  */
 public class CodeModuleEditorForm extends FormPage {
 
-	private static final String NAME_MESSAGE_KEY = "nameMessageKey";
-	private static final String FILES_MESSAGE_KEY = "filesMessageKey";
+	private static final String REMOVE_LABEL = Messages.CodeModuleEditorForm_RemoveLabel;
+	private static final String ADD_LABEL = Messages.CodeModuleEditorForm_AddLabel;
+	private static final String CODE_MODULE_FILES_DESCRIPTION = Messages.CodeModuleEditorForm_CodeModuleFilesDescription;
+	private static final String CODE_MODULE_FILES_TEXT = Messages.CodeModuleEditorForm_CodeModuleFilesText;
+	private static final String FORM_ID = "first"; //$NON-NLS-1$
+	private static final String FORM_TITLE = Messages.CodeModuleEditorForm_FormTitle;
+	private static final String PATH_COLUMN_LABEL = Messages.CodeModuleEditorForm_PathColumnLabel;
+	private static final String LAST_MODIFIED_COLUMN_LABEL = Messages.CodeModuleEditorForm_LastModifiedColumnLabel;
+	private static final String NAME_COLUMN_LABEL = Messages.CodeModuleEditorForm_NameColumnLabel;
+	private static final String CODE_MODULE_NAME_PREFIX = Messages.CodeModuleEditorForm_CodeModuleNamePrefix;
+	private static final String EMPTY_NAME_MESSAGE = Messages.CodeModuleEditorForm_EmptyNameMessage;
+	private static final String NO_FILES_MESSAGE = Messages.CodeModuleEditorForm_NoFilesMessage;
+	private static final String OBJECT_STORE_LABEL = Messages.CodeModuleEditorForm_ObjectStoreLabel;
+	private static final String NAME_LABEL = Messages.CodeModuleEditorForm_NameLabel;
+	private static final String CODE_MODULE_PROPERTIES_DESCRIPTION = Messages.CodeModuleEditorForm_CodeModulePropertiesDescription;
+	private static final String CODE_MODULE_PROPERTIES_TITLE = Messages.CodeModuleEditorForm_CodeModulePropertiesTitle;
+	private static final String CODE_MODULE_ACTIONS_DESCRIPTION = Messages.CodeModuleEditorForm_CodeModuleActionsDescription;
+	private static final String CODE_MODULE_ACTIONS_TITLE = Messages.CodeModuleEditorForm_CodeModuleActionsTitle;
+	private static final String UPDATE_CODE_MODULE_LINK_TEXT = Messages.CodeModuleEditorForm_UpdateCodeModuleLinkText;
+	private static final String UPDATE_CODE_MODULE_COMMAND_ID = "com.ecmdeveloper.plugin.updateCodeModule"; //$NON-NLS-1$
+	private static final String NAME_MESSAGE_KEY = "nameMessageKey"; //$NON-NLS-1$
+	private static final String FILES_MESSAGE_KEY = "filesMessageKey"; //$NON-NLS-1$
+	private static final String ALLOWED_FILES_EXTENSIONS[] = {"*.class", "*.jar", "*.zip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	
 	private Text nameText;
 	private Label objectStoreLabel;
 	private CodeModuleFile codeModuleFile;
@@ -70,7 +88,7 @@ public class CodeModuleEditorForm extends FormPage {
 	private IMessageManager messageManager;
 	
 	public CodeModuleEditorForm(FormEditor editor) {
-		super(editor, "first", "Main");
+		super(editor, FORM_ID, FORM_TITLE);
 	}
 
 	@Override
@@ -84,31 +102,34 @@ public class CodeModuleEditorForm extends FormPage {
 		final ScrolledForm form = managedForm.getForm();
 		final FormToolkit toolkit = managedForm.getToolkit();
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-                HyperlinkSettings.UNDERLINE_HOVER);
+                HyperlinkSettings.UNDERLINE_ALWAYS);
 		
 		toolkit.decorateFormHeading(form.getForm());
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
 		form.getBody().setLayout(layout);
 		
 		createInfoSection( form, toolkit );
-		createTableSection(form, toolkit );
+		createActionsSection( form, toolkit );
+		createFilesSection(form, toolkit );
 		
 		messageManager = managedForm.getMessageManager();
+		form.reflow(true);
 	}
 
 	private void validateForm()
 	{
 		if ( codeModuleFile.getFiles().isEmpty() ) {
-			messageManager.addMessage(FILES_MESSAGE_KEY, "There are no files selected", null, IMessageProvider.ERROR );
+			messageManager.addMessage(FILES_MESSAGE_KEY, NO_FILES_MESSAGE, null, IMessageProvider.ERROR );
 		} else {
 			messageManager.removeMessage(FILES_MESSAGE_KEY);
 		}
 		
 		if ( codeModuleFile.getName().isEmpty() ) {
-			messageManager.addMessage( NAME_MESSAGE_KEY, "The name is empty", null, IMessage.ERROR );
+			messageManager.addMessage( NAME_MESSAGE_KEY, EMPTY_NAME_MESSAGE, null, IMessage.ERROR );
 		} else {
 			messageManager.removeMessage( NAME_MESSAGE_KEY );
 		}
@@ -117,10 +138,10 @@ public class CodeModuleEditorForm extends FormPage {
 	public void refreshFormContent(CodeModuleFile codeModuleFile)
 	{
 		this.codeModuleFile = codeModuleFile;
-		getManagedForm().getForm().setText( "Code Module: " + codeModuleFile.getName() );
+		getManagedForm().getForm().setText( CODE_MODULE_NAME_PREFIX + codeModuleFile.getName() );
 		filesTableViewer.setInput( codeModuleFile.getFiles() );
 		nameText.setText( codeModuleFile.getName() );
-		objectStoreLabel.setText(codeModuleFile.getConnectionName() + ":"
+		objectStoreLabel.setText(codeModuleFile.getConnectionName() + ":" //$NON-NLS-1$
 				+ codeModuleFile.getObjectStoreName());
 	}
 
@@ -134,9 +155,8 @@ public class CodeModuleEditorForm extends FormPage {
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR );
 		
-		form.setImage( Activator.getImage("icons/script.png") );
-		section.setText("Code Module properties");
-		section.setDescription("Specify the properties of this code module");
+		section.setText(CODE_MODULE_PROPERTIES_TITLE);
+		section.setDescription(CODE_MODULE_PROPERTIES_DESCRIPTION);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(gd);
@@ -146,7 +166,7 @@ public class CodeModuleEditorForm extends FormPage {
 		layout.numColumns = 2;
 		client.setLayout(layout);
 
-		addLabel(client, "Name:");
+		addLabel(client, NAME_LABEL);
 
 		nameText = new Text(client, SWT.BORDER);
 		nameText.addModifyListener(new ModifyListener() {
@@ -157,29 +177,73 @@ public class CodeModuleEditorForm extends FormPage {
 		});
 		nameText.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
 
-		addLabel(client, "Object Store:");
+		addLabel(client, OBJECT_STORE_LABEL);
 
 		objectStoreLabel = new Label( client, SWT.NONE );
 		objectStoreLabel.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-		objectStoreLabel.setText("");
-		
+		//objectStoreLabel.setText("");
+
 		section.setClient(client);
 	}
 
-	private void createTableSection(final ScrolledForm form, FormToolkit toolkit ) {
+	private void createActionsSection(ScrolledForm form, FormToolkit toolkit )
+	{
+		Section section = toolkit.createSection(form.getBody(),
+				Section.DESCRIPTION | Section.TITLE_BAR );
+		
+		section.setText(CODE_MODULE_ACTIONS_TITLE);
+		section.setDescription(CODE_MODULE_ACTIONS_DESCRIPTION);
+
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(gd);
+
+		Composite client = toolkit.createComposite( section, SWT.WRAP );
+		GridLayout layout = new GridLayout();
+		client.setLayout(layout);
+
+		createUpdateCodeModuleLink(toolkit, client);
+
+		section.setClient(client);
+	}
+
+	private void createUpdateCodeModuleLink(FormToolkit toolkit,
+			Composite client) {
+
+		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
+		link.setText(UPDATE_CODE_MODULE_LINK_TEXT);
+		link.setImage( Activator.getImage(IconFiles.ICON_CODEMODULE_UPDATE) );
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(UPDATE_CODE_MODULE_COMMAND_ID, null );
+				} catch (Exception exception) {
+					PluginLog.error( exception );
+				}
+			}
+	    });
+	}
+	
+	private void createFilesSection(final ScrolledForm form, FormToolkit toolkit ) {
 
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR );
 
-		ToolBar tbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
-		ToolItem titem = new ToolItem(tbar, SWT.NULL);
-		titem.setImage( Activator.getImage("icons/page_add.png") );
-		titem.setToolTipText("Add File");
-		titem = new ToolItem(tbar, SWT.PUSH);
-		titem.setToolTipText("Remove File");
-		titem.setImage( Activator.getImage("icons/page_delete.png") );
-
-		section.setTextClient(tbar);
+		section.setText(CODE_MODULE_FILES_TEXT);
+		section.setDescription(CODE_MODULE_FILES_DESCRIPTION);
+		
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		section.setLayoutData(gd);
+		
+		//		ToolBar tbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
+//		ToolItem titem = new ToolItem(tbar, SWT.NULL);
+//		titem.setImage( Activator.getImage("icons/page_add.png") );
+//		titem.setToolTipText("Add File");
+//		titem = new ToolItem(tbar, SWT.PUSH);
+//		titem.setToolTipText("Remove File");
+//		titem.setImage( Activator.getImage("icons/page_delete.png") );
+//		section.setTextClient(tbar);
 		
 		Composite client = toolkit.createComposite( section, SWT.WRAP );
 		GridLayout layout = new GridLayout();
@@ -198,45 +262,29 @@ public class CodeModuleEditorForm extends FormPage {
 		
 		toolkit.paintBordersFor(client);
 
-		section.setText("Code Module contents");
-		section.setDescription("Specify the Java resources contained in this code module");
 		section.setClient(client);
-
-		section.setLayoutData( new GridData(GridData.FILL_BOTH) );
 	}
 
 	private void createRemoveButton(FormToolkit toolkit, Composite client) {
 		
-		GridData gd;
-		Button removeButton = toolkit.createButton( client, "Remove", SWT.PUSH);
-		
+		Button removeButton = toolkit.createButton( client, REMOVE_LABEL, SWT.PUSH);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performRemoveFiles();
 			}
 		});
-		
-//		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-//		removeButton.setLayoutData(gd);
-//		removeButton.setImage( Activator.getImage("icons/page_delete.png") );
 	}
 
 	private void createAddButton(FormToolkit toolkit, Composite client) {
 		
-		Button addButton = toolkit.createButton( client, "Add...", SWT.PUSH);
+		Button addButton = toolkit.createButton( client, ADD_LABEL, SWT.PUSH);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performAddFile();
 			}
 		});
-
-//		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING );
-//		//gd.grabExcessHorizontalSpace = true;
-//		addButton.setLayoutData(gd);
-//		addButton.setImage( Activator.getImage("icons/page_add.png") );
-		
 	}
 
 	protected void performRemoveFiles() 
@@ -256,7 +304,7 @@ public class CodeModuleEditorForm extends FormPage {
 	protected void performAddFile() 
 	{
 		FileDialog dialog = new FileDialog( this.getSite().getShell(), SWT.OPEN);
-		dialog.setFilterExtensions(new String [] {"*.class", "*.jar", "*.zip", "*.*"} );
+		dialog.setFilterExtensions( ALLOWED_FILES_EXTENSIONS );
 		String result = dialog.open();
 		
 		if ( result != null ) {
@@ -296,15 +344,15 @@ public class CodeModuleEditorForm extends FormPage {
 	}
 
 	private void addLabel(Composite container, String text) {
-		final Label label_1 = new Label( container, SWT.NONE );
-		final GridData gridData_1 = new GridData(GridData.BEGINNING);
-		label_1.setLayoutData(gridData_1);
-		label_1.setText(text);
+		Label label = new Label( container, SWT.NONE );
+		GridData gridData_1 = new GridData(GridData.BEGINNING);
+		label.setLayoutData(gridData_1);
+		label.setText(text);
 	}
 
 	private void createFilesTableColumns(TableViewer viewer) {
 
-		String[] titles = { "Name", "Last modified", "Path" };
+		String[] titles = { NAME_COLUMN_LABEL, LAST_MODIFIED_COLUMN_LABEL, PATH_COLUMN_LABEL };
 		int[] bounds = { 100, 100, 300 };
 
 		for (int i = 0; i < titles.length; i++) {
@@ -329,27 +377,16 @@ public class CodeModuleEditorForm extends FormPage {
 	
 		@Override
 		public void dispose() {
-			// TODO Auto-generated method stub
-			
 		}
 	
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub
-			
 		}
 	}
 	
 	public class FilesLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-//		// We use icons
-//		private static final Image CHECKED = AbstractUIPlugin
-//				.imageDescriptorFromPlugin("de.vogella.jface.tableviewer",
-//						"icons/checked.gif").createImage();
-//		private static final Image UNCHECKED = AbstractUIPlugin
-//				.imageDescriptorFromPlugin("de.vogella.jface.tableviewer",
-//						"icons/unchecked.gif").createImage();
-
+		private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -372,13 +409,13 @@ public class CodeModuleEditorForm extends FormPage {
 					return new Date( file.lastModified() ).toString();
 				}
 				else {
-					return "";
+					return EMPTY_STRING;
 				}
 			case 2:
 				return file.getParent();
 			}
 
-			return "";
+			return EMPTY_STRING;
 		}
 	}
 }

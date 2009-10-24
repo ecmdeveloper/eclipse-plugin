@@ -77,7 +77,6 @@ public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler
 				}
 			}
 		} catch (Exception e) {
-			PluginLog.error(e);
 			PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
 		}
 		return null;
