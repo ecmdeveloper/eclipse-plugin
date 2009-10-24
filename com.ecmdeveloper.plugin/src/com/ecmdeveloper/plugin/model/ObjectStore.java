@@ -29,7 +29,7 @@ public class ObjectStore extends ObjectStoreItem
 	protected com.filenet.api.core.ObjectStore objectStore;
 	protected Folder rootFolder;
 	
-	private ArrayList<IObjectStoreItem> children;
+	private Collection<IObjectStoreItem> children;
 
 	public ObjectStore(String objectStoreName, IObjectStoreItem parent) {
 
@@ -53,17 +53,28 @@ public class ObjectStore extends ObjectStoreItem
 		if ( children == null )
 		{
 			children = new ArrayList<IObjectStoreItem>();
+			children.add( new Placeholder() );
+			
+			ObjectStoresManager.getManager().loadChildren(this);
 		}
 
-		if ( objectStore != null && rootFolder == null )
-		{
-			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
-			rootFolder = new Folder( objectStore.get_RootFolder(), this, this );
-			children.addAll( rootFolder.getChildren() );
-		}
+//		if ( objectStore != null && rootFolder == null )
+//		{
+//			
+//			// TODO fetch these in a background thread...
+//			
+//			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
+//			rootFolder = new Folder( objectStore.get_RootFolder(), this, this );
+//			children.addAll( rootFolder.getChildren() );
+//		}
 
 		return children;
 	}
+
+	@Override
+	public void setChildren(Collection<IObjectStoreItem> children) {
+		this.children = children;
+	}	
 
 	public boolean isConnected() {
 		

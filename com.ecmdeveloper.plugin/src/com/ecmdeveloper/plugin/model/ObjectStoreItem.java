@@ -1,6 +1,7 @@
 package com.ecmdeveloper.plugin.model;
 
 import java.beans.DesignMode;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Platform;
@@ -91,6 +92,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		}
 	}
 
+	@Override
+	public void setChildren(Collection<IObjectStoreItem> children) {
+		// Stub for childless objects 
+	}	
+	
 	private void moveChildObject(IObjectStoreItem destination) {
 
 		com.filenet.api.core.Folder folder = (com.filenet.api.core.Folder) getObjectStoreObject();
