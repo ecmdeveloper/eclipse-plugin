@@ -92,33 +92,39 @@ public class ObjectStoresViewContentProvider implements
 	}
 
 	@Override
-	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
+	public void objectStoreItemsChanged(final ObjectStoresManagerEvent event) {
 
-		if ( event.getItemsRemoved() != null ) {
-			viewer.remove( event.getItemsRemoved() );
-		}
-
-		if ( event.getItemsAdded() != null ) {
+		viewer.getTree().getDisplay().asyncExec( new Runnable() {
 			
-			for ( IObjectStoreItem objectStoreItem : event.getItemsAdded() ) {
-				if ( objectStoreItem instanceof ObjectStore ) {
-					viewer.refresh(null, false );
-					viewer.add( invisibleRoot, objectStoreItem );
-				} else {
+			@Override
+			public void run() {
+				if ( event.getItemsRemoved() != null ) {
+					viewer.remove( event.getItemsRemoved() );
+				}
+	
+				if ( event.getItemsAdded() != null ) {
+					
+					for ( IObjectStoreItem objectStoreItem : event.getItemsAdded() ) {
+						if ( objectStoreItem instanceof ObjectStore ) {
+							viewer.refresh(null, false );
+							viewer.add( invisibleRoot, objectStoreItem );
+						} else {
+						}
+					}
+				}
+				
+				if ( event.getItemsUpdated() != null ) {
+					viewer.update( event.getItemsUpdated() , null );
+	
+					for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
+						if ( objectStoreItem instanceof Folder ) {
+							viewer.refresh(objectStoreItem);
+						} else if ( objectStoreItem instanceof ObjectStore ) {
+							viewer.refresh( objectStoreItem, false );
+						}
+					}
 				}
 			}
-		}
-		
-		if ( event.getItemsUpdated() != null ) {
-			viewer.update( event.getItemsUpdated() , null );
-
-			for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
-				if ( objectStoreItem instanceof Folder ) {
-					viewer.refresh(objectStoreItem);
-				} else if ( objectStoreItem instanceof ObjectStore ) {
-					viewer.refresh( objectStoreItem, false );
-				}
-			}
-		}
+		});
 	}
 }

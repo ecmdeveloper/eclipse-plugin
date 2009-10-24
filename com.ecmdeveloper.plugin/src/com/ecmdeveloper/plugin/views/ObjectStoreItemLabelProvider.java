@@ -14,6 +14,7 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.Placeholder;
 import com.ecmdeveloper.plugin.util.IconFiles;
 
 public class ObjectStoreItemLabelProvider extends LabelProvider {
@@ -59,7 +60,9 @@ public class ObjectStoreItemLabelProvider extends LabelProvider {
 
 		String imageKey = ISharedImages.IMG_OBJS_INFO_TSK;
 		
-		if (obj instanceof ObjectStore) {
+		if ( obj instanceof Placeholder ){
+	         return Activator.getImage( IconFiles.HOURGLASS );
+		} else if (obj instanceof ObjectStore) {
 			
 	         Image image = Activator.getImage( IconFiles.ICON_OBJECTSTORE );
 	         Image decorated = decorator.decorateImage(image, obj);
