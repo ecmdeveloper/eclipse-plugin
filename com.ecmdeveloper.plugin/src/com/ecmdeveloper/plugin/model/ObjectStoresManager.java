@@ -5,20 +5,30 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginTagNames;
+import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.core.IndependentObject;
+import com.filenet.api.core.ReferentialContainmentRelationship;
 
 /**
  * 
@@ -27,6 +37,8 @@ import com.ecmdeveloper.plugin.util.PluginTagNames;
  */
 public class ObjectStoresManager implements IObjectStoresManager
 {
+	private static final String CONNECT_MESSAGE = "Connecting to \"{0}\"";
+
 	private static ObjectStoresManager objectStoresManager;
 	
 	protected Map<String,ContentEngineConnection> connections;
@@ -34,7 +46,11 @@ public class ObjectStoresManager implements IObjectStoresManager
 
 	private List<ObjectStoresManagerListener> listeners = new ArrayList<ObjectStoresManagerListener>();
 	
-	private ObjectStoresManager() {}
+	private ExecutorService executorService;
+
+	private ObjectStoresManager() {
+		executorService = Executors.newSingleThreadExecutor();
+	}
 	
 	public static ObjectStoresManager getManager()
 	{
@@ -55,47 +71,140 @@ public class ObjectStoresManager implements IObjectStoresManager
 //		return new String[0];
 	}
 	
-	public String createConnection(String url, String username, String password) 
+	public String createConnection(String url, String username, String password, IProgressMonitor monitor ) 
 	{
-		if ( connections == null) {
-			loadObjectStores();
+		try {
+			
+			if ( monitor != null ) {
+	    		monitor.beginTask( MessageFormat.format( CONNECT_MESSAGE, url ), IProgressMonitor.UNKNOWN);
+			}
+			
+			if ( connections == null) {
+				loadObjectStores();
+			}
+			
+			ContentEngineConnection objectStoreConnection = new ContentEngineConnection();
+			
+			objectStoreConnection.setUrl(url);
+			objectStoreConnection.setUsername(username);
+			objectStoreConnection.setPassword(password);
+			objectStoreConnection.connect();
+	
+			connections.put( objectStoreConnection.getName(), objectStoreConnection);
+			
+			return objectStoreConnection.getName();
+		} finally {
+			if ( monitor != null ) {
+				monitor.done();
+			}
 		}
-		
-		ContentEngineConnection objectStoreConnection = new ContentEngineConnection();
-		
-		objectStoreConnection.setUrl(url);
-		objectStoreConnection.setUsername(username);
-		objectStoreConnection.setPassword(password);
-		objectStoreConnection.connect();
-				
-		PluginLog.info("Connecting to " + url + " with " + username);
-
-		connections.put( objectStoreConnection.getName(), objectStoreConnection);
-		
-		return objectStoreConnection.getName();
 	}
 	
-	public void connectConnection( String connectionName ) {
-	
-		if ( connections.containsKey( connectionName ) ) {
-
-			connections.get( connectionName ).connect();
-
-			ArrayList<IObjectStoreItem> connectionObjectStores = new ArrayList<IObjectStoreItem>();
-			
-			for ( IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
-				
-				ObjectStore objectStore = (ObjectStore) objectStoreItem;
-				if ( objectStore.getConnection().getName().equals(connectionName)) {
-					objectStore.connect();
-					connectionObjectStores.add( objectStore );
+	public void loadChildren( final ObjectStoreItem objectStoreItem )
+	{
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				ArrayList<IObjectStoreItem> children = new ArrayList<IObjectStoreItem>();
+		
+				com.filenet.api.core.Folder folder;
+		
+				if ( objectStoreItem instanceof ObjectStore ) {
+					com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) objectStoreItem.getObjectStoreObject();
+					objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
+					folder = objectStore.get_RootFolder();
+				} else if ( objectStoreItem instanceof Folder ) {
+					folder = (com.filenet.api.core.Folder) objectStoreItem.getObjectStoreObject();
+				} else {
+					return;
 				}
+				
+				folder.fetchProperties( new String[] { PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
+				
+				Iterator<?> iterator = folder.get_SubFolders().iterator();
+				ObjectStore objectStore = objectStoreItem.getObjectStore();
+				while (iterator.hasNext()) {
+					children.add( new Folder( iterator.next(), objectStoreItem, objectStore ) );
+				}
+				
+				iterator = folder.get_Containees().iterator();
+				
+				while (iterator.hasNext() ) {
+					
+					ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
+					relation.fetchProperties( new String[]{ PropertyNames.HEAD } );
+		
+					IndependentObject object = relation.get_Head();
+		
+					if ( object instanceof com.filenet.api.core.Document )
+					{
+						children.add( new Document( object, objectStoreItem, objectStore ) );
+					}
+					else if ( object instanceof com.filenet.api.core.Folder )
+					{
+						// TODO: mark this folder as a link instead of a regular child?
+						children.add( new Folder( object, objectStoreItem, objectStore ) );
+					}
+					else if ( object instanceof com.filenet.api.core.CustomObject )
+					{
+						children.add( new CustomObject( object, objectStoreItem, objectStore ) );
+					}
+				}
+				
+//				ObjectStoreItem[] oldChildren = objectStoreItem.getChildren().toArray(new ObjectStoreItem[1] );
+				objectStoreItem.setChildren(children);
+				
+//				fireObjectStoreItemsChanged(children.toArray(new ObjectStoreItem[0]), oldChildren, null );
+				fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem} );
 			}
+		};
+		
+		executorService.execute(runnable);
+	}
+	
+	public void connectConnection( final String connectionName, IProgressMonitor monitor ) {
 
-			fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
+		try {
+			if ( monitor != null ) {
+				monitor.beginTask( MessageFormat.format( CONNECT_MESSAGE, connectionName ), IProgressMonitor.UNKNOWN);
+			}
+	
+			if ( connections.containsKey( connectionName ) ) {
+	
+				Runnable runnable = new Runnable() {
+					@Override
+					public void run() {
+						connections.get( connectionName ).connect();
+						ArrayList<IObjectStoreItem> connectionObjectStores = new ArrayList<IObjectStoreItem>();
+						
+						for ( IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
+							
+							ObjectStore objectStore = (ObjectStore) objectStoreItem;
+							if ( objectStore.getConnection().getName().equals(connectionName)) {
+								objectStore.connect();
+								connectionObjectStores.add( objectStore );
+							}
+						}
 			
-		} else {
-			throw new UnsupportedOperationException( "Invalid connection name '" + connectionName + "'" );
+						fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
+					}
+				};
+	
+				try {
+					executorService.submit(runnable).get();
+				} catch (ExecutionException e) {
+					throw new RuntimeException(e);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+				
+			} else {
+				throw new UnsupportedOperationException( "Invalid connection name '" + connectionName + "'" );
+			}
+		} finally {
+			if ( monitor != null ) {
+				monitor.done();
+			}
 		}
 	}
 	
@@ -124,7 +233,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
 	}
 
-	public void connectObjectStore(ObjectStore objectStore)
+	public void connectObjectStore(ObjectStore objectStore, IProgressMonitor monitor )
 	{
 		if ( objectStore == null) {
 			return;
@@ -134,7 +243,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 			return;
 		}
 		
-		connectConnection(objectStore.getConnection().getName() );
+		connectConnection(objectStore.getConnection().getName(), monitor );
 	}
 
 	public ObjectStores getObjectStores()
