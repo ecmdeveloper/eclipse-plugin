@@ -1,6 +1,10 @@
 package com.ecmdeveloper.plugin.codemodule.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -69,6 +73,29 @@ public class CodeModuleEditor extends FormEditor implements CodeModulesManagerLi
 
 		if ( ! (input instanceof CodeModuleEditorInput ) )
 	         throw new PartInitException( "Invalid Input: Must be CodeModuleEditorInput");
+		
+		site.setSelectionProvider( new ISelectionProvider() {
+
+			@Override
+			public void addSelectionChangedListener( ISelectionChangedListener listener) {
+				// No changing selection
+			}
+
+			@Override
+			public ISelection getSelection() {
+				return new StructuredSelection( getEditorInput().getAdapter( CodeModuleFile.class ) );
+			}
+
+			@Override
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+				// No changing selection
+			}
+
+			@Override
+			public void setSelection(ISelection selection) {
+				// No changing selection
+			}
+		});
 	}
 
 	@Override

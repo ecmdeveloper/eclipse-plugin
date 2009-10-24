@@ -1,9 +1,11 @@
 package com.ecmdeveloper.plugin.codemodule.wizard;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IEditorInput;
@@ -14,6 +16,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditor;
@@ -23,6 +26,7 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 
 /**
@@ -32,6 +36,7 @@ import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
  */
 public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 
+	private static final String WIZARD_NAME = "Import Code Module";
 	private SelectCodeModuleWizardPage selectCodeModuleWizardPage;
 	private ObjectStore objectStore;
 	private CodeModule codeModule;
@@ -49,7 +54,8 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 		
 		selectCodeModuleWizardPage = new SelectCodeModuleWizardPage();
 		addPage( selectCodeModuleWizardPage );
-		setWindowTitle( "Import Code Module" );
+		setWindowTitle( WIZARD_NAME );
+		setNeedsProgressMonitor(true);
 	}
 
 	@Override
@@ -108,7 +114,20 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 
 	public void connectObjectStore() {
 		if ( objectStore != null ) {
-			objectStoresManager.connectObjectStore( objectStore );
+			try {
+	         getContainer().run(true, false, new IRunnableWithProgress() {
+		            public void run(IProgressMonitor monitor) throws InvocationTargetException,
+		                  InterruptedException {
+		    			objectStoresManager.connectObjectStore( objectStore, monitor );
+		            }
+		         });
+		      }
+		      catch (InvocationTargetException e) {
+		    	  PluginMessage.openError(getShell(), WIZARD_NAME, e.getLocalizedMessage(), e );
+		      }
+		      catch (InterruptedException e) {
+		    	  // Should not happen
+		      }
 		}
 	}
 }

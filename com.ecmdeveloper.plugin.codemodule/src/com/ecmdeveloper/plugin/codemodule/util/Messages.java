@@ -13,6 +13,24 @@ public class Messages extends NLS {
 	private Messages() {
 	}
 
+	public static String CodeModuleEditorForm_AddLabel;
+	public static String CodeModuleEditorForm_CodeModuleActionsDescription;
+	public static String CodeModuleEditorForm_CodeModuleActionsTitle;
+	public static String CodeModuleEditorForm_CodeModuleFilesDescription;
+	public static String CodeModuleEditorForm_CodeModuleFilesText;
+	public static String CodeModuleEditorForm_CodeModuleNamePrefix;
+	public static String CodeModuleEditorForm_CodeModulePropertiesDescription;
+	public static String CodeModuleEditorForm_CodeModulePropertiesTitle;
+	public static String CodeModuleEditorForm_EmptyNameMessage;
+	public static String CodeModuleEditorForm_FormTitle;
+	public static String CodeModuleEditorForm_LastModifiedColumnLabel;
+	public static String CodeModuleEditorForm_NameColumnLabel;
+	public static String CodeModuleEditorForm_NameLabel;
+	public static String CodeModuleEditorForm_NoFilesMessage;
+	public static String CodeModuleEditorForm_ObjectStoreLabel;
+	public static String CodeModuleEditorForm_PathColumnLabel;
+	public static String CodeModuleEditorForm_RemoveLabel;
+	public static String CodeModuleEditorForm_UpdateCodeModuleLinkText;
 	public static String EditCodeModuleHandler_HandlerName;
 	public static String EditCodeModuleHandler_OpenCodeModuleEditorError;
 	public static String NewCodeModuleWizard_OpenEditorFailedMessage;

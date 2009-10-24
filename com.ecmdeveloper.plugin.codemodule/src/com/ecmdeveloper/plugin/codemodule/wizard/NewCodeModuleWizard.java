@@ -3,6 +3,10 @@
  */
 package com.ecmdeveloper.plugin.codemodule.wizard;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IEditorInput;
@@ -94,7 +98,20 @@ public class NewCodeModuleWizard extends Wizard implements INewWizard {
 
 	public void connectObjectStore() {
 		if ( objectStore != null ) {
-			objectStoresManager.connectObjectStore( objectStore );
+			try {
+	         getContainer().run(true, false, new IRunnableWithProgress() {
+		            public void run(IProgressMonitor monitor) throws InvocationTargetException,
+		                  InterruptedException {
+		    			objectStoresManager.connectObjectStore( objectStore, monitor );
+		            }
+		         });
+		      }
+		      catch (InvocationTargetException e) {
+		    	  PluginMessage.openError(getShell(), WIZARD_NAME, e.getLocalizedMessage(), e );
+		      }
+		      catch (InterruptedException e) {
+		    	  // Should not happen
+		      }
 		}
 	}
 
