@@ -75,8 +75,8 @@ public class RenameObjectStoreItemHandler extends AbstractHandler implements IHa
 					ObjectStoresManager.getManager().updateObjectStoreItems(
 							new IObjectStoreItem[] { objectStoreItem }, false); 
 				} catch (Exception e) {
-					PluginLog.error(e);
-					PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
+//					PluginLog.error(e);
+					PluginMessage.openError(window.getShell(), HANDLER_NAME, "Rename failed", e );
 				} 
 			}
 		}
@@ -86,7 +86,8 @@ public class RenameObjectStoreItemHandler extends AbstractHandler implements IHa
 
 	class FolderNameValidator implements IInputValidator
 	{
-		private static final String NAME_INVALID_CHARS = "\\/*:?\"<>|"; //$NON-NLS-1$
+//		private static final String NAME_INVALID_CHARS = "\\/*:\"<>|?"; //$NON-NLS-1$
+		private static final String NAME_INVALID_CHARS = ""; //$NON-NLS-1$
 		private static final int MAX_NAME_LENGTH = 64;
 		
 		@Override
