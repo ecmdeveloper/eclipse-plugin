@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +25,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
+import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginTagNames;
 import com.filenet.api.constants.PropertyNames;
@@ -102,64 +105,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 	
 	public void loadChildren( final ObjectStoreItem objectStoreItem )
 	{
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				ArrayList<IObjectStoreItem> children = new ArrayList<IObjectStoreItem>();
-		
-				com.filenet.api.core.Folder folder;
-		
-				if ( objectStoreItem instanceof ObjectStore ) {
-					com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) objectStoreItem.getObjectStoreObject();
-					objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
-					folder = objectStore.get_RootFolder();
-				} else if ( objectStoreItem instanceof Folder ) {
-					folder = (com.filenet.api.core.Folder) objectStoreItem.getObjectStoreObject();
-				} else {
-					return;
-				}
-				
-				folder.fetchProperties( new String[] { PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
-				
-				Iterator<?> iterator = folder.get_SubFolders().iterator();
-				ObjectStore objectStore = objectStoreItem.getObjectStore();
-				while (iterator.hasNext()) {
-					children.add( new Folder( iterator.next(), objectStoreItem, objectStore ) );
-				}
-				
-				iterator = folder.get_Containees().iterator();
-				
-				while (iterator.hasNext() ) {
-					
-					ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
-					relation.fetchProperties( new String[]{ PropertyNames.HEAD } );
-		
-					IndependentObject object = relation.get_Head();
-		
-					if ( object instanceof com.filenet.api.core.Document )
-					{
-						children.add( new Document( object, objectStoreItem, objectStore ) );
-					}
-					else if ( object instanceof com.filenet.api.core.Folder )
-					{
-						// TODO: mark this folder as a link instead of a regular child?
-						children.add( new Folder( object, objectStoreItem, objectStore ) );
-					}
-					else if ( object instanceof com.filenet.api.core.CustomObject )
-					{
-						children.add( new CustomObject( object, objectStoreItem, objectStore ) );
-					}
-				}
-				
-//				ObjectStoreItem[] oldChildren = objectStoreItem.getChildren().toArray(new ObjectStoreItem[1] );
-				objectStoreItem.setChildren(children);
-				
-//				fireObjectStoreItemsChanged(children.toArray(new ObjectStoreItem[0]), oldChildren, null );
-				fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem} );
-			}
-		};
-		
-		executorService.execute(runnable);
+		LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this, objectStoreItem );
+		executorService.submit(loadChildrenTask);
 	}
 	
 	public void connectConnection( final String connectionName, IProgressMonitor monitor ) {
@@ -317,14 +264,22 @@ public class ObjectStoresManager implements IObjectStoresManager
 	public void updateObjectStoreItems(IObjectStoreItem[] objectStoreItems, boolean delete ) {
 		
 		// TODO add updating batch support
-		for (IObjectStoreItem objectStoreItem2 : objectStoreItems) {
-			((ObjectStoreItem)objectStoreItem2).save();
-		}
-
-		if ( delete ) {
-			fireObjectStoreItemsChanged(null, objectStoreItems, null );
-		} else {
-			fireObjectStoreItemsChanged(null, null, objectStoreItems );
+//		for (IObjectStoreItem objectStoreItem2 : objectStoreItems) {
+//			((ObjectStoreItem)objectStoreItem2).save();
+//		}
+//
+//		if ( delete ) {
+//			fireObjectStoreItemsChanged(null, objectStoreItems, null );
+//		} else {
+//			fireObjectStoreItemsChanged(null, null, objectStoreItems );
+//		}
+		UpdateTask updateTask = new UpdateTask(this, objectStoreItems, delete);
+		try {
+			executorService.submit(updateTask).get();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -477,7 +432,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		listeners.remove(listener);
 	}
 
-	private void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
+	public void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
 			IObjectStoreItem[] itemsRemoved, IObjectStoreItem[] itemsUpdated ) {
 		ObjectStoresManagerEvent event = new ObjectStoresManagerEvent(this,
 				itemsAdded, itemsRemoved, itemsUpdated );
