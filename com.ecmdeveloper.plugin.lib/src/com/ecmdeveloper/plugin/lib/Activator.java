@@ -1,6 +1,11 @@
 package com.ecmdeveloper.plugin.lib;
 
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -28,10 +33,18 @@ public class Activator extends Plugin {
 		super.start(context);
 		plugin = this;
 		
-		String jaasConfigFile = "D:/Users/Ricardo.Belfor/ecm-developer/com.ecmdeveloper.plugin.lib/config/jaas.conf.WSI";
-		String waspLocation = "D:/Users/Ricardo.Belfor/ecm-developer/com.ecmdeveloper.plugin.lib/wsi";
+		String installLocation = getInstallLocation();
+		String jaasConfigFile = installLocation + "/config/jaas.conf.WSI";
+		String waspLocation = installLocation + "/wsi";
 		System.setProperty("java.security.auth.login.config", jaasConfigFile );
 		System.setProperty("wasp.location", waspLocation );
+	}
+
+	public String getInstallLocation() throws Exception {
+		Bundle bundle = getBundle();
+		URL locationUrl = FileLocator.find(bundle, new Path("/"), null);
+		URL fileUrl = FileLocator.toFileURL(locationUrl);
+		return fileUrl.getFile();
 	}
 
 	/*
