@@ -48,10 +48,8 @@ public class Action extends ObjectStoreItem {
 	}
 
 	public void setCodeModule(CodeModule codeModule) {
-		eventAction
-				.set_CodeModule((com.filenet.api.admin.CodeModule) codeModule
-						.getAdapter(com.filenet.api.core.Document.class));
-		eventAction.save( RefreshMode.REFRESH );
+		eventAction.set_CodeModule((com.filenet.api.admin.CodeModule) codeModule
+						.getObjectStoreObject());
 	}
 	
 	public void setCodeModuleVersion(String codeModuleVersion ) {

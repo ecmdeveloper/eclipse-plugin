@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.filenet.api.collection.CodeModuleSet;
 import com.filenet.api.constants.PropertyNames;
@@ -27,7 +28,6 @@ public class ObjectStore extends ObjectStoreItem
 	private static final String NOT_CONNECTED_MESSAGE = Messages.ObjectStore_NotConnectedMessage;
 	protected ContentEngineConnection connection;
 	protected com.filenet.api.core.ObjectStore objectStore;
-	protected Folder rootFolder;
 	
 	private Collection<IObjectStoreItem> children;
 
@@ -55,19 +55,9 @@ public class ObjectStore extends ObjectStoreItem
 			children = new ArrayList<IObjectStoreItem>();
 			children.add( new Placeholder() );
 			
-			ObjectStoresManager.getManager().loadChildren(this);
+			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
+			ObjectStoresManager.getManager().executeTaskASync(loadChildrenTask);
 		}
-
-//		if ( objectStore != null && rootFolder == null )
-//		{
-//			
-//			// TODO fetch these in a background thread...
-//			
-//			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
-//			rootFolder = new Folder( objectStore.get_RootFolder(), this, this );
-//			children.addAll( rootFolder.getChildren() );
-//		}
-
 		return children;
 	}
 
@@ -75,6 +65,12 @@ public class ObjectStore extends ObjectStoreItem
 	public void setChildren(Collection<IObjectStoreItem> children) {
 		this.children = children;
 	}	
+
+	public void removeChild(IObjectStoreItem childItem ) {
+		if ( children.contains( childItem ) ) {
+			children.remove(childItem);
+		}
+	}
 
 	public boolean isConnected() {
 		
@@ -95,19 +91,6 @@ public class ObjectStore extends ObjectStoreItem
 		objectStore.fetchProperties( new String[] { PropertyNames.ID } );
 		id = objectStore.get_Id().toString();
 	}
-
-//	// TODO: remove this offline test stuff
-//	
-//	private boolean tempConnected = false;
-//	
-//	public boolean isConnected() {
-//		
-//		return tempConnected;
-//	}
-//
-//	public void connect() {
-//		tempConnected = true;
-//	}
 	
 	public ContentEngineConnection getConnection() {
 		return connection;
@@ -136,14 +119,6 @@ public class ObjectStore extends ObjectStoreItem
 		return codeModules;
 	}
 	
-	public Folder getRootFolder() {
-		
-		if ( rootFolder == null ) {
-			getChildren();
-		}
-		return rootFolder;
-	}
-	
 	public IObjectStoreItem getObject(String id, String className )
 	{
 		if ( objectStore == null ) {
@@ -167,7 +142,6 @@ public class ObjectStore extends ObjectStoreItem
 	@Override
 	public void refresh() {
 		children = null;
-		rootFolder = null;
 	}
 
 	public static void assertConnected(ObjectStore objectStore) {

@@ -219,6 +219,11 @@
                               value="com.ecmdeveloper.plugin.model.ObjectStore">
                         </instanceof>
                      </not>
+                     <not>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                        </instanceof>
+                     </not>
                   </iterate>
                </with>
             </visibleWhen>

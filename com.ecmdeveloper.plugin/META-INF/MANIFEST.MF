@@ -15,4 +15,5 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.ide
 Export-Package: com.ecmdeveloper.plugin.dialogs,
  com.ecmdeveloper.plugin.model,
+ com.ecmdeveloper.plugin.model.tasks,
  com.ecmdeveloper.plugin.views
