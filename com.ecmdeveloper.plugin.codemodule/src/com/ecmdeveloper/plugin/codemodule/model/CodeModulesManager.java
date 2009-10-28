@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IMemento;
@@ -19,8 +20,13 @@ import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 import com.ecmdeveloper.plugin.codemodule.util.PluginTagNames;
 import com.ecmdeveloper.plugin.model.Action;
 import com.ecmdeveloper.plugin.model.CodeModule;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.tasks.CreateCodeModuleTask;
+import com.ecmdeveloper.plugin.model.tasks.GetCodeModuleActionsTask;
+import com.ecmdeveloper.plugin.model.tasks.UpdateCodeModuleTask;
+import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 
 public class CodeModulesManager {
 
@@ -155,13 +161,15 @@ public class CodeModulesManager {
 		}
 	}
 
-	public void saveNewCodeModuleFile(CodeModuleFile codeModuleFile) {
+	public void saveNewCodeModuleFile(CodeModuleFile codeModuleFile) throws ExecutionException {
 
 		ObjectStore objectStore = getObjectStore(codeModuleFile);
 		ObjectStore.assertConnected(objectStore);
 		
-		CodeModule codeModule = CodeModule.createInstance(codeModuleFile
-				.getName(), codeModuleFile.getFiles(), objectStore);
+		CreateCodeModuleTask task = new CreateCodeModuleTask(codeModuleFile
+				.getName(), codeModuleFile.getFiles(), objectStore );
+		
+		CodeModule codeModule = (CodeModule) ObjectStoresManager.getManager().executeTaskSync(task);
 		codeModuleFile.setId( codeModule.getId() );
 		
 		saveCodeModuleFile(codeModuleFile, true);
@@ -242,34 +250,35 @@ public class CodeModulesManager {
 		return codeModuleFile;
 	}
 
-	public Collection<Action> getCodeModuleActions( CodeModuleFile codeModuleFile ) {
+	@SuppressWarnings("unchecked")
+	public Collection<Action> getCodeModuleActions( CodeModuleFile codeModuleFile ) throws ExecutionException {
 		
-		CodeModule codeModule = getCodeModuleFromFile(codeModuleFile);
-		return codeModule.getActions();
+		ObjectStore objectStore = getObjectStore(codeModuleFile);
+		ObjectStore.assertConnected(objectStore);
+		GetCodeModuleActionsTask task = new GetCodeModuleActionsTask(codeModuleFile.getId(), objectStore );
+		return (Collection<Action>) ObjectStoresManager.getManager().executeTaskSync(task);
 	}
 	
-	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) {
+	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws ExecutionException {
 		
-		CodeModule codeModule = getCodeModuleFromFile(codeModuleFile);
-		codeModule.setName( codeModuleFile.getName() );
-		codeModule.update( codeModuleFile.getFiles() );
+		ObjectStore objectStore = getObjectStore(codeModuleFile);
+		ObjectStore.assertConnected(objectStore);
+		UpdateCodeModuleTask task = new UpdateCodeModuleTask(codeModuleFile
+				.getId(), codeModuleFile.getName(), codeModuleFile.getFiles(),
+				objectStore);
 		
+		CodeModule codeModule = (CodeModule) ObjectStoresManager.getManager().executeTaskSync(task);
+
 		for ( Object objectStoreItem : selectedActions ) {
 			if (objectStoreItem instanceof Action ) {
 				((Action) objectStoreItem).setCodeModule( codeModule );
+				UpdateTask updateTask = new UpdateTask((IObjectStoreItem) objectStoreItem );
+				ObjectStoresManager.getManager().executeTaskSync(updateTask);
 			}
 		}
+		
 	}
 
-	private CodeModule getCodeModuleFromFile(CodeModuleFile codeModuleFile) {
-		
-		ObjectStore objectStore = getObjectStore(codeModuleFile);
-		
-		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), "VersionSeries" );
-//		CodeModule codeModule = (CodeModule) objectStore.getObject(codeModuleFile.getId(), CODE_MODULE_CLASS_NAME );
-		return codeModule;
-	}
-	
 	public static IPath getCodeModulesPath() {
 		IPath parentFolder = Activator.getDefault().getStateLocation().append(CODEMODULES_FOLDER);
 		
