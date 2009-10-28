@@ -73,11 +73,6 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return objectStore;
 	}
 	
-	@Override
-	public void delete() {
-		getObjectStoreObject().delete();
-	}
-
 	public void save() {
 		getObjectStoreObject().save(RefreshMode.REFRESH);
 	}
@@ -104,8 +99,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		if ( destination instanceof Folder ) {
 			folder.set_Parent( (com.filenet.api.core.Folder) ((Folder) destination).getObjectStoreObject() );
 		} else if (destination instanceof ObjectStore ) {
-			Folder rootFolder = ((ObjectStore)destination).getRootFolder();
-			folder.set_Parent( (com.filenet.api.core.Folder) rootFolder.getObjectStoreObject() );
+
+			throw new UnsupportedOperationException( "Fix this!");
+// TODO: fix this			
+//			Folder rootFolder = ((ObjectStore)destination).getRootFolder();
+//			folder.set_Parent( (com.filenet.api.core.Folder) rootFolder.getObjectStoreObject() );
 		}
 		folder.save( RefreshMode.REFRESH );
 	}

@@ -5,7 +5,6 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.concurrent.Callable;
 
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
@@ -13,7 +12,6 @@ import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentObject;
 import com.filenet.api.core.ReferentialContainmentRelationship;
@@ -22,12 +20,11 @@ import com.filenet.api.core.ReferentialContainmentRelationship;
  * @author Ricardo Belfor
  *
  */
-public class LoadChildrenTask extends BaseTask implements Callable<String> {
+public class LoadChildrenTask extends BaseTask {
 
 	final protected ObjectStoreItem objectStoreItem;
 	
-	public LoadChildrenTask(ObjectStoresManager objectStoresManager, ObjectStoreItem objectStoreItem) {
-		super(objectStoresManager);
+	public LoadChildrenTask( ObjectStoreItem objectStoreItem ) {
 		this.objectStoreItem = objectStoreItem;
 	}
 
@@ -42,13 +39,12 @@ public class LoadChildrenTask extends BaseTask implements Callable<String> {
 			com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) objectStoreItem.getObjectStoreObject();
 			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
 			folder = objectStore.get_RootFolder();
+			folder.fetchProperties( new String[] { PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
 		} else if ( objectStoreItem instanceof Folder ) {
 			folder = (com.filenet.api.core.Folder) objectStoreItem.getObjectStoreObject();
 		} else {
 			return null;
 		}
-		
-		folder.fetchProperties( new String[] { PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
 		
 		Iterator<?> iterator = folder.get_SubFolders().iterator();
 		ObjectStore objectStore = objectStoreItem.getObjectStore();
@@ -81,7 +77,7 @@ public class LoadChildrenTask extends BaseTask implements Callable<String> {
 		}
 		
 		objectStoreItem.setChildren(children);
-		objectStoresManager.fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem} );
+		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem} );
 		
 		return null;
 	}

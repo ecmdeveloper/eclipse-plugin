@@ -4,32 +4,36 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.util.PluginLog;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class UpdateTask extends BaseTask {
+public class RefreshTask extends BaseTask {
 
 	protected IObjectStoreItem[] objectStoreItems;
-	
-	public UpdateTask( IObjectStoreItem objectStoreItem ) {
-		this.objectStoreItems = new IObjectStoreItem[] { objectStoreItem }; 
-	}
-	
-	public UpdateTask( IObjectStoreItem[] objectStoreItems ) {
+
+	public RefreshTask( IObjectStoreItem[] objectStoreItems ) {
 		this.objectStoreItems = objectStoreItems;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.Callable#call()
+	 */
 	@Override
-	public String call() throws Exception {
+	public Object call() throws Exception {
 
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
-			((ObjectStoreItem)objectStoreItem).save();
+			try {
+				objectStoreItem.refresh();
+			} catch (Exception e) {
+				PluginLog.error(e);
+			}
 		}
 
 		fireObjectStoreItemsChanged(null, null, objectStoreItems );
+
 		return null;
 	}
 }

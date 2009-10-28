@@ -10,7 +10,7 @@ public class ObjectStoresManagerEvent  extends EventObject {
 	private final IObjectStoreItem[] itemsRemoved;
 	private final IObjectStoreItem[] itemsUpdated;
 	
-	public ObjectStoresManagerEvent(ObjectStoresManager source,
+	public ObjectStoresManagerEvent(Object source,
 			IObjectStoreItem[] itemsAdded, IObjectStoreItem[] itemsRemoved, IObjectStoreItem[] itemsUpdated) {
 		super(source);
 		this.itemsAdded = itemsAdded;

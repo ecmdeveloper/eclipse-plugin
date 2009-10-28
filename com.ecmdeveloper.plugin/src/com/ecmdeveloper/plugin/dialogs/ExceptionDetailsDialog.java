@@ -231,6 +231,7 @@ public class ExceptionDetailsDialog extends AbstractDetailsDialog
       if (image != null)
          return image;
       Display display = Display.getCurrent();
+      if ( display == null ) return null;
       if (details instanceof IStatus) {
          switch (((IStatus) details).getSeverity()) {
          case IStatus.ERROR:

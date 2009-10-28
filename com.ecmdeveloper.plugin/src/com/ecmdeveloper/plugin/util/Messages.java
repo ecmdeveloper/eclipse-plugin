@@ -15,7 +15,10 @@ public class Messages extends NLS {
 
 	public static String ConnectObjectStoreHandler_HandlerName;
 	public static String DeleteObjectStoreItemHandler_DeleteMessage;
+	public static String DeleteObjectStoreItemHandler_FailedMessage;
 	public static String DeleteObjectStoreItemHandler_HandlerName;
+	public static String DeleteObjectStoreItemHandler_MonitorMessage;
+	public static String DeleteObjectStoreItemHandler_ProgressMessage;
 	public static String HandlerName;
 	public static String MoveObjectStoreItemHandler_ChooseDestinationMessage;
 	public static String MoveObjectStoreItemHandler_HandlerName;
@@ -25,6 +28,9 @@ public class Messages extends NLS {
 	public static String RefreshObjectStoreItemHandler_HandlerName;
 	public static String RenameObjectStoreItemHandler_0;
 	public static String RenameObjectStoreItemHandler_1;
+	public static String RenameObjectStoreItemHandler_FailedMessage;
 	public static String RenameObjectStoreItemHandler_InvalidCharsMessage;
 	public static String RenameObjectStoreItemHandler_InvalidLengthMessage;
+	public static String RenameObjectStoreItemHandler_MonitorMessage;
+	public static String RenameObjectStoreItemHandler_ProgressMessage;
 }

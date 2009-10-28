@@ -49,5 +49,7 @@ public class Document extends ObjectStoreItem {
 
 	@Override
 	public void setName(String name) {
+		this.name = name;
+		this.document.getProperties().putValue( "DocumentTitle", name);
 	}
 }

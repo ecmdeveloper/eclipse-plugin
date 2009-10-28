@@ -16,8 +16,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 import com.ecmdeveloper.plugin.util.Messages;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -49,17 +49,11 @@ public class RefreshObjectStoreItemHandler extends AbstractHandler  {
 		
 		while (iter.hasNext()) {
 			IObjectStoreItem selectedObject = (IObjectStoreItem) iter.next();
-
-			try {
-				selectedObject.refresh();
-				elementsRefreshed.add( selectedObject );
-			} catch (Exception e ) {
-				PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
-			}
+			elementsRefreshed.add( selectedObject );
 		}
-		
-		ObjectStoresManager.getManager().refreshObjectStoreItems(
-				elementsRefreshed.toArray(new IObjectStoreItem[0]) );
+
+		RefreshTask refreshTask = new RefreshTask( elementsRefreshed.toArray(new IObjectStoreItem[0] ) );
+		ObjectStoresManager.getManager().executeTaskASync(refreshTask);
 		
 		return null;
 	}

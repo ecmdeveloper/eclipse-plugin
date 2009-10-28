@@ -25,7 +25,10 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
+import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginTagNames;
@@ -103,12 +106,6 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 	}
 	
-	public void loadChildren( final ObjectStoreItem objectStoreItem )
-	{
-		LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this, objectStoreItem );
-		executorService.submit(loadChildrenTask);
-	}
-	
 	public void connectConnection( final String connectionName, IProgressMonitor monitor ) {
 
 		try {
@@ -161,12 +158,21 @@ public class ObjectStoresManager implements IObjectStoresManager
 			loadObjectStores();
 		}
 		
-		ObjectStore objectStore = new ObjectStore( name, objectStores );
+		final ObjectStore objectStore = new ObjectStore( name, objectStores );
 		objectStore.setConnection( connections.get( connectionName ) );
-		objectStore.connect();
-		objectStores.add(objectStore);
 		
-		fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
+		Callable<Object> callable = new Callable<Object>(){
+
+			@Override
+			public Object call() throws Exception {
+				objectStore.connect();
+				objectStores.add(objectStore);
+				fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
+				return null;
+			}
+		};
+		
+		executorService.submit(callable);
 	}
 	
 	public void removeObjectStore(ObjectStore objectStore) 
@@ -239,8 +245,22 @@ public class ObjectStoresManager implements IObjectStoresManager
 			return new String[0];
 		}
 		
-		ContentEngineConnection connection = connections.get( connectionName );
-		return connection.getObjectStoreNames();
+		final ContentEngineConnection connection = connections.get( connectionName );
+
+		Callable<String[]> a = new Callable<String[]>(){
+
+			@Override
+			public String[] call() throws Exception {
+				return connection.getObjectStoreNames();			}
+		};
+		
+		try {
+			return executorService.submit( a ).get();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public ObjectStore getObjectStore(String connectionName, String objectStoreName) {
@@ -261,32 +281,22 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return null;
 	}
 
-	public void updateObjectStoreItems(IObjectStoreItem[] objectStoreItems, boolean delete ) {
-		
-		// TODO add updating batch support
-//		for (IObjectStoreItem objectStoreItem2 : objectStoreItems) {
-//			((ObjectStoreItem)objectStoreItem2).save();
-//		}
-//
-//		if ( delete ) {
-//			fireObjectStoreItemsChanged(null, objectStoreItems, null );
-//		} else {
-//			fireObjectStoreItemsChanged(null, null, objectStoreItems );
-//		}
-		UpdateTask updateTask = new UpdateTask(this, objectStoreItems, delete);
+	public Object executeTaskSync( BaseTask task ) throws ExecutionException
+	{
 		try {
-			executorService.submit(updateTask).get();
+			task.setListeners(listeners);
+			return executorService.submit(task).get();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public void refreshObjectStoreItems(IObjectStoreItem[] objectStoreItems ) {
-		fireObjectStoreItemsChanged(null, null, objectStoreItems );
+		} 
 	}
 
+	public void executeTaskASync( BaseTask task )
+	{
+		task.setListeners(listeners);
+		executorService.submit(task);
+	}
+	
 	public void moveObjectStoreItems( IObjectStoreItem[] objectStoreItems, IObjectStoreItem destination )
 	{
 		fireObjectStoreItemsChanged(null, objectStoreItems, null );
@@ -432,7 +442,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		listeners.remove(listener);
 	}
 
-	public void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
+	private void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
 			IObjectStoreItem[] itemsRemoved, IObjectStoreItem[] itemsUpdated ) {
 		ObjectStoresManagerEvent event = new ObjectStoresManagerEvent(this,
 				itemsAdded, itemsRemoved, itemsUpdated );
