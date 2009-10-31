@@ -76,10 +76,13 @@ public class CodeModuleEditorForm extends FormPage {
 	private static final String CODE_MODULE_ACTIONS_DESCRIPTION = Messages.CodeModuleEditorForm_CodeModuleActionsDescription;
 	private static final String CODE_MODULE_ACTIONS_TITLE = Messages.CodeModuleEditorForm_CodeModuleActionsTitle;
 	private static final String UPDATE_CODE_MODULE_LINK_TEXT = Messages.CodeModuleEditorForm_UpdateCodeModuleLinkText;
-	private static final String UPDATE_CODE_MODULE_COMMAND_ID = "com.ecmdeveloper.plugin.updateCodeModule"; //$NON-NLS-1$
+	private static final String SHOW_CODE_MODULE_ACTIONS_LINK_TEXT = "Show Code Module Actions";
 	private static final String NAME_MESSAGE_KEY = "nameMessageKey"; //$NON-NLS-1$
 	private static final String FILES_MESSAGE_KEY = "filesMessageKey"; //$NON-NLS-1$
 	private static final String ALLOWED_FILES_EXTENSIONS[] = {"*.class", "*.jar", "*.zip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	private static final String UPDATE_CODE_MODULE_COMMAND_ID = "com.ecmdeveloper.plugin.updateCodeModule"; //$NON-NLS-1$
+	private static final String SHOW_CODE_MODULES_ACTIONS_COMMAND_ID = "com.ecmdeveloper.plugin.showCodeModuleActions";
 	
 	private Text nameText;
 	private Label objectStoreLabel;
@@ -202,7 +205,8 @@ public class CodeModuleEditorForm extends FormPage {
 		client.setLayout(layout);
 
 		createUpdateCodeModuleLink(toolkit, client);
-
+		createShowCodeModuleActionsLink(toolkit, client);
+		
 		section.setClient(client);
 	}
 
@@ -217,6 +221,24 @@ public class CodeModuleEditorForm extends FormPage {
 				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
 				try {
 					handlerService.executeCommand(UPDATE_CODE_MODULE_COMMAND_ID, null );
+				} catch (Exception exception) {
+					PluginLog.error( exception );
+				}
+			}
+	    });
+	}
+
+	private void createShowCodeModuleActionsLink(FormToolkit toolkit,
+			Composite client) {
+
+		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
+		link.setText(SHOW_CODE_MODULE_ACTIONS_LINK_TEXT);
+		link.setImage( Activator.getImage(IconFiles.ICON_ACTION) );
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(SHOW_CODE_MODULES_ACTIONS_COMMAND_ID, null );
 				} catch (Exception exception) {
 					PluginLog.error( exception );
 				}

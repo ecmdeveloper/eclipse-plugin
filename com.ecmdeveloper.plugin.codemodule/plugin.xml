@@ -87,6 +87,12 @@
             id="com.ecmdeveloper.plugin.newCodeModule"
             name="New Code Module">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Show Code Module Actions"
+            id="com.ecmdeveloper.plugin.showCodeModuleActions"
+            name="Show Actions">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -217,6 +223,21 @@
       <handler
             class="com.ecmdeveloper.plugin.codemodule.handlers.NewCodeModuleHandler"
             commandId="com.ecmdeveloper.plugin.newCodeModule">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.codemodule.handlers.ShowCodeModuleActionsHandler"
+            commandId="com.ecmdeveloper.plugin.showCodeModuleActions">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
