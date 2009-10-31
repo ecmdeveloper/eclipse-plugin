@@ -4,6 +4,7 @@
 package com.ecmdeveloper.plugin.codemodule.handlers;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -11,24 +12,26 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.model.Action;
+import com.ecmdeveloper.plugin.codemodule.handlers.util.CodeModuleActionLabelProvider;
+import com.ecmdeveloper.plugin.codemodule.handlers.util.GetCodeModuleActionsJob;
+import com.ecmdeveloper.plugin.codemodule.handlers.util.UpdateCodeModuleJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
-import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
-import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
-import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.model.Action;
 
 /**
  * @author Ricardo Belfor
@@ -40,12 +43,11 @@ public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler
 	private static final String UPDATE_MESSAGE = Messages.UpdateCodeModuleHandler_UpdateMessage;
 	private static final String HANDLER_NAME = Messages.UpdateCodeModuleHandler_HandlerName;
 	private static final String ACTION_SELECTION_DIALOG_TITLE = Messages.UpdateCodeModuleHandler_ActionSelectionDialogTitle;
-	private static final String ACTION_LABEL = Messages.UpdateCodeModuleHandler_ActionLabel;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if (window == null)	return null;
 
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
@@ -54,44 +56,91 @@ public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler
 			return null;
 		}
 
-		try {
-			CodeModulesManager codeModulesManager = CodeModulesManager.getManager();
-			
-			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-			while ( iterator.hasNext() ) {
+		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+		
+		final ArrayList<CodeModuleFile> list = new ArrayList<CodeModuleFile>();
+		while ( iterator.hasNext() ) {
+			list.add( (CodeModuleFile) iterator.next() );
+		}
+		
+		GetCodeModuleActionsJob job = new GetCodeModuleActionsJob( list, window.getShell() );
+		job.addJobChangeListener( new GetCodeModuleActionsJobListener( list, window.getShell() ) );
+		job.setUser(true);
+		job.schedule();
 
-				CodeModuleFile codeModuleFile = (CodeModuleFile) iterator.next();
-				Collection<Action> actions = codeModulesManager.getCodeModuleActions(codeModuleFile);
+		return null;
+	}
+	
+	class GetCodeModuleActionsJobListener extends JobChangeAdapter {
+		
+		public GetCodeModuleActionsJobListener(ArrayList<CodeModuleFile> list, Shell shell) {
+			super();
+			this.list = list;
+			this.shell = shell;
+		}
+
+		ArrayList<CodeModuleFile> list;
+		Shell shell;
+		
+		@Override
+		public void done(IJobChangeEvent event) {
+
+			if ( event.getResult().equals( Status.CANCEL_STATUS ) ) {
+				return;
+			}
+
+			GetCodeModuleActionsJob job = (GetCodeModuleActionsJob) event.getJob();
+
+			for ( final CodeModuleFile codeModuleFile : list) {
+				Collection<Action> actions = job.getActions(codeModuleFile);
+				if ( actions == null ) {
+					continue;
+				}
+				
 				String message = MessageFormat.format( SELECT_ACTIONS_MESSAGE, codeModuleFile.getName() );
 				LabelProvider labelProvider = new CodeModuleActionLabelProvider();
-				ListSelectionDialog dialog = new ListSelectionDialog(window.getShell(), actions, new ArrayContentProvider(), labelProvider, message );
+				final ListSelectionDialog dialog = new ListSelectionDialog(shell, actions, new ArrayContentProvider(), labelProvider, message );
 				dialog.setInitialSelections( actions.toArray() );
 				dialog.setTitle( ACTION_SELECTION_DIALOG_TITLE );
 
-				if ( dialog.open() == Dialog.OK ) {
-					codeModulesManager.updateCodeModule(codeModuleFile, dialog.getResult() );
-					MessageDialog.openInformation(window.getShell(),
+				shell.getDisplay().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						if ( dialog.open() == Dialog.OK ) {
+							UpdateCodeModuleJob updateCodeModuleJob = new UpdateCodeModuleJob(
+									codeModuleFile, dialog.getResult(),
+									shell );
+							updateCodeModuleJob.addJobChangeListener( new UpdateCodeModuleJobListener() );
+							updateCodeModuleJob.setUser(true);
+							updateCodeModuleJob.schedule();
+						}
+					}
+				} );
+			}
+		}
+	}
+	
+	class UpdateCodeModuleJobListener extends JobChangeAdapter {
+
+		@Override
+		public void done(IJobChangeEvent event) {
+
+			if ( event.getResult().equals( Status.CANCEL_STATUS ) ) {
+				return;
+			}
+
+			final UpdateCodeModuleJob job = (UpdateCodeModuleJob) event.getJob();
+			
+			job.getShell().getDisplay().syncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					MessageDialog.openInformation(job.getShell(),
 							HANDLER_NAME, MessageFormat.format(
 									UPDATE_MESSAGE,
-									codeModuleFile.getName()).toString() );
+									job.getCodeModuleFile().getName()).toString() );			
 				}
-			}
-		} catch (Exception e) {
-			PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
-		}
-		return null;
-	}
-
-	class CodeModuleActionLabelProvider extends ObjectStoreItemLabelProvider {
-
-		public String getText(Object object) {
-			if ( object instanceof Action ) {
-				String name = ((IObjectStoreItem) object).getName();
-				String codeModuleVersion = ((Action) object).getCodeModuleVersion();
-				return  MessageFormat.format( ACTION_LABEL, name, codeModuleVersion ); 
-			}
-			
-			return super.getText(object);
+			} );
 		}
 	}
 }
