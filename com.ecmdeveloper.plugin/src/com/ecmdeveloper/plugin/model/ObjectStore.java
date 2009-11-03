@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.model;
 
 import java.text.MessageFormat;
@@ -38,6 +57,11 @@ public class ObjectStore extends ObjectStoreItem
 	}
 
 	@Override
+	public ObjectStore getObjectStore() {
+		return this;
+	}
+	
+	@Override
 	public IndependentlyPersistableObject getObjectStoreObject() {
 		return objectStore;
 	}
@@ -69,6 +93,13 @@ public class ObjectStore extends ObjectStoreItem
 	public void removeChild(IObjectStoreItem childItem ) {
 		if ( children.contains( childItem ) ) {
 			children.remove(childItem);
+		}
+	}
+
+	@Override
+	public void addChild(IObjectStoreItem childItem) {
+		if ( ! children.contains( childItem ) ) {
+			children.add(childItem);
 		}
 	}
 

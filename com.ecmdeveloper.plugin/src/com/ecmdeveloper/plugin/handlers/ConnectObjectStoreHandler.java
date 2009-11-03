@@ -3,7 +3,6 @@
  */
 package com.ecmdeveloper.plugin.handlers;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -11,12 +10,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.progress.IProgressService;
 
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
@@ -50,28 +51,38 @@ public class ConnectObjectStoreHandler extends AbstractHandler implements IHandl
 		if ( !(selection instanceof IStructuredSelection) ) {
 			return null;
 		}
-
+		
 		Iterator iter = ((IStructuredSelection) selection).iterator();			
 		while (iter.hasNext()) {
 			final Object selectedObject = iter.next();
 			if ( selectedObject instanceof ObjectStore ) {
-				try {
-					
-					IProgressService progressService = window.getWorkbench().getProgressService();
-					progressService.run( true, false, new IRunnableWithProgress() {
-
-						@Override
-						public void run(IProgressMonitor monitor) throws InvocationTargetException,	InterruptedException {
-							ObjectStoresManager.getManager().connectObjectStore(( ObjectStore)selectedObject, monitor );
-						}
-					} );
-					
-				} catch(Exception e ) {
-					PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
-				}
+				ConnectObjectStoreJob job = new ConnectObjectStoreJob( (ObjectStore)selectedObject, window.getShell() );
+				job.schedule();
 			}
 		}
 
 		return null;
 	}
+
+	class ConnectObjectStoreJob extends Job {
+
+		private ObjectStore objectStore;
+		private Shell shell;
+
+		public ConnectObjectStoreJob(ObjectStore objectStore, Shell shell) {
+			super("Connect Object Store");
+			this.objectStore = objectStore;
+			this.shell = shell;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				ObjectStoresManager.getManager().connectObjectStore( objectStore, monitor );
+			} catch (Exception e ) {
+				PluginMessage.openError(shell, HANDLER_NAME, e.getLocalizedMessage(), e );
+			}
+			return Status.OK_STATUS;
+		}
+	};
 }

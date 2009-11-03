@@ -73,6 +73,14 @@ public class Folder extends ObjectStoreItem {
 	}
 
 	@Override
+	public void addChild(IObjectStoreItem childItem) {
+		if ( ! children.contains( childItem ) ) {
+			children.add(childItem);
+			hasChildren = ! children.isEmpty();
+		}
+	}
+
+	@Override
 	public boolean hasChildren() 
 	{
 		if ( hasChildren == null ) {

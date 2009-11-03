@@ -1,6 +1,24 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.handlers;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,26 +33,20 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.progress.IProgressService;
 
-import com.ecmdeveloper.plugin.handlers.DeleteObjectStoreItemHandler.DeleteJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.util.Messages;
-import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -121,13 +133,11 @@ public class RenameObjectStoreItemHandler extends AbstractHandler implements IHa
 		protected IStatus run(IProgressMonitor monitor) {
 
 			try {
-				int worked = 0;
+				monitor.beginTask( MONITOR_MESSAGE, itemsRenamed.size() );
 				for ( IObjectStoreItem objectStoreItem : itemsRenamed ) {
-					
-					monitor.beginTask( MONITOR_MESSAGE, itemsRenamed.size() );
 					monitor.subTask( MessageFormat.format(PROGRESS_MESSAGE, objectStoreItem.getName() ) );
 					updateItem( objectStoreItem );
-					monitor.worked(++worked);
+					monitor.worked(1);
 
 					if ( monitor.isCanceled() ) {
 						break;
@@ -159,8 +169,7 @@ public class RenameObjectStoreItemHandler extends AbstractHandler implements IHa
 
 	class FolderNameValidator implements IInputValidator
 	{
-//		private static final String NAME_INVALID_CHARS = "\\/*:\"<>|?"; //$NON-NLS-1$
-		private static final String NAME_INVALID_CHARS = ""; //$NON-NLS-1$
+		private static final String NAME_INVALID_CHARS = "\\/*:\"<>|?"; //$NON-NLS-1$
 		private static final int MAX_NAME_LENGTH = 64;
 		
 		@Override
