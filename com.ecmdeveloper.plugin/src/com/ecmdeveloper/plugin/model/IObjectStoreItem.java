@@ -27,9 +27,13 @@ public interface IObjectStoreItem extends IAdaptable {
 	
 	public ObjectStore getObjectStore();
 	
-	void move(IObjectStoreItem destination);
+	//void move(IObjectStoreItem destination);
 
 	public void setParent(IObjectStoreItem parent);
 	
 	public void refresh();
+
+	public void removeChild(IObjectStoreItem objectStoreItem);
+
+	public void addChild(IObjectStoreItem objectStoreItem);
 }

@@ -3,8 +3,10 @@ package com.ecmdeveloper.plugin.wizard;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -50,6 +52,16 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		setNeedsProgressMonitor(true);
 	}
 
+	/**
+	 * Gets the next wizard page. If on the select connection page a existing
+	 * connection is choosen then the configure connection page is skipped.
+	 * 
+	 * @param page the page
+	 * 
+	 * @return the next page
+	 * 
+	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		
@@ -101,18 +113,25 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		
 		if ( ! connection.isConnected() ) {
 			
-	      try {
-	    	  getContainer().run(true, false, new IRunnableWithProgress() {
-	    		  public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-	    			  performConnect(connection, monitor);
-	    		  }
-	    	  });
-			} catch (InvocationTargetException e) {
-				PluginMessage.openError(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
-			} catch (InterruptedException e) {
-				// User canceled, so stop but don’t close wizard.
-			}
-			
+//	    	  getShell().getDisplay().syncExec( new Runnable() {
+//
+//				@Override
+//				public void run() {
+//
+//			      try {
+//			    	  getContainer().run(true, false, new IRunnableWithProgress() {
+//			    		  public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			    			  performConnect(connection, new NullProgressMonitor() );
+//			    		  }
+//			    	  });
+//					} catch (InvocationTargetException e) {
+//						PluginMessage.openError(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
+//					} catch (InterruptedException e) {
+//						// User canceled, so stop but don’t close wizard.
+//					}
+//					
+//				} });
+	    	  
 		} else {
 			connected = true;
 			connectionName = connection.getName();
@@ -147,7 +166,19 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	}
 	
 	public String[] getObjectStores() {
-		return objectStoresManager.getNewObjectstoreNames(connectionName);
+		
+		String[] objectStores = new String[0];
+
+		try {
+			NewObjectstoreNamesRunnable runnable = new NewObjectstoreNamesRunnable(
+					connectionName);
+			getContainer().run(true, false, runnable);
+			return runnable.getObjectStores();
+		} catch (Exception e ) {
+			PluginMessage.openError(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
+		}
+		
+		return objectStores; 
 	}
 
 	private void performConnect(final ContentEngineConnection connection, IProgressMonitor monitor) {
@@ -155,5 +186,35 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		connected = true;
 		connectionName = connection.getName();
 		getContainer().updateButtons();
+	}
+	
+	class NewObjectstoreNamesRunnable implements IRunnableWithProgress {
+
+		private String connectionName;
+		private String[] objectStores = new String[0];
+		
+		public NewObjectstoreNamesRunnable(String connectionName ) {
+			this.connectionName = connectionName;
+		}
+		
+		@Override
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+			try {
+				objectStores = objectStoresManager.getNewObjectstoreNames(connectionName);
+			} catch (final Exception e) {
+				getShell().getDisplay().syncExec( new Runnable() {
+
+					@Override
+					public void run() {
+						PluginMessage.openError(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
+					} 
+				} );
+			}					
+		}
+
+		public String[] getObjectStores() {
+			return objectStores;
+		}
 	}
 }
