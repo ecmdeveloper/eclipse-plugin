@@ -1,3 +1,23 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 package com.ecmdeveloper.plugin.codemodule.views;
 
 import java.util.Iterator;
@@ -27,7 +47,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditor;
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorInput;
-import com.ecmdeveloper.plugin.codemodule.handlers.EditCodeModuleHandler;
+import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorUtils;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
@@ -127,7 +147,7 @@ public class CodeModulesView extends ViewPart {
 
 		try {
 			
-			if ( ! EditCodeModuleHandler.isEditorActive( getSite().getPage(), (CodeModuleFile) elem ) ) {
+			if ( ! CodeModuleEditorUtils.isEditorActive( getSite().getPage(), (CodeModuleFile) elem ) ) {
 				IEditorInput input = new CodeModuleEditorInput( (CodeModuleFile) elem );
 				String editorId = CodeModuleEditor.CODE_MODULE_EDITOR_ID;
 				IDE.openEditor(getSite().getPage(), input, editorId);
