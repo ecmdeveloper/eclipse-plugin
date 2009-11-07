@@ -98,6 +98,11 @@ public class ObjectStore extends ObjectStoreItem
 
 	@Override
 	public void addChild(IObjectStoreItem childItem) {
+
+		if ( children == null ) {
+			children = new ArrayList<IObjectStoreItem>();
+		}
+		
 		if ( ! children.contains( childItem ) ) {
 			children.add(childItem);
 		}
@@ -131,39 +136,39 @@ public class ObjectStore extends ObjectStoreItem
 		this.connection = connection;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Collection<CodeModule> getCodeModules() {
+//	@SuppressWarnings("unchecked")
+//	public Collection<CodeModule> getCodeModules2() {
+//	
+//		SearchScope scope = new SearchScope(objectStore);
+//		String query = "Select This From CodeModule WHERE IsCurrentVersion = TRUE"; //$NON-NLS-1$
+//		CodeModuleSet codeModuleSet = (CodeModuleSet) scope.fetchObjects(new SearchSQL( query  ), null, null, null);
+//		Iterator iterator = codeModuleSet.iterator();
+//		
+//		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
+//
+//		while (iterator.hasNext()) {
+//			com.filenet.api.core.Document document = (Document) iterator.next(); 
+//			document.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
+//			codeModules.add( new CodeModule( document.get_VersionSeries(), this, this ) );
+//		}
+//		
+//		return codeModules;
+//	}
 	
-		SearchScope scope = new SearchScope(objectStore);
-		String query = "Select This From CodeModule WHERE IsCurrentVersion = TRUE"; //$NON-NLS-1$
-		CodeModuleSet codeModuleSet = (CodeModuleSet) scope.fetchObjects(new SearchSQL( query  ), null, null, null);
-		Iterator iterator = codeModuleSet.iterator();
-		
-		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
-
-		while (iterator.hasNext()) {
-			com.filenet.api.core.Document document = (Document) iterator.next(); 
-			document.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
-			codeModules.add( new CodeModule( document.get_VersionSeries(), this, this ) );
-		}
-		
-		return codeModules;
-	}
-	
-	public IObjectStoreItem getObject(String id, String className )
-	{
-		if ( objectStore == null ) {
-			throw new RuntimeException(MessageFormat.format(
-					NOT_CONNECTED_MESSAGE, connection.getName(), getName()));
-		}
-		
-		if ( VERSION_SERIES_CLASS.equals( className) ) {
-			return new CodeModule(Factory.VersionSeries.getInstance(objectStore, new Id( id ) ), this, this);
-		} else {
-			IndependentObject object = objectStore.getObject(className, id);
-			return ObjectStoreItemFactory.getObject( object, this, this );
-		}
-	}
+//	public IObjectStoreItem getObject(String id, String className )
+//	{
+//		if ( objectStore == null ) {
+//			throw new RuntimeException(MessageFormat.format(
+//					NOT_CONNECTED_MESSAGE, connection.getName(), getName()));
+//		}
+//		
+//		if ( VERSION_SERIES_CLASS.equals( className) ) {
+//			return new CodeModule(Factory.VersionSeries.getInstance(objectStore, new Id( id ) ), this, this);
+//		} else {
+//			IndependentObject object = objectStore.getObject(className, id);
+//			return ObjectStoreItemFactory.getObject( object, this, this );
+//		}
+//	}
 
 	@Override
 	public void setName(String name) {

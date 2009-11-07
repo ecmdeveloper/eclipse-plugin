@@ -15,6 +15,7 @@ import com.filenet.api.core.IndependentlyPersistableObject;
 public class Document extends ObjectStoreItem {
 
 	protected com.filenet.api.core.Document document;
+	protected String versionSeriesId;
 	
 	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore ) {
 		super(parent, objectStore);
@@ -30,9 +31,10 @@ public class Document extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
-		this.document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
-		this.name = this.document.get_Name();
-		this.id = this.document.get_Id().toString();
+		this.document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.VERSION_SERIES } );
+		name = this.document.get_Name();
+		id = this.document.get_Id().toString();
+		versionSeriesId = this.document.get_VersionSeries().get_Id().toString(); 
 	}
 
 	/** 
@@ -51,5 +53,13 @@ public class Document extends ObjectStoreItem {
 	public void setName(String name) {
 		this.name = name;
 		this.document.getProperties().putValue( "DocumentTitle", name);
+	}
+
+	public String getVersionSeriesId() {
+		return versionSeriesId;
+	}
+
+	public void setVersionSeriesId(String versionSeriesId) {
+		this.versionSeriesId = versionSeriesId;
 	}
 }

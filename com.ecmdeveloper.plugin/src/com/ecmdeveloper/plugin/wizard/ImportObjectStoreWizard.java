@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.wizard;
 
 import java.lang.reflect.InvocationTargetException;
@@ -182,10 +201,14 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	}
 
 	private void performConnect(final ContentEngineConnection connection, IProgressMonitor monitor) {
-		objectStoresManager.connectConnection(connection.getName(), monitor );
-		connected = true;
-		connectionName = connection.getName();
-		getContainer().updateButtons();
+		try {
+			objectStoresManager.connectConnection(connection.getName(), monitor );
+			connected = true;
+			connectionName = connection.getName();
+			getContainer().updateButtons();
+		} catch (ExecutionException e) {
+			PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
+		}
 	}
 	
 	class NewObjectstoreNamesRunnable implements IRunnableWithProgress {
@@ -200,17 +223,14 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
+
+			monitor.beginTask("Getting Object Store names", IProgressMonitor.UNKNOWN );
 			try {
 				objectStores = objectStoresManager.getNewObjectstoreNames(connectionName);
 			} catch (final Exception e) {
-				getShell().getDisplay().syncExec( new Runnable() {
-
-					@Override
-					public void run() {
-						PluginMessage.openError(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
-					} 
-				} );
-			}					
+				PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
+			}
+			monitor.done();
 		}
 
 		public String[] getObjectStores() {

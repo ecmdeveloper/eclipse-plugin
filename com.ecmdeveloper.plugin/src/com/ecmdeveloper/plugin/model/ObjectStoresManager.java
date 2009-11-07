@@ -106,7 +106,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 	}
 	
-	public void connectConnection( final String connectionName, IProgressMonitor monitor ) {
+	public void connectConnection( final String connectionName, IProgressMonitor monitor ) throws ExecutionException {
 
 		try {
 			if ( monitor != null ) {
@@ -136,8 +136,6 @@ public class ObjectStoresManager implements IObjectStoresManager
 	
 				try {
 					executorService.submit(runnable).get();
-				} catch (ExecutionException e) {
-					throw new RuntimeException(e);
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);
 				}
@@ -186,7 +184,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
 	}
 
-	public void connectObjectStore(ObjectStore objectStore, IProgressMonitor monitor )
+	public void connectObjectStore(ObjectStore objectStore, IProgressMonitor monitor ) throws ExecutionException
 	{
 		if ( objectStore == null) {
 			return;
