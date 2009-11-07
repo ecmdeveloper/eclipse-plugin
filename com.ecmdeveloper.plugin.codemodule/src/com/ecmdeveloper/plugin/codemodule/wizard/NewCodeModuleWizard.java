@@ -1,9 +1,27 @@
 /**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
  * 
  */
+
 package com.ecmdeveloper.plugin.codemodule.wizard;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -101,9 +119,15 @@ public class NewCodeModuleWizard extends Wizard implements INewWizard {
 			try {
 	         getContainer().run(true, false, new IRunnableWithProgress() {
 		            public void run(IProgressMonitor monitor) throws InvocationTargetException,
-		                  InterruptedException {
-		    			objectStoresManager.connectObjectStore( objectStore, monitor );
-		            }
+		                  InterruptedException 
+					{
+		               try {
+							objectStoresManager.connectObjectStore(objectStore,
+									monitor);
+						} catch (ExecutionException e) {
+				    	  PluginMessage.openErrorFromThread( getShell(), WIZARD_NAME, e.getLocalizedMessage(), e );
+						}
+					}
 		         });
 		      }
 		      catch (InvocationTargetException e) {

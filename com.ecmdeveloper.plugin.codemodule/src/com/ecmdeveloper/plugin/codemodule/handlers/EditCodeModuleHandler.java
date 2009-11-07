@@ -1,3 +1,23 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 package com.ecmdeveloper.plugin.codemodule.handlers;
 
 import java.util.Iterator;
@@ -9,8 +29,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -18,6 +36,7 @@ import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditor;
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorInput;
+import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorUtils;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
@@ -50,7 +69,7 @@ public class EditCodeModuleHandler extends AbstractHandler implements IHandler {
 			Object elem = iterator.next();
 	
 			try {
-				if ( ! isEditorActive( window.getActivePage(), (CodeModuleFile) elem ) ) {
+				if ( ! CodeModuleEditorUtils.isEditorActive( window.getActivePage(), (CodeModuleFile) elem ) ) {
 					IEditorInput input = new CodeModuleEditorInput( (CodeModuleFile) elem );
 					String editorId = CodeModuleEditor.CODE_MODULE_EDITOR_ID;
 					IDE.openEditor( window.getActivePage(), input, editorId);
@@ -64,25 +83,4 @@ public class EditCodeModuleHandler extends AbstractHandler implements IHandler {
 		
 		return null;
 	}
-	
-	public static boolean isEditorActive( IWorkbenchPage activePage, CodeModuleFile codeModuleFile ) throws PartInitException {
-
-		IEditorReference[] editors = activePage.getEditorReferences();
-		
-		for ( int i = 0; i < editors.length; i++ ) {
-			
-			if ( ! ( editors[i].getEditorInput() instanceof CodeModuleEditorInput ) ) {
-				continue;
-			}
-
-			CodeModuleFile editorFile = (CodeModuleFile) editors[i].getEditorInput().getAdapter( codeModuleFile.getClass() );
-			if ( editorFile.getId().equalsIgnoreCase( codeModuleFile.getId() ) ) {
-				activePage.activate( editors[i].getEditor(true) );
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 }

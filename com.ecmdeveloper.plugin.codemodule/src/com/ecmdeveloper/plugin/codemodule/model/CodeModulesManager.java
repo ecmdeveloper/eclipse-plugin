@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.codemodule.model;
 
 import java.io.File;
@@ -20,38 +39,69 @@ import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 import com.ecmdeveloper.plugin.codemodule.util.PluginTagNames;
 import com.ecmdeveloper.plugin.model.Action;
 import com.ecmdeveloper.plugin.model.CodeModule;
+import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
 import com.ecmdeveloper.plugin.model.tasks.CreateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.tasks.GetCodeModuleActionsTask;
+import com.ecmdeveloper.plugin.model.tasks.GetCodeModulesTask;
 import com.ecmdeveloper.plugin.model.tasks.UpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 
-public class CodeModulesManager {
+/**
+ * This class is the manager class for Code Module Files. It is implemented as a
+ * singleton class.
+ * 
+ * @author Ricardo.Belfor
+ * 
+ */
+public class CodeModulesManager implements ObjectStoresManagerListener {
 
-	private static final String CODE_MODULE_CLASS_NAME = "CodeModule";
 	private static final String CODEMODULES_FOLDER = "codemodules";
 	private static final String CODEMODULE_FILE_EXTENSION = "codemodule";
 
 	private static CodeModulesManager codeModulesManager;
 	protected ArrayList<CodeModuleFile> codeModulefiles;
+	protected ObjectStoresManager objectStoresManager;
+	
 	private List<CodeModulesManagerListener> listeners = new ArrayList<CodeModulesManagerListener>();
 	
-	private CodeModulesManager() {}
+	private CodeModulesManager() {
+		getObjectStoresManager();
+	}
 	
 	public static CodeModulesManager getManager()
 	{
-		if ( codeModulesManager == null )
-		{
+		if ( codeModulesManager == null ) {
 			codeModulesManager = new CodeModulesManager();
 		}
 		return codeModulesManager;
 	}
 
-	public Collection<CodeModule> getNewCodeModules(ObjectStore objectStore ) {
-		
-		Collection<CodeModule> codeModules = objectStore.getCodeModules();
+	private ObjectStoresManager getObjectStoresManager() {
+
+		if ( objectStoresManager == null ) {
+			objectStoresManager = ObjectStoresManager.getManager();
+			objectStoresManager.addObjectStoresManagerListener(this);
+		}
+		return objectStoresManager;
+	}
+	
+	public static void shutdown() {
+      if ( codeModulesManager != null) {
+      }
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<CodeModule> getNewCodeModules(ObjectStore objectStore ) throws ExecutionException {
+
+		GetCodeModulesTask task = new GetCodeModulesTask( objectStore );
+		Collection<CodeModule> codeModules = 
+			(Collection<CodeModule>) getObjectStoresManager().executeTaskSync(task);
+
 		ArrayList<CodeModule> newCodeModules = new ArrayList<CodeModule>();
 		
 		for (CodeModule codeModule : codeModules) {
@@ -169,7 +219,7 @@ public class CodeModulesManager {
 		CreateCodeModuleTask task = new CreateCodeModuleTask(codeModuleFile
 				.getName(), codeModuleFile.getFiles(), objectStore );
 		
-		CodeModule codeModule = (CodeModule) ObjectStoresManager.getManager().executeTaskSync(task);
+		CodeModule codeModule = (CodeModule) getObjectStoresManager().executeTaskSync(task);
 		codeModuleFile.setId( codeModule.getId() );
 		
 		saveCodeModuleFile(codeModuleFile, true);
@@ -256,7 +306,7 @@ public class CodeModulesManager {
 		ObjectStore objectStore = getObjectStore(codeModuleFile);
 		ObjectStore.assertConnected(objectStore);
 		GetCodeModuleActionsTask task = new GetCodeModuleActionsTask(codeModuleFile.getId(), objectStore );
-		return (Collection<Action>) ObjectStoresManager.getManager().executeTaskSync(task);
+		return (Collection<Action>) getObjectStoresManager().executeTaskSync(task);
 	}
 	
 	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws ExecutionException {
@@ -267,13 +317,13 @@ public class CodeModulesManager {
 				.getId(), codeModuleFile.getName(), codeModuleFile.getFiles(),
 				objectStore);
 		
-		CodeModule codeModule = (CodeModule) ObjectStoresManager.getManager().executeTaskSync(task);
+		CodeModule codeModule = (CodeModule) getObjectStoresManager().executeTaskSync(task);
 
 		for ( Object objectStoreItem : selectedActions ) {
 			if (objectStoreItem instanceof Action ) {
 				((Action) objectStoreItem).setCodeModule( codeModule );
 				UpdateTask updateTask = new UpdateTask((IObjectStoreItem) objectStoreItem );
-				ObjectStoresManager.getManager().executeTaskSync(updateTask);
+				getObjectStoresManager().executeTaskSync(updateTask);
 			}
 		}
 		
@@ -320,6 +370,29 @@ public class CodeModulesManager {
 				itemsAdded, itemsRemoved, itemsUpdated );
 		for (CodeModulesManagerListener listener : listeners) {
 			listener.codeModuleFilesItemsChanged( event );
+		}
+	}
+
+	@Override
+	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
+		
+		if ( event.getItemsRemoved() != null ) {
+		
+			for ( IObjectStoreItem objectStoreItem : event.getItemsRemoved() )
+			{
+				if ( ! ( objectStoreItem instanceof Document ) ) {
+					continue;
+				}
+
+				String id = ((Document)objectStoreItem).getVersionSeriesId(); 
+				
+				for ( CodeModuleFile codeModuleFile: codeModulefiles ) {
+					if ( id.equalsIgnoreCase( codeModuleFile.getId() ) ) {
+						removeCodeModuleFile(codeModuleFile);
+						break;
+					}
+				}
+			}
 		}
 	}
 }
