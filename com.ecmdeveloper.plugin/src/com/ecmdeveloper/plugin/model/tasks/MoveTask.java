@@ -38,6 +38,8 @@ import com.filenet.api.property.FilterElement;
 import com.filenet.api.property.PropertyFilter;
 
 /**
+ * This task moves object store items to the specified destination.
+ * 
  * @author Ricardo Belfor
  *
  */
@@ -46,13 +48,27 @@ public class MoveTask extends BaseTask {
 	protected IObjectStoreItem[] objectStoreItems;
 	protected IObjectStoreItem destination;
 	
+	/**
+	 * Instantiates a new move task.
+	 * 
+	 * @param objectStoreItems the object store items
+	 * @param destination the destination
+	 */
 	public MoveTask(IObjectStoreItem[] objectStoreItems, IObjectStoreItem destination ) {
 		super();
 		this.objectStoreItems = objectStoreItems;
 		this.destination = destination;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Moves the object store items and notifies the listeners of the changes.
+	 * An extra check is made for folders as they can be child items or
+	 * contained items.
+	 * 
+	 * @return the object
+	 * 
+	 * @throws Exception the exception
+	 * 
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
@@ -62,10 +78,14 @@ public class MoveTask extends BaseTask {
 
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
 		
-			if ( !(objectStoreItem instanceof Folder) ) { // TODO: add check for contained folder
+			if ( !(objectStoreItem instanceof Folder) ) {
 				moveContainedObject(objectStoreItem, destination);
 			} else {
-				moveChildObject( objectStoreItem, destination );
+				if ( ! ((Folder)objectStoreItem).isContained() ) {
+					moveChildObject( objectStoreItem, destination );
+				} else {
+					moveContainedObject(objectStoreItem, destination);
+				}
 			}
 
 			if ( objectStoreItem.getParent() != null ) {
@@ -81,6 +101,12 @@ public class MoveTask extends BaseTask {
 		return null;
 	}
 
+	/**
+	 * Move an object with a parent-child relationship.
+	 * 
+	 * @param objectStoreItem the object store item
+	 * @param destination the destination
+	 */
 	private void moveChildObject(IObjectStoreItem objectStoreItem, IObjectStoreItem destination) {
 
 		com.filenet.api.core.Folder folder = (com.filenet.api.core.Folder) ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
@@ -88,15 +114,19 @@ public class MoveTask extends BaseTask {
 		if ( destination instanceof Folder ) {
 			folder.set_Parent( (com.filenet.api.core.Folder) ((Folder) destination).getObjectStoreObject() );
 		} else if (destination instanceof ObjectStore ) {
-
-			throw new UnsupportedOperationException( "Fix this!");
-// TODO: fix this			
-//			Folder rootFolder = ((ObjectStore)destination).getRootFolder();
-//			folder.set_Parent( (com.filenet.api.core.Folder) rootFolder.getObjectStoreObject() );
+			com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) ((ObjectStoreItem) destination).getObjectStoreObject();
+			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } ); 
+			folder.set_Parent( objectStore.get_RootFolder() );
 		}
 		folder.save( RefreshMode.REFRESH );
 	}
 
+	/**
+	 * Move a contained object.
+	 * 
+	 * @param objectStoreItem the object store item
+	 * @param destination the destination
+	 */
 	@SuppressWarnings("unchecked")
 	private void moveContainedObject(IObjectStoreItem objectStoreItem, IObjectStoreItem destination) {
 

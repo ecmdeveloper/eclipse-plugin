@@ -1,6 +1,23 @@
 /**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
  * 
  */
+
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.model.Document;
@@ -8,14 +25,13 @@ import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.core.VersionSeries;
 
 /**
- * This class is used to perform the delete task.
+ * This class is used to perform deleting of objects.
  * 
  * @author Ricardo Belfor
  *
@@ -23,19 +39,18 @@ import com.filenet.api.core.VersionSeries;
 public class DeleteTask extends BaseTask {
 
 	protected IObjectStoreItem[] objectStoreItems;
-	protected boolean deleteAllVerions;
+	protected boolean deleteAllVersions;
 	
 	/**
 	 * The constructor of this task is used to pass all the relevant input
 	 * to perform the task.
 	 * 
-	 * @param objectStoresManager
-	 * @param objectStoreItems
-	 * @param deleteAllVerions
+	 * @param objectStoreItems the object store items
+	 * @param deleteAllVersions the delete all verions flag
 	 */
-	public DeleteTask( IObjectStoreItem[] objectStoreItems, boolean deleteAllVerions) {
+	public DeleteTask( IObjectStoreItem[] objectStoreItems, boolean deleteAllVersions) {
 		this.objectStoreItems = objectStoreItems;
-		this.deleteAllVerions = deleteAllVerions;
+		this.deleteAllVersions = deleteAllVersions;
 	}
 
 	/**
@@ -54,7 +69,7 @@ public class DeleteTask extends BaseTask {
 			
 			IndependentlyPersistableObject persistableObject = ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
 
-			if ( deleteAllVerions && objectStoreItem instanceof Document ) {
+			if ( deleteAllVersions && objectStoreItem instanceof Document ) {
 				com.filenet.api.core.Document documentObject = (com.filenet.api.core.Document) persistableObject;
 				documentObject.fetchProperties( new String[] { PropertyNames.VERSION_SERIES} );
 				VersionSeries versionSeries = documentObject.get_VersionSeries();

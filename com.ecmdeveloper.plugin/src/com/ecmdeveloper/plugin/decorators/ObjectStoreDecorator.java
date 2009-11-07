@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.decorators;
 
 import java.util.ArrayList;
@@ -18,9 +37,10 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
 
 /**
+ * This class decorates the Object Store object. The decoration is changed based
+ * on the fact if the Object Store is connected or not connected.
  * 
  * @author Ricardo Belfor
- *
  */
 public class ObjectStoreDecorator implements ILightweightLabelDecorator, ObjectStoresManagerListener {
 
@@ -36,7 +56,12 @@ public class ObjectStoreDecorator implements ILightweightLabelDecorator, ObjectS
 		manager.addObjectStoresManagerListener(this);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Decorates the element.
+	 * 
+	 * @param element the element
+	 * @param decoration the decoration
+	 * 
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
@@ -52,7 +77,11 @@ public class ObjectStoreDecorator implements ILightweightLabelDecorator, ObjectS
 		decoration.addOverlay(descriptor,quadrant);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Adds the listener.
+	 * 
+	 * @param listener the listener
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) {
@@ -61,27 +90,48 @@ public class ObjectStoreDecorator implements ILightweightLabelDecorator, ObjectS
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Dispose.
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
 		manager.removeObjectStoresManagerListener(this);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Checks if this is a label property.
+	 * 
+	 * @param element the element
+	 * @param property the property
+	 * 
+	 * @return true, if checks if is label property
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Removes the listener.
+	 * 
+	 * @param listener the listener
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
 		listenerList.remove(listener);
 	}
 
+	/**
+	 * Notification that the Object Store items is changed. This will change the 
+	 * items registered as listeners accordingly.
+	 * 
+	 * @param event the event
+	 * 
+	 * @see com.ecmdeveloper.plugin.model.ObjectStoresManagerListener#objectStoreItemsChanged(com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent)
+	 */
 	@Override
 	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
 		

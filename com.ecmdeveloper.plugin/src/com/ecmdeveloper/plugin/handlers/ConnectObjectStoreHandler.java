@@ -80,7 +80,7 @@ public class ConnectObjectStoreHandler extends AbstractHandler implements IHandl
 			try {
 				ObjectStoresManager.getManager().connectObjectStore( objectStore, monitor );
 			} catch (Exception e ) {
-				PluginMessage.openError(shell, HANDLER_NAME, e.getLocalizedMessage(), e );
+				PluginMessage.openErrorFromThread(shell, HANDLER_NAME, e.getLocalizedMessage(), e );
 			}
 			return Status.OK_STATUS;
 		}
