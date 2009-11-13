@@ -1,0 +1,10 @@
+<h2>Navigation</h2>
+	<a href="index.shtml">start page</a><br/>
+	<a href="installing.shtml">installation</a><br/>
+	<a href="getting_started.shtml">getting started</a><br/><br/>
+	<a href="browsing_object_stores.shtml">browsing object stores</a><br/>
+	<a href="editing_code_modules.shtml">editing code modules</a><br/>
+</ul>
+
+<h2>Recent Updates</h2>
+<p>First release coming soon...</p>
