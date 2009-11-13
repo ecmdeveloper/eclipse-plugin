@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>ECM Developer (installing)</title>
+<meta name="keywords" content="filenet,p8,eclipse" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<!--#include virtual="/header.shtml" -->
+
+<div id="content">
+	<div id="left">
+	
+	<h2>Installing ECM Developer</h2>
+	
+	The plug-in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
+	Because the Java API is not distributed with this plug-in, using this plug-in requires 
+	access to the Java API. Therefore installing this plug-in is a little bit more complicated
+	than a basic plug-in install.
+	<p>Before you install this plug-in you have to make sure that you
+	have the Content Engine Client files available on your local machine. There a two ways to 
+	obtain these files:
+	<ul>
+	<li>
+	The Content Engine Client files are located in a folder named <b>CE_API</b> in the FileNet 
+	installation folder on the Application Engine server. You can copy this folder to your 
+	local machine.
+	</li>
+	<li>If you don't have access to this folder the Content Engine Client files can also be installed
+	using the Content Engine Client installer. 
+	</ul>
+	The ECM Developer plug-in can be installed from the update site at <b>http://www.ecmdeveloper.com/update</b>. 
+	(The update site can be configured in the dialog that appears if you select the 
+	<b>Help &gt; Software Updates... &gt; Add Site</b> commands in the Eclipse IDE):  
+	<p>
+	<img alt='add site dialog'/>
+	<p>
+	If this does not work (if for example you are behind a firewall) then you could install
+	the plug-in from the <a href='http://www.ecmdeveloper.com/todo'>zip-file distibution</a>. In this
+	case use the <b>Archive</b> command in the Add Site dialog.
+	<p>
+	After the plug-in is installed do not restart Eclipse inmediately. For the plug-in to work
+	properly first the Content Engine Client files must be made available within the Eclipse 
+	environment. First navigate to the <b>plugins</b> folder of your eclipse installation. The
+	installation of the ECM Developer plug-in created a folder called <b>com.ecmdeveloper.plugin.lib_1.0.0</b>.
+	This folder already contains some files. Now the <i>content</i> of the <b>CE_API</b> folder must
+	copied to this folder. After this the installation is completed and Eclipse must be restarted.
+	  
+	</div>
+	<div id="right">
+		<!--#include virtual="/navigation.shtml" -->
+	</div>
+</div>
+<div id="footer">
+	<p>Copyright &copy; 2009 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
+</div>
+</body>
+</html>
