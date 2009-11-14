@@ -40,6 +40,7 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
 
 public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	
+	private static final String CONNECT_FAILED_MESSAGE = "Connect failed";
 	private static final String CONNECT_MESSAGE = "Connecting to \"{0}\"";
 	private static final String CONNECT_TITLE = "Connect";
 	private SelectConnectionWizardPage selectConnectionWizardPage;
@@ -164,15 +165,23 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 		final String username = configureConnectionWizardPage.getUsername();
 		final String password = configureConnectionWizardPage.getPassword();
 		
-	      // Perform the operation in a separate thread
-	      // so that the operation can be canceled.
 		try {
 	         getContainer().run(true, false, new IRunnableWithProgress() {
 	            public void run(IProgressMonitor monitor) throws InvocationTargetException,
 	                  InterruptedException {
-	        		connectionName = objectStoresManager.createConnection( url, username, password, monitor );
-	        		connected = true;
-	        		getContainer().updateButtons();
+	        		try {
+						connectionName = objectStoresManager.createConnection( url, username, password, monitor );
+		        		connected = true;
+		    			getShell().getDisplay().syncExec( new Runnable() {
+	
+		    				@Override
+		    				public void run() {
+		    					getContainer().updateButtons();
+		    				}
+		    			});
+					} catch (ExecutionException e) {
+						PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, CONNECT_FAILED_MESSAGE, e );
+					}
 	            }
 	         });
 	      }
@@ -205,7 +214,13 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 			objectStoresManager.connectConnection(connection.getName(), monitor );
 			connected = true;
 			connectionName = connection.getName();
-			getContainer().updateButtons();
+			
+			getShell().getDisplay().syncExec( new Runnable() {
+
+				@Override
+				public void run() {
+					getContainer().updateButtons();
+				}});
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
 		}

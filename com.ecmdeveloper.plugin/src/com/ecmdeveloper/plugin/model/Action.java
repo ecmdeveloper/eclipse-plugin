@@ -1,4 +1,20 @@
 /**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
  * 
  */
 package com.ecmdeveloper.plugin.model;
@@ -6,22 +22,24 @@ package com.ecmdeveloper.plugin.model;
 import java.util.Collection;
 
 import com.filenet.api.constants.PropertyNames;
-import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.IndependentlyPersistableObject;
 
 /**
+ * This class represents an Action object. Examples of this type of object are
+ * Event Actions and Document Lifecyle Actions.
+ * 
  * @author Ricardo.Belfor
- *
+ * 
  */
 public class Action extends ObjectStoreItem {
 
-	com.filenet.api.events.EventAction eventAction;
+	com.filenet.api.events.Action action;
 	protected String codeModuleVersion;
 	
 	public Action(Object eventAction, IObjectStoreItem parent, ObjectStore objectStore ) {
 		super(parent, objectStore);
 
-		this.eventAction = (com.filenet.api.events.EventAction) eventAction;
+		this.action = (com.filenet.api.events.Action) eventAction;
 		refresh();
 	}
 
@@ -32,23 +50,23 @@ public class Action extends ObjectStoreItem {
 
 	@Override
 	public IndependentlyPersistableObject getObjectStoreObject() {
-		return eventAction;
+		return action;
 	}
 
 	@Override
 	public void setName(String name) {
-		eventAction.set_DisplayName(name);
+		action.set_DisplayName(name);
 	}
 
 	@Override
 	public void refresh() {
-		this.eventAction.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
-		this.name = this.eventAction.get_Name();
-		this.id = this.eventAction.get_Id().toString();
+		this.action.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
+		this.name = this.action.get_Name();
+		this.id = this.action.get_Id().toString();
 	}
 
 	public void setCodeModule(CodeModule codeModule) {
-		eventAction.set_CodeModule((com.filenet.api.admin.CodeModule) codeModule
+		action.set_CodeModule((com.filenet.api.admin.CodeModule) codeModule
 						.getObjectStoreObject());
 	}
 	

@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.model;
 
 import java.io.File;
@@ -10,13 +29,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -26,20 +43,15 @@ import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
-import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
-import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
-import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
-import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginTagNames;
-import com.filenet.api.constants.PropertyNames;
-import com.filenet.api.core.IndependentObject;
-import com.filenet.api.core.ReferentialContainmentRelationship;
 
 /**
+ * This class manages the connections to the Object Stores. It is also
+ * responsible for executing the different tasks on the object store items.
  * 
  * @author Ricardo Belfor
- *
+ * 
  */
 public class ObjectStoresManager implements IObjectStoresManager
 {
@@ -74,10 +86,9 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 		
 		return connections.values();
-//		return new String[0];
 	}
 	
-	public String createConnection(String url, String username, String password, IProgressMonitor monitor ) 
+	public String createConnection(String url, String username, String password, IProgressMonitor monitor ) throws ExecutionException 
 	{
 		try {
 			
@@ -88,17 +99,14 @@ public class ObjectStoresManager implements IObjectStoresManager
 			if ( connections == null) {
 				loadObjectStores();
 			}
+
+			CreateConnectionTask createConnection = new CreateConnectionTask(url, username, password );
 			
-			ContentEngineConnection objectStoreConnection = new ContentEngineConnection();
-			
-			objectStoreConnection.setUrl(url);
-			objectStoreConnection.setUsername(username);
-			objectStoreConnection.setPassword(password);
-			objectStoreConnection.connect();
-	
-			connections.put( objectStoreConnection.getName(), objectStoreConnection);
-			
-			return objectStoreConnection.getName();
+			try {
+				return executorService.submit(createConnection).get();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
 		} finally {
 			if ( monitor != null ) {
 				monitor.done();
@@ -115,27 +123,9 @@ public class ObjectStoresManager implements IObjectStoresManager
 	
 			if ( connections.containsKey( connectionName ) ) {
 	
-				Runnable runnable = new Runnable() {
-					@Override
-					public void run() {
-						connections.get( connectionName ).connect();
-						ArrayList<IObjectStoreItem> connectionObjectStores = new ArrayList<IObjectStoreItem>();
-						
-						for ( IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
-							
-							ObjectStore objectStore = (ObjectStore) objectStoreItem;
-							if ( objectStore.getConnection().getName().equals(connectionName)) {
-								objectStore.connect();
-								connectionObjectStores.add( objectStore );
-							}
-						}
-			
-						fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
-					}
-				};
-	
+				ConnectConnectionTask callable = new ConnectConnectionTask(connectionName);
 				try {
-					executorService.submit(runnable).get();
+					executorService.submit(callable).get();
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);
 				}
@@ -172,7 +162,14 @@ public class ObjectStoresManager implements IObjectStoresManager
 		
 		executorService.submit(callable);
 	}
-	
+
+	/**
+	 * Removes the Object Store from the list of configured Object Stores. If
+	 * there are no more Object Stores using the same connection then the
+	 * connection is also removed.
+	 * 
+	 * @param objectStore the object store
+	 */
 	public void removeObjectStore(ObjectStore objectStore) 
 	{
 		if ( objectStores == null) {
@@ -180,6 +177,20 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 		
 		objectStores.remove( objectStore );
+		
+		String connectionName = objectStore.getConnection().getName();
+		boolean found = false;
+		for (IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
+			String objectStoreConnectionName = ((ObjectStore)objectStoreItem).getConnection().getName();
+			if ( objectStoreConnectionName.equals(connectionName ) ) {
+				found = true;
+				break;
+			}
+		}
+			
+		if ( ! found ) {
+			connections.remove( connectionName );
+		}
 
 		fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
 	}
@@ -324,9 +335,13 @@ public class ObjectStoresManager implements IObjectStoresManager
 			IMemento connectionChild = connectionsChild.createChild(PluginTagNames.CONNECTION_TAG);
 			
 			connectionChild.putString( PluginTagNames.NAME_TAG, contentEngineConnection.getName() );
+			connectionChild.putString( PluginTagNames.DISPLAY_NAME_TAG, contentEngineConnection.getDisplayName() );
 			connectionChild.putString( PluginTagNames.URL_TAG, contentEngineConnection.getUrl() );
 			connectionChild.putString( PluginTagNames.USERNAME_TAG, contentEngineConnection.getUsername() );
-			connectionChild.putString( PluginTagNames.PASSWORD_TAG, contentEngineConnection.getPassword() );
+			String password = contentEngineConnection.getPassword();
+			// TODO add some basic encryption
+			connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
+			
 		}
 		
 		// Next save the object stores
@@ -351,6 +366,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 				ContentEngineConnection contentEngineConnection = new ContentEngineConnection();
 				
 				contentEngineConnection.setName( connectionChild.getString( PluginTagNames.NAME_TAG ) );
+				contentEngineConnection.setDisplayName( connectionChild.getString( PluginTagNames.DISPLAY_NAME_TAG ) );
 				contentEngineConnection.setUrl( connectionChild.getString( PluginTagNames.URL_TAG ) );
 				contentEngineConnection.setUsername( connectionChild.getString( PluginTagNames.USERNAME_TAG ) );
 				contentEngineConnection.setPassword( connectionChild.getString( PluginTagNames.PASSWORD_TAG ) );
@@ -446,6 +462,62 @@ public class ObjectStoresManager implements IObjectStoresManager
 				itemsAdded, itemsRemoved, itemsUpdated );
 		for (ObjectStoresManagerListener listener : listeners) {
 			listener.objectStoreItemsChanged(event);
+		}
+	}
+	
+	class ConnectConnectionTask implements Callable<Object> {
+		private Object connectionName;
+
+		public ConnectConnectionTask(Object connectionName) {
+			super();
+			this.connectionName = connectionName;
+		}
+
+		@Override
+		public Object call() throws Exception {
+			connections.get( connectionName ).connect();
+			ArrayList<IObjectStoreItem> connectionObjectStores = new ArrayList<IObjectStoreItem>();
+			
+			for ( IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
+				
+				ObjectStore objectStore = (ObjectStore) objectStoreItem;
+				if ( objectStore.getConnection().getName().equals(connectionName)) {
+					objectStore.connect();
+					connectionObjectStores.add( objectStore );
+				}
+			}
+
+			fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
+			return null;
+		}
+	}
+	
+	class CreateConnectionTask implements Callable<String> {
+
+		private String url;
+		private String username;
+		private String password;
+
+		public CreateConnectionTask(String url, String username, String password) {
+			super();
+			this.url = url;
+			this.username = username;
+			this.password = password;
+		}
+
+		@Override
+		public String call() throws Exception {
+
+			ContentEngineConnection objectStoreConnection = new ContentEngineConnection();
+			
+			objectStoreConnection.setUrl(url);
+			objectStoreConnection.setUsername(username);
+			objectStoreConnection.setPassword(password);
+			objectStoreConnection.connect();
+	
+			connections.put( objectStoreConnection.getName(), objectStoreConnection);
+			
+			return objectStoreConnection.getName();
 		}
 	}
 }
