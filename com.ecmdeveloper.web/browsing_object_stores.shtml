@@ -12,15 +12,47 @@
 <!--#include virtual="/header.shtml" -->
 <div id="content">
 	<div id="left">
+	
 	<h2>Browsing Object Stores</h2>
 	The main view of the ECM Developer plug-in is the Object Stores View. You can open
-	this view using the <strong>Window&gt;Show view&gt;Other</strong> command. The
+	this view using the <strong>Window &gt; Show view &gt;Other</strong> command. The
 	Object Stores view is located in the <strong>Content Engine</strong> category. Selecting
 	this view will show the following window:
 	<p><img alt='object stores view'/></p>
 	If this window is empty you have to setup your connections to the Content Engine. See the 
 	<a href='getting_started.shtml'>getting started</a> page for details.
-	 
+	<p>
+	First you have to make a connection to the Object Store using either the context menu of
+	the Object Store or the toolbar button (<img width='16' height='16' alt='Connect' src='images/icons/database_connect.png'/>) 
+	of the view. When the Object Store is connected the
+	Object Store can be browsed, showing folders, documents and custom objects. Also additional
+	Object Stores can be added to this view using the toolbar button 
+	(<img width='16' height='16' alt='Import' src='images/icons/database_add.png'/>). Next the operations
+	currently possible on Object Store items will be discussed.
+	
+	<h3>Refresh</h3>
+	An Object Store item can be refreshed using either the <strong>File &gt; Refresh</strong> command
+	or the <strong>Refresh</strong> command of the context menu. This command will get a fresh copy
+	of the item on the server.
+	
+	<h3>Rename</h3>
+	An Object Store item can be renamed using either the <strong>File &gt; Rename</strong> command
+	or the <strong>Rename</strong> command of the context menu. A dialog will appear where a new name
+	for the item can be entered:
+	<p><img alt='Rename'/></p>
+	
+	<h3>Move</h3>
+	An Object Store item can be renamed using either the <strong>File &gt; Move</strong> command
+	or the <strong>Move</strong> command of the context menu. A dialog will appear where a new 
+	location for the item can be entered:
+	<p><img alt='Move'/></p>
+	In case of a multiple selection the new location will apply for all the items selected.
+	 	
+	<h3>Delete</h3>
+	An Object Store item can be deleted using either the <strong>Edit &gt; Delete</strong> command
+	or the <strong>Delete</strong> command of the context menu. A confirmation is request for each
+	item to be deleted. 
+	
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
