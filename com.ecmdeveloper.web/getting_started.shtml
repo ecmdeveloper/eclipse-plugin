@@ -19,22 +19,23 @@
 		<ul>
 		<li>Start the standard Eclipse import wizard using the <strong>File&gt;Import</strong>
 		command.
-		<p/><img alt='Import Object Store page'/></p>
+		<p><img alt='Import Object Store page'/></p>
 		In the Content Engine category select <strong>Object Store</strong> and continue the
 		wizard.
 		</li>
-		<li>In the <strong>Select Connection</strong> page you can either choose to configure a
-		new connection or use an existing connection (if any exists):
+		<li>If there are any existing connections then in the <strong>Select Connection</strong> page 
+		you can either choose to configure a new connection or use an existing connection:
 		<p><img alt='Selected Connection page'/></p>
-		Choose the appropriate option an continue the wizard.
+		Choose the appropriate option and continue the wizard.
 		</li>
-		<li>If a new connection is selected then the <strong>Configure Connection</strong> page will
-		be shown:
-		<p/><img alt='Configure Connection page'/></p>
+		<li>If a new connection is selected or if there a no connection configure yet, then the 
+		<strong>Configure Connection</strong> page will be shown:
+		<p><img alt='Configure Connection page'/></p>
 		In this page you can enter the necessary connection parameters and use the 
 		<strong>Connect</strong> command to connect to the Content Engine. Every time you connect to
-		this Content Engine these connection parameters will be used. After a successful connection
-		is made the wizard can be continued.
+		this Content Engine these connection parameters will be used. Note that if for some reason 
+		the Content Engine cannot be reached using the URL supplied then it may take a while before
+		a timeout occurs. After a successful connection is made the wizard can be continued.
 		</li>
 		<li>The final page of the wizard is the <strong>Select Object Store</strong> page:
 		<p><img alt='Select Object Store page'/></p>
@@ -44,8 +45,12 @@
 		After you have completed these steps you can start using the Object Stores using the 
 		ECM developer plug-in. Browsing the Object Stores is described 
 		<a href='browsing_object_stores.shtml'>here</a>.
-		   
-			
+		<p>
+		If you have configured a proxy server within Eclipse, add the Content Engine server as a 
+		host for which no proxy server is necessary and restart Eclipse afterwards. This can be 
+		done in the <strong>Network Connections</strong> preference page using the 
+		<strong>Window &gt; Preferences &gt; General &gt; Network Connections</strong> command:
+		<p><img alt='Network Connections'></p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
