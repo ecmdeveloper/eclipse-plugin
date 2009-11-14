@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.model;
 
 import java.util.ArrayList;
@@ -11,10 +30,10 @@ import com.filenet.api.core.Connection;
 import com.filenet.api.core.Domain;
 import com.filenet.api.core.EntireNetwork;
 import com.filenet.api.core.Factory;
-import com.filenet.api.core.ObjectStore;
 import com.filenet.api.util.UserContext;
 
 /**
+ * This class represents a connection to the Content Engine.
  * 
  * @author Ricardo Belfor
  *
@@ -25,7 +44,8 @@ public class ContentEngineConnection
 	private String username;
 	private String password;
 	private String name;
-
+	private String displayName;
+	
 	private Connection connection;
 	private Domain domain;
 	
@@ -42,9 +62,19 @@ public class ContentEngineConnection
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	public String getUrl() {
 		return url;
 	}
@@ -97,7 +127,11 @@ public class ContentEngineConnection
 			EntireNetwork entireNetwork = Factory.EntireNetwork.fetchInstance(connection, null);
 			domain = entireNetwork.get_LocalDomain();
 			
-			this.name = domain.get_Name();
+			name = domain.get_Name();
+			if ( displayName == null ) {
+				displayName = domain.get_Name();
+			}
+			
 			connected = true;
 		}
 	}
@@ -106,7 +140,6 @@ public class ContentEngineConnection
 	{
 		if ( connected == false )
 		{
-			// TODO throw an exception
 			return null;
 		}
 		
@@ -115,6 +148,6 @@ public class ContentEngineConnection
 
 	@Override
 	public String toString() {
-		return getName();
+		return getDisplayName();
 	}
 }

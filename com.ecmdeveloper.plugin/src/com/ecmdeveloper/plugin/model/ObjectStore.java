@@ -22,19 +22,11 @@ package com.ecmdeveloper.plugin.model;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.util.Messages;
-import com.filenet.api.collection.CodeModuleSet;
 import com.filenet.api.constants.PropertyNames;
-import com.filenet.api.core.Document;
-import com.filenet.api.core.Factory;
-import com.filenet.api.core.IndependentObject;
 import com.filenet.api.core.IndependentlyPersistableObject;
-import com.filenet.api.query.SearchSQL;
-import com.filenet.api.query.SearchScope;
-import com.filenet.api.util.Id;
 
 /**
  * 
@@ -43,7 +35,6 @@ import com.filenet.api.util.Id;
  */
 public class ObjectStore extends ObjectStoreItem 
 {
-	private static final String VERSION_SERIES_CLASS = "VersionSeries"; //$NON-NLS-1$
 	private static final String NOT_CONNECTED_MESSAGE = Messages.ObjectStore_NotConnectedMessage;
 	protected ContentEngineConnection connection;
 	protected com.filenet.api.core.ObjectStore objectStore;
@@ -135,25 +126,6 @@ public class ObjectStore extends ObjectStoreItem
 	public void setConnection(ContentEngineConnection connection) {
 		this.connection = connection;
 	}
-
-//	@SuppressWarnings("unchecked")
-//	public Collection<CodeModule> getCodeModules2() {
-//	
-//		SearchScope scope = new SearchScope(objectStore);
-//		String query = "Select This From CodeModule WHERE IsCurrentVersion = TRUE"; //$NON-NLS-1$
-//		CodeModuleSet codeModuleSet = (CodeModuleSet) scope.fetchObjects(new SearchSQL( query  ), null, null, null);
-//		Iterator iterator = codeModuleSet.iterator();
-//		
-//		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
-//
-//		while (iterator.hasNext()) {
-//			com.filenet.api.core.Document document = (Document) iterator.next(); 
-//			document.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
-//			codeModules.add( new CodeModule( document.get_VersionSeries(), this, this ) );
-//		}
-//		
-//		return codeModules;
-//	}
 	
 //	public IObjectStoreItem getObject(String id, String className )
 //	{
@@ -185,7 +157,7 @@ public class ObjectStore extends ObjectStoreItem
 		if ( ! objectStore.isConnected() ) {
 			throw new RuntimeException(MessageFormat.format(
 					NOT_CONNECTED_MESSAGE, objectStore.getConnection()
-							.getName(), objectStore.getName()));
+							.toString(), objectStore.getName()));
 		}
 	}
 }

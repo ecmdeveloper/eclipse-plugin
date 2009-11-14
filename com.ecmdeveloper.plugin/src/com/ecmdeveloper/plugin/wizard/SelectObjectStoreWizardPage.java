@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.wizard;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -14,12 +33,14 @@ import org.eclipse.swt.widgets.Composite;
 public class SelectObjectStoreWizardPage extends WizardPage 
 {
 	private CheckboxTableViewer objectStoresTable = null;
+	private boolean inputSet;
 	
 	public SelectObjectStoreWizardPage() 
 	{
 		super( "selectObjectStore" );
 		setTitle("Select Object Store");
 		setDescription("Select from the list below the Object Stores to import" );
+		inputSet = false;
 	}
 
 	@Override
@@ -55,6 +76,7 @@ public class SelectObjectStoreWizardPage extends WizardPage
 		objectStoresTable.setContentProvider( new ArrayContentProvider() );
 		objectStoresTable.setInput( ((ImportObjectStoreWizard)getWizard()).getObjectStores() );
 		objectStoresTable.setLabelProvider( new LabelProvider() );
+		inputSet = true;
 		if ( objectStoresTable.getTable().getItemCount() == 0 )
 		{
 			setErrorMessage( "There are no more Object Stores left to import from this connection." );
@@ -62,12 +84,16 @@ public class SelectObjectStoreWizardPage extends WizardPage
 	}
 
 	public String[] getObjectStores() {
-		
-		Object[] selectedObjects = objectStoresTable.getCheckedElements();
-		String[] objectStores = new String[ objectStoresTable.getCheckedElements().length ];
-		for (int i = 0; i < objectStores.length; i++) {
-			objectStores[i] = (String) selectedObjects[i];
+
+		if ( true ) {
+			Object[] selectedObjects = objectStoresTable.getCheckedElements();
+			String[] objectStores = new String[ objectStoresTable.getCheckedElements().length ];
+			for (int i = 0; i < objectStores.length; i++) {
+				objectStores[i] = (String) selectedObjects[i];
+			}
+			return objectStores;
+		} else {
+			return new String[0];
 		}
-		return objectStores;
 	}
 }
