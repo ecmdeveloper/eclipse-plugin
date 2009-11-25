@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditor"
+            default="false"
+            extensions="classdiagram"
+            id="com.ecmdeveloper.plugin.diagrams.classDiagramEditor"
+            name="Class Diagram">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="com.ecmdeveloper.plugin.contentEngine"
+            class="com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard"
+            icon="icons/table_edit.png"
+            id="com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard"
+            name="New Class Diagram">
+         <description>
+            Creates a new Class Diagram
+         </description>
+      </wizard>
+      <category
+            id="com.ecmdeveloper.plugin.contentEngine"
+            name="Content Engine">
+      </category>
+   </extension>
+
+</plugin>
