@@ -1,7 +1,26 @@
 /**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
  * 
  */
+
 package com.ecmdeveloper.plugin.codemodule.views;
+
+import java.text.MessageFormat;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -48,7 +67,11 @@ public class CodeModulesViewLabelProvider extends ObjectStoreItemLabelProvider i
 		case TYPE_COLUMN:
 			return Activator.getImage( IconFiles.ICON_CODEMODULE );
 		case LOCATION_COLUMN:
-			return super.getImage( getObjectStore(element) );
+			ObjectStore objectStore = getObjectStore(element);
+			if ( objectStore == null ) {
+				return Activator.getImage( IconFiles.ICON_DATABASE_ERROR );
+			}
+			return super.getImage( objectStore );
 		}
 		return null;
 	}
@@ -62,6 +85,12 @@ public class CodeModulesViewLabelProvider extends ObjectStoreItemLabelProvider i
 		case NAME_COLUMN:
 			return ((CodeModuleFile) element).getName();
 		case LOCATION_COLUMN:
+			ObjectStore objectStore = getObjectStore(element);
+			if ( objectStore == null ) {
+				return MessageFormat.format("Object Store \"{0}:{1}\" is not configured", 
+						((CodeModuleFile) element).getConnectionName(),
+						((CodeModuleFile) element).getObjectStoreName() );
+			}
 			return super.getText( getObjectStore(element) );
 		default:
 			return "";

@@ -25,9 +25,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IPath;
@@ -60,6 +63,7 @@ import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
  */
 public class CodeModulesManager implements ObjectStoresManagerListener {
 
+	private static final String CODE_MODULE_FILE_FORMAT = "{0}_{1}_{2}.{3}";
 	private static final String CODEMODULES_FOLDER = "codemodules";
 	private static final String CODEMODULE_FILE_EXTENSION = "codemodule";
 
@@ -71,6 +75,7 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	
 	private CodeModulesManager() {
 		getObjectStoresManager();
+		getCodeModuleFiles();	
 	}
 	
 	public static CodeModulesManager getManager()
@@ -107,10 +112,13 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		for (CodeModule codeModule : codeModules) {
 			
 			boolean found = false;
-			for ( CodeModuleFile codeModuleFile : codeModulefiles ) {
-				if ( codeModule.getId().equalsIgnoreCase( codeModuleFile.getId() ) ) {
-					found = true;
-					break;
+			
+			if ( codeModulefiles != null ) {
+				for ( CodeModuleFile codeModuleFile : codeModulefiles ) {
+					if ( isSame(codeModule, codeModuleFile) ) {
+						found = true;
+						break;
+					}
 				}
 			}
 			
@@ -120,6 +128,21 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		}
 		
 		return newCodeModules;
+	}
+
+	/**
+	 * Checks if the Code Module is the same as the Code Module managed
+	 * by the Code Module file. It is not enough to check the Id as Id's
+	 * may be the same for different Object Stores in case of an export/import.
+	 * 
+	 * @param codeModule
+	 * @param codeModuleFile
+	 * @return
+	 */
+	private boolean isSame(CodeModule codeModule, CodeModuleFile codeModuleFile) {
+		return codeModule.getId().equalsIgnoreCase( codeModuleFile.getId() ) && 
+				codeModuleFile.getObjectStoreName().equals( codeModule.getObjectStore().getName() ) &&
+				codeModuleFile.getConnectionName().equals(codeModule.getObjectStore().getConnection().getName() );
 	}
 
 	public Collection<CodeModuleFile> getCodeModuleFiles() {
@@ -151,7 +174,7 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	public CodeModuleFile createNewCodeModuleFile(ObjectStore objectStore, String name) {
 
 		CodeModuleFile codeModuleFile = new CodeModuleFile(name, null,
-				objectStore.getConnection().getName(), objectStore.getName());
+				objectStore.getConnection().toString(), objectStore.getName());
 		
 		return codeModuleFile;
 	}
@@ -340,7 +363,13 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	}
 	
 	public File getCodeModuleFile(CodeModuleFile codeModuleFile) {
-		String filename = codeModuleFile.getId() + "." + CODEMODULE_FILE_EXTENSION;
+		
+		String filename = MessageFormat.format( CODE_MODULE_FILE_FORMAT, 
+				codeModuleFile.getConnectionName(),
+				codeModuleFile.getObjectStoreName(),
+				codeModuleFile.getId(),
+				CODEMODULE_FILE_EXTENSION );
+		
 		return CodeModulesManager.getCodeModulesPath().append( filename ).toFile();
 	}
 
@@ -377,22 +406,53 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
 		
 		if ( event.getItemsRemoved() != null ) {
-		
-			for ( IObjectStoreItem objectStoreItem : event.getItemsRemoved() )
-			{
-				if ( ! ( objectStoreItem instanceof Document ) ) {
-					continue;
-				}
-
-				String id = ((Document)objectStoreItem).getVersionSeriesId(); 
-				
-				for ( CodeModuleFile codeModuleFile: codeModulefiles ) {
-					if ( id.equalsIgnoreCase( codeModuleFile.getId() ) ) {
-						removeCodeModuleFile(codeModuleFile);
-						break;
-					}
+			for ( IObjectStoreItem objectStoreItem : event.getItemsRemoved() ) {
+				if ( objectStoreItem instanceof Document ) {
+					removeDocumentCodeModuleFile(objectStoreItem);
+				} else if ( objectStoreItem instanceof ObjectStore ) {
+					updateObjectStoreCodeModuleFiles(objectStoreItem);
 				}
 			}
+		}
+		
+		if ( event.getItemsUpdated() != null ) {
+			for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
+				if ( objectStoreItem instanceof Document ) {
+					// TODO check if this is a Code Module
+				} else if ( objectStoreItem instanceof ObjectStore ) {
+					updateObjectStoreCodeModuleFiles(objectStoreItem);
+				}
+			}
+		}
+	}
+
+	private void removeDocumentCodeModuleFile(IObjectStoreItem objectStoreItem) {
+
+		String id = ((Document)objectStoreItem).getVersionSeriesId(); 
+		
+		for ( CodeModuleFile codeModuleFile: codeModulefiles ) {
+			if ( id.equalsIgnoreCase( codeModuleFile.getId() ) ) {
+				removeCodeModuleFile(codeModuleFile);
+				break;
+			}
+		}
+	}
+
+	private void updateObjectStoreCodeModuleFiles( IObjectStoreItem objectStoreItem) {
+		
+		String objectStoreName = objectStoreItem.getName();
+		String connectionName = ((ObjectStore) objectStoreItem).getConnection().getName();
+		Set<CodeModuleFile> removedItems = new HashSet<CodeModuleFile>();
+
+		for ( CodeModuleFile codeModuleFile: codeModulefiles ) {
+			if ( objectStoreName.equalsIgnoreCase( codeModuleFile.getObjectStoreName() ) &&
+				 connectionName.equalsIgnoreCase( codeModuleFile.getConnectionName() ) ) {
+				removedItems.add( codeModuleFile );
+			}
+		}
+
+		if ( ! removedItems.isEmpty() ) {
+			fireCodeModuleFilesChanged(null, null, removedItems.toArray( new CodeModuleFile[ removedItems.size() ] ) );
 		}
 	}
 }
