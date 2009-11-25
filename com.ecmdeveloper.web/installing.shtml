@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>ECM Developer (installing)</title>
+<title>ECM Developer - installing</title>
 <meta name="keywords" content="filenet,p8,eclipse" />
 <meta name="description" content="" />
 <link href="default.css" rel="stylesheet" type="text/css" />
@@ -33,21 +33,21 @@
 	<li>If you don't have access to this folder the Content Engine Client files can also be installed
 	using the Content Engine Client installer. 
 	</ul>
-	The ECM Developer plug-in can be installed from the update site at <b>http://www.ecmdeveloper.com/update</b>. 
-	(The update site can be configured in the dialog that appears if you select the 
-	<b>Help &gt; Software Updates... &gt; Add Site</b> commands in the Eclipse IDE):  
+	The ECM Developer plug-in can be downloaded from the <a href="http://sourceforge.net/projects/ecmdeveloper/files/">project download site</a>. 
+	The plug-in can be installed into your Eclipse environment in the dialog that appears if 
+	you select the <strong>Help &gt; Software Updates... &gt; Add Site</strong> commands in the Eclipse IDE:  
 	<p>
-	<img alt='add site dialog'/>
-	<p>
-	If this does not work (if for example you are behind a firewall) then you could install
-	the plug-in from the <a href='http://www.ecmdeveloper.com/todo'>zip-file distibution</a>. In this
-	case use the <b>Archive</b> command in the Add Site dialog.
+	<img src='images/installing/add_site.jpg' alt='add site dialog'/>
+	</p>
+	In this dialog use the <strong>Archive</strong> command and select the downloaded file. After this dialog
+	is completed the ECM Developer plug-in should appear in the list of available software and can 
+	be installed using the <strong>Install</strong> command.
 	<p>
 	After the plug-in is installed do not restart Eclipse inmediately. For the plug-in to work
 	properly first the Content Engine Client files must be made available within the Eclipse 
-	environment. First navigate to the <b>plugins</b> folder of your eclipse installation. The
-	installation of the ECM Developer plug-in created a folder called <b>com.ecmdeveloper.plugin.lib_1.0.0</b>.
-	This folder already contains some files. Now the <i>content</i> of the <b>CE_API</b> folder must
+	environment. First navigate to the <strong>plugins</strong> folder of your eclipse installation. The
+	installation of the ECM Developer plug-in created a folder called <strong>com.ecmdeveloper.plugin.lib_1.0.0</strong>.
+	This folder already contains some files. Now the <i>content</i> of the <strong>CE_API</strong> folder must
 	copied to this folder. After this the installation is completed and Eclipse must be restarted.
 	  
 	</div>

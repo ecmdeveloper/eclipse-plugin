@@ -12,7 +12,10 @@
 <!--#include virtual="/header.shtml" -->
 <div id="content">
 	<div id="left">
-	
+
+	<h2>Editing Code Modules</h2>
+	One of the features of the ECM Developer plug-in is editing of Code Modules. Code Modules
+	are Java classes which implement the desired behavior of  	
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->

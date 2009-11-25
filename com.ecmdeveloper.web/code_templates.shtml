@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>ECM Developer - Code Templates</title>
+<meta name="keywords" content="filenet,p8,eclipse" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!--#include virtual="/header.shtml" -->
+<div id="content">
+	<div id="left">
+
+	<h2>Code Templates</h2>
+	Although its is not very difficult to start developing code modules, a convenient
+	way to generate the starting Java code is by using the templates in the ECM Developer
+	plug-in. There are templates for the following code module types:
+	<ul>
+	<li>Event Actions</li>
+	<li>Lifecycle Action Handler</li>
+	<li>Document Classifier</li>
+	</ul>
+	<p>
+	Before you start programming the code modules make sure that you have a reference to
+	the Content Engine API, the file <strong>Jace.jar</strong>, in you project build path. 
+	The code modules can be generating
+	by using the <strong>File &gt; New &gt; Other</strong> command and next selecting the desired
+	Java class:
+	<p><img alt='New Class' src='images/code_templates/new_class.jpg'></p>
+	In the next page of the wizard the necessary information can be supplied to generate the
+	Java class:
+	<p><img alt='New Class' src='images/code_templates/new_event_action.jpg'></p>
+	If the wizard is finished the Java class will be generated at the desired location:
+	<p><img alt='Event Action Class' src='images/code_templates/my_event_action.jpg'></p>
+	The wizards for the other code modules work in the same way.
+	</div>
+	<div id="right">
+		<!--#include virtual="/navigation.shtml" -->
+	</div>
+</div>
+<div id="footer">
+	<p>Copyright &copy; 2009 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
+</div>
+</body>
+</html>
