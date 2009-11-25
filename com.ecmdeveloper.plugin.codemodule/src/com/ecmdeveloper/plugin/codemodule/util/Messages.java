@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.codemodule.util;
 
 import org.eclipse.osgi.util.NLS;
@@ -31,6 +50,7 @@ public class Messages extends NLS {
 	public static String CodeModuleEditorForm_PathColumnLabel;
 	public static String CodeModuleEditorForm_RemoveLabel;
 	public static String CodeModuleEditorForm_UpdateCodeModuleLinkText;
+	public static String CodeModuleEditorInput_CodeModuleTooltipMessage;
 	public static String EditCodeModuleHandler_HandlerName;
 	public static String EditCodeModuleHandler_OpenCodeModuleEditorError;
 	public static String NewCodeModuleWizard_OpenEditorFailedMessage;
@@ -43,7 +63,6 @@ public class Messages extends NLS {
 	public static String NewCodeModuleWizardPage_Title;
 	public static String RemoveCodeModuleHandler_HandlerName;
 	public static String RemoveCodeModuleHandler_RemoveMessage;
-	public static String UpdateCodeModuleHandler_ActionLabel;
 	public static String UpdateCodeModuleHandler_ActionSelectionDialogTitle;
 	public static String UpdateCodeModuleHandler_HandlerName;
 	public static String UpdateCodeModuleHandler_SelectActionsMessage;
