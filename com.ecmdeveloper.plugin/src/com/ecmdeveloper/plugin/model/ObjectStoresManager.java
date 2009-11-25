@@ -290,19 +290,23 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return null;
 	}
 
-	public Object executeTaskSync( BaseTask task ) throws ExecutionException
+	public Object executeTaskSync( Callable<Object> task ) throws ExecutionException
 	{
 		try {
-			task.setListeners(listeners);
+			if ( task instanceof BaseTask ) {
+				((BaseTask)task).setListeners(listeners);
+			}
 			return executorService.submit(task).get();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} 
 	}
 
-	public void executeTaskASync( BaseTask task )
+	public void executeTaskASync( Callable<Object> task )
 	{
-		task.setListeners(listeners);
+		if ( task instanceof BaseTask ) {
+			((BaseTask)task).setListeners(listeners);
+		}
 		executorService.submit(task);
 	}
 	
