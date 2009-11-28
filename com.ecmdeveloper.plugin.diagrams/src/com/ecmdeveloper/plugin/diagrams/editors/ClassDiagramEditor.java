@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.diagrams.editors;
 
 import java.io.IOException;
+import java.util.EventObject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -31,10 +32,12 @@ import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistable;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramFile;
 import com.ecmdeveloper.plugin.diagrams.parts.ClassesEditPartFactory;
@@ -79,10 +82,28 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 	@Override
 	protected void setInput(IEditorInput input) {
 		super.setInput(input);
-		ClassDiagram classDiagram = new ClassDiagram();
-		classDiagram.addClassDiagramClass( new ClassDiagramClass("My Class") );
+//		ClassDiagram classDiagram = new ClassDiagram();
+//		classDiagram.addClassDiagramClass( new ClassDiagramClass("My Class") );
 		//classDiagram.addClassDiagramClass( new ClassDiagramClass("My Second Class") );
-		model = classDiagram;
+//		model = classDiagram;
+		
+		IFile file = ((IFileEditorInput) getEditorInput()).getFile();
+		ClassDiagramFile classDiagramFile = new ClassDiagramFile(file);
+		try {
+			model = classDiagramFile.read(); 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ClassDiagramClass classDiagramClass = model.getClassDiagramClasses().get(0);
+		classDiagramClass.setAbstractClass(true);
+		classDiagramClass.addAttribute( new ClassDiagramAttribute("name", "String", null, null, false, false, false ) );
+		classDiagramClass.addAttribute( new ClassDiagramAttribute("id", "Id", null, null, true, false, false ) );
+		classDiagramClass.addAttribute( new ClassDiagramAttribute("color", "Color", null, "*", false, false, true ) );
 	}
 
 	@Override
@@ -97,6 +118,7 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		ClassDiagramFile classDiagramFile = new ClassDiagramFile(file);
 		try {
 			classDiagramFile.save(model, monitor);
+			getCommandStack().markSaveLocation();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,5 +126,11 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void commandStackChanged(EventObject event) {
+		firePropertyChange(IEditorPart.PROP_DIRTY);
+		super.commandStackChanged(event);
 	}
 }

@@ -20,6 +20,9 @@
 
 package com.ecmdeveloper.plugin.diagrams.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * @author Ricardo Belfor
@@ -28,7 +31,9 @@ package com.ecmdeveloper.plugin.diagrams.model;
 public class ClassDiagramClass extends ClassDiagramElement {
 
 	private String name;
-
+	private boolean abstractClass;
+	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
+	
 	public ClassDiagramClass(String name) {
 		super();
 		this.name = name;
@@ -40,5 +45,21 @@ public class ClassDiagramClass extends ClassDiagramElement {
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isAbstractClass() {
+		return abstractClass;
+	}
+
+	public void setAbstractClass(boolean abstractClass) {
+		this.abstractClass = abstractClass;
+	}
+	
+	public void addAttribute(ClassDiagramAttribute attribute ) {
+		attributes.add(attribute);
+	}
+	
+	public List<ClassDiagramAttribute> getAttributes() {
+		return attributes;
 	}
 }
