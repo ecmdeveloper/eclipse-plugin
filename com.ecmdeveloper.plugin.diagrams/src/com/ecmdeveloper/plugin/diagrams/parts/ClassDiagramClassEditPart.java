@@ -24,10 +24,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 
 import com.ecmdeveloper.plugin.diagrams.figures.ResourceFigure;
+import com.ecmdeveloper.plugin.diagrams.figures.UMLClassFigure;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 
 /**
@@ -64,11 +69,29 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 		}
 	}
 
+	/**
+	 * Creates the figure.
+	 * 
+	 * @return the figure
+	 * 
+	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#createFigure()
+	 */
 	@Override
 	protected IFigure createFigure() {
-		resourceFigure.setSize( getClassDiagramClass().getSize() );
-		// resourceFigure.setToolTip(createToolTipLabel());
-		return resourceFigure;
+
+		ClassDiagramClass classDiagramClass = getClassDiagramClass();
+		Font classFont = new Font(null, "Arial", 12, SWT.BOLD
+				+ (classDiagramClass.isAbstractClass() ? SWT.ITALIC : 0));
+		Label classLabel1 = new Label( classDiagramClass.getName() );
+		classLabel1.setFont(classFont);
+		
+		UMLClassFigure classFigure = new UMLClassFigure( classLabel1 );
+	
+		for ( ClassDiagramAttribute attribute : classDiagramClass.getAttributes() ) {
+			Label attributeLabel = new Label( attribute.toString() );
+			classFigure.getAttributesCompartment().add( attributeLabel );
+		}
+		return classFigure;
 	}
 
 	@Override

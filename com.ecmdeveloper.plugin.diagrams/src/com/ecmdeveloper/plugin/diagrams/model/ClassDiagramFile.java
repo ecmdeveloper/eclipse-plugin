@@ -22,8 +22,15 @@ package com.ecmdeveloper.plugin.diagrams.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
@@ -33,7 +40,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+
+import com.ecmdeveloper.plugin.diagrams.util.PluginTagNames;
 
 /**
  * @author Ricardo.Belfor
@@ -60,69 +70,90 @@ public class ClassDiagramFile {
 		memento.save(writer); 
 		writer.close(); 
 
-		dataOut.writeUTF( writer.toString() );
+		dataOut.write( writer.toString().getBytes("UTF-8") );
 		
 		file.setContents(new ByteArrayInputStream(out.toByteArray()), true, false, monitor);
+	}
+
+	public ClassDiagram read() throws IOException, WorkbenchException {
+
+//		InputStream contents = file.getContents();
+//		file.get
+//		byte[] buffer = new byte[100];
+//		int bytesRead;
+//		
+//		StringBuffer stringBuffer = new StringBuffer();
+//		while ( ( bytesRead = contents.read(buffer) ) > 0 ) {
+//			stringBuffer.append(buffer, );
+//		}
+//		
+//	    DataInputStream in = new DataInputStream(new ByteArrayInputStream(stringBuffer.toString().getBytes())); 
+//
+//	    String xmlString = in.readUTF();
+//	    if (xmlString == null || xmlString.length() == 0) {
+//			return null;
+//		}
+//
+//		StringReader reader = new StringReader(xmlString);
+		
+//		Reader reader = InputStreamReader) file.getContents() );
+//		XMLMemento memento = XMLMemento.createReadRoot(reader);
+
+		File file2 = file.getLocation().toFile();
+		FileReader fileReader = new FileReader( file2 );
+		
+		XMLMemento memento = XMLMemento.createReadRoot( fileReader );
+		
+		return getClassDiagram(memento);
+	}
+	
+	public ClassDiagram getClassDiagram(XMLMemento memento ) {
+	
+		ClassDiagram classDiagram = new ClassDiagram();
+
+		IMemento classes = memento.getChild(PluginTagNames.CLASSES);
+		
+		if ( classes != null ) {
+			
+			for (IMemento clazz : classes.getChildren( PluginTagNames.CLASS ) ) {
+				
+				String name = clazz.getString( PluginTagNames.NAME );
+				ClassDiagramClass classDiagramClass = new ClassDiagramClass(name);
+				
+				Point location = new Point(clazz.getInteger(PluginTagNames.XPOS),
+						clazz.getInteger(PluginTagNames.YPOS));
+				classDiagramClass.setLocation(location);
+				
+				Dimension size = new Dimension(
+						clazz.getInteger(PluginTagNames.WIDTH), 
+						clazz.getInteger(PluginTagNames.HEIGHT));
+				classDiagramClass.setSize(size);
+				
+				classDiagram.addClassDiagramClass(classDiagramClass);
+			}
+		}		
+		return classDiagram;
 	}
 	
 	public XMLMemento getXMLMemento(ClassDiagram classDiagram ) {
 		
-		XMLMemento memento = XMLMemento.createWriteRoot("classdiagram");
-		IMemento classesChild = memento.createChild("classes"); 
+		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.CLASSDIAGRAM);
+		IMemento classesChild = memento.createChild(PluginTagNames.CLASSES); 
 		
 		for ( ClassDiagramClass classDiagramClass : classDiagram.getClassDiagramClasses() ) {
 			
-			IMemento classChild = classesChild.createChild("class");
-			classChild.putString( "name", classDiagramClass.getName() );
+			IMemento classChild = classesChild.createChild(PluginTagNames.CLASS);
+			classChild.putString( PluginTagNames.NAME, classDiagramClass.getName() );
 			
 			Point location = classDiagramClass.getLocation();
-			classChild.putInteger( "xPos", location.x );
-			classChild.putInteger( "yPos", location.y );
+			classChild.putInteger( PluginTagNames.XPOS, location.x );
+			classChild.putInteger( PluginTagNames.YPOS, location.y );
 			
 			Dimension size = classDiagramClass.getSize();
-			classChild.putInteger( "height", size.height );
-			classChild.putInteger( "width", size.width );
+			classChild.putInteger( PluginTagNames.HEIGHT, size.height );
+			classChild.putInteger( PluginTagNames.WIDTH, size.width );
 		}
 		
 		return memento;
 	}
-	
-//	private void saveToFile(CodeModuleFile codeModuleFile, boolean saveNew ) {
-//
-//		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.CODE_MODULE);
-//		boolean saved = false;
-//		saveCodeModuleFile(codeModuleFile, memento);
-//		FileWriter writer = null;
-//		try {
-//			File outputFile;
-//			if ( codeModuleFile.getFilename() != null) {
-//				outputFile = new File( codeModuleFile.getFilename() );
-//			}
-//			else
-//			{
-//				outputFile = getCodeModuleFile(codeModuleFile);
-//			}
-//			writer = new FileWriter( outputFile );
-//			memento.save(writer);
-//			saved = true;
-//		} catch (IOException e) {
-//			PluginLog.error(e);
-//		} finally {
-//			try {
-//				if (writer != null)
-//					writer.close();
-//			} catch (IOException e) {
-//				PluginLog.error(e);
-//			}
-//		}
-//		
-//		if ( saved) {
-//			if ( saveNew ) {
-//				fireCodeModuleFilesChanged(new CodeModuleFile[] { codeModuleFile}, null, null );
-//			} else {
-//				fireCodeModuleFilesChanged(null, null, new CodeModuleFile[] { codeModuleFile} );
-//			}
-//		}
-//	}
-	
 }
