@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://www.ecmdeveloper.com/update">
+      ECM Developer is an Eclipse Plugin aimed at supporting the development of applications using FileNet P8 system. It approaches the system from a developers point of view and tries to find solutions for day to day tasks. An example is the development of event actions with related code modules. Part of developing event actions involve updating an existing code module and reconnecting the new version of the code module with the event action. Altough this process can be streamlined using a custom java application doing all these actions, a generic solutions is preferable. This is what the ECM Developer plugin offers.
+   </description>
+   <feature url="features/com.ecmdeveloper.plugin_1.0.0.jar" id="com.ecmdeveloper.plugin" version="1.0.0">
+      <category name="com.ecmdeveloper.plugin.contentEngine"/>
+   </feature>
+   <category-def name="com.ecmdeveloper.plugin.contentEngine" label="Content Engine">
+      <description>
+         This category contains the Content Engine features.
+      </description>
+   </category-def>
+</site>
