@@ -63,6 +63,8 @@ import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
  */
 public class CodeModulesManager implements ObjectStoresManagerListener {
 
+	private static final int CURRENT_FILE_VERSION = 1;
+
 	private static final String CODE_MODULE_FILE_FORMAT = "{0}_{1}_{2}.{3}";
 	private static final String CODEMODULES_FOLDER = "codemodules";
 	private static final String CODEMODULE_FILE_EXTENSION = "codemodule";
@@ -199,6 +201,8 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	private void saveCodeModuleFile(CodeModuleFile codeModuleFile, boolean saveNew ) {
 
 		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.CODE_MODULE);
+		memento.putInteger(PluginTagNames.VERSION_TAG, CURRENT_FILE_VERSION );
+		
 		boolean saved = false;
 		saveCodeModuleFile(codeModuleFile, memento);
 		FileWriter writer = null;
