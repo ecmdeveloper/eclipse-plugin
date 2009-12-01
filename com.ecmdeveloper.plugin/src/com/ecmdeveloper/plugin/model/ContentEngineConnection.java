@@ -99,20 +99,23 @@ public class ContentEngineConnection
 	}
 
 	@SuppressWarnings("unchecked")
-	public String[] getObjectStoreNames()
+	public ObjectStore[] getObjectStores(IObjectStoreItem parent )
 	{
 		ObjectStoreSet objectStores = domain.get_ObjectStores();
 		Iterator iterator = objectStores.iterator();
-		ArrayList<String> objectStoreNames = new ArrayList<String>();
+		ArrayList<ObjectStore> objectStoreList = new ArrayList<ObjectStore>();
 		
 		while (iterator.hasNext()) 
 		{
 			com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) iterator.next();
-			objectStore.fetchProperties( new String[] { PropertyNames.NAME } );
-			objectStoreNames.add( objectStore.get_Name() );
+
+			objectStore.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.DISPLAY_NAME } );
+			ObjectStore os = new ObjectStore(objectStore.get_Name(), objectStore.get_DisplayName(), parent );
+			os.setConnection( this );
+			objectStoreList.add( os ); 
 		}
 
-		return objectStoreNames.toArray( new String[0] );
+		return objectStoreList.toArray( new ObjectStore[0] );
 	}
 	
 	public void connect() {

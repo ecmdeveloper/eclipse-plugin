@@ -55,6 +55,8 @@ import com.ecmdeveloper.plugin.util.PluginTagNames;
  */
 public class ObjectStoresManager implements IObjectStoresManager
 {
+	private static final int CURRENT_FILE_VERSION = 1;
+
 	private static final String CONNECT_MESSAGE = "Connecting to \"{0}\"";
 
 	private static ObjectStoresManager objectStoresManager;
@@ -140,14 +142,11 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 	}
 	
-	public void addObjectStore(String name, String connectionName)
+	public void addObjectStore( final ObjectStore objectStore )
 	{
 		if ( objectStores == null) {
 			loadObjectStores();
 		}
-		
-		final ObjectStore objectStore = new ObjectStore( name, objectStores );
-		objectStore.setConnection( connections.get( connectionName ) );
 		
 		Callable<Object> callable = new Callable<Object>(){
 
@@ -216,18 +215,18 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return objectStores;
 	}
 
-	public String[] getNewObjectstoreNames( String connectionName ) {
+	public ObjectStore[] getNewObjectstores( String connectionName ) {
 
-		String[] objectStoreNames = getObjectStoreNames(connectionName);
-		ArrayList<String> newObjectStoreNames = new ArrayList<String>();
+		ObjectStore[] objectStores2 = getObjectStores(connectionName);
+		ArrayList<ObjectStore> newObjectStores = new ArrayList<ObjectStore>();
 
-		for (String objectStoreName : objectStoreNames ) {
+		for (ObjectStore objectStore2 : objectStores2 ) {
 		
 			boolean found = false;
 
 			for ( IObjectStoreItem objectStore : objectStores.getChildren() ) {
 			
-				if (objectStore.getName().equals(objectStoreName)
+				if (objectStore.getName().equals( objectStore2.getName() )
 						&& ((ObjectStore) objectStore).getConnection()
 								.getName().equals(connectionName)) {
 					found = true;
@@ -236,14 +235,14 @@ public class ObjectStoresManager implements IObjectStoresManager
 			}
 			
 			if ( ! found ) {
-				newObjectStoreNames.add( objectStoreName );
+				newObjectStores.add( objectStore2 );
 			}
 		}
 		
-		return newObjectStoreNames.toArray( new String[0] );
+		return newObjectStores.toArray( new ObjectStore[0] );
 	}
 	
-	public String[] getObjectStoreNames(String connectionName )
+	public ObjectStore[] getObjectStores(String connectionName )
 	{
 		if ( objectStores == null) {
 			loadObjectStores();
@@ -251,16 +250,16 @@ public class ObjectStoresManager implements IObjectStoresManager
 		
 		if ( ! connections.containsKey( connectionName ) )
 		{
-			return new String[0];
+			return new ObjectStore[0];
 		}
 		
 		final ContentEngineConnection connection = connections.get( connectionName );
 
-		Callable<String[]> a = new Callable<String[]>(){
+		Callable<ObjectStore[]> a = new Callable<ObjectStore[]>(){
 
 			@Override
-			public String[] call() throws Exception {
-				return connection.getObjectStoreNames();			}
+			public ObjectStore[] call() throws Exception {
+				return connection.getObjectStores(objectStores);			}
 		};
 		
 		try {
@@ -357,6 +356,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 			IMemento objectStoreChild = objectStoresChild.createChild(PluginTagNames.OBJECT_STORE_TAG);
 			
 			objectStoreChild.putString( PluginTagNames.NAME_TAG, objectStore.getName() );
+			objectStoreChild.putString( PluginTagNames.DISPLAY_NAME_TAG, objectStore.getDisplayName() );
 			objectStoreChild.putString( PluginTagNames.CONNECTION_NAME_TAG, ((ObjectStore)objectStore).getConnection().getName() );
 		}
 	}
@@ -385,7 +385,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 			for ( IMemento objectStoreChild : objectStoresChild.getChildren( PluginTagNames.OBJECT_STORE_TAG ) )
 			{
 				String name = objectStoreChild.getString( PluginTagNames.NAME_TAG );
-				ObjectStore objectStore = new ObjectStore( name, objectStores );
+				String displayName = objectStoreChild.getString( PluginTagNames.DISPLAY_NAME_TAG );
+				ObjectStore objectStore = new ObjectStore( name, displayName, objectStores );
 				
 				String connectionName = objectStoreChild.getString( PluginTagNames.CONNECTION_NAME_TAG );
 				objectStore.setConnection( connections.get( connectionName ) );
@@ -426,6 +427,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 
 		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.OBJECT_STORES_TAG);
+		memento.putInteger(PluginTagNames.VERSION_TAG, CURRENT_FILE_VERSION );
 
 		saveObjectStores(memento);
 		FileWriter writer = null;

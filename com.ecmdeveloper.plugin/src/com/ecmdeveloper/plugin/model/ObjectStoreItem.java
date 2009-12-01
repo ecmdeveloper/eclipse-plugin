@@ -52,7 +52,21 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	public String getName() {
 		return name;
 	}
+
 	
+	/**
+	 * Gets the display name of this item. The default implementation just
+	 * returns the name.
+	 * 
+	 * @return the display name
+	 * 
+	 * @see com.ecmdeveloper.plugin.model.IObjectStoreItem#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return getName();
+	}
+
 	@Override
 	public String getId() {
 		return id;

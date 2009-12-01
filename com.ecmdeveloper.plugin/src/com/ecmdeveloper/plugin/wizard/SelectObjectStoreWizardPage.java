@@ -30,6 +30,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+
 public class SelectObjectStoreWizardPage extends WizardPage 
 {
 	private CheckboxTableViewer objectStoresTable = null;
@@ -75,7 +78,7 @@ public class SelectObjectStoreWizardPage extends WizardPage
 
 		objectStoresTable.setContentProvider( new ArrayContentProvider() );
 		objectStoresTable.setInput( ((ImportObjectStoreWizard)getWizard()).getObjectStores() );
-		objectStoresTable.setLabelProvider( new LabelProvider() );
+		objectStoresTable.setLabelProvider( new ObjectStoreItemLabelProvider() );
 		inputSet = true;
 		if ( objectStoresTable.getTable().getItemCount() == 0 )
 		{
@@ -83,17 +86,17 @@ public class SelectObjectStoreWizardPage extends WizardPage
 		}
 	}
 
-	public String[] getObjectStores() {
+	public ObjectStore[] getObjectStores() {
 
 		if ( true ) {
 			Object[] selectedObjects = objectStoresTable.getCheckedElements();
-			String[] objectStores = new String[ objectStoresTable.getCheckedElements().length ];
+			ObjectStore[] objectStores = new ObjectStore[ objectStoresTable.getCheckedElements().length ];
 			for (int i = 0; i < objectStores.length; i++) {
-				objectStores[i] = (String) selectedObjects[i];
+				objectStores[i] = (ObjectStore) selectedObjects[i];
 			}
 			return objectStores;
 		} else {
-			return new String[0];
+			return new ObjectStore[0];
 		}
 	}
 }
