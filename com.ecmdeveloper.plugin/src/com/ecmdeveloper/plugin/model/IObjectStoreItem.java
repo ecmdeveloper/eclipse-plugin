@@ -33,6 +33,8 @@ public interface IObjectStoreItem extends IAdaptable {
 	public String getName();
 	
 	public void setName(String name);
+
+	public String getDisplayName();
 	
 	public String getId();
 	

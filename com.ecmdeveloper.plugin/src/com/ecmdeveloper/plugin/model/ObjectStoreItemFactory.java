@@ -28,7 +28,7 @@ import com.filenet.api.core.IndependentObject;
 
 /**
  * @author Ricardo.Belfor
- *
+ * @deprecated
  */
 public class ObjectStoreItemFactory {
 

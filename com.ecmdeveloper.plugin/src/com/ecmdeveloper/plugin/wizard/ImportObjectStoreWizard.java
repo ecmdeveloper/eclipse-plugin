@@ -34,6 +34,7 @@ import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginMessage;
@@ -96,16 +97,16 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 
 	@Override
 	public boolean performFinish() {
-		for (String objectStoreName : selectObjectStoreWizardPage.getObjectStores() )
+		for (ObjectStore objectStore : selectObjectStoreWizardPage.getObjectStores() )
 		{
-			objectStoresManager.addObjectStore(objectStoreName, connectionName);
+			objectStoresManager.addObjectStore(objectStore);
 		}
 		return true;
 	}
 
 	@Override
 	public boolean canFinish() {
-		String[] objectStores = selectObjectStoreWizardPage.getObjectStores();
+		ObjectStore[] objectStores = selectObjectStoreWizardPage.getObjectStores();
 		if ( objectStores == null )
 		{
 			return false;
@@ -193,9 +194,9 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	      }
 	}
 	
-	public String[] getObjectStores() {
+	public ObjectStore[] getObjectStores() {
 		
-		String[] objectStores = new String[0];
+		ObjectStore[] objectStores = new ObjectStore[0];
 
 		try {
 			NewObjectstoreNamesRunnable runnable = new NewObjectstoreNamesRunnable(
@@ -229,7 +230,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	class NewObjectstoreNamesRunnable implements IRunnableWithProgress {
 
 		private String connectionName;
-		private String[] objectStores = new String[0];
+		private ObjectStore[] objectStores = new ObjectStore[0];
 		
 		public NewObjectstoreNamesRunnable(String connectionName ) {
 			this.connectionName = connectionName;
@@ -241,14 +242,14 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 
 			monitor.beginTask("Getting Object Store names", IProgressMonitor.UNKNOWN );
 			try {
-				objectStores = objectStoresManager.getNewObjectstoreNames(connectionName);
+				objectStores = objectStoresManager.getNewObjectstores(connectionName);
 			} catch (final Exception e) {
 				PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
 			}
 			monitor.done();
 		}
 
-		public String[] getObjectStores() {
+		public ObjectStore[] getObjectStores() {
 			return objectStores;
 		}
 	}

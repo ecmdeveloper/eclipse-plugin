@@ -40,11 +40,21 @@ public class ObjectStore extends ObjectStoreItem
 	protected com.filenet.api.core.ObjectStore objectStore;
 	
 	private Collection<IObjectStoreItem> children;
+	private String displayName;
 
-	public ObjectStore(String objectStoreName, IObjectStoreItem parent) {
+	public ObjectStore(String objectStoreName, String displayName, IObjectStoreItem parent) {
 
 		super(parent, null);
 		this.name = objectStoreName;
+		this.displayName = displayName;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
 	@Override
@@ -115,8 +125,9 @@ public class ObjectStore extends ObjectStoreItem
 		connection.connect();
 		
 		objectStore = (com.filenet.api.core.ObjectStore) connection.getObjectStoreObject( name );
-		objectStore.fetchProperties( new String[] { PropertyNames.ID } );
+		objectStore.fetchProperties( new String[] { PropertyNames.ID, PropertyNames.DISPLAY_NAME } );
 		id = objectStore.get_Id().toString();
+		displayName = objectStore.get_DisplayName();
 	}
 	
 	public ContentEngineConnection getConnection() {
@@ -127,21 +138,6 @@ public class ObjectStore extends ObjectStoreItem
 		this.connection = connection;
 	}
 	
-//	public IObjectStoreItem getObject(String id, String className )
-//	{
-//		if ( objectStore == null ) {
-//			throw new RuntimeException(MessageFormat.format(
-//					NOT_CONNECTED_MESSAGE, connection.getName(), getName()));
-//		}
-//		
-//		if ( VERSION_SERIES_CLASS.equals( className) ) {
-//			return new CodeModule(Factory.VersionSeries.getInstance(objectStore, new Id( id ) ), this, this);
-//		} else {
-//			IndependentObject object = objectStore.getObject(className, id);
-//			return ObjectStoreItemFactory.getObject( object, this, this );
-//		}
-//	}
-
 	@Override
 	public void setName(String name) {
 		objectStore.set_DisplayName(name);
@@ -150,6 +146,11 @@ public class ObjectStore extends ObjectStoreItem
 	@Override
 	public void refresh() {
 		children = null;
+		
+		if ( isConnected() ) {
+			objectStore.fetchProperties( new String[] { PropertyNames.DISPLAY_NAME } );
+			displayName = objectStore.get_DisplayName();
+		}
 	}
 
 	public static void assertConnected(ObjectStore objectStore) {

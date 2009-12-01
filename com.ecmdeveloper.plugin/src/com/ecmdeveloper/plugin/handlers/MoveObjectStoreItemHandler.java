@@ -82,11 +82,11 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 			return null;
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		Set<String> elementObjectStores = new HashSet<String>();
+		Set<ObjectStore> elementObjectStores = new HashSet<ObjectStore>();
 
 		while ( iterator.hasNext() ) {
 			IObjectStoreItem elem = (IObjectStoreItem) iterator.next();
-			elementObjectStores.add( elem.getObjectStore().getName() );
+			elementObjectStores.add( elem.getObjectStore() );
 		}
 
 		ArrayList<IObjectStoreItem> elementsMoved = new ArrayList<IObjectStoreItem>();
@@ -135,10 +135,10 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 	
 	class MoveTargetFilter extends ViewerFilter
 	{
-		final private String objectStoreName;
+		final private ObjectStore objectStore;
 		
-		public MoveTargetFilter(String objectStoreName ) {
-			this.objectStoreName = objectStoreName;
+		public MoveTargetFilter(ObjectStore objectStoreName ) {
+			this.objectStore = objectStoreName;
 		}
 		
 		@Override
@@ -147,7 +147,7 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 			if ( ( element instanceof Document || element instanceof CustomObject  ) ) {
 				return false;
 			} else if ( element instanceof ObjectStore ) {
-				return objectStoreName.equals( ((ObjectStore) element).getName() );
+				return objectStore.getId().equalsIgnoreCase( ((ObjectStore) element).getId() );
 			}
 			return true;
 		}
