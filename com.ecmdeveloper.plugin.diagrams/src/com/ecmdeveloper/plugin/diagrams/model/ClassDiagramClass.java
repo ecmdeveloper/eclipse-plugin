@@ -23,6 +23,11 @@ package com.ecmdeveloper.plugin.diagrams.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
+
+import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+
 
 /**
  * @author Ricardo Belfor
@@ -31,28 +36,52 @@ import java.util.List;
 public class ClassDiagramClass extends ClassDiagramElement {
 
 	private String name;
+	private String displayName;
 	private boolean abstractClass;
-	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
+	private String id;
 	
-	public ClassDiagramClass(String name) {
+	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
+
+	public ClassDiagramClass(String name, String displayName,
+			boolean abstractClass, String id) {
 		super();
 		this.name = name;
+		this.displayName = displayName;
+		this.abstractClass = abstractClass;
+		this.id = id;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public ClassDiagramClass(IAdaptable adaptableObject) {
+		
+		com.filenet.api.meta.ClassDescription internalClassDescription = (com.filenet.api.meta.ClassDescription) adaptableObject
+				.getAdapter(com.filenet.api.meta.ClassDescription.class);
+		
+		abstractClass = ! internalClassDescription.get_AllowsInstances();
+		id = internalClassDescription.get_Id().toString();
+		displayName = internalClassDescription.get_DisplayName();
+		name = internalClassDescription.get_Name();
+		
+		ClassDescription classDescription = (ClassDescription) adaptableObject.getAdapter(ClassDescription.class);
+		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
+			 ClassDiagramAttribute attribute = (ClassDiagramAttribute) propertyDescription.getAdapter(ClassDiagramAttribute.class);
+			 addAttribute(attribute);
+		 }
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public boolean isAbstractClass() {
-		return abstractClass;
+	public String getDisplayName() {
+		return displayName;
 	}
 
-	public void setAbstractClass(boolean abstractClass) {
-		this.abstractClass = abstractClass;
+	public String getId() {
+		return id;
+	}
+
+	public boolean isAbstractClass() {
+		return abstractClass;
 	}
 	
 	public void addAttribute(ClassDiagramAttribute attribute ) {

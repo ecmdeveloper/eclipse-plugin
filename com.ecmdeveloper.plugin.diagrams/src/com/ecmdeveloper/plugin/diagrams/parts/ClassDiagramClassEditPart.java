@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -34,6 +35,7 @@ import com.ecmdeveloper.plugin.diagrams.figures.ResourceFigure;
 import com.ecmdeveloper.plugin.diagrams.figures.UMLClassFigure;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
+import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy;
 
 /**
  * @author Ricardo Belfor
@@ -96,8 +98,8 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 
 	@Override
 	protected void createEditPolicies() {
-		// TODO Auto-generated method stub
-		
+		installEditPolicy(EditPolicy.COMPONENT_ROLE,
+				new ClassDiagramComponentEditPolicy() );
 	}
 
 	@Override

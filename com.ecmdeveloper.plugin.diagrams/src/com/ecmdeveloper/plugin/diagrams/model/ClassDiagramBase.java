@@ -29,7 +29,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 /**
  * The Class ClassDiagramBase.
  * 
- * @author Ricardo.Belfor
+ * @author Ricardo Belfor
  */
 public abstract class ClassDiagramBase implements IPropertySource {
 
