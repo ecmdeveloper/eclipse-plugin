@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECM Developer Classes Plug-in
+Bundle-SymbolicName: com.ecmdeveloper.plugin.classes;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: com.ecmdeveloper.plugin.classes.Activator
+Bundle-Vendor: ECMDEVELOPER
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.ecmdeveloper.plugin;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin.lib;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: com.ecmdeveloper.plugin.classes.model,
+ com.ecmdeveloper.plugin.classes.model.constants

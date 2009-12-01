@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="com.ecmdeveloper.plugin.contentEngine"
+            name="Content Engine">
+      </category>
+      <view
+            category="com.ecmdeveloper.plugin.contentEngine"
+            class="com.ecmdeveloper.plugin.classes.views.ClassesView"
+            icon="icons/table_multiple.png"
+            id="com.ecmdeveloper.plugin.classes.views.ClassesView"
+            name="Object Store Classes"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.classes.views.ClassesView?after=edit">
+         <command
+               commandId="com.ecmdeveloper.plugin.connectObjectStore"
+               icon="icons/database_connect.png"
+               style="push"
+               tooltip="Connect to the Object Store">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.ObjectStore">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
