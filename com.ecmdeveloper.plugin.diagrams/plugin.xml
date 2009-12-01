@@ -5,6 +5,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditor"
+            contributorClass="com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditorContributor"
             default="false"
             extensions="classdiagram"
             id="com.ecmdeveloper.plugin.diagrams.classDiagramEditor"
@@ -27,6 +28,63 @@
             id="com.ecmdeveloper.plugin.contentEngine"
             name="Content Engine">
       </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.classes.views.ClassesView?after=edit">
+         <command
+               commandId="com.ecmdeveloper.plugin.diagrams.addClassToDiagram"
+               icon="icons/table_add.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <with
+                        variable="selection">
+                     <iterate>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.classes.model.ClassDescription">
+                        </instanceof>
+                     </iterate>
+                  </with>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="com.ecmdeveloper.plugin.diagrams.classDiagramEditor">
+                     </equals>
+                  </with>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Add Class to Diagram"
+            id="com.ecmdeveloper.plugin.diagrams.addClassToDiagram"
+            name="Add to Diagram">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.ecmdeveloper.plugin.diagrams.handlers.AddClassToDiagramHandler"
+            commandId="com.ecmdeveloper.plugin.diagrams.addClassToDiagram">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.diagrams.handlers.DeleteHandler"
+            commandId="org.eclipse.ui.edit.delete">
+         <activeWhen>
+            <with
+                  variable="activeEditorId">
+               <equals
+                     value="com.ecmdeveloper.plugin.diagrams.classDiagramEditor">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
 
 </plugin>

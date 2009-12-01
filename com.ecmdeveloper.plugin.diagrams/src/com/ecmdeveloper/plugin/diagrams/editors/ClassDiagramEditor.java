@@ -30,11 +30,11 @@ import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
+import org.eclipse.gef.ui.actions.DeleteAction;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPersistable;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
@@ -56,6 +56,10 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		setEditDomain(new DefaultEditDomain(this));
 	}
 
+	public ClassDiagram getClassDiagram() {
+		return model;
+	}
+	
 	@Override
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
@@ -99,11 +103,11 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 			e.printStackTrace();
 		}
 		
-		ClassDiagramClass classDiagramClass = model.getClassDiagramClasses().get(0);
-		classDiagramClass.setAbstractClass(true);
-		classDiagramClass.addAttribute( new ClassDiagramAttribute("name", "String", null, null, false, false, false ) );
-		classDiagramClass.addAttribute( new ClassDiagramAttribute("id", "Id", null, null, true, false, false ) );
-		classDiagramClass.addAttribute( new ClassDiagramAttribute("color", "Color", null, "*", false, false, true ) );
+//		ClassDiagramClass classDiagramClass = model.getClassDiagramClasses().get(0);
+//		classDiagramClass.setAbstractClass(true);
+//		classDiagramClass.addAttribute( new ClassDiagramAttribute("name", "String", null, null, false, false, false ) );
+//		classDiagramClass.addAttribute( new ClassDiagramAttribute("id", "Id", null, null, true, false, false ) );
+//		classDiagramClass.addAttribute( new ClassDiagramAttribute("color", "Color", null, "*", false, false, true ) );
 	}
 
 	@Override
@@ -132,5 +136,17 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 	public void commandStackChanged(EventObject event) {
 		firePropertyChange(IEditorPart.PROP_DIRTY);
 		super.commandStackChanged(event);
+	}
+
+	@SuppressWarnings("deprecation")
+	public void deleteSelection() {
+      getActionRegistry().getAction(DeleteAction.ID).run();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class type) {
+		if (type == ClassDiagram.class)
+			return model;
+		return super.getAdapter(type);
 	}
 }

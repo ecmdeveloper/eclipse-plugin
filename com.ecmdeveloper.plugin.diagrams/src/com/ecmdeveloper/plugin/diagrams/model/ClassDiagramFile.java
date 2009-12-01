@@ -22,17 +22,11 @@ package com.ecmdeveloper.plugin.diagrams.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -118,7 +112,7 @@ public class ClassDiagramFile {
 			for (IMemento clazz : classes.getChildren( PluginTagNames.CLASS ) ) {
 				
 				String name = clazz.getString( PluginTagNames.NAME );
-				ClassDiagramClass classDiagramClass = new ClassDiagramClass(name);
+				ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, name, false, null );
 				
 				Point location = new Point(clazz.getInteger(PluginTagNames.XPOS),
 						clazz.getInteger(PluginTagNames.YPOS));

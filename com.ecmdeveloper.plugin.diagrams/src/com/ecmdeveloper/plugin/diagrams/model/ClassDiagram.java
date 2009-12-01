@@ -29,11 +29,21 @@ import java.util.List;
  */
 public class ClassDiagram extends ClassDiagramBase {
 
+	/** Property ID to use when a child is added to this diagram. */
+	public static final String CHILD_ADDED_PROP = "ClassDiagram.ChildAdded";
+	/** Property ID to use when a child is removed from this diagram. */
+	public static final String CHILD_REMOVED_PROP = "ClassDiagram.ChildRemoved";
+	
 	private ArrayList<ClassDiagramClass> classDiagramClasses = new ArrayList<ClassDiagramClass>();
 	
-	public void addClassDiagramClass( ClassDiagramClass classDiagramClass )
+	public boolean addClassDiagramClass( ClassDiagramClass classDiagramClass )
 	{
-		classDiagramClasses.add(classDiagramClass);
+		if ( classDiagramClass != null && classDiagramClasses.add(classDiagramClass) ) {
+			classDiagramClass.setParent(this);
+			firePropertyChange(CHILD_ADDED_PROP, null, classDiagramClass);
+			return true;
+		}
+		return false;
 	}
 
 	public List<ClassDiagramClass> getClassDiagramClasses() {
@@ -62,5 +72,19 @@ public class ClassDiagram extends ClassDiagramBase {
 	public void setPropertyValue(Object id, Object value) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void deleteClassDiagramElement(ClassDiagramElement object) {
+		if ( object instanceof ClassDiagramClass ) {
+			if ( classDiagramClasses.remove( object ) ) {
+				firePropertyChange(CHILD_REMOVED_PROP, null, object );
+			}
+		}
+	}
+
+	public void addClassDiagramElement(ClassDiagramElement object) {
+		if ( object instanceof ClassDiagramClass ) {
+			addClassDiagramClass((ClassDiagramClass) object);
+		}
 	}
 }

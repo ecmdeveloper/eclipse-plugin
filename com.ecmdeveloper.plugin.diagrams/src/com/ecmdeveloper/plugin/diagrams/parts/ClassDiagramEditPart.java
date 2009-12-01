@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.diagrams.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,8 @@ import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramLayoutEditPolicy;
  * @author Ricardo.Belfor
  *
  */
-public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart {
+public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart
+		implements PropertyChangeListener {
 
 	public ClassDiagramEditPart(ClassDiagram classDiagram) {
 		setModel(classDiagram);
@@ -46,7 +49,23 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart {
 	public ClassDiagram getClassDiagram() {
 		return (ClassDiagram) getModel();
 	}
-	
+
+	@Override
+	public void activate() {
+		if (!isActive()) {
+			super.activate();
+			getClassDiagram().addPropertyChangeListener(this);
+		}
+	}
+
+	@Override
+	public void deactivate() {
+		if (isActive()) {
+			super.deactivate();
+			getClassDiagram().removePropertyChangeListener(this);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#createFigure()
 	 */
@@ -68,5 +87,14 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart {
 	@Override
 	protected void createEditPolicies() {
       installEditPolicy(EditPolicy.LAYOUT_ROLE, new ClassDiagramLayoutEditPolicy());
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		String prop = evt.getPropertyName();
+		if (ClassDiagram.CHILD_ADDED_PROP.equals(prop)
+				|| ClassDiagram.CHILD_REMOVED_PROP.equals(prop)) {
+			refreshChildren();
+		}
 	}
 }
