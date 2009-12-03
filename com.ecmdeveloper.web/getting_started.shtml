@@ -14,23 +14,23 @@
 	<div id="left">
 		<h2>Getting Started</h2>
 		To start using the ECM Developer plug-in you have to import the Object Stores you
-		want to use with this plug-in. The following actions have to be performed to 
+		want to use with this plug-in in the workspace. The following actions have to be performed to 
 		accomplish this task:
 		<ul>
 		<li>Start the standard Eclipse import wizard using the <strong>File&gt;Import</strong>
 		command.
-		<p><img alt='Import Object Store page'/></p>
+		<p><img alt='Import Object Store page' src='images/getting_started/import_object_store.jpg'/></p>
 		In the Content Engine category select <strong>Object Store</strong> and continue the
 		wizard.
 		</li>
 		<li>If there are any existing connections then in the <strong>Select Connection</strong> page 
 		you can either choose to configure a new connection or use an existing connection:
-		<p><img alt='Selected Connection page'/></p>
+		<p><img alt='Selected Connection page' src='images/getting_started/select_connection.jpg'/></p>
 		Choose the appropriate option and continue the wizard.
 		</li>
-		<li>If a new connection is selected or if there a no connection configure yet, then the 
+		<li>If a new connection is selected or if there are no connections configure yet, then the 
 		<strong>Configure Connection</strong> page will be shown:
-		<p><img alt='Configure Connection page'/></p>
+		<p><img alt='Configure Connection page' src='images/getting_started/configure_connection.jpg'/></p>
 		In this page you can enter the necessary connection parameters and use the 
 		<strong>Connect</strong> command to connect to the Content Engine. Every time you connect to
 		this Content Engine these connection parameters will be used. Note that if for some reason 
@@ -38,8 +38,9 @@
 		a timeout occurs. After a successful connection is made the wizard can be continued.
 		</li>
 		<li>The final page of the wizard is the <strong>Select Object Store</strong> page:
-		<p><img alt='Select Object Store page'/></p>
-		Select the necessary Object Stores and finish the wizard.
+		<p><img alt='Select Object Store page' src='images/getting_started/select_object_store.jpg'/></p>
+		Select the necessary Object Stores and finish the wizard. If there are no object stores
+		left to import an error message will be displayed.
 		</li>
 		</ul>
 		After you have completed these steps you can start using the Object Stores using the 
@@ -50,7 +51,7 @@
 		host for which no proxy server is necessary and restart Eclipse afterwards. This can be 
 		done in the <strong>Network Connections</strong> preference page using the 
 		<strong>Window &gt; Preferences &gt; General &gt; Network Connections</strong> command:
-		<p><img alt='Network Connections'></p>
+		<p><img alt='Network Connections' src='images/getting_started/network_connections.jpg'/></p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
@@ -58,6 +59,14 @@
 </div>
 <div id="footer">
 	<p>Copyright &copy; 2009 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
-</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-723834-3");
+pageTracker._trackPageview();
+} catch(err) {}</script></div>
 </body>
 </html>
