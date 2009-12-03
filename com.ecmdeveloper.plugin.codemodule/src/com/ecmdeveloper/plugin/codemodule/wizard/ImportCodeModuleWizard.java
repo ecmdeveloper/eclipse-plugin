@@ -104,7 +104,7 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 
 	public Collection<CodeModule> getCodeModules() {
 		
-		if ( objectStore != null ) {
+		if ( objectStore != null && objectStore.isConnected() ) {
 			
 			NewCodeModulesRunnable runnable = new NewCodeModulesRunnable(objectStore);
 			try {
