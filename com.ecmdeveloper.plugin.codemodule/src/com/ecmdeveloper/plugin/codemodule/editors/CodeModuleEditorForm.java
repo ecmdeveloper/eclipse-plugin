@@ -1,3 +1,22 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.codemodule.editors;
 
 import java.io.File;
@@ -144,8 +163,8 @@ public class CodeModuleEditorForm extends FormPage {
 		getManagedForm().getForm().setText( CODE_MODULE_NAME_PREFIX + codeModuleFile.getName() );
 		filesTableViewer.setInput( codeModuleFile.getFiles() );
 		nameText.setText( codeModuleFile.getName() );
-		objectStoreLabel.setText(codeModuleFile.getConnectionName() + ":" //$NON-NLS-1$
-				+ codeModuleFile.getObjectStoreName());
+		objectStoreLabel.setText(codeModuleFile.getConnectionDisplayName() + ":" //$NON-NLS-1$
+				+ codeModuleFile.getObjectStoreDisplayName() );
 	}
 
 	public void refreshFilesTableContent()
@@ -184,7 +203,6 @@ public class CodeModuleEditorForm extends FormPage {
 
 		objectStoreLabel = new Label( client, SWT.NONE );
 		objectStoreLabel.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-		//objectStoreLabel.setText("");
 
 		section.setClient(client);
 	}
@@ -257,15 +275,6 @@ public class CodeModuleEditorForm extends FormPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		section.setLayoutData(gd);
-		
-		//		ToolBar tbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
-//		ToolItem titem = new ToolItem(tbar, SWT.NULL);
-//		titem.setImage( Activator.getImage("icons/page_add.png") );
-//		titem.setToolTipText("Add File");
-//		titem = new ToolItem(tbar, SWT.PUSH);
-//		titem.setToolTipText("Remove File");
-//		titem.setImage( Activator.getImage("icons/page_delete.png") );
-//		section.setTextClient(tbar);
 		
 		Composite client = toolkit.createComposite( section, SWT.WRAP );
 		GridLayout layout = new GridLayout();

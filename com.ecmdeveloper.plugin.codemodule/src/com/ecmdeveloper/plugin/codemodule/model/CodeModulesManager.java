@@ -176,17 +176,15 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	public CodeModuleFile createNewCodeModuleFile(ObjectStore objectStore, String name) {
 
 		CodeModuleFile codeModuleFile = new CodeModuleFile(name, null,
-				objectStore.getConnection().toString(), objectStore.getName());
+				objectStore.getConnection().getName(), objectStore.getConnection().getDisplayName(), 
+				objectStore.getName(), objectStore.getDisplayName() );
 		
 		return codeModuleFile;
 	}
 
 	public CodeModuleFile createCodeModuleFile(CodeModule codeModule, ObjectStore objectStore) {
 
-		CodeModuleFile codeModuleFile = new CodeModuleFile(
-				codeModule.getName(), codeModule.getId(), objectStore
-						.getConnection().getName(), objectStore.getName());
-
+		CodeModuleFile codeModuleFile = new CodeModuleFile( codeModule, objectStore );
 		codeModuleFile.setFilename( getCodeModuleFile(codeModuleFile).getPath() );
 		saveCodeModuleFile(codeModuleFile, true);
 		codeModulefiles.add(codeModuleFile);
@@ -274,7 +272,10 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		memento.putString( PluginTagNames.NAME_TAG, codeModuleFile.getName() );
 		memento.putString( PluginTagNames.ID_TAG, codeModuleFile.getId() );
 		memento.putString( PluginTagNames.CONNECTION_NAME_TAG, codeModuleFile.getConnectionName() );
+		memento.putString( PluginTagNames.CONNECTION_DISPLAY_NAME_TAG, codeModuleFile.getConnectionDisplayName() );
 		memento.putString( PluginTagNames.OBJECT_STORE_NAME_TAG, codeModuleFile.getObjectStoreName() );
+		memento.putString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME_TAG, codeModuleFile.getObjectStoreDisplayName() );
+		
 		IMemento filesChild = memento.createChild(PluginTagNames.FILES_TAG); 
 		
 		for ( File file : codeModuleFile.getFiles() ) {
@@ -311,9 +312,12 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		String name = memento.getString( PluginTagNames.NAME_TAG );
 		String id = memento.getString( PluginTagNames.ID_TAG );
 		String connectionName = memento.getString( PluginTagNames.CONNECTION_NAME_TAG );
+		String connectionDisplayName = memento.getString( PluginTagNames.CONNECTION_DISPLAY_NAME_TAG );
 		String objectStoreName = memento.getString( PluginTagNames.OBJECT_STORE_NAME_TAG );
+		String objectStoreDisplayName = memento.getString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME_TAG );
 		
-		CodeModuleFile codeModuleFile = new CodeModuleFile(name, id, connectionName, objectStoreName );
+		CodeModuleFile codeModuleFile = new CodeModuleFile(name, id, connectionName, connectionDisplayName, 
+				objectStoreName, objectStoreDisplayName );
 		
 		IMemento filesChild = memento.getChild(PluginTagNames.FILES_TAG );
 		if ( filesChild != null ) {
