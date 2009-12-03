@@ -45,6 +45,8 @@ public class Messages extends NLS {
 	public static String NewNameMessage;
 	public static String ObjectStore_NotConnectedMessage;
 	public static String RefreshObjectStoreItemHandler_HandlerName;
+	public static String RemoveObjectStoreHandler_HandlerName;
+	public static String RemoveObjectStoreHandler_RemoveObjectStoreMessage;
 	public static String RenameObjectStoreItemHandler_0;
 	public static String RenameObjectStoreItemHandler_1;
 	public static String RenameObjectStoreItemHandler_FailedMessage;

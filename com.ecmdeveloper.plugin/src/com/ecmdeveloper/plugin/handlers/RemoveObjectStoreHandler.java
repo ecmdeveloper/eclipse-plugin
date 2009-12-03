@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.handlers;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -33,6 +34,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.util.Messages;
 
 /**
  * @author Ricardo Belfor
@@ -40,6 +42,9 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
  */
 public class RemoveObjectStoreHandler extends AbstractHandler implements
 		IHandler {
+
+	private static final String REMOVE_OBJECT_STORE_MESSAGE = Messages.RemoveObjectStoreHandler_RemoveObjectStoreMessage;
+	private static final String HANDLER_NAME = Messages.RemoveObjectStoreHandler_HandlerName;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -63,7 +68,11 @@ public class RemoveObjectStoreHandler extends AbstractHandler implements
 			Object selectedObject = iter.next();
 			if ( selectedObject instanceof ObjectStore ) {
 				
-				boolean answerTrue = MessageDialog.openQuestion( window.getShell(), "Remove Object Stores from view", "Do you want to remove the Object Store '" + ((ObjectStore)selectedObject).getName() + " from the view?" );
+				ObjectStore objectStore = (ObjectStore)selectedObject;
+				String objecStoreName = objectStore.getConnection().getDisplayName() + ":" + objectStore.getDisplayName(); //$NON-NLS-1$
+				boolean answerTrue = MessageDialog.openQuestion(window
+						.getShell(), HANDLER_NAME, MessageFormat.format(
+						REMOVE_OBJECT_STORE_MESSAGE, objecStoreName));
 				if ( answerTrue )
 				{
 					ObjectStoresManager.getManager().removeObjectStore( (ObjectStore)selectedObject );
