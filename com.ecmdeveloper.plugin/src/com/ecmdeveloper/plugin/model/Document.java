@@ -32,6 +32,8 @@ public class Document extends ObjectStoreItem {
 
 	protected com.filenet.api.core.Document document;
 	protected String versionSeriesId;
+	protected String parentPath;
+	protected String containmentName;
 	
 	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore ) {
 		super(parent, objectStore);
@@ -78,4 +80,33 @@ public class Document extends ObjectStoreItem {
 	public void setVersionSeriesId(String versionSeriesId) {
 		this.versionSeriesId = versionSeriesId;
 	}
+
+	public String getParentPath() {
+		return parentPath;
+	}
+
+	public void setParentPath(String parentPath ) {
+		this.parentPath = parentPath;
+	}
+
+	public String getContainmentName() {
+		return containmentName;
+	}
+
+	public void setContainmentName(String containmentName) {
+		this.containmentName = containmentName;
+	}
+
+	public String getPathName() {
+		return getParentPath() + "/" + getContainmentName();
+	}
+	
+	@Override
+	public String getClassName() {
+		if ( document != null ) {
+			return document.getClassName();
+		}
+		return null;
+	}
+	
 }

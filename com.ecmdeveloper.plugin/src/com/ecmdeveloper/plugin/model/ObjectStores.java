@@ -68,4 +68,10 @@ public class ObjectStores extends ObjectStoreItem {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getClassName() {
+
+		return null;
+	}
 }

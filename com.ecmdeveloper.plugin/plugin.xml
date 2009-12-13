@@ -86,6 +86,12 @@
             id="com.ecmdeveloper.plugin.importObjectStore"
             name="Import`">
       </command>
+      <command
+            category="com.ecmdeveloper.plugin.category"
+            description="View Document"
+            id="com.ecmdeveloper.plugin.viewDocument"
+            name="View">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -231,6 +237,10 @@
          <command
                commandId="com.ecmdeveloper.plugin.refresh"
                icon="icons/refresh.gif"
+               style="push">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.viewDocument"
                style="push">
          </command>
       </menuContribution>
@@ -415,6 +425,21 @@
             class="com.ecmdeveloper.plugin.handlers.ImportObjectStoreHandler"
             commandId="com.ecmdeveloper.plugin.importObjectStore">
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.ViewDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.viewDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -454,6 +479,15 @@
             </objectClass>
          </enablement>
       </decorator>
+   </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="objectstorefile">
+         <run
+               class="com.ecmdeveloper.plugin.filesystem.ObjectStoreFileSystem">
+         </run>
+      </filesystem>
    </extension>
 
 </plugin>

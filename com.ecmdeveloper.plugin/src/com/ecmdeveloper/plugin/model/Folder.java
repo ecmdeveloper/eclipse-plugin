@@ -38,6 +38,7 @@ public class Folder extends ObjectStoreItem {
 	protected com.filenet.api.core.Folder folder;
 	protected Boolean hasChildren;
 	protected boolean contained;
+	protected String pathName;
 	
 	/**
 	 * Instantiates a new folder object.
@@ -75,11 +76,14 @@ public class Folder extends ObjectStoreItem {
 	@Override
 	public void refresh() {
 		
-		folder.fetchProperties( new String[] { PropertyNames.FOLDER_NAME, PropertyNames.ID, PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
-		name = this.folder.get_FolderName();
-		id = this.folder.get_Id().toString();
+		folder.fetchProperties(new String[] { PropertyNames.FOLDER_NAME,
+				PropertyNames.PATH_NAME, PropertyNames.ID,
+				PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS });
+
+		name = folder.get_FolderName();
+		pathName = folder.get_PathName();
+		id = folder.get_Id().toString();
 		children = null;
-	
 		hasChildren = ! folder.get_SubFolders().isEmpty() || ! folder.get_Containees().isEmpty();
 	}
 
@@ -203,5 +207,17 @@ public class Folder extends ObjectStoreItem {
 	 */
 	public boolean isContained() {
 		return contained;
+	}
+
+	public String getPathName() {
+		return pathName;
+	}
+
+	@Override
+	public String getClassName() {
+		if ( folder != null ) {
+			return folder.getClassName();
+		}
+		return null;
 	}
 }

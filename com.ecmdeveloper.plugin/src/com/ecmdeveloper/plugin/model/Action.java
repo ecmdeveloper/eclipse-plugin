@@ -77,4 +77,12 @@ public class Action extends ObjectStoreItem {
 	public String getCodeModuleVersion() {
 		return codeModuleVersion;
 	}
+
+	@Override
+	public String getClassName() {
+		if ( action != null ) {
+			return action.getClassName();
+		}
+		return null;
+	}
 }

@@ -35,7 +35,7 @@ public interface IObjectStoreItem extends IAdaptable {
 	public void setName(String name);
 
 	public String getDisplayName();
-	
+
 	public String getId();
 	
 	public IObjectStoreItem getParent();
@@ -55,4 +55,6 @@ public interface IObjectStoreItem extends IAdaptable {
 	public void removeChild(IObjectStoreItem objectStoreItem);
 
 	public void addChild(IObjectStoreItem objectStoreItem);
+	
+	public String getClassName();
 }
