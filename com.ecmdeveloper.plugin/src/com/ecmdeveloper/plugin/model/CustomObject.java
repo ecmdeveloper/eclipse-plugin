@@ -68,4 +68,12 @@ public class CustomObject extends ObjectStoreItem {
 		this.name = this.customObject.get_Name();
 		this.id = this.customObject.get_Id().toString();
 	}
+
+	@Override
+	public String getClassName() {
+		if ( customObject != null ) {
+			return customObject.getClassName();
+		}
+		return null;
+	}
 }

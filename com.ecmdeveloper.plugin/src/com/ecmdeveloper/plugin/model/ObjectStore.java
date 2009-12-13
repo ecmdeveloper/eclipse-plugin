@@ -161,4 +161,12 @@ public class ObjectStore extends ObjectStoreItem
 							.toString(), objectStore.getName()));
 		}
 	}
+
+	@Override
+	public String getClassName() {
+		if ( objectStore != null ) {
+			return objectStore.getClassName();
+		}
+		return null;
+	}
 }

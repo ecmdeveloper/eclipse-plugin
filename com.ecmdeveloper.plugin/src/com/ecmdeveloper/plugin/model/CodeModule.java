@@ -78,4 +78,12 @@ public class CodeModule extends ObjectStoreItem{
 		}
 		return super.getAdapter(adapter);
 	}
+
+	@Override
+	public String getClassName() {
+		if ( document != null ) {
+			return document.getClassName();
+		}
+		return null;
+	}
 }

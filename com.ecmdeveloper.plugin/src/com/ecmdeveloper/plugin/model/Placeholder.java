@@ -59,4 +59,9 @@ public class Placeholder extends ObjectStoreItem implements IObjectStoreItem{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getClassName() {
+		return null;
+	}
 }

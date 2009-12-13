@@ -95,13 +95,16 @@ public class LoadChildrenTask extends BaseTask {
 			while (iterator.hasNext() ) {
 				
 				ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
-				relation.fetchProperties( new String[]{ PropertyNames.HEAD } );
+				relation.fetchProperties( new String[]{ PropertyNames.HEAD, PropertyNames.CONTAINMENT_NAME } );
 	
 				IndependentObject object = relation.get_Head();
 	
 				if ( object instanceof com.filenet.api.core.Document )
 				{
-					children.add( new Document( object, objectStoreItem, objectStore ) );
+					Document document = new Document( object, objectStoreItem, objectStore );
+					document.setParentPath( ((Folder) objectStoreItem).getPathName() );
+					document.setContainmentName( relation.get_ContainmentName() );
+					children.add( document );
 				}
 				else if ( object instanceof com.filenet.api.core.Folder )
 				{

@@ -45,6 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.jobs.MoveJob;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
@@ -66,9 +67,6 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 	private static final String MOVING_ACROSS_OBJECT_STORES_ERROR = Messages.MoveObjectStoreItemHandler_MovingAcrossObjectStoresError;
 	private static final String CHOOSE_DESTINATION_MESSAGE = Messages.MoveObjectStoreItemHandler_ChooseDestinationMessage;
 	private static final String HANDLER_NAME = Messages.MoveObjectStoreItemHandler_HandlerName;
-	private static final String MONITOR_MESSAGE = "Moving";
-	private static final String PROGRESS_MESSAGE = "Moving \"{0}\"";
-	private static final String FAILED_MESSAGE = "Moving \"{0}\" failed";
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -152,56 +150,4 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 			return true;
 		}
 	};
-
-	class MoveJob extends Job
-	{
-		private ArrayList<IObjectStoreItem> itemsMoved;
-		private IObjectStoreItem destination;
-		private Shell shell;
-		
-		public MoveJob(ArrayList<IObjectStoreItem> itemsMoved,
-				IObjectStoreItem destination, Shell shell) {
-			super(HANDLER_NAME);
-			this.itemsMoved = itemsMoved;
-			this.shell = shell;
-			this.destination = destination;
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			
-			try {
-				monitor.beginTask( MONITOR_MESSAGE, itemsMoved.size() );
-				for ( IObjectStoreItem objectStoreItem : itemsMoved ) {
-					monitor.subTask( MessageFormat.format(PROGRESS_MESSAGE, objectStoreItem.getName() ) );
-					moveItem( objectStoreItem );
-					monitor.worked(1);
-
-					if ( monitor.isCanceled() ) {
-						break;
-					}
-				}
-				
-				return Status.OK_STATUS;
-			} finally {
-				monitor.done();
-			}
-		}
-
-		private void moveItem(final IObjectStoreItem objectStoreItem ) {
-
-			try {
-				MoveTask moveTask = new MoveTask( new IObjectStoreItem[] { objectStoreItem }, destination );
-				ObjectStoresManager.getManager().executeTaskSync( moveTask);
-			} catch(final Exception e ) {
-				Display.getDefault().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						PluginMessage.openError(shell, HANDLER_NAME, 
-								MessageFormat.format(FAILED_MESSAGE, objectStoreItem.getName() ), e );
-					}
-				} );
-			}
-		}
-	}
 }
