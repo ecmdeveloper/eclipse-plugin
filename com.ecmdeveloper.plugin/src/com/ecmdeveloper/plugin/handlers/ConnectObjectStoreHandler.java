@@ -73,6 +73,7 @@ public class ConnectObjectStoreHandler extends AbstractHandler implements IHandl
 			final Object selectedObject = iter.next();
 			if ( selectedObject instanceof ObjectStore ) {
 				ConnectObjectStoreJob job = new ConnectObjectStoreJob( (ObjectStore)selectedObject, window.getShell() );
+				job.setUser(true);
 				job.schedule();
 			}
 		}

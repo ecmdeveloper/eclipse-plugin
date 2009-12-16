@@ -20,6 +20,7 @@
 package com.ecmdeveloper.plugin.jobs;
 
 import java.io.File;
+import java.net.URI;
 import java.text.MessageFormat;
 
 import org.eclipse.core.filesystem.EFS;
@@ -106,15 +107,14 @@ public class ViewDocumentJob extends Job {
 		File file = new File( outputFile);
 		file.setReadOnly();
 
-		addFileToContentCache(file);
-		
 		IFileStore store = EFS.getLocalFileSystem().getStore( new Path( outputFile ) );
+		addFileToContentCache(tempFolderPath.toFile(), store.toURI() );
 		return store;
 	}
 
-	private void addFileToContentCache(File file) {
+	private void addFileToContentCache(File file, URI uri) {
 		ContentCache contentCache = Activator.getDefault().getContentCache();
-		contentCache.registerFile( file.getPath() );
+		contentCache.registerFile( uri.toString(), file.getPath() );
 	}
 
 	private IPath getTempFolderPath(IObjectStoreItem objectStoreItem) {
