@@ -79,9 +79,10 @@
 	frequently. Therefore the Code Module editor provides functionality for updating the Code Module
 	on the Content Engine. Actions are always coupled to a specific <strong>version</strong> of the 
 	Code Module. If you want your action to use the latest version of the Code Module the action must
-	also be modified. The Code Module editor will also take care of this.
+	also be modified. The Code Module editor will also take care of this. Before you update your code module
+	make sure that either your code is build automatically or that you manual build your code to the latest version. 
 	<p>
-	The following actions have to be performed to accomplish this task:
+	The following actions have to be performed to accomplish the code module updating task:
 	<ul>
 	<li>Select the <img width='16' height='16' alt='Update' src='images/icons/script_go.png'/>
 	<strong>Update Code Module</strong> command in the Code Module editor</li>

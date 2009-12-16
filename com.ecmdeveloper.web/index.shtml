@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>ECM Developer (introduction)</title>
+<title>ECM Developer - introduction</title>
 <meta name="keywords" content="filenet,p8,eclipse" />
 <meta name="description" content="" />
 <link href="default.css" rel="stylesheet" type="text/css" />
@@ -47,12 +47,7 @@
 	After the plugin is installed the Object Stores managed with this plugin must be imported. 
 	Information about importing an Object Store can be found here.
 	</p>
-	
-	<p>
-	The ECM Developer is open source software and is distributed under the GNU Lesser General 
-	Public License.
-	</p>
-	
+		
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
