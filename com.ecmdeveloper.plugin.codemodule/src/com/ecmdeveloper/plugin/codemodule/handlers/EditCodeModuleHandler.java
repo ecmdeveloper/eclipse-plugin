@@ -76,7 +76,6 @@ public class EditCodeModuleHandler extends AbstractHandler implements IHandler {
 				}
 				
 			} catch (PartInitException e) {
-				PluginLog.error(OPEN_CODE_MODULE_EDITOR_ERROR , e);
 				PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
 			}
 		}
