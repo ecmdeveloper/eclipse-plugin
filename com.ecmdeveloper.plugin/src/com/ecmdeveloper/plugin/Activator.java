@@ -19,7 +19,6 @@
  */
 package com.ecmdeveloper.plugin;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -34,42 +33,28 @@ import com.ecmdeveloper.plugin.util.ImageCache;
  */
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin";
-
-	// The shared instance
 	private static Activator plugin;
-	
 	private static final ImageCache imageCache = new ImageCache();
-	
 	private ContentCache contentCache;
-	/**
-	 * The constructor
-	 */
+
 	public Activator() {
-		contentCache = new ContentCache();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		contentCache = new ContentCache( getStateLocation() );
 		contentCache.clear();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
 		ObjectStoresManager.getManager().saveObjectStores();
 		plugin = null;
 		imageCache.dispose();
 		contentCache.clear();
 		contentCache.stop();
+		
 		super.stop(context);
 	}
 

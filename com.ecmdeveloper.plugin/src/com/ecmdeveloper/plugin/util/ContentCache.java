@@ -1,10 +1,31 @@
+/**
+ * Copyright 2009, Ricardo Belfor
+ * 
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the ECM Developer plug-in. If not, see
+ * <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.ecmdeveloper.plugin.util;
 
 import java.io.File;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
@@ -13,16 +34,19 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 
-import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 public class ContentCache implements IPartListener2 {
 
+	private static final String CONTENT_CACHE_FOLDER = "content_cache";
 	private Set<IPartService> partServicesListeningTo = new HashSet<IPartService>();
-	private Set<String> cacheFiles = new HashSet<String>();
+	private Map<String,String> cacheFiles = new HashMap<String,String>();
+	private IPath parentPath;
 	
-	public ContentCache() {
+	public ContentCache(IPath parentPath) {
+		this.parentPath = parentPath;
 	}
 
 	public IPath getTempFolderPath(IObjectStoreItem objectStoreItem) {
@@ -38,7 +62,6 @@ public class ContentCache implements IPartListener2 {
 
 	public void clear() {
 	    for ( File file : getRootPath().toFile().listFiles() ) {
-	    	System.out.println( "Deleting " + file.toString() );
 	    	deleteDirectory( file );
 	    }
 	}
@@ -50,8 +73,7 @@ public class ContentCache implements IPartListener2 {
 				if (files[i].isDirectory()) {
 					deleteDirectory(files[i]);
 				} else {
-					boolean result = files[i].delete();
-					System.out.println( files[i].getName() + " " + result );
+					files[i].delete();
 				}
 			}
 		}
@@ -60,7 +82,7 @@ public class ContentCache implements IPartListener2 {
 	
 	public IPath getRootPath() {
 		
-		IPath cacheLocation = Activator.getDefault().getStateLocation().append( "content_cache" );
+		IPath cacheLocation = parentPath.append( CONTENT_CACHE_FOLDER );
 
 		if ( ! cacheLocation.toFile().exists() ) {
 			cacheLocation.toFile().mkdir();
@@ -69,8 +91,8 @@ public class ContentCache implements IPartListener2 {
 		return cacheLocation;
 	}
 	
-	public void registerFile( String filename ) {
-		cacheFiles.add(filename);
+	public void registerFile( String uriString, String filename ) {
+		cacheFiles.put(uriString, filename);
 	}
 	
 	private String getTempFolderName(IObjectStoreItem objectStoreItem) {
@@ -87,7 +109,6 @@ public class ContentCache implements IPartListener2 {
 	}
 	
 	public void registerAsListener(IWorkbenchWindow window ) {
-		
 		partServicesListeningTo.add( window.getPartService() );
 		window.getPartService().addPartListener(this);
 	}
@@ -114,31 +135,26 @@ public class ContentCache implements IPartListener2 {
 		
 		if ( partRef instanceof IEditorReference ) {
 			try {
-				IEditorInput editorInput = ((IEditorReference)partRef).getEditorInput();
-//				FileStoreEditorInput f = (FileStoreEditorInput) editorInput;
-//				System.out.println( f.getURI().toString() );
-				System.out.println( editorInput.getClass().toString() );
-//				if ( editorInput instanceof org.eclipse.ui.IIFileEditorInput )
-				FileStore fileStore = (FileStore) editorInput.getAdapter( FileStore.class );
-
-				if ( fileStore != null ) {
-					System.out.println( "Got filestore");
-				}
-				File file = (File) editorInput.getAdapter( File.class );
-				if ( file != null ) {
-					System.out.println( "Got file" );
-				}
-				
+				deleteEditorInput(partRef);
 			} catch (PartInitException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				PluginLog.error(e);
 			}
-		} else {
-			System.out.println( " The answer is " + partRef.getClass().toString() );
+		}	
+	}
+
+	private void deleteEditorInput(IWorkbenchPartReference partRef) throws PartInitException {
+		IEditorInput editorInput = ((IEditorReference)partRef).getEditorInput();
+		if ( editorInput instanceof FileStoreEditorInput ) {
+			deleteFileStoreEditorInput(editorInput);
 		}
-		System.out.println( "----> Part closed" );
-		// TODO Auto-generated method stub
-		
+	}
+
+	private void deleteFileStoreEditorInput(IEditorInput editorInput) {
+		URI uri = ((FileStoreEditorInput)editorInput).getURI();
+		if ( cacheFiles.containsKey( uri.toString() ) ) {
+			String filename = cacheFiles.get( uri.toString() );
+			deleteDirectory( new File( filename) );
+		}
 	}
 
 	@Override
