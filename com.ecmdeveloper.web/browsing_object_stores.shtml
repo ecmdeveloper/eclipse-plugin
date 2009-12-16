@@ -18,7 +18,7 @@
 	this view using the <strong>Window &gt; Show view &gt;Other</strong> command. The
 	Object Stores view is located in the <strong>Content Engine</strong> category. Selecting
 	this view will show the following window:
-	<p><img alt='object stores view'/></p>
+	<p><img alt='object stores view' src='images/browsing_object_stores/object_stores_view.jpg'/></p>
 	If this window is empty you have to setup your connections to the Content Engine. See the 
 	<a href='getting_started.shtml'>getting started</a> page for details.
 	<p>
@@ -41,18 +41,27 @@
 	for the item can be entered:
 	<p><img alt='Rename' src='images/browsing_object_stores/rename.jpg'/></p>
 	A check is made if the entered name is correct.
+
 	<h3>Move</h3>
+
 	An Object Store item can be renamed using either the <strong>File &gt; Move</strong> command
 	or the <strong>Move</strong> command of the context menu. A dialog will appear where a new 
-	location for the item can be entered:
-	<p><img alt='Move'/></p>
+	folder location for the item can be selected:
+	<p><img alt='Move' src='images/browsing_object_stores/move.jpg'/></p>
 	In case of a multiple selection the new location will apply for all the items selected.
 	 	
 	<h3>Delete</h3>
 	An Object Store item can be deleted using either the <strong>Edit &gt; Delete</strong> command
 	or the <strong>Delete</strong> command of the context menu. A confirmation is request for each
 	item to be deleted. 
-	
+
+	<h3>View</h3>
+	Documents can be viewed using the <strong>View</strong> command of the context menu. First a read 
+	only local copy of the content of the document is made. Next the file is opened, either in the 
+	available Eclipse editor or in an external system editor. If the document has no content then a
+	message is shown. Currently only the first content element of the document is shown. If possible
+	the local copy will be deleted when the editor closes. If this is not possible for the specific 
+	editor then the file will be deleted when Eclipse terminates or restarts.   
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
