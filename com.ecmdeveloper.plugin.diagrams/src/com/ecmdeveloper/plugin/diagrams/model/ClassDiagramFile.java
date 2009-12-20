@@ -45,13 +45,13 @@ import com.ecmdeveloper.plugin.diagrams.util.PluginTagNames;
  */
 public class ClassDiagramFile {
 
-	private IFile file;
+	private IFile classDiagramFile;
 
 	public ClassDiagramFile() {
 	}
 	
-	public ClassDiagramFile( IFile file ) {
-		this.file = file;
+	public ClassDiagramFile( IFile classDiagramFile ) {
+		this.classDiagramFile = classDiagramFile;
 	}
 
 	public void save( ClassDiagram classDiagram, IProgressMonitor monitor ) throws IOException, CoreException {
@@ -66,35 +66,13 @@ public class ClassDiagramFile {
 
 		dataOut.write( writer.toString().getBytes("UTF-8") );
 		
-		file.setContents(new ByteArrayInputStream(out.toByteArray()), true, false, monitor);
+		classDiagramFile.setContents(new ByteArrayInputStream(out.toByteArray()), true, false, monitor);
 	}
 
 	public ClassDiagram read() throws IOException, WorkbenchException {
 
-//		InputStream contents = file.getContents();
-//		file.get
-//		byte[] buffer = new byte[100];
-//		int bytesRead;
-//		
-//		StringBuffer stringBuffer = new StringBuffer();
-//		while ( ( bytesRead = contents.read(buffer) ) > 0 ) {
-//			stringBuffer.append(buffer, );
-//		}
-//		
-//	    DataInputStream in = new DataInputStream(new ByteArrayInputStream(stringBuffer.toString().getBytes())); 
-//
-//	    String xmlString = in.readUTF();
-//	    if (xmlString == null || xmlString.length() == 0) {
-//			return null;
-//		}
-//
-//		StringReader reader = new StringReader(xmlString);
-		
-//		Reader reader = InputStreamReader) file.getContents() );
-//		XMLMemento memento = XMLMemento.createReadRoot(reader);
-
-		File file2 = file.getLocation().toFile();
-		FileReader fileReader = new FileReader( file2 );
+		File file = classDiagramFile.getLocation().toFile();
+		FileReader fileReader = new FileReader( file );
 		
 		XMLMemento memento = XMLMemento.createReadRoot( fileReader );
 		
@@ -108,25 +86,60 @@ public class ClassDiagramFile {
 		IMemento classes = memento.getChild(PluginTagNames.CLASSES);
 		
 		if ( classes != null ) {
-			
-			for (IMemento clazz : classes.getChildren( PluginTagNames.CLASS ) ) {
-				
-				String name = clazz.getString( PluginTagNames.NAME );
-				ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, name, false, null );
-				
-				Point location = new Point(clazz.getInteger(PluginTagNames.XPOS),
-						clazz.getInteger(PluginTagNames.YPOS));
-				classDiagramClass.setLocation(location);
-				
-				Dimension size = new Dimension(
-						clazz.getInteger(PluginTagNames.WIDTH), 
-						clazz.getInteger(PluginTagNames.HEIGHT));
-				classDiagramClass.setSize(size);
-				
-				classDiagram.addClassDiagramClass(classDiagramClass);
-			}
+			getClassDiagramClasses(classDiagram, classes);
 		}		
 		return classDiagram;
+	}
+
+	private void getClassDiagramClasses(ClassDiagram classDiagram, IMemento classes) {
+		
+		for (IMemento clazz : classes.getChildren( PluginTagNames.CLASS ) ) {
+			ClassDiagramClass classDiagramClass = getClassDiagramClass(clazz);
+			classDiagram.addClassDiagramClass(classDiagramClass);
+		}
+	}
+
+	private ClassDiagramClass getClassDiagramClass(IMemento clazz) {
+
+		String name = clazz.getString( PluginTagNames.NAME );
+		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, name, false, null );
+		
+		Point location = new Point(clazz.getInteger(PluginTagNames.XPOS), clazz
+				.getInteger(PluginTagNames.YPOS));
+		classDiagramClass.setLocation(location);
+		
+		Dimension size = new Dimension(
+				clazz.getInteger(PluginTagNames.WIDTH), 
+				clazz.getInteger(PluginTagNames.HEIGHT));
+		classDiagramClass.setSize(size);
+
+		getClassDiagramAttributes(clazz, classDiagramClass);
+		
+		return classDiagramClass;
+	}
+
+	private void getClassDiagramAttributes(IMemento clazz, ClassDiagramClass classDiagramClass) {
+
+		IMemento attributesChild = clazz.getChild(PluginTagNames.ATTRIBUTES);
+		
+		for ( IMemento attributeChild : attributesChild.getChildren( PluginTagNames.ATTRIBUTE ) ) {
+			ClassDiagramAttribute classDiagramAttribute = getClassDiagramAttribute(attributeChild);
+			classDiagramClass.addAttribute(classDiagramAttribute);
+		}
+	}
+
+	private ClassDiagramAttribute getClassDiagramAttribute(IMemento attributeChild) {
+		
+		String name = attributeChild.getString( PluginTagNames.NAME );
+		String displayName = attributeChild.getString( PluginTagNames.DISPLAY_NAME );
+		String type = attributeChild.getString( PluginTagNames.TYPE );
+		String modifiers = attributeChild.getString( PluginTagNames.MODIFIERS );
+		String multiplicity = attributeChild.getString( PluginTagNames.MULTIPLICITY );
+		String defaultValue = attributeChild.getString( PluginTagNames.DEFAULT_VALUE );
+		
+		ClassDiagramAttribute classDiagramAttribute = new ClassDiagramAttribute(name, displayName, type, defaultValue, multiplicity,  modifiers );
+
+		return classDiagramAttribute;
 	}
 	
 	public XMLMemento getXMLMemento(ClassDiagram classDiagram ) {
@@ -137,17 +150,44 @@ public class ClassDiagramFile {
 		for ( ClassDiagramClass classDiagramClass : classDiagram.getClassDiagramClasses() ) {
 			
 			IMemento classChild = classesChild.createChild(PluginTagNames.CLASS);
-			classChild.putString( PluginTagNames.NAME, classDiagramClass.getName() );
-			
-			Point location = classDiagramClass.getLocation();
-			classChild.putInteger( PluginTagNames.XPOS, location.x );
-			classChild.putInteger( PluginTagNames.YPOS, location.y );
-			
-			Dimension size = classDiagramClass.getSize();
-			classChild.putInteger( PluginTagNames.HEIGHT, size.height );
-			classChild.putInteger( PluginTagNames.WIDTH, size.width );
+			initializeClassChild(classDiagramClass, classChild);
 		}
 		
 		return memento;
+	}
+
+	private void initializeClassChild(ClassDiagramClass classDiagramClass, IMemento classChild) {
+
+		classChild.putString( PluginTagNames.NAME, classDiagramClass.getName() );
+		
+		Point location = classDiagramClass.getLocation();
+		classChild.putInteger( PluginTagNames.XPOS, location.x );
+		classChild.putInteger( PluginTagNames.YPOS, location.y );
+		
+		Dimension size = classDiagramClass.getSize();
+		classChild.putInteger( PluginTagNames.HEIGHT, size.height );
+		classChild.putInteger( PluginTagNames.WIDTH, size.width );
+		
+		IMemento attributesChild = classChild.createChild(PluginTagNames.ATTRIBUTES);
+		initializeAttributesChild(classDiagramClass, attributesChild);
+	}
+
+	private void initializeAttributesChild(ClassDiagramClass classDiagramClass,
+			IMemento attributesChild) {
+
+		for ( ClassDiagramAttribute attribute : classDiagramClass.getAttributes() )
+		{
+			IMemento attributeChild = attributesChild.createChild(PluginTagNames.ATTRIBUTE);
+			initializeAttributeChild(attribute, attributeChild);
+		}
+	}
+
+	private void initializeAttributeChild(ClassDiagramAttribute attribute, IMemento attributeChild) {
+		attributeChild.putString(PluginTagNames.NAME, attribute.getName() );
+		attributeChild.putString(PluginTagNames.DISPLAY_NAME, attribute.getDisplayName() );
+		attributeChild.putString(PluginTagNames.TYPE, attribute.getType());
+		attributeChild.putString(PluginTagNames.MODIFIERS, attribute.getModifiers() );
+		attributeChild.putString(PluginTagNames.MULTIPLICITY, attribute.getMultiplicity() );
+		attributeChild.putString(PluginTagNames.DEFAULT_VALUE, attribute.getDefaultValue() );
 	}
 }
