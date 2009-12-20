@@ -17,6 +17,9 @@
 	
 	<h2>Installing ECM Developer</h2>
 	
+	The ECM Developer plug-in uses Java 6, so first make sure that your Eclipse is running
+	with this version. The plug-in is tested with the recent versions of Galileo and Ganymede.
+	<p> 
 	The plug-in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
 	Because the Java API is not distributed with this plug-in, using this plug-in requires 
 	access to the Java API. Therefore installing this plug-in is a little bit more complicated
@@ -35,7 +38,8 @@
 	</ul>
 	The ECM Developer plug-in can be downloaded from the <a href="http://sourceforge.net/projects/ecmdeveloper/files/">project download site</a>. 
 	The plug-in can be installed into your Eclipse environment in the dialog that appears if 
-	you select the <strong>Help &gt; Software Updates... &gt; Add Site</strong> commands in the Eclipse IDE:  
+	you select the <strong>Help &gt; Install new software... &gt; Add</strong> commands (Galileo) or 
+	<strong>Help &gt; Software Updates... &gt; Add Site</strong> commands (Ganymede) in the Eclipse IDE:
 	<p>
 	<img src='images/installing/add_site.jpg' alt='add site dialog'/>
 	</p>
