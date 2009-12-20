@@ -25,14 +25,20 @@ package com.ecmdeveloper.plugin.diagrams.util;
  *
  */
 public class PluginTagNames {
-
 	public static final String WIDTH = "width";
 	public static final String HEIGHT = "height";
 	public static final String YPOS = "yPos";
 	public static final String XPOS = "xPos";
 	public static final String NAME = "name";
+	public static final String DISPLAY_NAME = "displayName";
 	public static final String CLASS = "class";
 	public static final String CLASSES = "classes";
 	public static final String CLASSDIAGRAM = "classdiagram";
+	public static final String ATTRIBUTES = "attributes";
+	public static final String ATTRIBUTE = "attribute";
+	public static final String TYPE = "type";
+	public static final String MODIFIERS = "modifiers";
+	public static final String MULTIPLICITY = "multiplicity";
+	public static final String DEFAULT_VALUE = "defaultValue";
 	
 }

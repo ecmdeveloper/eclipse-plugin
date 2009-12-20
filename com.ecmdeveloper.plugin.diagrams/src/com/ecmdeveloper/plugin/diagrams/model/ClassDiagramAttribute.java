@@ -43,13 +43,15 @@ public class ClassDiagramAttribute {
 	private String modifiers;
 	private String displayName;
 	
-	public ClassDiagramAttribute(String name, String type, String defaultValue,
-			String multiplicity) {
-		super();
+	public ClassDiagramAttribute(String name, String displayName, String type,
+			String defaultValue, String multiplicity, String modifiers) {
+
 		this.name = name;
+		this.displayName = displayName;
 		this.type = type;
 		this.defaultValue = defaultValue;
 		this.multiplicity = multiplicity;
+		this.modifiers = modifiers;
 	}
 
 	public ClassDiagramAttribute(IAdaptable adaptableObject) {
@@ -87,6 +89,13 @@ public class ClassDiagramAttribute {
 		return displayName;
 	}
 
+	public String getDefaultValue() {
+		if ( defaultValue != null ) {
+			return defaultValue.toString();
+		}
+		return "";
+	}
+	
 	@Override
 	public String toString() {
 		return getUMLString(false, true, true, true, true );
@@ -180,10 +189,5 @@ public class ClassDiagramAttribute {
 			}
 		}
 		return attributeText.toString();
-	}
-
-	private Object getDefaultValue() {
-		// TODO figure this outs
-		return null;
 	}
 }
