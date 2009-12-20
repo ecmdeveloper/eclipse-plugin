@@ -92,6 +92,12 @@
             id="com.ecmdeveloper.plugin.viewDocument"
             name="View">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Edit Folder"
+            id="com.ecmdeveloper.plugin.editFolder"
+            name="Edit">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -454,6 +460,10 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.EditFolderHandler"
+            commandId="com.ecmdeveloper.plugin.editFolder">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -502,6 +512,15 @@
                class="com.ecmdeveloper.plugin.filesystem.ObjectStoreFileSystem">
          </run>
       </filesystem>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.ecmdeveloper.plugin.editors.FolderEditor"
+            default="false"
+            id="com.ecmdeveloper.plugin.editors.folderEditor"
+            name="Folder Editor">
+      </editor>
    </extension>
 
 </plugin>
