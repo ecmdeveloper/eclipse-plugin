@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.ecmdeveloper.plugin.editors.folder.FolderEditor"
+            default="false"
+            id="com.ecmdeveloper.plugin.editors.folderEditor"
+            name="Folder Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Edit Folder"
+            id="com.ecmdeveloper.plugin.editFolder"
+            name="Edit">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=edit">
+         <command
+               commandId="com.ecmdeveloper.plugin.editFolder"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.ecmdeveloper.plugin.editors.handlers.EditFolderHandler"
+            commandId="com.ecmdeveloper.plugin.editFolder">
+      </handler>
+   </extension>
+
+</plugin>
