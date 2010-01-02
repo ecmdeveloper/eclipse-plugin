@@ -4,7 +4,7 @@ public class PropertyValueConversion {
 
 	public static String getValueAsString(Object value) {
 		if ( value == null ) {
-			return "";
+			return "(empty)";
 		} else if ( value instanceof Object[] ) {
 			String arrayValue = getArrayValue(value);
 			return arrayValue;

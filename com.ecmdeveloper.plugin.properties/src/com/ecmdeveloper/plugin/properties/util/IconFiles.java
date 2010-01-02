@@ -21,4 +21,5 @@ package com.ecmdeveloper.plugin.properties.util;
 
 public class IconFiles {
 	public static final String FOLDER_EDIT = "icons/folder_edit.png";
+	public static final String READ_ONLY = "icons/lock_edit.png";
 }

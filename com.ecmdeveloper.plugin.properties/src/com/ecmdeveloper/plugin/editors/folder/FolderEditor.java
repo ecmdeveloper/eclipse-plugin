@@ -20,7 +20,11 @@
 
 package com.ecmdeveloper.plugin.editors.folder;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 
@@ -33,7 +37,7 @@ import com.ecmdeveloper.plugin.properties.util.PluginLog;
  * @author Ricardo Belfor
  *
  */
-public class FolderEditor extends FormEditor {
+public class FolderEditor extends FormEditor implements PropertyChangeListener {
 
 	public static final String EDITOR_ID = "com.ecmdeveloper.plugin.editors.folderEditor";
 	
@@ -41,6 +45,7 @@ public class FolderEditor extends FormEditor {
 	private PropertiesInputForm propertiesInputForm;
 	private ClassDescription classDescription;
 	private ObjectStoreItem objectStoreItem;
+	private boolean isPageModified;
 	
 	@Override
 	protected void addPages() {
@@ -50,6 +55,8 @@ public class FolderEditor extends FormEditor {
 			addFolderEditorForm();
 			
 			objectStoreItem = (ObjectStoreItem) getEditorInput().getAdapter( ObjectStoreItem.class);
+			objectStoreItem.addPropertyChangeListener(this);
+			isPageModified = false;
 			
 		} catch (PartInitException e) {
 			PluginLog.error( e );
@@ -75,7 +82,7 @@ public class FolderEditor extends FormEditor {
 
 	@Override
 	public boolean isDirty() {
-		return false;
+		return isPageModified;
 	}
 
 	@Override
@@ -86,7 +93,17 @@ public class FolderEditor extends FormEditor {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		
+
+		isPageModified = false;
+		firePropertyChange(IEditorPart.PROP_DIRTY);
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		boolean wasDirty = isDirty();
+		isPageModified = true;
+		if (!wasDirty) {
+			firePropertyChange(IEditorPart.PROP_DIRTY);
+		}
 	}
 }
