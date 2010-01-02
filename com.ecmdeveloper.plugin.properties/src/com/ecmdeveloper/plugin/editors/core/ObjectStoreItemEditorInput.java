@@ -43,6 +43,14 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 		this.classDescription = classDescription;
 	}
 
+	protected ObjectStoreItem getObjectStoreItem() {
+		return objectStoreItem;
+	}
+
+	protected ClassDescription getClassDescription() {
+		return classDescription;
+	}
+
 	@Override
 	public boolean exists() {
 		return false;
@@ -55,8 +63,7 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 
 	@Override
 	public String getName() {
-		return "Bla";
-//		return objectStoreItem.getDisplayName();
+		return objectStoreItem.getDisplayName();
 	}
 
 	@Override

@@ -89,11 +89,10 @@ public class EditFolderHandler extends AbstractHandler {
 
 	private void openNewFolderEditor(ObjectStoreItem objectStoreItem) throws Exception {
 		
-//		ClassDescription classDescription = getClassDescription(objectStoreItem);
-//		fetchProperties(objectStoreItem, classDescription);
-//
-//		IEditorInput input = new ObjectStoreItemEditorInput( (ObjectStoreItem) objectStoreItem, classDescription );
-		IEditorInput input = new ObjectStoreItemEditorInput( null, null );
+		ClassDescription classDescription = getClassDescription(objectStoreItem);
+		fetchProperties(objectStoreItem, classDescription);
+
+		IEditorInput input = new ObjectStoreItemEditorInput( (ObjectStoreItem) objectStoreItem, classDescription );
 		String editorId = FolderEditor.EDITOR_ID;
 		IDE.openEditor( window.getActivePage(), input, editorId);
 		System.out.println( " Editor opened");
