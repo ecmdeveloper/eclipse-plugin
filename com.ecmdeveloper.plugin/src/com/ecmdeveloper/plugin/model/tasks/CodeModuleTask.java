@@ -38,7 +38,6 @@ public abstract class CodeModuleTask extends BaseTask {
 	protected ContentElementList createContent(Collection<File> files) {
 		
 		ContentElementList contentElementList = Factory.ContentElement.createList();
-		ContentTransfer content = Factory.ContentTransfer.createInstance();
 
 		for ( File file : files ) {
 			
@@ -46,22 +45,28 @@ public abstract class CodeModuleTask extends BaseTask {
 				continue;
 			}
 			
-			content.set_RetrievalName( file.getName() );
-			try {
-				content.setCaptureSource( new FileInputStream( file ) );
-			} catch (FileNotFoundException e) {
-				// Should not happen as only existing files are added...
-			}
-			
-			if ( file.getName().toLowerCase().endsWith(".jar") ||
-				 file.getName().toLowerCase().endsWith(".zip") ) {
-				content.set_ContentType( "application/x-zip-compressed" );
-			} else if ( file.getName().endsWith( ".class" ) ) {
-				content.set_ContentType( "application/java" );
-			}
-				
+			ContentTransfer content = createFileContent(file);
 			contentElementList.add(content);
 		}
 		return contentElementList;
+	}
+
+	private ContentTransfer createFileContent(File file) {
+
+		ContentTransfer content = Factory.ContentTransfer.createInstance();
+		content.set_RetrievalName( file.getName() );
+		try {
+			content.setCaptureSource( new FileInputStream( file ) );
+		} catch (FileNotFoundException e) {
+			// Should not happen as only existing files are added...
+		}
+		
+		if ( file.getName().toLowerCase().endsWith(".jar") ||
+			 file.getName().toLowerCase().endsWith(".zip") ) {
+			content.set_ContentType( "application/x-zip-compressed" );
+		} else if ( file.getName().endsWith( ".class" ) ) {
+			content.set_ContentType( "application/java" );
+		}
+		return content;
 	}
 }
