@@ -57,4 +57,8 @@ public interface IObjectStoreItem extends IAdaptable {
 	public void addChild(IObjectStoreItem objectStoreItem);
 	
 	public String getClassName();
+	
+	public Object getValue(String propertyName);
+
+	public void setValue(String propertyName, Object value );
 }

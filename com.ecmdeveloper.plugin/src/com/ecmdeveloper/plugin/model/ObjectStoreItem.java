@@ -19,12 +19,16 @@
  */
 package com.ecmdeveloper.plugin.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.Platform;
 
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.IndependentlyPersistableObject;
+import com.filenet.api.property.Properties;
 
 /**
  * 
@@ -38,6 +42,8 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	protected String id;
 	protected ObjectStore objectStore;
 
+	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
+	
 	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore ) {
 		this.parent = parent;
 		this.objectStore = objectStore;
@@ -53,7 +59,6 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return name;
 	}
 
-	
 	/**
 	 * Gets the display name of this item. The default implementation just
 	 * returns the name.
@@ -72,9 +77,6 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ecmdeveloper.plugin.model.IObjectStoreItem#getParent()
-	 */
 	@Override
 	public IObjectStoreItem getParent() {
 		return parent;
@@ -117,5 +119,54 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	@Override
 	public void setChildren(Collection<IObjectStoreItem> children) {
 		// Stub for childless objects 
-	}	
+	}
+	
+	@Override
+	public Object getValue(String propertyName) {
+		Properties properties = getProperties();
+		Object objectValue = properties.getObjectValue(propertyName);
+		if ( objectValue instanceof Collection ) {
+			ArrayList<?> values = new ArrayList( (Collection) objectValue );
+			return values.toArray();
+		} else if ( objectValue instanceof IndependentlyPersistableObject ) {
+//			return ((IndependentlyPersistableObject)objectValue).getProperties().getIdValue(PropertyNames.ID).toString();
+			return "TODO";
+		}
+		return objectValue;
+	}
+
+	private Properties getProperties() {
+		IndependentlyPersistableObject objectStoreObject = getObjectStoreObject();
+		Properties properties = objectStoreObject.getProperties();
+		return properties;
+	}
+
+	@Override
+	public void setValue(String propertyName, Object value) {
+		
+		Object oldValue = getValue(propertyName);
+
+		Properties properties = getProperties();
+		properties.putObjectValue(propertyName, value);
+		firePropertyChange(propertyName, oldValue, value );
+	}
+
+	public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException();
+		}
+		pcsDelegate.addPropertyChangeListener(listener);
+	}
+
+	public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+		if (listener != null) {
+			pcsDelegate.removePropertyChangeListener(listener);
+		}
+	}
+
+	protected void firePropertyChange(String property, Object oldValue, Object newValue) {
+		if (pcsDelegate.hasListeners(property)) {
+			pcsDelegate.firePropertyChange(property, oldValue, newValue);
+		}
+	}
 }

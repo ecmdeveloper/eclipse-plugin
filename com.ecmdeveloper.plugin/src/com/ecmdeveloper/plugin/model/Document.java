@@ -108,5 +108,4 @@ public class Document extends ObjectStoreItem {
 		}
 		return null;
 	}
-	
 }
