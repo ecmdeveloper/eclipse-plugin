@@ -92,12 +92,6 @@
             id="com.ecmdeveloper.plugin.viewDocument"
             name="View">
       </command>
-      <command
-            categoryId="com.ecmdeveloper.plugin.category"
-            description="Edit Folder"
-            id="com.ecmdeveloper.plugin.editFolder"
-            name="Edit">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -459,10 +453,6 @@
                </iterate>
             </with>
          </enabledWhen>
-      </handler>
-      <handler
-            class="com.ecmdeveloper.plugin.handlers.EditFolderHandler"
-            commandId="com.ecmdeveloper.plugin.editFolder">
       </handler>
    </extension>
    <extension
