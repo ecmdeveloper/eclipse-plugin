@@ -1,5 +1,5 @@
 /**
- * Copyright 2009,2010, Ricardo Belfor
+ * Copyright 2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -36,10 +36,10 @@ import com.ecmdeveloper.plugin.properties.model.Property;
  * @author Ricardo.Belfor
  *
  */
-public class IntegerDetailsPage extends BaseDetailsPage {
+public class DoubleDetailsPage extends BaseDetailsPage {
 
-	private static final String INVALID_INTEGER_VALUE = "Invalid integer value";
-	private static final String INVALID_INTEGER_MESSAGE_KEY = "invalidInteger";
+	private static final String INVALID_DOUBLE_VALUE = "Invalid double value";
+	private static final String INVALID_DOUBLE_MESSAGE_KEY = "invalidDouble";
 	
 	private Text text;
 	private IMessageManager messageManager;
@@ -61,20 +61,20 @@ public class IntegerDetailsPage extends BaseDetailsPage {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				try {
-					String textValue = text.getText();
-					if ( textValue != null && textValue.trim().length() != 0 ) {
-						Integer.parseInt( textValue );
+					String textValue = text.getText().trim();
+					if ( textValue.trim().length() != 0 ) {
+						Double.parseDouble( textValue );
 					}
-					messageManager.removeMessage(INVALID_INTEGER_MESSAGE_KEY, text );
+					messageManager.removeMessage(INVALID_DOUBLE_MESSAGE_KEY, text );
 					setDirty(true);
 				} catch (NumberFormatException exception) {
-					messageManager.addMessage(INVALID_INTEGER_MESSAGE_KEY, INVALID_INTEGER_VALUE,
+					messageManager.addMessage(INVALID_DOUBLE_MESSAGE_KEY, INVALID_DOUBLE_VALUE,
 							null, IMessageProvider.ERROR, text );
 				}
 			}
 		});
 	}
-
+	
 	@Override
 	protected int getNumClientColumns() {
 		return 1;
@@ -89,8 +89,8 @@ public class IntegerDetailsPage extends BaseDetailsPage {
 	protected void propertyChanged(Property property) {
 		Object value = property.getValue();
 		if ( value != null ) {
-			if ( value instanceof Integer ) {
-				text.setText( ((Integer) value).toString() );
+			if ( value instanceof Double ) {
+				text.setText( ((Double) value).toString() );
 			}
 		} else {
 			text.setText("");
@@ -101,7 +101,7 @@ public class IntegerDetailsPage extends BaseDetailsPage {
 	protected Object getValue() {
 		try {
 			String textValue = text.getText().trim();
-			return Integer.parseInt( textValue );
+			return Double.parseDouble( textValue );
 		} catch (NumberFormatException e) {
 			return null;
 		}

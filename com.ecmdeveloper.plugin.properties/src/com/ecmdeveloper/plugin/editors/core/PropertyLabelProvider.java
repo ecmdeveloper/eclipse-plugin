@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -23,8 +23,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.properties.Activator;
+import com.ecmdeveloper.plugin.properties.model.Property;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
 
 /**
@@ -37,7 +37,16 @@ public class PropertyLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		return Activator.getImage( IconFiles.READ_ONLY );
+
+		if ( ! (element instanceof Property) ) {
+			throw new UnsupportedOperationException( "This type is not supported for this label provider" );
+		}
+		
+		Property property = (Property) element;
+		if ( property.isRequired() ) {
+			return Activator.getImage( IconFiles.REQUIRED );
+		}
+		return null;
 	}
 
 	@Override

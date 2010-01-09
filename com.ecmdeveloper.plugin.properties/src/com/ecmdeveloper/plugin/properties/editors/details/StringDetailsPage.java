@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import com.ecmdeveloper.plugin.editors.core.Property;
+import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
  * @author Ricardo.Belfor
