@@ -36,6 +36,10 @@ public class GetClassDescriptionTask extends BaseTask {
 	private String name;
 	private ObjectStore objectStore;
 	private Object parent;
+
+	public GetClassDescriptionTask(String name, ObjectStore objectStore) {
+		this(name, null, objectStore);
+	}
 	
 	public GetClassDescriptionTask(String name, Object parent, ObjectStore objectStore) {
 		super();
@@ -54,20 +58,36 @@ public class GetClassDescriptionTask extends BaseTask {
 			(com.filenet.api.meta.ClassDescription) objectStoreObject.fetchObject("ClassDescription", name, null);
 
 		ClassDescription classDescription = new ClassDescription(classDescriptionObject, parent, objectStore );
+		
+		addToParent(classDescription);
+		
+		return classDescription;
+	}
+
+	private void addToParent(ClassDescription classDescription) {
+
+		if ( parent == null ) {
+			return;
+		}
+		
 		ArrayList<ClassDescription> children = new ArrayList<ClassDescription>();
 		children.add(classDescription);
 
 		Collection<Object> oldChildren = null;
 		if ( parent instanceof VirtualFolder) {
-			oldChildren = ((VirtualFolder) parent).getChildren();
-			ArrayList<Object> childObjects = new ArrayList<Object>();
-			childObjects.addAll(children);
-			((VirtualFolder)parent).setChildren( ( childObjects ) );
+			oldChildren = addToVirtualFolder(children);
 		}
 
 		fireClassDescriptionChanged(children.toArray(new ClassDescription[1]),
 				oldChildren != null ? oldChildren.toArray( new ClassDescription[1] ) : null, null);
-		
-		return null;
+	}
+
+	private Collection<Object> addToVirtualFolder(ArrayList<ClassDescription> children) {
+		Collection<Object> oldChildren;
+		oldChildren = ((VirtualFolder) parent).getChildren();
+		ArrayList<Object> childObjects = new ArrayList<Object>();
+		childObjects.addAll(children);
+		((VirtualFolder)parent).setChildren( ( childObjects ) );
+		return oldChildren;
 	}
 }

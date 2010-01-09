@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import com.ecmdeveloper.plugin.classes.model.task.BaseTask;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
@@ -109,5 +110,12 @@ public class ClassesManager implements ObjectStoresManagerListener {
 			((BaseTask)task).setListeners(listeners);
 		}
 		objectStoresManager.executeTaskASync(task);
+	}
+
+	public Object executeTaskSync(Callable<Object> task) throws Exception {
+		if ( task instanceof BaseTask) {
+			((BaseTask)task).setListeners(listeners);
+		}
+		return objectStoresManager.executeTaskSync(task);
 	}
 }

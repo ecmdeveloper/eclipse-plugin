@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -20,10 +20,20 @@
 
 package com.ecmdeveloper.plugin.classes.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.classes.model.task.GetChoiceValuesTask;
+import com.ecmdeveloper.plugin.classes.util.PluginLog;
+import com.filenet.api.admin.ChoiceList;
+import com.filenet.api.constants.Cardinality;
+import com.filenet.api.meta.PropertyDescriptionBoolean;
+import com.filenet.api.meta.PropertyDescriptionInteger32;
+import com.filenet.api.meta.PropertyDescriptionString;
 
 
 /**
@@ -35,11 +45,38 @@ public class PropertyDescription implements IAdaptable {
 	private com.filenet.api.meta.PropertyDescription propertyDescription;
 	private PropertyType propertyType;
 	private String name;
+	private ChoiceList choiceList;
+	private ArrayList<Choice> choices;
+	private boolean required;
+	private boolean multivalue;
 	
 	public PropertyDescription(Object internalPropertyDescription) {
 		this.propertyDescription = (com.filenet.api.meta.PropertyDescription) internalPropertyDescription;
-		name = this.propertyDescription.get_Name();
+		name = this.propertyDescription.get_SymbolicName();
 		propertyType = PropertyType.fromTypeID(this.propertyDescription.get_DataType() );
+		choiceList = propertyDescription.get_ChoiceList();
+		required = propertyDescription.get_IsValueRequired();
+		multivalue = !Cardinality.SINGLE.equals( propertyDescription.get_Cardinality() );
+		
+		StringBuffer description = new StringBuffer();
+		description.append( propertyDescription.get_DescriptiveText() ); 
+		description.append("This is " + (required? "": "not ") + "a required property.");
+
+		if ( internalPropertyDescription instanceof PropertyDescriptionString ) {
+			PropertyDescriptionString stringPropertyDescription = (PropertyDescriptionString) internalPropertyDescription;
+
+			if ( stringPropertyDescription.get_MaximumLengthString() != null ) {
+				description.append( " The maximum length is " + stringPropertyDescription.get_MaximumLengthString() + " characters." );
+				description.append( " The maximum length is unspecified." );
+			}
+			if ( stringPropertyDescription.get_PropertyDefaultString() != null ) {
+				description.append( " The default value is '" + stringPropertyDescription.get_PropertyDefaultString() + "'" );
+			}
+		} else if ( internalPropertyDescription instanceof PropertyDescriptionBoolean) {
+			PropertyDescriptionBoolean booleanPropertyDescription =  (PropertyDescriptionBoolean) internalPropertyDescription;
+		} else if ( internalPropertyDescription instanceof PropertyDescriptionInteger32 ) {
+			PropertyDescriptionInteger32 booleanPropertyDescription = (PropertyDescriptionInteger32) internalPropertyDescription;
+		}
 	}
 
 	public String getName() {
@@ -50,11 +87,44 @@ public class PropertyDescription implements IAdaptable {
 		return propertyType;
 	}
 	
+	public boolean isRequired() {
+		return required;
+	}
+
+	public boolean isMultivalue() {
+		return multivalue;
+	}
+
+	protected void setMultivalue(boolean multivalue) {
+		this.multivalue = multivalue;
+	}
+
 	public String getType() {
 		// TODO look for the real type in case of an object type
 		return propertyType.toString();
 	}
+
+	public boolean hasChoices() {
+		return choiceList != null;
+	}
 	
+	@SuppressWarnings("unchecked")
+	public Collection<Choice> getChoices() {
+		if ( choiceList == null ) {
+			return null;
+		}
+		
+		if ( choices == null ) {
+			GetChoiceValuesTask task = new GetChoiceValuesTask(choiceList);
+			try {
+				choices = (ArrayList<Choice>) ClassesManager.getManager().executeTaskSync(task);
+			} catch (Exception e) {
+				PluginLog.error(e);
+			}
+		}
+		return choices;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
