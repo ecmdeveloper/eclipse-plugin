@@ -21,6 +21,8 @@ package com.ecmdeveloper.plugin.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -125,6 +127,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	public Object getValue(String propertyName) {
 		Properties properties = getProperties();
 		Object objectValue = properties.getObjectValue(propertyName);
+
 		if ( objectValue instanceof Collection ) {
 			ArrayList<?> values = new ArrayList( (Collection) objectValue );
 			return values.toArray();
@@ -143,14 +146,43 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 
 	@Override
 	public void setValue(String propertyName, Object value) {
-		
+
 		Object oldValue = getValue(propertyName);
 
 		Properties properties = getProperties();
-		properties.putObjectValue(propertyName, value);
+		if ( value != null ) {
+			properties.putObjectValue(propertyName, value);
+		} else {
+			setNullValue( properties.get( propertyName ) );
+		}
+
 		firePropertyChange(propertyName, oldValue, value );
 	}
 
+	private void setNullValue(com.filenet.api.property.Property property)
+	{
+		Method method = getSetValueMethod(property);
+		if ( method != null ) {
+			try {
+				method.invoke( property, new Object[] { null } );
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	private Method getSetValueMethod( com.filenet.api.property.Property property ) 
+	{
+		Method methods[] = property.getClass().getMethods();
+		
+		for (int i = 0; i < methods.length; i++) {
+			if ( methods[i].getName().equals( "setValue" ) ) {
+				return methods[i];
+			}
+		}
+		return null;
+	}
+	
 	public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();
