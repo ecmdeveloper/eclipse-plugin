@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -17,11 +17,28 @@
  * <http://www.gnu.org/licenses/>.
  * 
  */
-package com.ecmdeveloper.plugin.properties.util;
+package com.ecmdeveloper.plugin.properties.choices;
 
-public class IconFiles {
-	public static final String FOLDER_EDIT = "icons/folder_edit.png";
-	public static final String READ_ONLY = "icons/lock_edit.png";
-	public static final String REQUIRED = "icons/bullet_red.png";
-	
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+
+import com.ecmdeveloper.plugin.classes.model.Choice;
+import com.ecmdeveloper.plugin.properties.Activator;
+import com.ecmdeveloper.plugin.properties.util.IconFiles;
+
+public class ChoicesLabelProvider extends LabelProvider {
+
+	@Override
+	public Image getImage(Object element) {
+		Choice choice = (Choice) element;
+		if ( ! choice.isSelectable() ) {
+			return Activator.getImage( IconFiles.FOLDER_EDIT );
+		}
+		return null;
+	}
+
+	@Override
+	public String getText(Object element) {
+		return ((Choice) element).getDisplayName();
+	}
 }

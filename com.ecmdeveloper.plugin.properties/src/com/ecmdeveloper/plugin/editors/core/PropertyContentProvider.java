@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.Viewer;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
  * @author Ricardo.Belfor

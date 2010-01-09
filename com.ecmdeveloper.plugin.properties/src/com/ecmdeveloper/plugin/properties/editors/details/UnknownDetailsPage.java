@@ -25,7 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 
-import com.ecmdeveloper.plugin.editors.core.Property;
+import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
  * @author Ricardo.Belfor

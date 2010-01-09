@@ -18,8 +18,11 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.editors.core;
+package com.ecmdeveloper.plugin.properties.model;
 
+import java.util.Collection;
+
+import com.ecmdeveloper.plugin.classes.model.Choice;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.input.PropertyValueConversion;
@@ -56,5 +59,17 @@ public class Property {
 	
 	public String getValueAsString() {
 		return PropertyValueConversion.getValueAsString( getValue() );
+	}
+
+	public boolean isRequired() {
+		return propertyDescription.isRequired();
+	}
+
+	public boolean isMultivalue() {
+		return propertyDescription.isMultivalue();
+	}
+
+	public Collection<Choice> getChoices() {
+		return propertyDescription.getChoices();
 	}
 }

@@ -38,7 +38,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import com.ecmdeveloper.plugin.editors.core.Property;
+import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
  * @author Ricardo.Belfor
@@ -106,6 +106,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = ((Button)e.getSource()).getSelection();
 				handleEmptyValueButton(selected);
+				setDirty(true);
 			}
 		} );
 
@@ -149,6 +150,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	    	propertyChanged( property );
 			setEmptyValueButtonState(property);
 			setDirty(false);
+			form.getMessageManager().removeAllMessages();
 	    }
 	}
 
@@ -157,9 +159,14 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	private void setEmptyValueButtonState(Property property) {
 		
 		if ( emptyValueButton != null ) { 
-			Object value = property.getValue();
-			emptyValueButton.setSelection( value == null );
-			handleEmptyValueButton( value == null );
+			if ( ! property.isRequired() ) {
+				Object value = property.getValue();
+				emptyValueButton.setSelection( value == null );
+				handleEmptyValueButton( value == null );
+			} else {
+				emptyValueButton.setEnabled(false);
+				handleEmptyValueButton(false);
+			}
 		}
 	}
 

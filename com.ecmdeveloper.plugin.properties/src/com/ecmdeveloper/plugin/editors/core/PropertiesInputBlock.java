@@ -44,6 +44,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.properties.Activator;
+import com.ecmdeveloper.plugin.properties.editors.details.PropertiesInputDetailsPageProvider;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
 
 public class PropertiesInputBlock extends MasterDetailsBlock {
@@ -93,7 +94,6 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 			}
 		});
 
-		IEditorInput editorInput = page.getEditor().getEditorInput();
 		viewer.setLabelProvider( new PropertyLabelProvider() );
 		viewer.setContentProvider( new PropertyContentProvider() );
 	}
