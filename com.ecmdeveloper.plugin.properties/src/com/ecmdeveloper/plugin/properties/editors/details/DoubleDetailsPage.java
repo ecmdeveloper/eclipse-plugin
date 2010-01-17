@@ -20,16 +20,9 @@
 
 package com.ecmdeveloper.plugin.properties.editors.details;
 
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.IMessageManager;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import com.ecmdeveloper.plugin.properties.editors.details.input.DoubleFormInput;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
@@ -38,41 +31,18 @@ import com.ecmdeveloper.plugin.properties.model.Property;
  */
 public class DoubleDetailsPage extends BaseDetailsPage {
 
-	private static final String INVALID_DOUBLE_VALUE = "Invalid double value";
-	private static final String INVALID_DOUBLE_MESSAGE_KEY = "invalidDouble";
+	private DoubleFormInput doubleInput;
 	
-	private Text text;
-	private IMessageManager messageManager;
-
 	@Override
 	protected void createClientContent(Composite client) {
 		super.createClientContent(client);
 		
-		FormToolkit toolkit = form.getToolkit();
-		messageManager = form.getMessageManager();
-		createText(client, toolkit);
-	}
-
-	private void createText(Composite client, FormToolkit toolkit) {
-
-		text = toolkit.createText(client, "", SWT.BORDER ); 
-		text.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-		text.addModifyListener(new ModifyListener() {
+		doubleInput = new DoubleFormInput(client, form) {
 			@Override
-			public void modifyText(ModifyEvent e) {
-				try {
-					String textValue = text.getText().trim();
-					if ( textValue.trim().length() != 0 ) {
-						Double.parseDouble( textValue );
-					}
-					messageManager.removeMessage(INVALID_DOUBLE_MESSAGE_KEY, text );
-					setDirty(true);
-				} catch (NumberFormatException exception) {
-					messageManager.addMessage(INVALID_DOUBLE_MESSAGE_KEY, INVALID_DOUBLE_VALUE,
-							null, IMessageProvider.ERROR, text );
-				}
+			protected void valueModified(Object value) {
+				setDirty(true);
 			}
-		});
+		};
 	}
 	
 	@Override
@@ -82,29 +52,18 @@ public class DoubleDetailsPage extends BaseDetailsPage {
 
 	@Override
 	protected void handleEmptyValueButton(boolean selected) {
-		text.setEnabled( !selected );
+		doubleInput.setEnabled( !selected );
 	}
 
 	@Override
 	protected void propertyChanged(Property property) {
 		Object value = property.getValue();
-		if ( value != null ) {
-			if ( value instanceof Double ) {
-				text.setText( ((Double) value).toString() );
-			}
-		} else {
-			text.setText("");
-		}
+		doubleInput.setValue((Double) value);
 	}
 
 	@Override
 	protected Object getValue() {
-		try {
-			String textValue = text.getText().trim();
-			return Double.parseDouble( textValue );
-		} catch (NumberFormatException e) {
-			return null;
-		}
+		return doubleInput.getValue();
 	}
 
 	@Override
@@ -122,7 +81,7 @@ public class DoubleDetailsPage extends BaseDetailsPage {
 
 	@Override
 	public void setFocus() {
-		text.setFocus();
+		doubleInput.setFocus();
 	}
 
 	@Override

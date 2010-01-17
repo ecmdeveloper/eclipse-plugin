@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.properties.editors.details;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -89,8 +90,26 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	}
 
 	private void commitPropertyValue() {
-		if ( emptyValueButton != null && emptyValueButton.getSelection() ) {
-			property.getObjectStoreItem().setValue( property.getName(), null );
+		try {
+			if ( emptyValueButton != null && emptyValueButton.getSelection() ) {
+				property.getObjectStoreItem().setValue( property.getName(), null );
+			} else {
+				commitNotNullPropertyValue();
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void commitNotNullPropertyValue() throws Exception {
+		Object value = getValue();
+		if ( value instanceof Object[] ) {
+			List valuesList = property.getList();
+			for ( Object valueElement : (Object[]) value ) {
+				valuesList.add( valueElement );
+			}
+			property.getObjectStoreItem().setValue( property.getName(), valuesList );
 		} else {
 			property.getObjectStoreItem().setValue( property.getName(), getValue() );
 		}

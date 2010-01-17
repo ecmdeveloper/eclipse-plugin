@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -20,11 +20,31 @@
 
 package com.ecmdeveloper.plugin.properties.editors.details;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+
+import com.ecmdeveloper.plugin.properties.editors.details.input.DoubleFormInput;
+
 /**
  * @author Ricardo.Belfor
  *
  */
-public class DoubleInput {
+public class MultiValueDoubleDetailsPage extends BaseMultiValueDetailsPage {
 
-	public DoubleInput() {}
+	private DoubleFormInput doubleInput;
+
+	@Override
+	protected void createInput(Composite client, FormToolkit toolkit) {
+		doubleInput = new DoubleFormInput(client, form);
+	}
+
+	@Override
+	protected Object getInputValue() {
+		return doubleInput.getValue();
+	}
+
+	@Override
+	protected void setInputValue(Object value) {
+		doubleInput.setValue((Double) value);
+	}
 }

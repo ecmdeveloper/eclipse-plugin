@@ -22,8 +22,10 @@ package com.ecmdeveloper.plugin.editors.folder;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -31,7 +33,10 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.editors.core.PropertiesInputForm;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
+import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
  * @author Ricardo Belfor
@@ -95,7 +100,17 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 	public void doSave(IProgressMonitor monitor) {
 
 		isPageModified = false;
-		firePropertyChange(IEditorPart.PROP_DIRTY);
+		monitor.beginTask("Saving folder", 1);
+		
+		try {
+			UpdateTask task = new UpdateTask(objectStoreItem);
+			ObjectStoresManager.getManager().executeTaskSync(task);
+			firePropertyChange(IEditorPart.PROP_DIRTY);
+		} catch (Exception e) {
+			PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
+		} finally {
+			monitor.done();
+		}
 	}
 
 	@Override
