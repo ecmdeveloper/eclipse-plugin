@@ -25,12 +25,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 
+import com.filenet.api.collection.BooleanList;
 import com.filenet.api.constants.RefreshMode;
+import com.filenet.api.core.Factory;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.property.Properties;
+import com.filenet.api.property.Property;
 
 /**
  * 
@@ -145,8 +149,8 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	}
 
 	@Override
-	public void setValue(String propertyName, Object value) {
-
+	public void setValue(String propertyName, Object value) throws Exception {
+		
 		Object oldValue = getValue(propertyName);
 
 		Properties properties = getProperties();
@@ -177,6 +181,18 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		
 		for (int i = 0; i < methods.length; i++) {
 			if ( methods[i].getName().equals( "setValue" ) ) {
+				return methods[i];
+			}
+		}
+		return null;
+	}
+
+	private Method getGetListValueMethod( com.filenet.api.property.Property property ) 
+	{
+		Method methods[] = property.getClass().getMethods();
+		
+		for (int i = 0; i < methods.length; i++) {
+			if ( methods[i].getName().endsWith( "ListValue" ) ) {
 				return methods[i];
 			}
 		}
