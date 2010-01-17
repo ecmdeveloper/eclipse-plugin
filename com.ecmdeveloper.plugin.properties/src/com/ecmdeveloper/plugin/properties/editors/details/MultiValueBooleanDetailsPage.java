@@ -21,55 +21,43 @@
 package com.ecmdeveloper.plugin.properties.editors.details;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class MultiValueStringDetailsPage extends BaseMultiValueDetailsPage {
+public class MultiValueBooleanDetailsPage extends BaseMultiValueDetailsPage {
 
-	private Text text;
-	
+	private Button trueButton;
+	private Button falseButton;
+
 	@Override
 	protected void createInput(Composite client, FormToolkit toolkit) {
-		createText(client, toolkit);
-	}
-
-	private void createText(Composite client, FormToolkit toolkit) {
-		text = toolkit.createText(client, "", SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.WRAP ); 
-		text.setLayoutData( new GridData(GridData.FILL_HORIZONTAL ) );
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-			}
-		});
-	}
-
-	@Override
-	protected void setInputValue(Object value) {
-		if ( value == null) {
-			text.setText("");
-		} else {
-			text.setText( value.toString() );
-		}
+		trueButton = toolkit.createButton(client, "True", SWT.RADIO );
+		falseButton = toolkit.createButton(client, "False", SWT.RADIO );
 	}
 
 	@Override
 	protected Object getInputValue() {
-		return text.getText();
+		Boolean value = new Boolean( trueButton.getSelection() );
+		return value;
 	}
 
 	@Override
-	protected void handleEmptyValueButton(boolean selected) {
-		super.handleEmptyValueButton(selected);
-		text.setEnabled( !selected );
+	protected void setInputValue(Object value) {
+		Boolean booleanValue = (Boolean) value;
+		if ( booleanValue == null ) {
+			trueButton.setSelection(false);
+			falseButton.setSelection(false);
+		} else if ( booleanValue ) {
+			trueButton.setSelection(true);
+			falseButton.setSelection(false);
+		} else {
+			trueButton.setSelection(false);
+			falseButton.setSelection(true);
+		}
 	}
-	
-	
 }

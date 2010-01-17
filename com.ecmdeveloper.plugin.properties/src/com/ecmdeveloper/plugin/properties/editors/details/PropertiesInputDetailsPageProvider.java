@@ -36,18 +36,26 @@ import com.ecmdeveloper.plugin.properties.model.Property;
  */
 public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider {
 
-	private static Map<String,Class<?>> keyToClassMap = new HashMap<String, Class<?>>();
+	private static Map<String,Class<? extends IDetailsPage>> keyToClassMap = new HashMap<String, Class<? extends IDetailsPage>>();
 	
 	static
 	{
 		keyToClassMap.put( getPageKey(PropertyType.STRING, false, false ), StringDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.STRING, true, false ), SingleChoiceDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.STRING, false, true ), MultiValueStringDetailsPage.class );
+
 		keyToClassMap.put( getPageKey(PropertyType.LONG, false, false ), IntegerDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.LONG, true, false ), SingleChoiceDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, false, true ), MultiValueIntegerDetailsPage.class );
+		
 		keyToClassMap.put( getPageKey(PropertyType.DATE, false, false ), DateDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.DATE, false, true ), MultiValueDateDetailsPage.class );
+		
 		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, false ), BooleanDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, true ), MultiValueBooleanDetailsPage.class );
+
 		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, false ), DoubleDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, true ), MultiValueDoubleDetailsPage.class );
 	}
 	
 	private IDetailsPage unknownDetailsPage;

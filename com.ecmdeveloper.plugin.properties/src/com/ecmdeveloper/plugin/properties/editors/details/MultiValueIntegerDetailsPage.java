@@ -1,5 +1,5 @@
 /**
- * Copyright 2009,2010, Ricardo Belfor
+ * Copyright 2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -21,73 +21,30 @@
 package com.ecmdeveloper.plugin.properties.editors.details;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import com.ecmdeveloper.plugin.properties.editors.details.input.IntegerFormInput;
-import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class IntegerDetailsPage extends BaseDetailsPage {
+public class MultiValueIntegerDetailsPage extends BaseMultiValueDetailsPage {
 
 	private IntegerFormInput integerInput;
-	
-	@Override
-	protected void createClientContent(Composite client) {
-		super.createClientContent(client);
-		
-		integerInput = new IntegerFormInput(client, form) {
 
-			@Override
-			protected void valueModified(Object value) {
-				setDirty(true);
-			}
-			
-		};
+	@Override
+	protected void createInput(Composite client, FormToolkit toolkit) {
+		integerInput = new IntegerFormInput(client, form);
 	}
 
 	@Override
-	protected int getNumClientColumns() {
-		return 1;
-	}
-
-	@Override
-	protected void handleEmptyValueButton(boolean selected) {
-		integerInput.setEnabled( !selected );
-	}
-
-	@Override
-	protected void propertyChanged(Property property) {
-		Object value = property.getValue();
-		integerInput.setValue((Integer) value);
-	}
-
-	@Override
-	protected Object getValue() {
+	protected Object getInputValue() {
 		return integerInput.getValue();
 	}
 
 	@Override
-	public void dispose() {
-	}
-
-	@Override
-	public boolean isStale() {
-		return false;
-	}
-
-	@Override
-	public void refresh() {
-	}
-
-	@Override
-	public void setFocus() {
-		integerInput.setFocus();
-	}
-
-	@Override
-	public boolean setFormInput(Object input) {
-		return false;
+	protected void setInputValue(Object value) {
+		integerInput.setValue((Integer) value);
 	}
 }
