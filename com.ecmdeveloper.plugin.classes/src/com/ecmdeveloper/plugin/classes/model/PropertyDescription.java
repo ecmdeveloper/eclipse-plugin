@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.classes.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -31,6 +32,7 @@ import com.ecmdeveloper.plugin.classes.model.task.GetChoiceValuesTask;
 import com.ecmdeveloper.plugin.classes.util.PluginLog;
 import com.filenet.api.admin.ChoiceList;
 import com.filenet.api.constants.Cardinality;
+import com.filenet.api.core.Factory;
 import com.filenet.api.meta.PropertyDescriptionBoolean;
 import com.filenet.api.meta.PropertyDescriptionInteger32;
 import com.filenet.api.meta.PropertyDescriptionString;
