@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -56,6 +56,14 @@ public class Property {
 		return propertyDescription.getName();
 	}
 	
+	public String getDisplayName() {
+		return propertyDescription.getDisplayName();
+	}
+	
+	public String getDescriptiveText() {
+		return propertyDescription.getDescriptiveText();
+	}
+
 	public Object getValue() {
 		return objectStoreItem.getValue( getName() );
 	}
