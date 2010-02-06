@@ -28,13 +28,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.editor.FormEditor;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.editors.core.PropertiesInputForm;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
+import com.ecmdeveloper.plugin.properties.editors.PropertiesInputForm;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
@@ -46,7 +47,6 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 
 	public static final String EDITOR_ID = "com.ecmdeveloper.plugin.editors.folderEditor";
 	
-//	private FolderEditorForm folderEditorForm;
 	private PropertiesInputForm propertiesInputForm;
 	private ClassDescription classDescription;
 	private ObjectStoreItem objectStoreItem;
@@ -63,6 +63,8 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 			objectStoreItem.addPropertyChangeListener(this);
 			isPageModified = false;
 			
+			updateTitle();
+			
 		} catch (PartInitException e) {
 			PluginLog.error( e );
 		}
@@ -71,8 +73,6 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 	private void addFolderEditorForm() throws PartInitException {
 		propertiesInputForm = new PropertiesInputForm(this, classDescription);
 		addPage(propertiesInputForm);
-//		folderEditorForm = new FolderEditorForm(this, classDescription);
-//		addPage( folderEditorForm );
 	}
 
 	@Override
@@ -81,6 +81,11 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 		propertiesInputForm.refreshFormContent(objectStoreItem);
 	}
 
+	private void updateTitle() {
+		setPartName( objectStoreItem.getName() );
+		setTitleToolTip( "Folder: " + objectStoreItem.getName() );
+	}
+	
 	@Override
 	public void doSaveAs() {
 	}
@@ -97,20 +102,28 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {
+	public void doSave(final IProgressMonitor monitor) {
 
 		isPageModified = false;
-		monitor.beginTask("Saving folder", 1);
+		monitor.beginTask("Saving properties", 1);
+
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					UpdateTask task = new UpdateTask(objectStoreItem);
+					ObjectStoresManager.getManager().executeTaskSync(task);
+					updateTitle();
+					firePropertyChange(IEditorPart.PROP_DIRTY);
+					Thread.sleep(5000);
+				} catch (Exception e) {
+					PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
+				} finally {
+					monitor.done();
+				}
+			}} );
 		
-		try {
-			UpdateTask task = new UpdateTask(objectStoreItem);
-			ObjectStoresManager.getManager().executeTaskSync(task);
-			firePropertyChange(IEditorPart.PROP_DIRTY);
-		} catch (Exception e) {
-			PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
-		} finally {
-			monitor.done();
-		}
 	}
 
 	@Override
@@ -122,3 +135,59 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 		}
 	}
 }
+
+/*
+IWorkspace workspace= ResourcesPlugin.getWorkspace();
+final IFile file= workspace.getRoot().getFile(path);
+
+WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+        public void execute(final IProgressMonitor monitor) throws CoreException {
+                try {
+                        getDiagram().setFilename(file.getName());
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        createOutputStream(out);
+                        file.create(new ByteArrayInputStream(out.toByteArray()), true, monitor);
+                        out.close();
+                }
+                catch (Exception e) {
+                        e.printStackTrace();
+                }
+        }
+};
+
+try {
+        new ProgressMonitorDialog(getSite().getWorkbenchWindow().getShell()).run(false, true, op);
+        setInput(new FileEditorInput((IFile)file));
+        getCommandStack().markSaveLocation();
+}
+catch (Exception e) {
+        e.printStackTrace();
+}
+
+         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable()
+                {
+                        public void run()
+                        {
+                                try {
+                                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                        createOutputStream(out);
+                                        if(file.exists())
+                                        {
+                                                file.setContents(new ByteArrayInputStream(out.toByteArray()),
+                                                                true, false, monitor);
+                                        }
+                                        else
+                                        {
+
+                                                file.create(new ByteArrayInputStream(out.toByteArray()), true, monitor);
+                                        }
+                                        out.close();
+                                        getCommandStack().markSaveLocation();
+                                }
+                                catch (Exception e) {
+                                        e.printStackTrace();
+                                }
+                        }});
+        }
+
+*/
