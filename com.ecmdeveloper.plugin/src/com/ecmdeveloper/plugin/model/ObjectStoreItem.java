@@ -154,6 +154,12 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		Object oldValue = getValue(propertyName);
 
 		Properties properties = getProperties();
+		
+		if ( ! properties.get(propertyName).isSettable() ) {
+			// TODO throw exception
+			return;
+		}
+		
 		if ( value != null ) {
 			properties.putObjectValue(propertyName, value);
 		} else {

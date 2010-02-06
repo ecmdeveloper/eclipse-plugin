@@ -132,7 +132,7 @@ public class ClassDescription implements IAdaptable {
 				com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) iterator.next();
 				
 				if ( ! internalPropertyDescription.get_IsSystemGenerated() &&
-						! internalPropertyDescription.get_IsSystemOwned() && 
+						/*! internalPropertyDescription.get_IsSystemOwned() && */ 
 						! internalPropertyDescription.get_IsHidden()) {
 					System.out.println( "Adding " + internalPropertyDescription.get_Name() );
 					propertyDescriptions.add( new PropertyDescription(internalPropertyDescription) );

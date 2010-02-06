@@ -87,6 +87,13 @@ public class Folder extends ObjectStoreItem {
 		hasChildren = ! folder.get_SubFolders().isEmpty() || ! folder.get_Containees().isEmpty();
 	}
 
+	@Override
+	public void save() {
+		super.save();
+		name = folder.get_FolderName();
+		pathName = folder.get_PathName();
+	}
+
 	/**
 	 * Gets the children of this folder. If the children are not yet loaded a
 	 * place holder is returned and asynchronous task is started to fetch the
