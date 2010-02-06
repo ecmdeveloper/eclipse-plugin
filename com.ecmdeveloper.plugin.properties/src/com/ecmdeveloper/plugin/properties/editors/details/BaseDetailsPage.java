@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -47,6 +47,8 @@ import com.ecmdeveloper.plugin.properties.model.Property;
  */
 public abstract class BaseDetailsPage implements IDetailsPage {
 
+	private static final String EMPTY_VALUE_BUTTON_TEXT = "Use Empty Value";
+	
 	protected IManagedForm form;
 	private Section section;
 	protected Button emptyValueButton;
@@ -119,7 +121,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	
 	protected void createEmptyValueButton(Composite client, FormToolkit toolkit) {
 		
-		emptyValueButton = toolkit.createButton(client, "Use Empty Value", SWT.CHECK );
+		emptyValueButton = toolkit.createButton(client, EMPTY_VALUE_BUTTON_TEXT, SWT.CHECK );
 		emptyValueButton.addSelectionListener( new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -163,9 +165,8 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 	    property = getPropertyFromSelection(selection);
 	    if ( property != null ) {
-	    	setTitle( property.getName() );
-	    	setDescription("Enter a new value for the string value. " +
-					"This is not a required property and the maximum length is 64.");
+	    	setTitle( property.getDisplayName() );
+	    	setDescription( property.getDescriptiveText() );
 	    	propertyChanged( property );
 			setEmptyValueButtonState(property);
 			setDirty(false);
