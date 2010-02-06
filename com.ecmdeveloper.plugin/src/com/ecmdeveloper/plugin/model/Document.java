@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -49,10 +49,16 @@ public class Document extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
-		this.document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.VERSION_SERIES } );
-		name = this.document.get_Name();
-		id = this.document.get_Id().toString();
-		versionSeriesId = this.document.get_VersionSeries().get_Id().toString(); 
+		document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.VERSION_SERIES } );
+		name = document.get_Name();
+		id = document.get_Id().toString();
+		versionSeriesId = document.get_VersionSeries().get_Id().toString(); 
+	}
+
+	@Override
+	public void save() {
+		super.save();
+		name = document.get_Name();
 	}
 
 	/** 

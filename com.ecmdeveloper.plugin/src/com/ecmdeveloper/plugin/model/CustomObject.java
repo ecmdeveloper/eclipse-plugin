@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -63,10 +63,15 @@ public class CustomObject extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
+		customObject.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
+		name = customObject.get_Name();
+		id = customObject.get_Id().toString();
+	}
 
-		this.customObject.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
-		this.name = this.customObject.get_Name();
-		this.id = this.customObject.get_Id().toString();
+	@Override
+	public void save() {
+		super.save();
+		name = customObject.get_Name();
 	}
 
 	@Override
