@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -54,7 +54,7 @@ import com.filenet.api.meta.PropertyDescriptionString;
 /**
  * 
  * @author Ricardo Belfor
- *
+ * @deprecated Editor is now implement differently
  */
 public class FolderEditorForm extends FormPage {
 
