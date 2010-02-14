@@ -20,37 +20,30 @@
 
 package com.ecmdeveloper.plugin.properties.handlers;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.ide.IDE;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
-import com.ecmdeveloper.plugin.editors.folder.FolderEditor;
+import com.ecmdeveloper.plugin.model.CustomObject;
+import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
-import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditorInput;
-import com.ecmdeveloper.plugin.properties.jobs.OpenFolderEditorJob;
-import com.ecmdeveloper.plugin.properties.util.PluginMessage;
+import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
+import com.ecmdeveloper.plugin.properties.editors.DocumentEditor;
+import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
+import com.ecmdeveloper.plugin.properties.jobs.OpenObjectStoreItemEditorJob;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class EditFolderHandler extends AbstractHandler {
+public class EditObjectStoreItemHandler extends AbstractHandler {
 
 	private IWorkbenchWindow window;
 	
@@ -65,20 +58,27 @@ public class EditFolderHandler extends AbstractHandler {
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 
-		openFolderEditors(selection);
+		openEditors(selection);
 		return null;
 	}
 
-	private void openFolderEditors(ISelection selection) {
+	private void openEditors(ISelection selection) {
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
-			openFolderEditor((ObjectStoreItem) iterator.next());
+			ObjectStoreItem objectStoreItem = (ObjectStoreItem) iterator.next();
+			if (objectStoreItem instanceof Folder ) {
+				openEditor( objectStoreItem, FolderEditor.EDITOR_ID );
+			} else if (objectStoreItem instanceof Document ) {
+				openEditor( objectStoreItem, DocumentEditor.EDITOR_ID );
+			} else if (objectStoreItem instanceof CustomObject ) {
+				openEditor( objectStoreItem, CustomObjectEditor.EDITOR_ID );
+			}
 		}
 	}
 
-	private void openFolderEditor(ObjectStoreItem objectStoreItem) {
-		OpenFolderEditorJob job = new OpenFolderEditorJob(objectStoreItem, window);
+	private void openEditor(ObjectStoreItem objectStoreItem, String editorId ) {
+		OpenObjectStoreItemEditorJob job = new OpenObjectStoreItemEditorJob(objectStoreItem, editorId, window);
 		job.setUser(true);
 		job.schedule();
 	}

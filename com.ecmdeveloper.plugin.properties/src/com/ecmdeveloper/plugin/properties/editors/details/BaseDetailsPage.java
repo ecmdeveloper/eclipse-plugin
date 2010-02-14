@@ -178,16 +178,19 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 
 	private void setEmptyValueButtonState(Property property) {
 		
-		if ( emptyValueButton != null ) { 
-			if ( ! property.isRequired() ) {
-				Object value = property.getValue();
-				emptyValueButton.setSelection( value == null );
-				handleEmptyValueButton( value == null );
-			} else {
-				emptyValueButton.setEnabled(false);
-				handleEmptyValueButton(false);
-			}
+		if ( emptyValueButton == null ) {
+			return;
 		}
+		
+		emptyValueButton.setEnabled( !property.isRequired() );
+
+		if ( ! property.isRequired() ) {
+			emptyValueButton.setSelection( property.getValue() == null );
+		} else {
+			emptyValueButton.setSelection(false);
+		}
+		
+		handleEmptyValueButton( emptyValueButton.getSelection() );
 	}
 
 	protected Property getPropertyFromSelection(ISelection selection) {

@@ -34,6 +34,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import com.ecmdeveloper.plugin.classes.model.Choice;
 import com.ecmdeveloper.plugin.properties.choices.ChoicesContentProvider;
 import com.ecmdeveloper.plugin.properties.choices.ChoicesLabelProvider;
+import com.ecmdeveloper.plugin.properties.editors.details.input.ChoiceFormInput;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
@@ -42,47 +43,55 @@ import com.ecmdeveloper.plugin.properties.model.Property;
  */
 public class SingleChoiceDetailsPage extends BaseDetailsPage {
 
-	private CheckboxTreeViewer treeViewer;
+//	private CheckboxTreeViewer treeViewer;
+	private ChoiceFormInput choiceFormInput;
 
 	@Override
 	protected void createClientContent(Composite client) {
 		super.createClientContent(client);
 		
 		FormToolkit toolkit = form.getToolkit();
-		createChoicesTree(client, toolkit);
-	}
-
-	private void createChoicesTree(Composite client, FormToolkit toolkit) {
-
-		Tree choicesTree = toolkit.createTree(client, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION/*| SWT.V_SCROLL */ | SWT.CHECK );
-		choicesTree.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-		
-		treeViewer = new CheckboxTreeViewer(choicesTree);
-		treeViewer.setLabelProvider( new ChoicesLabelProvider() );
-		treeViewer.setContentProvider( new ChoicesContentProvider() );
-		treeViewer.addCheckStateListener( new ICheckStateListener() {
+		choiceFormInput = new ChoiceFormInput(client,toolkit) {
 
 			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				makeSingleSelected(event);				
-			}
-
-			private void makeSingleSelected(CheckStateChangedEvent event) {
-				Choice choice = (Choice) event.getElement();
-				if ( choice.isSelectable() ) {
-					treeViewer.setCheckedElements( new Object[] { choice } );
-				} else {
-					treeViewer.setCheckedElements( new Object[0] );
-				}
-			}
-		});
-		treeViewer.addSelectionChangedListener( new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
+			protected void selectionModified() {
 				setDirty(true);
 			}
-		} );
+		};
+//		createChoicesTree(client, toolkit);
 	}
+
+//	private void createChoicesTree(Composite client, FormToolkit toolkit) {
+//
+//		Tree choicesTree = toolkit.createTree(client, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION/*| SWT.V_SCROLL */ | SWT.CHECK );
+//		choicesTree.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+//		
+//		treeViewer = new CheckboxTreeViewer(choicesTree);
+//		treeViewer.setLabelProvider( new ChoicesLabelProvider() );
+//		treeViewer.setContentProvider( new ChoicesContentProvider() );
+//		treeViewer.addCheckStateListener( new ICheckStateListener() {
+//
+//			@Override
+//			public void checkStateChanged(CheckStateChangedEvent event) {
+//				makeSingleSelected(event);				
+//			}
+//
+//			private void makeSingleSelected(CheckStateChangedEvent event) {
+//				Choice choice = (Choice) event.getElement();
+//				if ( choice.isSelectable() ) {
+//					treeViewer.setCheckedElements( new Object[] { choice } );
+//				} else {
+//					treeViewer.setCheckedElements( new Object[0] );
+//				}
+//			}
+//		});
+//		treeViewer.addSelectionChangedListener( new ISelectionChangedListener() {
+//			@Override
+//			public void selectionChanged(SelectionChangedEvent event) {
+//				setDirty(true);
+//			}
+//		} );
+//	}
 
 	@Override
 	protected int getNumClientColumns() {
@@ -91,38 +100,45 @@ public class SingleChoiceDetailsPage extends BaseDetailsPage {
 
 	@Override
 	protected Object getValue() {
-		
-		Object[] checkedElements = treeViewer.getCheckedElements();
-		if ( checkedElements == null || checkedElements.length == 0 ) {
-			return null;
-		}
-		
-		Choice choice = (Choice) checkedElements[0];
-		return choice.getValue();
+
+		return choiceFormInput.getValue();
+//		Object[] checkedElements = treeViewer.getCheckedElements();
+//		if ( checkedElements == null || checkedElements.length == 0 ) {
+//			return null;
+//		}
+//		
+//		Choice choice = (Choice) checkedElements[0];
+//		return choice.getValue();
 	}
 
 	@Override
 	protected void handleEmptyValueButton(boolean selected) {
-		treeViewer.getTree().setEnabled( !selected );
+//		treeViewer.getTree().setEnabled( !selected );
+		choiceFormInput.setEnabled( !selected );
 	}
 
 	@Override
 	protected void propertyChanged(Property property) {
-		treeViewer.setInput(property);
+		choiceFormInput.setProperty(property);
 		if ( property.getValue() != null ) {
-			selectPropertyValue(property);
+			choiceFormInput.setValue( property.getValue() );
 		}
+		
+//		treeViewer.setInput(property);
+//		if ( property.getValue() != null ) {
+//			selectPropertyValue(property);
+//		}
 	}
 
-	private void selectPropertyValue(Property property) {
-		Object value = property.getValue();
-		for ( Choice choice : property.getChoices() ) {
-			if ( value.equals( choice.getValue() ) ) {
-				treeViewer.setChecked( choice , true);
-				break;
-			}
-		}
-	}
+//	private void selectPropertyValue(Property property) {
+//		Object value = property.getValue();
+//		for ( Choice choice : property.getChoices() ) {
+//			if ( value.equals( choice.getValue() ) ) {
+//				treeViewer.setChecked( choice , true);
+//				break;
+//			}
+//		}
+//	}
 
 	@Override
 	public void dispose() {
@@ -139,7 +155,8 @@ public class SingleChoiceDetailsPage extends BaseDetailsPage {
 
 	@Override
 	public void setFocus() {
-		treeViewer.getTree().setFocus();
+//		treeViewer.getTree().setFocus();
+		choiceFormInput.setFocus();
 	}
 
 	@Override

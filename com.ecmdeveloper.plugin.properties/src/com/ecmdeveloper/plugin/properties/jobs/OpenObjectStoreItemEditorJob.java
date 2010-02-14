@@ -36,7 +36,6 @@ import org.eclipse.ui.ide.IDE;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
-import com.ecmdeveloper.plugin.editors.folder.FolderEditor;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
@@ -47,26 +46,29 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
  * @author Ricardo.Belfor
  *
  */
-public class OpenFolderEditorJob extends Job {
+public class OpenObjectStoreItemEditorJob extends Job {
 
+	private static final String NO_EDITABLE_PROPERTIES = "This object does not has editable properties";
 	private static final String JOB_NAME = "Open Editor";
 	private static final String MONITOR_MESSAGE = "Opening Editor";
 	private static final String FAILED_MESSAGE = "Opening Editor for \"{0}\" failed";
-
+	
 	private ObjectStoreItem objectStoreItem;
 	private IWorkbenchWindow window;
+	private String editorId;
 	
-	public OpenFolderEditorJob(ObjectStoreItem objectStoreItem,IWorkbenchWindow window) {
+	public OpenObjectStoreItemEditorJob(ObjectStoreItem objectStoreItem, String editorId, IWorkbenchWindow window) {
 		super(JOB_NAME);
 		this.objectStoreItem = objectStoreItem;
 		this.window = window;
+		this.editorId = editorId;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			monitor.beginTask(MONITOR_MESSAGE, 1);
-			openNewFolderEditor();
+			openNewEditor();
 			monitor.worked(1);
 		} catch (Exception e) {
 			PluginMessage.openErrorFromThread(window.getShell(), JOB_NAME, MessageFormat.format(
@@ -76,20 +78,22 @@ public class OpenFolderEditorJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private void openNewFolderEditor() throws Exception {
+	private void openNewEditor() throws Exception {
 		
 		ClassDescription classDescription = getClassDescription();
 		fetchProperties(classDescription);
 
 		IEditorInput input = new ObjectStoreItemEditorInput( (ObjectStoreItem) objectStoreItem, classDescription );
-		String editorId = FolderEditor.EDITOR_ID;
-		
 		openEditorWindow(input, editorId);
 	}
 
-	private void fetchProperties(ClassDescription classDescription)
-			throws Exception {
+	private void fetchProperties(ClassDescription classDescription) throws Exception {
 		String[] propertyNames = getPropertyNames(classDescription);
+		
+//		if ( propertyNames.length == 0 ) {
+//			throw new Exception( NO_EDITABLE_PROPERTIES );
+//		}
+		
 		FetchPropertiesTask task = new FetchPropertiesTask(objectStoreItem, propertyNames);
 		ObjectStoresManager.getManager().executeTaskSync(task);
 	}
