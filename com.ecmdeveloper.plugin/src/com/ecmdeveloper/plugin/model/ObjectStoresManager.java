@@ -43,6 +43,13 @@ import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
+import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
+import com.ecmdeveloper.plugin.model.tasks.MoveTask;
+import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
+import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
+import com.ecmdeveloper.plugin.model.tasks.TaskListener;
+import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginTagNames;
 
@@ -53,7 +60,7 @@ import com.ecmdeveloper.plugin.util.PluginTagNames;
  * @author Ricardo Belfor
  * 
  */
-public class ObjectStoresManager implements IObjectStoresManager
+public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 {
 	private static final int CURRENT_FILE_VERSION = 1;
 
@@ -293,7 +300,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 	{
 		try {
 			if ( task instanceof BaseTask ) {
-				((BaseTask)task).setListeners(listeners);
+				((BaseTask)task).addTaskListener(this);
 			}
 			return executorService.submit(task).get();
 		} catch (InterruptedException e) {
@@ -304,7 +311,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 	public void executeTaskASync( Callable<Object> task )
 	{
 		if ( task instanceof BaseTask ) {
-			((BaseTask)task).setListeners(listeners);
+//			((BaseTask)task).setListeners(listeners);
 		}
 		executorService.submit(task);
 	}
@@ -525,5 +532,57 @@ public class ObjectStoresManager implements IObjectStoresManager
 			
 			return objectStoreConnection.getName();
 		}
+	}
+
+	@Override
+	public void onTaskComplete(TaskCompleteEvent taskCompleteEvent) {
+		handleTaskCompleteEvent(taskCompleteEvent);
+	}
+
+	private void handleTaskCompleteEvent(TaskCompleteEvent taskCompleteEvent) {
+		if ( isTaskSourceInstanceOf(taskCompleteEvent, DeleteTask.class) ) {
+			handleDeleteTaskCompleted( taskCompleteEvent );
+		} if ( isTaskSourceInstanceOf(taskCompleteEvent, LoadChildrenTask.class) ) {
+			handleLoadChildrenTaskCompleted( taskCompleteEvent );
+		} if ( isTaskSourceInstanceOf(taskCompleteEvent, RefreshTask.class) ) {
+			handleRefreshTaskCompleted( taskCompleteEvent );
+		} if ( isTaskSourceInstanceOf(taskCompleteEvent, MoveTask.class) ) {
+			handleMoveTaskCompleted( taskCompleteEvent );
+		} if ( isTaskSourceInstanceOf(taskCompleteEvent, UpdateTask.class) ) {
+			handleUpdateTaskCompleted(taskCompleteEvent);
+		}
+	}
+
+	private boolean isTaskSourceInstanceOf(TaskCompleteEvent taskCompleteEvent, Class<?> taskClass) {
+		return taskCompleteEvent.getSource().getClass().isInstance(taskClass);
+	}
+
+	private void handleUpdateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
+		UpdateTask updateTask = (UpdateTask) taskCompleteEvent.getSource();
+		IObjectStoreItem[] objectStoreItems = updateTask.getObjectStoreItems();
+		fireObjectStoreItemsChanged(null, null, objectStoreItems );
+	}
+
+	private void handleDeleteTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
+		DeleteTask deleteTask = (DeleteTask) taskCompleteEvent.getSource();
+		IObjectStoreItem[] objectStoreItems = deleteTask.getObjectStoreItems();
+		fireObjectStoreItemsChanged(null, objectStoreItems, null );
+	}
+
+	private void handleLoadChildrenTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
+		LoadChildrenTask loadChildrenTask = (LoadChildrenTask) taskCompleteEvent.getSource();
+		ObjectStoreItem objectStoreItem = loadChildrenTask.getObjectStoreItem();
+		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
+	}
+
+	private void handleRefreshTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
+		RefreshTask refreshTask = (RefreshTask)taskCompleteEvent.getSource();
+		IObjectStoreItem[] objectStoreItems = refreshTask.getObjectStoreItems();
+		fireObjectStoreItemsChanged(null, null, objectStoreItems );
+	}
+
+	private void handleMoveTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
+		MoveTask moveTask = (MoveTask) taskCompleteEvent.getSource();
+		fireObjectStoreItemsChanged(null, moveTask.getObjectStoreItems(), moveTask.getUpdatedObjectStoreItems() );
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -38,6 +38,10 @@ public class UpdateTask extends BaseTask {
 		this.objectStoreItems = objectStoreItems;
 	}
 
+	public IObjectStoreItem[] getObjectStoreItems() {
+		return objectStoreItems;
+	}
+
 	@Override
 	public String call() throws Exception {
 
@@ -45,7 +49,8 @@ public class UpdateTask extends BaseTask {
 			((ObjectStoreItem)objectStoreItem).save();
 		}
 
-		fireObjectStoreItemsChanged(null, null, objectStoreItems );
+		fireTaskCompleteEvent( TaskResult.COMPLETED );
+		
 		return null;
 	}
 }

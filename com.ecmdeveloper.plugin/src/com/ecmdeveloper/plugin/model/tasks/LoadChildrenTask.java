@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -51,6 +51,10 @@ public class LoadChildrenTask extends BaseTask {
 	 */
 	public LoadChildrenTask( ObjectStoreItem objectStoreItem ) {
 		this.objectStoreItem = objectStoreItem;
+	}
+
+	public ObjectStoreItem getObjectStoreItem() {
+		return objectStoreItem;
 	}
 
 	/**
@@ -119,7 +123,7 @@ public class LoadChildrenTask extends BaseTask {
 			}
 			
 			objectStoreItem.setChildren(children);
-			fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem} );
+			fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		} catch (Exception e ) {
 			PluginLog.error(e);

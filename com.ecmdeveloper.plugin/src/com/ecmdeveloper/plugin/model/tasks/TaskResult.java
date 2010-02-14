@@ -19,38 +19,7 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.util.PluginLog;
-
-/**
- * @author Ricardo.Belfor
- *
- */
-public class RefreshTask extends BaseTask {
-
-	private IObjectStoreItem[] objectStoreItems;
-
-	public RefreshTask( IObjectStoreItem[] objectStoreItems ) {
-		this.objectStoreItems = objectStoreItems;
-	}
-	
-	@Override
-	public Object call() throws Exception {
-
-		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
-			try {
-				objectStoreItem.refresh();
-			} catch (Exception e) {
-				PluginLog.error(e);
-			}
-		}
-
-		fireTaskCompleteEvent( TaskResult.COMPLETED );
-
-		return null;
-	}
-
-	public IObjectStoreItem[] getObjectStoreItems() {
-		return objectStoreItems;
-	}
+public enum TaskResult {
+	COMPLETED,
+	ERROR
 }
