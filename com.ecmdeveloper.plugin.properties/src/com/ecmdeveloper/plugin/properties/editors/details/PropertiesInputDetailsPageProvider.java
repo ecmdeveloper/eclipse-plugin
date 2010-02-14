@@ -43,10 +43,12 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 		keyToClassMap.put( getPageKey(PropertyType.STRING, false, false ), StringDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.STRING, true, false ), SingleChoiceDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.STRING, false, true ), MultiValueStringDetailsPage.class );
-
+		keyToClassMap.put( getPageKey(PropertyType.STRING, true, true ), MultiChoiceDetailsPage.class );
+		
 		keyToClassMap.put( getPageKey(PropertyType.LONG, false, false ), IntegerDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.LONG, true, false ), SingleChoiceDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.LONG, false, true ), MultiValueIntegerDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, true, true ), MultiChoiceDetailsPage.class );
 		
 		keyToClassMap.put( getPageKey(PropertyType.DATE, false, false ), DateDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.DATE, false, true ), MultiValueDateDetailsPage.class );

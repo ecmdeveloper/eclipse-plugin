@@ -56,8 +56,6 @@ public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
 		
 		FormToolkit toolkit = form.getToolkit();
 		
-		createInput(client, toolkit);
-		createUpdateButton(client, toolkit);
 		createValuesTableViewer(client, toolkit);
 
 		Composite buttons = createButtonsComposite(client);
@@ -66,6 +64,9 @@ public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
 		createDeleteButton(buttons, toolkit);
 		createUpButton(buttons, toolkit);
 		createDownButton(buttons, toolkit);
+
+		createInput(client, toolkit);
+		createUpdateButton(client, toolkit);
 	}
 
 	protected abstract void createInput(Composite client, FormToolkit toolkit);
@@ -113,6 +114,9 @@ public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
 				setDirty(true);
 			}
 		});
+		
+		GridData gridData = new GridData( SWT.FILL, SWT.TOP, true, false );
+		updateButton.setLayoutData( gridData );
 	}
 
 	protected abstract Object getInputValue();

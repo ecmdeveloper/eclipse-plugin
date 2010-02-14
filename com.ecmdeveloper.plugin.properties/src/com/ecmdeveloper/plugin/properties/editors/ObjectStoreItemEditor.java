@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,35 +18,32 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.editors.folder;
+package com.ecmdeveloper.plugin.properties.editors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.concurrent.ExecutionException;
+import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.forms.editor.FormEditor;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
-import com.ecmdeveloper.plugin.properties.editors.PropertiesInputForm;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
- * @author Ricardo Belfor
+ * @author Ricardo.Belfor
  *
  */
-public class FolderEditor extends FormEditor implements PropertyChangeListener {
+public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener {
 
-	public static final String EDITOR_ID = "com.ecmdeveloper.plugin.editors.folderEditor";
-	
 	private PropertiesInputForm propertiesInputForm;
 	private ClassDescription classDescription;
 	private ObjectStoreItem objectStoreItem;
@@ -57,7 +54,7 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 		try {
 			classDescription = (ClassDescription) getEditorInput().getAdapter( ClassDescription.class);
 
-			addFolderEditorForm();
+			addPropertiesInputForm();
 			
 			objectStoreItem = (ObjectStoreItem) getEditorInput().getAdapter( ObjectStoreItem.class);
 			objectStoreItem.addPropertyChangeListener(this);
@@ -70,7 +67,7 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 		}
 	}
 
-	private void addFolderEditorForm() throws PartInitException {
+	private void addPropertiesInputForm() throws PartInitException {
 		propertiesInputForm = new PropertiesInputForm(this, classDescription);
 		addPage(propertiesInputForm);
 	}
@@ -100,30 +97,35 @@ public class FolderEditor extends FormEditor implements PropertyChangeListener {
 		return false;
 	}
 
-
 	@Override
 	public void doSave(final IProgressMonitor monitor) {
 
 		isPageModified = false;
-		monitor.beginTask("Saving properties", 1);
 
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
+		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+		
 			@Override
-			public void run() {
+			protected void execute(IProgressMonitor monitor) throws CoreException,
+					InvocationTargetException, InterruptedException {
 				try {
+					monitor.beginTask("Saving properties", 1);
 					UpdateTask task = new UpdateTask(objectStoreItem);
 					ObjectStoresManager.getManager().executeTaskSync(task);
 					updateTitle();
 					firePropertyChange(IEditorPart.PROP_DIRTY);
-					Thread.sleep(5000);
 				} catch (Exception e) {
 					PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
 				} finally {
 					monitor.done();
 				}
-			}} );
+			}
+		};
 		
+		try {
+			op.run(monitor);
+		} catch (Exception e) {
+			PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
+		}
 	}
 
 	@Override

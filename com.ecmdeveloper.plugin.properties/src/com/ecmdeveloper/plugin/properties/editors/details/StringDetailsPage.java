@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -85,20 +85,15 @@ public class StringDetailsPage extends BaseDetailsPage {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public boolean isStale() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -108,7 +103,6 @@ public class StringDetailsPage extends BaseDetailsPage {
 
 	@Override
 	public boolean setFormInput(Object input) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
