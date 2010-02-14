@@ -53,6 +53,10 @@ public class DeleteTask extends BaseTask {
 		this.deleteAllVersions = deleteAllVersions;
 	}
 
+	public IObjectStoreItem[] getObjectStoreItems() {
+		return objectStoreItems;
+	}
+
 	/**
 	 * Performs the delete task. If the input item is an document there is a
 	 * choice if all versions or just this version of the document should be
@@ -90,7 +94,7 @@ public class DeleteTask extends BaseTask {
 			}
 		}
 		
-		fireObjectStoreItemsChanged(null, objectStoreItems, null );
+		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		return null;
 	}

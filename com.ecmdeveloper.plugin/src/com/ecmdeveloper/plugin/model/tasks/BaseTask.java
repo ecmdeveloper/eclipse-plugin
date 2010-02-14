@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -29,26 +30,41 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
 
 public abstract class BaseTask implements Callable<Object>{
 
-	protected List<ObjectStoresManagerListener> listeners;
-
-	public BaseTask() {
-	}
-
-	public void setListeners( List<ObjectStoresManagerListener> listeners ) {
-		this.listeners = listeners;
-	}
-
-	public void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
-			IObjectStoreItem[] itemsRemoved, IObjectStoreItem[] itemsUpdated ) {
-		
-		if ( listeners == null || listeners.isEmpty() ) {
-			return;
+	protected List<TaskListener> listeners = new ArrayList<TaskListener>();
+	
+	public void addTaskListener(TaskListener taskListener) {
+		if ( ! listeners.contains( taskListener ) ) {
+			listeners.add(taskListener);
 		}
-		
-		ObjectStoresManagerEvent event = new ObjectStoresManagerEvent(this,
-				itemsAdded, itemsRemoved, itemsUpdated );
-		for (ObjectStoresManagerListener listener : listeners) {
-			listener.objectStoreItemsChanged(event);
+	} 
+	
+	protected void fireTaskCompleteEvent(TaskResult taskResult) {
+		for (TaskListener taskListener : listeners) {
+			TaskCompleteEvent taskCompleteEvent = new TaskCompleteEvent(this,taskResult);
+			taskListener.onTaskComplete(taskCompleteEvent );
 		}
 	}
+
+//	protected List<ObjectStoresManagerListener> listeners;
+//
+//	public BaseTask() {
+//	}
+//
+//	public void setListeners( List<ObjectStoresManagerListener> listeners ) {
+//		this.listeners = listeners;
+//	}
+//
+//	public void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
+//			IObjectStoreItem[] itemsRemoved, IObjectStoreItem[] itemsUpdated ) {
+//		
+//		if ( listeners == null || listeners.isEmpty() ) {
+//			return;
+//		}
+//		
+//		ObjectStoresManagerEvent event = new ObjectStoresManagerEvent(this,
+//				itemsAdded, itemsRemoved, itemsUpdated );
+//		for (ObjectStoresManagerListener listener : listeners) {
+//			listener.objectStoreItemsChanged(event);
+//		}
+//	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -47,6 +47,7 @@ public class MoveTask extends BaseTask {
 
 	protected IObjectStoreItem[] objectStoreItems;
 	protected IObjectStoreItem destination;
+	private Set<IObjectStoreItem> updateSet;
 	
 	/**
 	 * Instantiates a new move task.
@@ -74,7 +75,7 @@ public class MoveTask extends BaseTask {
 	@Override
 	public Object call() throws Exception {
 
-		Set<IObjectStoreItem> updateSet = new HashSet<IObjectStoreItem>();
+		updateSet = new HashSet<IObjectStoreItem>();
 
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
 		
@@ -95,10 +96,18 @@ public class MoveTask extends BaseTask {
 			}
 		}
 		updateSet.add( destination );
-
-		fireObjectStoreItemsChanged(null, objectStoreItems, updateSet.toArray( new IObjectStoreItem[0]) );
+		
+		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		return null;
+	}
+
+	public IObjectStoreItem[] getObjectStoreItems() {
+		return objectStoreItems;
+	}
+
+	public IObjectStoreItem[] getUpdatedObjectStoreItems() {
+		return updateSet.toArray( new IObjectStoreItem[0]);
 	}
 
 	/**
