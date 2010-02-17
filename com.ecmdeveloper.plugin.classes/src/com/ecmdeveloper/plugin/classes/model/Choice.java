@@ -38,8 +38,10 @@ public class Choice {
 	private ArrayList<Choice> choices;
 	
 	public Choice(Object internalChoice, Choice parent) {
-		this.internalChoice = (com.filenet.api.admin.Choice) internalChoice;
-		this.parent = parent;
+		if ( internalChoice != null ) {
+			this.internalChoice = (com.filenet.api.admin.Choice) internalChoice;
+			this.parent = parent;
+		}
 	}
 
 	public Collection<Choice> getChildren() {

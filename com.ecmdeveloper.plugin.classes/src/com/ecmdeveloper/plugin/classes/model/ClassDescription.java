@@ -131,13 +131,17 @@ public class ClassDescription implements IAdaptable {
 			while (iterator.hasNext()) {
 				com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) iterator.next();
 				
-				if ( ! internalPropertyDescription.get_IsSystemGenerated() &&
+				if ( /*! internalPropertyDescription.get_IsSystemGenerated() && */
 						/*! internalPropertyDescription.get_IsSystemOwned() && */ 
 						! internalPropertyDescription.get_IsHidden()) {
 					System.out.println( "Adding " + internalPropertyDescription.get_Name() );
 					propertyDescriptions.add( new PropertyDescription(internalPropertyDescription) );
 				} else {
-					System.out.println( "Skipping " + internalPropertyDescription.get_Name() );
+					if ( internalPropertyDescription.get_IsHidden() ) {
+						System.out.println( "Skipping hidden " + internalPropertyDescription.get_Name() );
+					} else {
+						System.out.println( "Skipping " + internalPropertyDescription.get_Name() );
+					}
 				}
 			}
 		}
