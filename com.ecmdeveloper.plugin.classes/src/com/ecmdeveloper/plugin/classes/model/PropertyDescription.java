@@ -20,21 +20,23 @@
 
 package com.ecmdeveloper.plugin.classes.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.classes.model.task.GetChoiceValuesTask;
-import com.ecmdeveloper.plugin.classes.util.PluginLog;
+import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
+import com.ecmdeveloper.plugin.model.tasks.TaskListener;
 import com.filenet.api.admin.ChoiceList;
 import com.filenet.api.constants.Cardinality;
-import com.filenet.api.core.Factory;
+import com.filenet.api.constants.PropertySettability;
 import com.filenet.api.meta.PropertyDescriptionBoolean;
 import com.filenet.api.meta.PropertyDescriptionDateTime;
 import com.filenet.api.meta.PropertyDescriptionFloat64;
@@ -46,8 +48,11 @@ import com.filenet.api.meta.PropertyDescriptionString;
  * @author Ricardo.Belfor
  *
  */
-public class PropertyDescription implements IAdaptable {
+public class PropertyDescription implements IAdaptable, TaskListener {
 	
+	private static final String READ_ONLY_TEXT = " The value is read only.";
+	private static final String SETTABLE_ON_CHECKIN_TEXT = " The value is only settable on checkin.";
+	private static final String SETTABLE_ON_CREATE_TEXT = " The value is only settable on create.";
 	private static final String NOT_TEXT = "not ";
 	private static final String PROPERTY_TYPE_TEXT = " This is a {0}required {1} property.";
 	private static final String MAXIMUM_VALUE_TEXT = "the maximum value is ";
@@ -59,6 +64,7 @@ public class PropertyDescription implements IAdaptable {
 	private static final String UNSPECIFIED_MAXIMUM_LENGTH_TEXT = " The maximum length is unspecified.";
 	private static final String DEFAULT_VALUE_TEXT = " The default value is \"{0}\".";
 	
+	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
 	private com.filenet.api.meta.PropertyDescription propertyDescription;
 	private PropertyType propertyType;
 	private String name;
@@ -68,6 +74,10 @@ public class PropertyDescription implements IAdaptable {
 	private boolean required;
 	private boolean multivalue;
 	private String descriptiveText;
+	private boolean readOnly;
+	private boolean settableOnCreate;
+	private boolean settableOnCheckIn;
+	private boolean settableOnEdit;
 	
 	public PropertyDescription(Object internalPropertyDescription) {
 		this.propertyDescription = (com.filenet.api.meta.PropertyDescription) internalPropertyDescription;
@@ -77,7 +87,17 @@ public class PropertyDescription implements IAdaptable {
 		choiceList = propertyDescription.get_ChoiceList();
 		required = propertyDescription.get_IsValueRequired();
 		multivalue = !Cardinality.SINGLE.equals( propertyDescription.get_Cardinality() );
+	
+		initializeSettability();
 		initializeDescriptiveText();
+	}
+
+	private void initializeSettability() {
+		PropertySettability settability = propertyDescription.get_Settability();
+		readOnly = settability.equals( PropertySettability.READ_ONLY );
+		settableOnEdit = settability.equals( PropertySettability.READ_WRITE );
+		settableOnCheckIn = settability.equals( PropertySettability.SETTABLE_ONLY_BEFORE_CHECKIN );
+		settableOnCreate = settability.equals( PropertySettability.SETTABLE_ONLY_ON_CREATE );
 	}
 
 	public String getName() {
@@ -113,25 +133,49 @@ public class PropertyDescription implements IAdaptable {
 		return propertyType.toString();
 	}
 
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public boolean isSettableOnCreate() {
+		return settableOnCreate;
+	}
+
+	public boolean isSettableOnCheckIn() {
+		return settableOnCheckIn;
+	}
+
+	public boolean isSettableOnEdit() {
+		return settableOnEdit;
+	}
+
 	public boolean hasChoices() {
 		return choiceList != null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Collection<Choice> getChoices() {
 		if ( choiceList == null ) {
 			return null;
 		}
 		
 		if ( choices == null ) {
+			choices = new ArrayList<Choice>();
+			choices.add( new ChoicePlaceholder() );
+			
 			GetChoiceValuesTask task = new GetChoiceValuesTask(choiceList);
-			try {
-				choices = (ArrayList<Choice>) ClassesManager.getManager().executeTaskSync(task);
-			} catch (Exception e) {
-				PluginLog.error(e);
-			}
+			task.addTaskListener(this);
+			ClassesManager.getManager().executeTaskASync(task);
 		}
 		return choices;
+	}
+
+	@Override
+	public void onTaskComplete(TaskCompleteEvent taskCompleteEvent) {
+		if ( taskCompleteEvent.getSource().getClass().equals(GetChoiceValuesTask.class) ) {
+			GetChoiceValuesTask task = (GetChoiceValuesTask) taskCompleteEvent.getSource();
+			choices = task.getChoices();
+			firePropertyChange("Choices", null, null);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -179,7 +223,14 @@ public class PropertyDescription implements IAdaptable {
 
 		description.append(MessageFormat.format(PROPERTY_TYPE_TEXT,
 				(required ? "" : NOT_TEXT), propertyType.toString() ));
-		
+
+		if ( isSettableOnCreate() ) {
+			description.append( SETTABLE_ON_CREATE_TEXT );
+		} else if ( isSettableOnCheckIn() ) {
+			description.append( SETTABLE_ON_CHECKIN_TEXT );
+		} else if ( isReadOnly() ) {
+			description.append( READ_ONLY_TEXT );
+		}
 		return description;
 	}
 
@@ -286,5 +337,24 @@ public class PropertyDescription implements IAdaptable {
 		}
 		
 		return description.toString();
+	}
+
+	public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException();
+		}
+		pcsDelegate.addPropertyChangeListener(listener);
+	}
+
+	public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+		if (listener != null) {
+			pcsDelegate.removePropertyChangeListener(listener);
+		}
+	}
+
+	protected void firePropertyChange(String property, Object oldValue, Object newValue) {
+		if (pcsDelegate.hasListeners(property)) {
+			pcsDelegate.firePropertyChange(property, oldValue, newValue);
+		}
 	}
 }

@@ -25,6 +25,7 @@ import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.classes.model.Choice;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 import com.filenet.api.admin.ChoiceList;
 
 /**
@@ -35,6 +36,7 @@ public class GetChoiceValuesTask extends BaseTask {
 
 	private Choice parentChoice;
 	public ChoiceList choiceList;
+	private ArrayList<Choice> choices;
 	
 	public GetChoiceValuesTask(Choice parentChoice) {
 		this.parentChoice = parentChoice;
@@ -48,7 +50,12 @@ public class GetChoiceValuesTask extends BaseTask {
 	public Object call() throws Exception {
 
 		Iterator<?> iterator = getChoiceValuesIterator();
-		ArrayList<Choice> choices = getChoices(iterator);
+		choices = getChoices(iterator);
+		fireTaskCompleteEvent( TaskResult.COMPLETED );
+		return choices;
+	}
+
+	public ArrayList<Choice> getChoices() {
 		return choices;
 	}
 
