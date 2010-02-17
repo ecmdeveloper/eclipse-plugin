@@ -48,7 +48,8 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
  */
 public class OpenObjectStoreItemEditorJob extends Job {
 
-	private static final String NO_EDITABLE_PROPERTIES = "This object does not has editable properties";
+	private static final String FETCHING_PROPERTY_VALUES_TASK_MESSAGE = "Fetching property values";
+	private static final String FETCHING_CLASS_DESCRIPTIONS_TASK_MESSAGE = "Fetching class descriptions";
 	private static final String JOB_NAME = "Open Editor";
 	private static final String MONITOR_MESSAGE = "Opening Editor";
 	private static final String FAILED_MESSAGE = "Opening Editor for \"{0}\" failed";
@@ -67,9 +68,8 @@ public class OpenObjectStoreItemEditorJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			monitor.beginTask(MONITOR_MESSAGE, 1);
-			openNewEditor();
-			monitor.worked(1);
+			monitor.beginTask(MONITOR_MESSAGE, 2);
+			openNewEditor(monitor);
 		} catch (Exception e) {
 			PluginMessage.openErrorFromThread(window.getShell(), JOB_NAME, MessageFormat.format(
 					FAILED_MESSAGE, objectStoreItem.getName()), e);
@@ -78,10 +78,15 @@ public class OpenObjectStoreItemEditorJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private void openNewEditor() throws Exception {
+	private void openNewEditor(IProgressMonitor monitor) throws Exception {
 		
+		monitor.setTaskName( FETCHING_CLASS_DESCRIPTIONS_TASK_MESSAGE );
 		ClassDescription classDescription = getClassDescription();
+		monitor.worked(1);
+		
+		monitor.setTaskName(FETCHING_PROPERTY_VALUES_TASK_MESSAGE );
 		fetchProperties(classDescription);
+		monitor.worked(1);
 
 		IEditorInput input = new ObjectStoreItemEditorInput( (ObjectStoreItem) objectStoreItem, classDescription );
 		openEditorWindow(input, editorId);
@@ -90,12 +95,10 @@ public class OpenObjectStoreItemEditorJob extends Job {
 	private void fetchProperties(ClassDescription classDescription) throws Exception {
 		String[] propertyNames = getPropertyNames(classDescription);
 		
-//		if ( propertyNames.length == 0 ) {
-//			throw new Exception( NO_EDITABLE_PROPERTIES );
-//		}
-		
-		FetchPropertiesTask task = new FetchPropertiesTask(objectStoreItem, propertyNames);
-		ObjectStoresManager.getManager().executeTaskSync(task);
+		if ( propertyNames.length != 0 ) {
+			FetchPropertiesTask task = new FetchPropertiesTask(objectStoreItem, propertyNames);
+			ObjectStoresManager.getManager().executeTaskSync(task);
+		}
 	}
 
 	private String[] getPropertyNames(ClassDescription classDescription) {
@@ -131,5 +134,4 @@ public class OpenObjectStoreItemEditorJob extends Job {
 			}
 		} );
 	}
-	
 }

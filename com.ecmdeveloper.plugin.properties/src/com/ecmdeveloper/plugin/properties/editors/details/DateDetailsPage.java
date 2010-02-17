@@ -92,10 +92,9 @@ public class DateDetailsPage extends BaseDetailsPage {
 			emptyValueButton.setSelection(false);
 			Calendar calendarValue = Calendar.getInstance();
 			calendarValue.setTime(value);
-			System.out.println( calendarValue.get(Calendar.DAY_OF_MONTH) );
 			calendar.setDate(calendarValue.get(Calendar.YEAR), calendarValue.get(Calendar.MONTH),
 					calendarValue.get(Calendar.DAY_OF_MONTH));
-			time.setTime(calendarValue.get(Calendar.HOUR), calendarValue.get(Calendar.MINUTE),
+			time.setTime(calendarValue.get(Calendar.HOUR_OF_DAY), calendarValue.get(Calendar.MINUTE),
 					calendarValue.get(Calendar.SECOND) );
 		} else {
 			emptyValueButton.setSelection(true);
@@ -110,7 +109,7 @@ public class DateDetailsPage extends BaseDetailsPage {
 		calendarValue.set(Calendar.YEAR, calendar.getYear() );
 		calendarValue.set(Calendar.MONTH, calendar.getMonth() );
 		calendarValue.set(Calendar.DAY_OF_MONTH, calendar.getDay() );
-		calendarValue.set(Calendar.HOUR, time.getHours() );
+		calendarValue.set(Calendar.HOUR_OF_DAY, time.getHours() );
 		calendarValue.set(Calendar.MINUTE, time.getMinutes() );
 		calendarValue.set(Calendar.SECOND, time.getSeconds() );
 		

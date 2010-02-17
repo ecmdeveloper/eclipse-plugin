@@ -1,19 +1,35 @@
 package com.ecmdeveloper.plugin.properties.choices;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.ecmdeveloper.plugin.classes.model.Choice;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
-public class ChoicesContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+public class ChoicesContentProvider implements IStructuredContentProvider, ITreeContentProvider, PropertyChangeListener {
 
 	private Property property;
+	private TreeViewer treeViewer;
 	
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	
+		treeViewer = (TreeViewer) viewer;
+		
+		if ( property != null) {
+			property.getPropertyDescription().removePropertyChangeListener(this);
+		}
+		
 		property = (Property) newInput;
+		
+		if ( property != null ) {
+			property.getPropertyDescription().addPropertyChangeListener(this);
+		}
 	}
 
 	@Override
@@ -48,5 +64,17 @@ public class ChoicesContentProvider implements IStructuredContentProvider, ITree
 
 	@Override
 	public void dispose() {
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+		if ( propertyChangeEvent.getPropertyName().equals("Choices") ) {
+			treeViewer.getTree().getDisplay().asyncExec( new Runnable() {
+				@Override
+				public void run() {
+					treeViewer.refresh();
+				}
+			} );
+		}
 	}
 }

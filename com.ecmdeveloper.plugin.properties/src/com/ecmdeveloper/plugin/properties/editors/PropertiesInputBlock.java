@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -26,10 +26,15 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -66,12 +71,34 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = createSection(parent, toolkit);
+		createToolbar(section);
 		Composite client = createClient(toolkit, section);
 		final SectionPart spart = new SectionPart(section);
 		Table table = createTable(toolkit, client);
 		managedForm.addPart(spart);
 		createTableViewer(managedForm, spart, table);
 		section.setClient(client);
+	}
+
+	private void createToolbar(Section section) {
+		ToolBar tbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
+		ToolItem titem = new ToolItem(tbar, SWT.CHECK );
+        titem.setImage(Activator.getImage( IconFiles.READ_ONLY ));
+        titem.setToolTipText("Toggle Read Only properties");
+        titem.addSelectionListener( new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				// TODO Auto-generated method stub
+				
+			}} 
+        );
+
+        titem = new ToolItem(tbar, SWT.SEPARATOR);
+		titem = new ToolItem(tbar, SWT.PUSH );
+        titem.setImage(Activator.getImage( IconFiles.REFRESH ));        
+        section.setTextClient(tbar);
 	}
 
 	private Table createTable(FormToolkit toolkit, Composite client) {
@@ -123,21 +150,19 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 	
 	@Override
 	protected void createToolBarActions(IManagedForm managedForm) {
-		final ScrolledForm form = managedForm.getForm();
-		Action commitAction = new Action("hor", Action.AS_PUSH_BUTTON) { 
-			public void run() {
-			}
-		};
-		commitAction.setToolTipText("Commit changes");
-		commitAction.setImageDescriptor( Activator.getImageDescriptor( IconFiles.READ_ONLY ) );
-		form.getToolBarManager().add(commitAction);
+//		final ScrolledForm form = managedForm.getForm();
+//		Action commitAction = new Action("hor", Action.AS_PUSH_BUTTON) { 
+//			public void run() {
+//			}
+//		};
+//		commitAction.setToolTipText("Commit changes");
+//		commitAction.setImageDescriptor( Activator.getImageDescriptor( IconFiles.READ_ONLY ) );
+//		form.getToolBarManager().add(commitAction);
 	}
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 
 		detailsPart.setPageProvider( new PropertiesInputDetailsPageProvider() );
-//		detailsPart.registerPage(String.class, new StringDetailsPage() );
-//		detailsPart.registerPage( Date.class, new DateDetailsPage() );
 	}
 }

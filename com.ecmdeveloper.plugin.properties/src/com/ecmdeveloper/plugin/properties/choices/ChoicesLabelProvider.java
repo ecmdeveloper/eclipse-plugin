@@ -23,22 +23,52 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.classes.model.Choice;
+import com.ecmdeveloper.plugin.classes.model.ChoicePlaceholder;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
 
 public class ChoicesLabelProvider extends LabelProvider {
 
+	private static final String CHOICE_VALUE_POSTFIX = ")";
+	private static final String CHOICE_VALUE_PREFIX = " (";
+
 	@Override
 	public Image getImage(Object element) {
 		Choice choice = (Choice) element;
+		if ( choice instanceof ChoicePlaceholder ) {
+			return Activator.getImage( IconFiles.CHOICES_PLACEHOLDER );
+		}
 		if ( ! choice.isSelectable() ) {
-			return Activator.getImage( IconFiles.FOLDER_EDIT );
+			return Activator.getImage( IconFiles.CHOICES_FOLDER );
 		}
 		return null;
 	}
 
 	@Override
 	public String getText(Object element) {
-		return ((Choice) element).getDisplayName();
+		Choice choice = (Choice) element;
+		if ( choice.isSelectable() ) {
+			return getSelectableChoiceText(choice);
+		} else {
+			return choice.getDisplayName();
+		}
+	}
+
+	private String getSelectableChoiceText(Choice choice) {
+		if ( choice.getValue().toString().equals( choice.getDisplayName() ) ) {
+			return choice.getDisplayName();
+		} else {
+			StringBuffer text = getDisplayNameAndValue(choice);
+			return text.toString();
+		}
+	}
+
+	private StringBuffer getDisplayNameAndValue(Choice choice) {
+		StringBuffer text = new StringBuffer();
+		text.append( choice.getDisplayName() );
+		text.append( CHOICE_VALUE_PREFIX );
+		text.append( choice.getValue().toString() );
+		text.append( CHOICE_VALUE_POSTFIX );
+		return text;
 	}
 }

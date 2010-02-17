@@ -21,7 +21,10 @@ package com.ecmdeveloper.plugin.properties.util;
 
 public class IconFiles {
 	public static final String FOLDER_EDIT = "icons/folder_edit.png";
-	public static final String READ_ONLY = "icons/lock_edit.png";
+	public static final String READ_ONLY_SMALL = "icons/bullet_key.png";
+	public static final String READ_ONLY = "icons/key.png";
 	public static final String REQUIRED = "icons/bullet_red.png";
-	
+	public static final String CHOICES_FOLDER = "icons/folder.png";
+	public static final String CHOICES_PLACEHOLDER = "icons/hourglass.png";
+	public static final String REFRESH = "icons/refresh.gif";
 }

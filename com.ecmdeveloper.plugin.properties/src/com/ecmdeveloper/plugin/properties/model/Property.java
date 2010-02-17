@@ -80,6 +80,10 @@ public class Property {
 		return propertyDescription.isMultivalue();
 	}
 
+	public boolean isSettableOnEdit() {
+		return propertyDescription.isSettableOnEdit();
+	}
+	
 	public Collection<Choice> getChoices() {
 		return propertyDescription.getChoices();
 	}

@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import com.ecmdeveloper.plugin.classes.model.Choice;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
 public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
@@ -52,29 +53,40 @@ public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
 	
 	@Override
 	protected void createClientContent(Composite client) {
-		super.createClientContent(client);
+		
+		if ( ! isReadOnly() ) {
+			super.createClientContent(client);
+		}
 		
 		FormToolkit toolkit = form.getToolkit();
 		
 		createValuesTableViewer(client, toolkit);
 
-		Composite buttons = createButtonsComposite(client);
-		
-		createAddButton(buttons, toolkit);
-		createDeleteButton(buttons, toolkit);
-		createUpButton(buttons, toolkit);
-		createDownButton(buttons, toolkit);
-
-		createInput(client, toolkit);
-		createUpdateButton(client, toolkit);
+		if ( ! isReadOnly() ) {
+			Composite buttons = createButtonsComposite(client);
+			
+			createAddButton(buttons, toolkit);
+			createDeleteButton(buttons, toolkit);
+			createUpButton(buttons, toolkit);
+			createDownButton(buttons, toolkit);
+	
+			createInput(client, toolkit);
+			createUpdateButton(client, toolkit);
+		}
 	}
 
 	protected abstract void createInput(Composite client, FormToolkit toolkit);
+
+	protected boolean isReadOnly() {
+		return false;
+	}
 	
 	private void createValuesTableViewer(Composite client, FormToolkit toolkit) {
 	
 		Table table = toolkit.createTable(client, SWT.BORDER | SWT.FULL_SELECTION );
-		table.setLayoutData( new GridData(GridData.FILL_BOTH) );
+		GridData layoutData = new GridData(GridData.FILL_BOTH);
+		layoutData.grabExcessVerticalSpace = true;
+		table.setLayoutData( layoutData );
 		valuesTableViewer = new TableViewer(table);
 		valuesTableViewer.setLabelProvider( new LabelProvider() );
 		valuesTableViewer.setContentProvider( new ArrayContentProvider() );
@@ -115,7 +127,7 @@ public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
 			}
 		});
 		
-		GridData gridData = new GridData( SWT.FILL, SWT.TOP, true, false );
+		GridData gridData = new GridData( SWT.LEFT, SWT.TOP, true, false );
 		updateButton.setLayoutData( gridData );
 	}
 
@@ -261,7 +273,7 @@ public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
 		public Object objectValue;
 		
 		public Value(Object objectValue) {
-			this.objectValue = objectValue;
+			initializeValue(objectValue);
 		}
 
 		public Object getValue() {
@@ -269,8 +281,12 @@ public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
 		}
 
 		public void setValue(Object objectValue) {
-			this.objectValue = objectValue;
+			initializeValue(objectValue);
 			modelChanged();
+		}
+
+		private void initializeValue(Object objectValue) {
+			this.objectValue = objectValue;
 		}
 
 		@Override
