@@ -1,5 +1,5 @@
 /**
- * Copyright 2009,2010, Ricardo Belfor
+ * Copyright 2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -21,7 +21,10 @@
 package com.ecmdeveloper.plugin.properties.editors.details;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import com.ecmdeveloper.plugin.properties.model.Property;
 
@@ -29,11 +32,16 @@ import com.ecmdeveloper.plugin.properties.model.Property;
  * @author Ricardo.Belfor
  *
  */
-public class UnknownDetailsPage extends BaseDetailsPage {
+public class SingleValueReadOnlyDetailsPage extends BaseDetailsPage {
 
+	private Text text;
+	
 	@Override
 	protected void createClientContent(Composite client) {
-		form.getToolkit().createLabel(client, "No details page for this property type yet.", SWT.CENTER | SWT.WRAP );
+		FormToolkit toolkit = form.getToolkit();
+		text = toolkit.createText(client, "", SWT.MULTI | SWT.V_SCROLL | SWT.WRAP );
+		text.setEditable(false);
+		text.setLayoutData( new GridData(GridData.FILL_BOTH) );
 	}
 
 	@Override
@@ -42,20 +50,30 @@ public class UnknownDetailsPage extends BaseDetailsPage {
 	}
 
 	@Override
+	protected Object getValue() {
+		return null;
+	}
+
+	@Override
 	protected void handleEmptyValueButton(boolean selected) {
 	}
 
 	@Override
-	public void commit(boolean onSave) {
+	protected void propertyChanged(Property property) {
+		Object value = property.getValue();
+		setValue( value );
+	}
+
+	private void setValue(Object value) {
+		if ( value != null ) {
+			text.setText( value.toString() );
+		} else {
+			text.setText("(empty)");
+		}
 	}
 
 	@Override
 	public void dispose() {
-	}
-
-	@Override
-	public boolean isDirty() {
-		return false;
 	}
 
 	@Override
@@ -69,19 +87,11 @@ public class UnknownDetailsPage extends BaseDetailsPage {
 
 	@Override
 	public void setFocus() {
+		text.setFocus();
 	}
 
 	@Override
 	public boolean setFormInput(Object input) {
 		return false;
-	}
-
-	@Override
-	protected void propertyChanged(Property property) {
-	}
-
-	@Override
-	protected Object getValue() {
-		return null;
 	}
 }

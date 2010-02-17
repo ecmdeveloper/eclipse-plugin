@@ -40,24 +40,46 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 	
 	static
 	{
-		keyToClassMap.put( getPageKey(PropertyType.STRING, false, false ), StringDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.STRING, true, false ), SingleChoiceDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.STRING, false, true ), MultiValueStringDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.STRING, true, true ), MultiChoiceDetailsPage.class );
-		
-		keyToClassMap.put( getPageKey(PropertyType.LONG, false, false ), IntegerDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.LONG, true, false ), SingleChoiceDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.LONG, false, true ), MultiValueIntegerDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.LONG, true, true ), MultiChoiceDetailsPage.class );
-		
-		keyToClassMap.put( getPageKey(PropertyType.DATE, false, false ), DateDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.DATE, false, true ), MultiValueDateDetailsPage.class );
-		
-		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, false ), BooleanDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, true ), MultiValueBooleanDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, false, false, false ), StringDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, true, false, false ), SingleChoiceDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, false, true, false ), MultiValueStringDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, true, true, false ), MultiChoiceDetailsPage.class );
 
-		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, false ), DoubleDetailsPage.class );
-		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, true ), MultiValueDoubleDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, false, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, true, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, false, true, true ), MultiValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.STRING, true, true, true ), MultiValueReadOnlyDetailsPage.class );
+		
+		keyToClassMap.put( getPageKey(PropertyType.LONG, false, false, false ), IntegerDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, true, false, false ), SingleChoiceDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, false, true, false ), MultiValueIntegerDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, true, true, false ), MultiChoiceDetailsPage.class );
+
+		keyToClassMap.put( getPageKey(PropertyType.LONG, false, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, true, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, false, true, true ), MultiValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.LONG, true, true, true ), MultiValueReadOnlyDetailsPage.class );
+		
+		keyToClassMap.put( getPageKey(PropertyType.DATE, false, false, false ), DateDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.DATE, false, true, false ), MultiValueDateDetailsPage.class );
+
+		keyToClassMap.put( getPageKey(PropertyType.DATE, false, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.DATE, false, true, true ), MultiValueReadOnlyDetailsPage.class );
+		
+		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, false, false ), BooleanDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, true, false ), MultiValueBooleanDetailsPage.class );
+
+		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.BOOLEAN, false, true, true ), MultiValueReadOnlyDetailsPage.class );
+
+		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, false, false ), DoubleDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, true, false ), MultiValueDoubleDetailsPage.class );
+
+		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.DOUBLE, false, true, true ), MultiValueReadOnlyDetailsPage.class );
+
+		keyToClassMap.put( getPageKey(PropertyType.GUID, false, false, true ), SingleValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.GUID, false, true, true ), MultiValueReadOnlyDetailsPage.class );
 	}
 	
 	private IDetailsPage unknownDetailsPage;
@@ -67,7 +89,7 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 		Property property = (Property) object;
 		PropertyDescription propertyDescription = property.getPropertyDescription();
 		return PropertiesInputDetailsPageProvider.getPageKey(propertyDescription.getPropertyType(),
-				propertyDescription.hasChoices(), property.isMultivalue() );
+				propertyDescription.hasChoices(), property.isMultivalue(), !property.isSettableOnEdit() );
 	}
 	
 	@Override
@@ -91,13 +113,13 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 	}
 	
 	private IDetailsPage getUnknownDetailsPage() {
-		if ( unknownDetailsPage != null ) {
+		if ( unknownDetailsPage == null ) {
 			unknownDetailsPage = new UnknownDetailsPage();
 		}
 		return unknownDetailsPage;
 	}
 	
-	private static String getPageKey( PropertyType propertyType, boolean selectable, boolean multivalue ) {
+	private static String getPageKey( PropertyType propertyType, boolean selectable, boolean multivalue, boolean readOnly ) {
 
 		StringBuffer pageKey = new StringBuffer();
 
@@ -111,6 +133,9 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 			pageKey.append("WithChoices" );
 		}
 		
+		if ( readOnly ) {
+			pageKey.append( "ReadOnly" );
+		}
 		return pageKey.toString();
 	}
 }

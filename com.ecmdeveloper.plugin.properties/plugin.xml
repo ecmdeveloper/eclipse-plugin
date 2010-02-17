@@ -4,18 +4,33 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="com.ecmdeveloper.plugin.editors.folder.FolderEditor"
+            class="com.ecmdeveloper.plugin.properties.editors.FolderEditor"
             default="false"
+            icon="icons/folder_edit.png"
             id="com.ecmdeveloper.plugin.editors.folderEditor"
             name="Folder Editor">
+      </editor>
+      <editor
+            class="com.ecmdeveloper.plugin.properties.editors.DocumentEditor"
+            default="false"
+            icon="icons/page_white_edit.png"
+            id="com.ecmdeveloper.plugin.editors.documentEditor"
+            name="Document Editor">
+      </editor>
+      <editor
+            class="com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor"
+            default="false"
+            icon="icons/application_form_edit.png"
+            id="com.ecmdeveloper.plugin.editors.customObjectEditor"
+            name="Custom Object Editor">
       </editor>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
             categoryId="com.ecmdeveloper.plugin.category"
-            description="Edit Folder"
-            id="com.ecmdeveloper.plugin.editFolder"
+            description="Edit Object Store Item"
+            id="com.ecmdeveloper.plugin.editObjectStoreItem"
             name="Edit">
       </command>
    </extension>
@@ -24,16 +39,56 @@
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=edit">
          <command
-               commandId="com.ecmdeveloper.plugin.editFolder"
+               commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+               icon="icons/pencil.png"
+               label="Edit..."
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Folder">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="com.ecmdeveloper.plugin.properties.handlers.EditFolderHandler"
-            commandId="com.ecmdeveloper.plugin.editFolder">
+            class="com.ecmdeveloper.plugin.properties.handlers.EditObjectStoreItemHandler"
+            commandId="com.ecmdeveloper.plugin.editObjectStoreItem">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Folder">
+                     </instanceof></or>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
 

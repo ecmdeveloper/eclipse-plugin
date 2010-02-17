@@ -24,7 +24,9 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -49,7 +51,7 @@ public class ChoiceFormInput {
 	public ChoiceFormInput(Composite client, FormToolkit toolkit) {
 
 		Tree choicesTree = toolkit.createTree(client, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION/*| SWT.V_SCROLL */ | SWT.CHECK );
-		choicesTree.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+		choicesTree.setLayoutData( new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL ) );
 		
 		treeViewer = new CheckboxTreeViewer(choicesTree);
 		treeViewer.setLabelProvider( new ChoicesLabelProvider() );
@@ -86,7 +88,16 @@ public class ChoiceFormInput {
 		this.property = property;
 		treeViewer.setInput(property);
 	}
-	
+
+	public void setValueASync(final Object value) {
+		treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				setValue(value);
+			}} 
+		);
+	}
 	public void setValue(Object value  ) {
 
 		treeViewer.setCheckedElements( new Object[0] );

@@ -20,6 +20,9 @@
 
 package com.ecmdeveloper.plugin.properties.editors.details;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -41,9 +44,8 @@ import com.ecmdeveloper.plugin.properties.model.Property;
  * @author Ricardo.Belfor
  *
  */
-public class SingleChoiceDetailsPage extends BaseDetailsPage {
+public class SingleChoiceDetailsPage extends BaseDetailsPage implements PropertyChangeListener {
 
-//	private CheckboxTreeViewer treeViewer;
 	private ChoiceFormInput choiceFormInput;
 
 	@Override
@@ -52,46 +54,13 @@ public class SingleChoiceDetailsPage extends BaseDetailsPage {
 		
 		FormToolkit toolkit = form.getToolkit();
 		choiceFormInput = new ChoiceFormInput(client,toolkit) {
-
 			@Override
 			protected void selectionModified() {
 				setDirty(true);
 			}
 		};
-//		createChoicesTree(client, toolkit);
 	}
 
-//	private void createChoicesTree(Composite client, FormToolkit toolkit) {
-//
-//		Tree choicesTree = toolkit.createTree(client, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION/*| SWT.V_SCROLL */ | SWT.CHECK );
-//		choicesTree.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-//		
-//		treeViewer = new CheckboxTreeViewer(choicesTree);
-//		treeViewer.setLabelProvider( new ChoicesLabelProvider() );
-//		treeViewer.setContentProvider( new ChoicesContentProvider() );
-//		treeViewer.addCheckStateListener( new ICheckStateListener() {
-//
-//			@Override
-//			public void checkStateChanged(CheckStateChangedEvent event) {
-//				makeSingleSelected(event);				
-//			}
-//
-//			private void makeSingleSelected(CheckStateChangedEvent event) {
-//				Choice choice = (Choice) event.getElement();
-//				if ( choice.isSelectable() ) {
-//					treeViewer.setCheckedElements( new Object[] { choice } );
-//				} else {
-//					treeViewer.setCheckedElements( new Object[0] );
-//				}
-//			}
-//		});
-//		treeViewer.addSelectionChangedListener( new ISelectionChangedListener() {
-//			@Override
-//			public void selectionChanged(SelectionChangedEvent event) {
-//				setDirty(true);
-//			}
-//		} );
-//	}
 
 	@Override
 	protected int getNumClientColumns() {
@@ -100,45 +69,23 @@ public class SingleChoiceDetailsPage extends BaseDetailsPage {
 
 	@Override
 	protected Object getValue() {
-
 		return choiceFormInput.getValue();
-//		Object[] checkedElements = treeViewer.getCheckedElements();
-//		if ( checkedElements == null || checkedElements.length == 0 ) {
-//			return null;
-//		}
-//		
-//		Choice choice = (Choice) checkedElements[0];
-//		return choice.getValue();
 	}
 
 	@Override
 	protected void handleEmptyValueButton(boolean selected) {
-//		treeViewer.getTree().setEnabled( !selected );
 		choiceFormInput.setEnabled( !selected );
 	}
 
 	@Override
 	protected void propertyChanged(Property property) {
+		
 		choiceFormInput.setProperty(property);
 		if ( property.getValue() != null ) {
 			choiceFormInput.setValue( property.getValue() );
+			property.getPropertyDescription().addPropertyChangeListener(this);
 		}
-		
-//		treeViewer.setInput(property);
-//		if ( property.getValue() != null ) {
-//			selectPropertyValue(property);
-//		}
 	}
-
-//	private void selectPropertyValue(Property property) {
-//		Object value = property.getValue();
-//		for ( Choice choice : property.getChoices() ) {
-//			if ( value.equals( choice.getValue() ) ) {
-//				treeViewer.setChecked( choice , true);
-//				break;
-//			}
-//		}
-//	}
 
 	@Override
 	public void dispose() {
@@ -155,12 +102,21 @@ public class SingleChoiceDetailsPage extends BaseDetailsPage {
 
 	@Override
 	public void setFocus() {
-//		treeViewer.getTree().setFocus();
 		choiceFormInput.setFocus();
 	}
 
 	@Override
 	public boolean setFormInput(Object input) {
 		return false;
+	}
+
+
+	@Override
+	public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+		if ( propertyChangeEvent.getPropertyName().equals("Choices") ) {
+			if ( property.getValue() != null ) {
+				choiceFormInput.setValueASync( property.getValue() );
+			}
+		}		
 	}
 }

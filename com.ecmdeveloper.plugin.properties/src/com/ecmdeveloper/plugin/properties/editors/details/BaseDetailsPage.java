@@ -53,7 +53,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	private Section section;
 	protected Button emptyValueButton;
 	private boolean isDirty;
-	private Property property;
+	protected Property property;
 	
 	@Override
 	public void initialize(IManagedForm form) {

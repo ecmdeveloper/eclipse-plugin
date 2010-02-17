@@ -75,11 +75,13 @@ public class PropertyContentProvider implements IStructuredContentProvider, Prop
 			objectStoreItem.removePropertyChangeListener(this);
 		}
 		
-		classDescription = ((ObjectStoreItemEditorInput) newInput).getClassDescription();
-		objectStoreItem = ((ObjectStoreItemEditorInput) newInput).getObjectStoreItem();
-		
-		if ( objectStoreItem != null ) {
-			objectStoreItem.addPropertyChangeListener(this);
+		if ( newInput != null ) {
+			classDescription = ((ObjectStoreItemEditorInput) newInput).getClassDescription();
+			objectStoreItem = ((ObjectStoreItemEditorInput) newInput).getObjectStoreItem();
+			
+			if ( objectStoreItem != null ) {
+				objectStoreItem.addPropertyChangeListener(this);
+			}
 		}
 	}
 
