@@ -311,7 +311,7 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 	public void executeTaskASync( Callable<Object> task )
 	{
 		if ( task instanceof BaseTask ) {
-//			((BaseTask)task).setListeners(listeners);
+			((BaseTask)task).addTaskListener(this);
 		}
 		executorService.submit(task);
 	}
@@ -554,7 +554,7 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 	}
 
 	private boolean isTaskSourceInstanceOf(TaskCompleteEvent taskCompleteEvent, Class<?> taskClass) {
-		return taskCompleteEvent.getSource().getClass().isInstance(taskClass);
+		return taskCompleteEvent.getSource().getClass().equals(taskClass);
 	}
 
 	private void handleUpdateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
