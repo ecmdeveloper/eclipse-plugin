@@ -87,7 +87,6 @@
             name="Import`">
       </command>
       <command
-            category="com.ecmdeveloper.plugin.category"
             description="View Document"
             id="com.ecmdeveloper.plugin.viewDocument"
             name="View">
@@ -502,15 +501,6 @@
                class="com.ecmdeveloper.plugin.filesystem.ObjectStoreFileSystem">
          </run>
       </filesystem>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="com.ecmdeveloper.plugin.editors.FolderEditor"
-            default="false"
-            id="com.ecmdeveloper.plugin.editors.folderEditor"
-            name="Folder Editor">
-      </editor>
    </extension>
 
 </plugin>
