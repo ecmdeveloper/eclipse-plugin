@@ -43,13 +43,14 @@ public class PropertyLabelProvider implements ILabelProvider {
 		}
 		
 		Property property = (Property) element;
+		if ( ! property.isSettableOnEdit() ) {
+			return Activator.getImage( IconFiles.READ_ONLY_SMALL );
+		}
+
 		if ( property.isRequired() ) {
 			return Activator.getImage( IconFiles.REQUIRED );
 		}
 		
-		if ( ! property.isSettableOnEdit() ) {
-			return Activator.getImage( IconFiles.READ_ONLY_SMALL );
-		}
 		return null;
 	}
 

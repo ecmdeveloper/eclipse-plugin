@@ -22,19 +22,21 @@ package com.ecmdeveloper.plugin.properties.editors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
@@ -44,6 +46,7 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
  */
 public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener {
 
+	private static final String SAVE_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveProperties";
 	private PropertiesInputForm propertiesInputForm;
 	private ClassDescription classDescription;
 	private ObjectStoreItem objectStoreItem;
@@ -73,11 +76,50 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	}
 
 	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);
+
+		site.setSelectionProvider( new ISelectionProvider() {
+
+			@Override
+			public void addSelectionChangedListener( ISelectionChangedListener listener) {
+				// No changing selection
+			}
+
+			@Override
+			public ISelection getSelection() {
+				//Object selection = getEditorInput().getAdapter( ObjectStoreItem.class);
+				return new StructuredSelection( ObjectStoreItemEditor.this );
+			}
+
+			@Override
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+				// No changing selection
+			}
+
+			@Override
+			public void setSelection(ISelection selection) {
+				// No changing selection
+			}
+		});
+
+	}
+
+	@Override
 	protected void setActivePage(int pageIndex) {
 		super.setActivePage(pageIndex);
 		propertiesInputForm.refreshFormContent(objectStoreItem);
 	}
 
+	public void refreshProperties() {
+		getSite().getShell().getDisplay().syncExec( new Runnable() {
+			@Override
+			public void run() {
+				propertiesInputForm.refreshFormContent(objectStoreItem);
+			}} 
+		);
+	}
+	
 	private void updateTitle() {
 		setPartName( objectStoreItem.getName() );
 		setTitleToolTip( "Folder: " + objectStoreItem.getName() );
@@ -99,30 +141,9 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 
 	@Override
 	public void doSave(final IProgressMonitor monitor) {
-
-		isPageModified = false;
-
-		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
-		
-			@Override
-			protected void execute(IProgressMonitor monitor) throws CoreException,
-					InvocationTargetException, InterruptedException {
-				try {
-					monitor.beginTask("Saving properties", 1);
-					UpdateTask task = new UpdateTask(objectStoreItem);
-					ObjectStoresManager.getManager().executeTaskSync(task);
-					updateTitle();
-					firePropertyChange(IEditorPart.PROP_DIRTY);
-				} catch (Exception e) {
-					PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		
 		try {
-			op.run(monitor);
+			IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+			handlerService.executeCommand(SAVE_PROPERTIES_COMMAND_ID, null );
 		} catch (Exception e) {
 			PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
 		}
@@ -136,60 +157,15 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 			firePropertyChange(IEditorPart.PROP_DIRTY);
 		}
 	}
+
+	public void saved() {
+		isPageModified = false;
+		getSite().getShell().getDisplay().syncExec( new Runnable() {
+			@Override
+			public void run() {
+				updateTitle();
+				firePropertyChange(IEditorPart.PROP_DIRTY);
+			}} 
+		);
+	}
 }
-
-/*
-IWorkspace workspace= ResourcesPlugin.getWorkspace();
-final IFile file= workspace.getRoot().getFile(path);
-
-WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
-        public void execute(final IProgressMonitor monitor) throws CoreException {
-                try {
-                        getDiagram().setFilename(file.getName());
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        createOutputStream(out);
-                        file.create(new ByteArrayInputStream(out.toByteArray()), true, monitor);
-                        out.close();
-                }
-                catch (Exception e) {
-                        e.printStackTrace();
-                }
-        }
-};
-
-try {
-        new ProgressMonitorDialog(getSite().getWorkbenchWindow().getShell()).run(false, true, op);
-        setInput(new FileEditorInput((IFile)file));
-        getCommandStack().markSaveLocation();
-}
-catch (Exception e) {
-        e.printStackTrace();
-}
-
-         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable()
-                {
-                        public void run()
-                        {
-                                try {
-                                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                        createOutputStream(out);
-                                        if(file.exists())
-                                        {
-                                                file.setContents(new ByteArrayInputStream(out.toByteArray()),
-                                                                true, false, monitor);
-                                        }
-                                        else
-                                        {
-
-                                                file.create(new ByteArrayInputStream(out.toByteArray()), true, monitor);
-                                        }
-                                        out.close();
-                                        getCommandStack().markSaveLocation();
-                                }
-                                catch (Exception e) {
-                                        e.printStackTrace();
-                                }
-                        }});
-        }
-
-*/

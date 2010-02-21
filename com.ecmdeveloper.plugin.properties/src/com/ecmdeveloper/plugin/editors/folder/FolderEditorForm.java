@@ -19,19 +19,13 @@
  */
 package com.ecmdeveloper.plugin.editors.folder;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.IMessageManager;
@@ -47,9 +41,6 @@ import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.input.IPropertyInput;
 import com.ecmdeveloper.plugin.properties.input.PropertyInputFactory;
-import com.filenet.api.admin.PropertyDefinitionString;
-import com.filenet.api.constants.Cardinality;
-import com.filenet.api.meta.PropertyDescriptionString;
 
 /**
  * 
@@ -58,7 +49,9 @@ import com.filenet.api.meta.PropertyDescriptionString;
  */
 public class FolderEditorForm extends FormPage {
 
+	@SuppressWarnings("unused")
 	private IMessageManager messageManager;
+	@SuppressWarnings("unused")
 	private ObjectStoreItem objectStoreItem;
 	private ClassDescription classDescription;
 	private Map<String,IPropertyInput> propertyInputMap;

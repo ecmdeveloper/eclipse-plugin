@@ -21,14 +21,12 @@ package com.ecmdeveloper.plugin.properties.editors;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -41,15 +39,17 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.details.PropertiesInputDetailsPageProvider;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
+import com.ecmdeveloper.plugin.properties.util.PluginLog;
 
 public class PropertiesInputBlock extends MasterDetailsBlock {
 
+	private static final String REFRESH_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.refreshProperties";
 	private static final String DESCRIPTION_TEXT = "Select a property from the list";
 	private static final String TITLE_BAR_TEXT = "{0} Class Properties";
 	
@@ -85,18 +85,22 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 		ToolItem titem = new ToolItem(tbar, SWT.CHECK );
         titem.setImage(Activator.getImage( IconFiles.READ_ONLY ));
         titem.setToolTipText("Toggle Read Only properties");
+
+        titem = new ToolItem(tbar, SWT.SEPARATOR);
+		titem = new ToolItem(tbar, SWT.PUSH );
         titem.addSelectionListener( new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				// TODO Auto-generated method stub
-				
+				IHandlerService handlerService = (IHandlerService) page.getSite().getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(REFRESH_PROPERTIES_COMMAND_ID, null );
+				} catch (Exception exception) {
+					PluginLog.error( exception );
+				}
 			}} 
         );
-
-        titem = new ToolItem(tbar, SWT.SEPARATOR);
-		titem = new ToolItem(tbar, SWT.PUSH );
         titem.setImage(Activator.getImage( IconFiles.REFRESH ));        
         section.setTextClient(tbar);
 	}

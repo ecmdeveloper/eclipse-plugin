@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import com.ecmdeveloper.plugin.classes.model.Choice;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
 public abstract class BaseMultiValueDetailsPage extends BaseDetailsPage {
