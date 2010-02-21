@@ -33,6 +33,15 @@
             id="com.ecmdeveloper.plugin.editObjectStoreItem"
             name="Edit">
       </command>
+      <command
+            description="Refresh Properties"
+            id="com.ecmdeveloper.plugin.refreshProperties"
+            name="Refresh">
+      </command>
+      <command
+            id="com.ecmdeveloper.plugin.saveProperties"
+            name="Save Properties">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -89,6 +98,34 @@
                </iterate>
             </with>
          </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.RefreshEditorPropertiesHandler"
+            commandId="com.ecmdeveloper.plugin.refreshProperties">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.RefreshEditorPropertiesHandler"
+            commandId="org.eclipse.ui.file.refresh">
+         <activeWhen>
+            <with
+                  variable="activeEditorId">
+               <or>
+                  <equals
+                        value="com.ecmdeveloper.plugin.editors.folderEditor">
+                  </equals>
+                  <equals
+                        value="com.ecmdeveloper.plugin.editors.documentEditor">
+                  </equals>
+                  <equals
+                        value="com.ecmdeveloper.plugin.editors.customObjectEditor">
+                  </equals>
+               </or>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.SaveEditorPropertiesHandler"
+            commandId="com.ecmdeveloper.plugin.saveProperties">
       </handler>
    </extension>
 
