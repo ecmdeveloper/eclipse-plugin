@@ -24,6 +24,8 @@ import java.text.MessageFormat;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,11 +46,14 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.details.PropertiesInputDetailsPageProvider;
+import com.ecmdeveloper.plugin.properties.model.Property;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
 
 public class PropertiesInputBlock extends MasterDetailsBlock {
 
+	private static final String REFRESH_TOOL_TIP = "Refresh Property Values";
+	private static final String FILTER_TOOL_TIP = "Toggle Read Only Properties";
 	private static final String REFRESH_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.refreshProperties";
 	private static final String DESCRIPTION_TEXT = "Select a property from the list";
 	private static final String TITLE_BAR_TEXT = "{0} Class Properties";
@@ -56,6 +61,7 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 	private FormPage page;
 	private TableViewer viewer;
 	private String className;
+	private boolean filterReadOnly = true;
 	
 	public PropertiesInputBlock(FormPage page, String className ) {
 		this.page = page;
@@ -82,12 +88,31 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 
 	private void createToolbar(Section section) {
 		ToolBar tbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
+		createFilterReadOnlyButton(tbar);
+		createRefreshButton(tbar);        
+        section.setTextClient(tbar);
+	}
+
+	private void createFilterReadOnlyButton(ToolBar tbar) {
 		ToolItem titem = new ToolItem(tbar, SWT.CHECK );
         titem.setImage(Activator.getImage( IconFiles.READ_ONLY ));
-        titem.setToolTipText("Toggle Read Only properties");
+        titem.setToolTipText(FILTER_TOOL_TIP);
+        titem.setSelection( filterReadOnly );
+        titem.addSelectionListener( new SelectionAdapter() {
 
-        titem = new ToolItem(tbar, SWT.SEPARATOR);
-		titem = new ToolItem(tbar, SWT.PUSH );
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ToolItem toolItem = (ToolItem) e.getSource();
+				filterReadOnly = toolItem.getSelection();
+				viewer.refresh();
+			}
+			} 
+        );
+	}
+
+	private void createRefreshButton(ToolBar tbar) {
+		ToolItem titem = new ToolItem(tbar, SWT.PUSH );
+        titem.setToolTipText(REFRESH_TOOL_TIP);
         titem.addSelectionListener( new SelectionAdapter() {
 
 			@Override
@@ -101,8 +126,7 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 				}
 			}} 
         );
-        titem.setImage(Activator.getImage( IconFiles.REFRESH ));        
-        section.setTextClient(tbar);
+        titem.setImage(Activator.getImage( IconFiles.REFRESH ));
 	}
 
 	private Table createTable(FormToolkit toolkit, Composite client) {
@@ -128,6 +152,17 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 
 		viewer.setLabelProvider( new PropertyLabelProvider() );
 		viewer.setContentProvider( new PropertyContentProvider() );
+		viewer.addFilter( new ViewerFilter() {
+
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if ( ((Property) element).isSettableOnEdit() || ! filterReadOnly ) {
+					return true;
+				}
+				return false;
+			}
+			} 
+		);
 	}
 
 	private Composite createClient(FormToolkit toolkit, Section section) {
