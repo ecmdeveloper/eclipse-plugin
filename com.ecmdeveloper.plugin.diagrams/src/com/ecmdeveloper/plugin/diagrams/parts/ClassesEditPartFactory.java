@@ -25,6 +25,7 @@ import org.eclipse.gef.EditPartFactory;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
+import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
 
 /**
  * @author Ricardo Belfor
@@ -43,6 +44,9 @@ public class ClassesEditPartFactory implements EditPartFactory {
 
 		if (model instanceof ClassDiagramClass)
 			return new ClassDiagramClassEditPart((ClassDiagramClass) model);
+
+		if ( model instanceof InheritRelationship )
+			return new InheritConnectionEditPart( (InheritRelationship) model);
 		
 		throw new IllegalStateException(
 				"Couldn't create an edit part for the model object: "

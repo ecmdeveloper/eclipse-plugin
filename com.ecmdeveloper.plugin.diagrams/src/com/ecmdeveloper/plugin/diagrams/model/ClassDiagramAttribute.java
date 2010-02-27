@@ -31,10 +31,13 @@ import com.filenet.api.constants.Cardinality;
  */
 public class ClassDiagramAttribute {
 
-	private static final String MULTIPLICITY_MULTI_REQUIRED = "[1…n]";
-	private static final String MULTIPLICITY_MULTI_NOT_REQUIRED = "[0…n]";
+// TODO the unicode value is not correctly saved to file
+//	private static final String HORIZONTAL_ELIPSIS = "\u2026";
+	private static final String HORIZONTAL_ELIPSIS = "...";
+	private static final String MULTIPLICITY_MULTI_REQUIRED = "[1" + HORIZONTAL_ELIPSIS + "n]";
+	private static final String MULTIPLICITY_MULTI_NOT_REQUIRED = "[0" + HORIZONTAL_ELIPSIS + "n]";
 	private static final String MULTIPLICITY_SINGLE_REQUIRED = "";
-	private static final String MULTIPLICITY_SINGLE_NOT_REQUIRED = "[0…1]";
+	private static final String MULTIPLICITY_SINGLE_NOT_REQUIRED = "[0" + HORIZONTAL_ELIPSIS + "1]";
 	
 	private String name;
 	private String type;
@@ -42,7 +45,7 @@ public class ClassDiagramAttribute {
 	private String multiplicity;
 	private String modifiers;
 	private String displayName;
-	
+
 	public ClassDiagramAttribute(String name, String displayName, String type,
 			String defaultValue, String multiplicity, String modifiers) {
 
@@ -174,7 +177,7 @@ public class ClassDiagramAttribute {
 			attributeText.append( multiplicity );
 
 			if ( showDefaultValue ) {
-				if ( defaultValue != null ) {
+				if ( defaultValue != null && defaultValue.toString().length() != 0 ) {
 					attributeText.append( " = ");
 					attributeText.append( defaultValue );
 				}

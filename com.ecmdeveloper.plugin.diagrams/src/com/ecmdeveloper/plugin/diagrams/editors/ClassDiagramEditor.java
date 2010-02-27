@@ -41,12 +41,17 @@ import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramFile;
 import com.ecmdeveloper.plugin.diagrams.parts.ClassesEditPartFactory;
+import com.ecmdeveloper.plugin.diagrams.util.PluginMessage;
 
 /**
  * @author Ricardo Belfor
  *
  */
 public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
+
+	private static final String FILE_READ_MESSAGE = "Reading Class Diagram File failed.";
+
+	private static final String CLASS_DIAGRAM_EDITOR_NAME = "Class Diagram Editor";
 
 	private ClassDiagram model;
 	
@@ -86,28 +91,17 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 	@Override
 	protected void setInput(IEditorInput input) {
 		super.setInput(input);
-//		ClassDiagram classDiagram = new ClassDiagram();
-//		classDiagram.addClassDiagramClass( new ClassDiagramClass("My Class") );
-		//classDiagram.addClassDiagramClass( new ClassDiagramClass("My Second Class") );
-//		model = classDiagram;
-		
+
 		IFile file = ((IFileEditorInput) getEditorInput()).getFile();
 		ClassDiagramFile classDiagramFile = new ClassDiagramFile(file);
 		try {
-			model = classDiagramFile.read(); 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			model = classDiagramFile.read();
+			setPartName( file.getName());
+			setTitleToolTip( file.getLocation().toString() );
+		} catch (Exception e) {
+			PluginMessage.openError(getSite().getShell(), CLASS_DIAGRAM_EDITOR_NAME,
+					FILE_READ_MESSAGE, e);
 		}
-		
-//		ClassDiagramClass classDiagramClass = model.getClassDiagramClasses().get(0);
-//		classDiagramClass.setAbstractClass(true);
-//		classDiagramClass.addAttribute( new ClassDiagramAttribute("name", "String", null, null, false, false, false ) );
-//		classDiagramClass.addAttribute( new ClassDiagramAttribute("id", "Id", null, null, true, false, false ) );
-//		classDiagramClass.addAttribute( new ClassDiagramAttribute("color", "Color", null, "*", false, false, true ) );
 	}
 
 	@Override
