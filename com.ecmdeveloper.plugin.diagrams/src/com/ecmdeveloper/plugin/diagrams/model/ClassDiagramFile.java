@@ -65,7 +65,7 @@ public class ClassDiagramFile {
 		writer.close(); 
 
 		dataOut.write( writer.toString().getBytes("UTF-8") );
-		
+		System.out.println( writer.toString() );
 		classDiagramFile.setContents(new ByteArrayInputStream(out.toByteArray()), true, false, monitor);
 	}
 
@@ -102,17 +102,22 @@ public class ClassDiagramFile {
 	private ClassDiagramClass getClassDiagramClass(IMemento clazz) {
 
 		String name = clazz.getString( PluginTagNames.NAME );
-		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, name, false, null );
+		String displayName = clazz.getString( PluginTagNames.DISPLAY_NAME );
+		boolean abstractClass = clazz.getBoolean( PluginTagNames.ABSTRACT_CLASS );
+		String id = clazz.getString( PluginTagNames.ID );
+		
+		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName, abstractClass, id );
 		
 		Point location = new Point(clazz.getInteger(PluginTagNames.XPOS), clazz
 				.getInteger(PluginTagNames.YPOS));
 		classDiagramClass.setLocation(location);
-		
+
 		Dimension size = new Dimension(
 				clazz.getInteger(PluginTagNames.WIDTH), 
 				clazz.getInteger(PluginTagNames.HEIGHT));
 		classDiagramClass.setSize(size);
 
+		
 		getClassDiagramAttributes(clazz, classDiagramClass);
 		
 		return classDiagramClass;
@@ -159,6 +164,8 @@ public class ClassDiagramFile {
 	private void initializeClassChild(ClassDiagramClass classDiagramClass, IMemento classChild) {
 
 		classChild.putString( PluginTagNames.NAME, classDiagramClass.getName() );
+		classChild.putString( PluginTagNames.DISPLAY_NAME, classDiagramClass.getDisplayName() );
+		classChild.putBoolean( PluginTagNames.ABSTRACT_CLASS, classDiagramClass.isAbstractClass() );
 		
 		Point location = classDiagramClass.getLocation();
 		classChild.putInteger( PluginTagNames.XPOS, location.x );
@@ -167,6 +174,7 @@ public class ClassDiagramFile {
 		Dimension size = classDiagramClass.getSize();
 		classChild.putInteger( PluginTagNames.HEIGHT, size.height );
 		classChild.putInteger( PluginTagNames.WIDTH, size.width );
+		classChild.putString( PluginTagNames.ID, classDiagramClass.getId() );
 		
 		IMemento attributesChild = classChild.createChild(PluginTagNames.ATTRIBUTES);
 		initializeAttributesChild(classDiagramClass, attributesChild);

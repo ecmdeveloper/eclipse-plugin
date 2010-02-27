@@ -39,6 +39,8 @@ public class ClassDiagramClass extends ClassDiagramElement {
 	private String displayName;
 	private boolean abstractClass;
 	private String id;
+	private List<InheritRelationship> childRelations = new ArrayList<InheritRelationship>();
+	private InheritRelationship parentRelation;
 	
 	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
 
@@ -63,8 +65,10 @@ public class ClassDiagramClass extends ClassDiagramElement {
 		
 		ClassDescription classDescription = (ClassDescription) adaptableObject.getAdapter(ClassDescription.class);
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
-			 ClassDiagramAttribute attribute = (ClassDiagramAttribute) propertyDescription.getAdapter(ClassDiagramAttribute.class);
-			 addAttribute(attribute);
+			if ( ! propertyDescription.isReadOnly() ) {
+				ClassDiagramAttribute attribute = (ClassDiagramAttribute) propertyDescription.getAdapter(ClassDiagramAttribute.class);
+				addAttribute(attribute);
+			}
 		 }
 	}
 
@@ -90,5 +94,22 @@ public class ClassDiagramClass extends ClassDiagramElement {
 	
 	public List<ClassDiagramAttribute> getAttributes() {
 		return attributes;
+	}
+	
+	public void connectChild(InheritRelationship inheritRelationship ) {
+		parentRelation = inheritRelationship;
+	}
+	
+	public void addChild(ClassDiagramClass parentClass ) {
+		parentRelation = new InheritRelationship(parentClass, this);
+		childRelations.add( parentRelation );
+	}
+
+	public List<InheritRelationship> getChildRelations() {
+		return childRelations;
+	}
+	
+	public InheritRelationship getParentRelation() {
+		return parentRelation;
 	}
 }

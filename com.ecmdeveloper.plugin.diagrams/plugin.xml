@@ -8,6 +8,7 @@
             contributorClass="com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditorContributor"
             default="false"
             extensions="classdiagram"
+            icon="icons/table_edit.png"
             id="com.ecmdeveloper.plugin.diagrams.classDiagramEditor"
             name="Class Diagram">
       </editor>

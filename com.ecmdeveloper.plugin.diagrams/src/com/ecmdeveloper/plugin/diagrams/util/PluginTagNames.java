@@ -25,6 +25,7 @@ package com.ecmdeveloper.plugin.diagrams.util;
  *
  */
 public class PluginTagNames {
+	public static final String ID = "id";
 	public static final String WIDTH = "width";
 	public static final String HEIGHT = "height";
 	public static final String YPOS = "yPos";
@@ -40,5 +41,5 @@ public class PluginTagNames {
 	public static final String MODIFIERS = "modifiers";
 	public static final String MULTIPLICITY = "multiplicity";
 	public static final String DEFAULT_VALUE = "defaultValue";
-	
+	public static final String ABSTRACT_CLASS = "abstractClass";
 }

@@ -22,6 +22,8 @@ package com.ecmdeveloper.plugin.diagrams.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -71,16 +73,22 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 		}
 	}
 
-	/**
-	 * Creates the figure.
-	 * 
-	 * @return the figure
-	 * 
-	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#createFigure()
-	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected List getModelSourceConnections() {
+		return getClassDiagramClass().getChildRelations();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected List getModelTargetConnections() {
+		List targetList = new ArrayList();
+		targetList.add( getClassDiagramClass().getParentRelation() );
+		return targetList;
+	}
+
 	@Override
 	protected IFigure createFigure() {
-
 		ClassDiagramClass classDiagramClass = getClassDiagramClass();
 		Font classFont = new Font(null, "Arial", 12, SWT.BOLD
 				+ (classDiagramClass.isAbstractClass() ? SWT.ITALIC : 0));

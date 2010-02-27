@@ -35,12 +35,15 @@ import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
+import com.ecmdeveloper.plugin.diagrams.util.PluginTagNames;
+
 /**
  * 
  * @author Ricardo.Belfor
  *
  */
 public class NewClassDiagramWizard extends Wizard implements INewWizard {
+	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 	private NewClassDiagramWizardPage page;
 	private ISelection selection;
 
@@ -143,8 +146,9 @@ public class NewClassDiagramWizard extends Wizard implements INewWizard {
 	 */
 
 	private InputStream openContentStream() {
-		String contents =
-			"This is the initial file contents for *.classdiagram file that should be word-sorted in the Preview page of the multi-page editor";
+		String contents = XML_HEADER + 
+						  "<" + PluginTagNames.CLASSDIAGRAM + ">" +
+						  "</" + PluginTagNames.CLASSDIAGRAM + ">";
 		return new ByteArrayInputStream(contents.getBytes());
 	}
 
