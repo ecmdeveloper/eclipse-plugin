@@ -60,7 +60,7 @@ public class Action extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
-		this.action.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
+		this.action.refresh( new String[] { PropertyNames.NAME, PropertyNames.ID } );
 		this.name = this.action.get_Name();
 		this.id = this.action.get_Id().toString();
 	}

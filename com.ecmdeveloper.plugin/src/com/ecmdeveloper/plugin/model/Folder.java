@@ -76,7 +76,7 @@ public class Folder extends ObjectStoreItem {
 	@Override
 	public void refresh() {
 		
-		folder.fetchProperties(new String[] { PropertyNames.FOLDER_NAME,
+		folder.refresh( new String[] { PropertyNames.FOLDER_NAME,
 				PropertyNames.PATH_NAME, PropertyNames.ID,
 				PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS });
 

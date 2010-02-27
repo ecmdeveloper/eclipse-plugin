@@ -148,7 +148,7 @@ public class ObjectStore extends ObjectStoreItem
 		children = null;
 		
 		if ( isConnected() ) {
-			objectStore.fetchProperties( new String[] { PropertyNames.DISPLAY_NAME } );
+			objectStore.refresh( new String[] { PropertyNames.DISPLAY_NAME } );
 			displayName = objectStore.get_DisplayName();
 		}
 	}
