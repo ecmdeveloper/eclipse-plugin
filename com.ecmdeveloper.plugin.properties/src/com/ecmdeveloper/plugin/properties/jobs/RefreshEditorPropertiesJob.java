@@ -24,21 +24,13 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
-import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -83,7 +75,7 @@ public class RefreshEditorPropertiesJob extends AbstractEditorJob {
 
 	@Override
 	protected String getFailedMessage() {
-		return FAILED_MESSAGE;
+		return MessageFormat.format( FAILED_MESSAGE, objectStoreItem.getName() );		
 	}
 
 	@Override
