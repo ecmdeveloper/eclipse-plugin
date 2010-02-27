@@ -2,7 +2,7 @@
 <feature
       id="com.ecmdeveloper.plugin"
       label="ECM Developer Plug-in"
-      version="1.0.0"
+      version="1.1.0"
       provider-name="ECMDEVELOPER">
 
    <description url="http://www.ecmdeveloper.com">
@@ -233,5 +233,19 @@ Library.
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.properties"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.classes"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
