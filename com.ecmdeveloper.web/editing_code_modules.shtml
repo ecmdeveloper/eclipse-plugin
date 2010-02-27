@@ -14,17 +14,19 @@
 	<div id="left">
 
 	<h2>Editing Code Modules</h2>
+	<p>
 	One of the features of the ECM Developer plug-in is editing of Code Modules. Code Modules
 	are Java classes which implement the desired behavior of Event Actions, Document Lifecycle Actions
 	and Document Classification Actions. Starting points for these classes can be generated using
 	the <a href="code_templates.shtml">code templates</a>. With he Code Module editor of the ECM Developer
 	plug-in you can create a new Code Module or update an existing Code Module. 
-	
+	</p>
 	<h3>Creating Code Modules</h3>  
-
+	<p>
 	The ability to create Code Modules from scratch is one of the unique points of the ECM Developer plug-in. 
 	Because the Code Module class is a hidden class it cannot be created directly with the Enterprise Manager. It 
 	must always be created in combination with the creation of a specific action.
+	</p>
 	<p> 
 	The following actions have to be performed to accomplish this task:  
 	<ul>
@@ -44,43 +46,55 @@
 	<p><img alt='New Code Module Editor' src='images/editing_code_module/new_code_module_editor.jpg'></p>
 	</li>
 	</ul>
+	</p>
+	<p>
 	The name can still be changed, the Object Store not. Initially the editor will show an error message 
 	because the content of the Code Module is not yet set. Use the <strong>Add</strong> command of the editor
 	to add files to the Code Module. This have to be either compiled Java class-files, tar-files or zip-files.
 	Use the <strong>Save</strong> command of the editor to create a new Code Module in the Object Store.
+	</p>
 	<p>
 	Now that you have a Code Module the FileNet Enterprise Manager can be used to create different actions
 	which use this Code Module.
 	
 	<h3>Importing Code Modules</h3>
-	
+	<p>
 	In order to edit existing Code Modules on the Content Engine they have to be imported into the Eclipse
 	workspace. The following actions have to be performed to accomplish this task: 
 	<ul>
 	<li>Start the standard Eclipse import wizard using the <strong>File&gt;Import</strong>
 	command.
+	</p>
 	<p><img alt='Import Code Module' src='images/editing_code_module/import_code_module.jpg'></p>
+	<p>
 	In the Content Engine category select <strong>Code Module</strong> and continue the
 	wizard.
 	</li>
 	<li>The next page of the wizard is the Code Module selection page:
+	</p>
 	<p><img alt='Select Code Module' src='images/editing_code_module/select_code_module.jpg'></p>
+	<p>
 	First select the Object Store and after that select the Code Module to import. Only Code Modules
 	that are not yet imported are shown. If there are no Code Modules left to import a error message
 	is shown.</li>
 	<li>If the wizard is finished the Code Module editor will open</li>
 	</ul>
+	</p>
+	<p>
 	Initially the editor will also show an error message because the content of the Code Module is not 
 	yet set. The Code Module editor will not retrieve the existing content of the Code Module on the 
 	Content Engine. Use the <strong>Add</strong> command to add content to the Code Module.
+	</p>
 	
 	<h3>Updating Code Modules</h3>
+	<p>
 	In the process of developing Code Modules the content of the Code Module on the Content Engine will change 
 	frequently. Therefore the Code Module editor provides functionality for updating the Code Module
 	on the Content Engine. Actions are always coupled to a specific <strong>version</strong> of the 
 	Code Module. If you want your action to use the latest version of the Code Module the action must
 	also be modified. The Code Module editor will also take care of this. Before you update your code module
 	make sure that either your code is build automatically or that you manual build your code to the latest version. 
+	</p>
 	<p>
 	The following actions have to be performed to accomplish the code module updating task:
 	<ul>
@@ -95,23 +109,28 @@
 	</li>
 	<li>If this dialog is completed the Code Module and the selected actions are updated.</li>
 	</ul>
+	</p>
 	<p>
 	Additionally the <img width='16' height='16' alt='Actions' src='images/icons/script_lightning.png'/>
 	<strong>Show Code Module Actions</strong> command of the editor can be uses to show which actions
 	are coupled to the Code Module. This will show a dialog similar to the action selection dialog.
 	
 	<h3>Code Modules View</h3>
+	<p>
 	All the Code Modules which are either created by the ECM Developer plug-in or imported by the
 	ECM Developer plug-in are shown in the Code Modules view. You can open this view using the 
 	<strong>Window &gt; Show view &gt;Other</strong> command. The Code Modules view is located 
 	in the <strong>Content Engine</strong> category. Selecting this view will show the following window:
+	</p>
 	<p><img alt='Code Modules View' src='images/editing_code_module/code_modules_view.jpg'></p>
+	<p>
 	The toolbar and the context menu of this view also provide most of the functionality described above,
 	such as creating, editing and updating Code Modules. One feature not yet described is the 
 	<strong><img width='16' height='16' alt='Update' src='images/icons/script_go.png'/> Remove</strong> 
 	command. This command will remove the Code Module from this view but will not remove 
 	the Code Module on the Content Engine. So this action can be undone by re-importing the Code Module
 	into the workspace.
+	</p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->

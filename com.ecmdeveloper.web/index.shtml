@@ -15,18 +15,18 @@
 
 	<h2>Introduction</h2>
  	<p>
-	ECM Developer is an Eclipse Plugin aimed at supporting the development of applications using FileNet P8 system. 
+	ECM Developer is an Eclipse plug in aimed at supporting the development of applications using FileNet P8 system. 
 	It approaches the system from a developers point of view and tries to find solutions for day to day tasks. 
 	An example is the development of event actions with related code modules. Part of developing event actions 
 	involve updating an existing code module and reconnecting the new version of the code module 
-	with the event action. Altough this process can be streamlined using a custom java application 
+	with the event action. Although this process can be streamlined using a custom java application 
 	doing all these actions, a generic solutions is preferable. This is what the ECM Developer plugin 
 	offers.
  	</p>
  	<p>
-	The aim of the ECM Developer plugin is not to be a replacement for the FileNet Enterprise Manager 
+	The aim of the ECM Developer plug in is not to be a replacement for the FileNet Enterprise Manager 
 	but to focus on things you cannot do with the Enterprise Manager. However this does not mean that 
-	there is no overlap in functionality between the ECM Developer plugin and the Enterprise Manager. 
+	there is no overlap in functionality between the ECM Developer plug in and the Enterprise Manager. 
 	To come to a streamlined application it is inevitable that some of the functionality of the 
 	Enterprise Manager is duplicated.
  	</p>
@@ -35,19 +35,23 @@
 	<ul>
 			<li>Browsing Object Stores</li>
 			<li>Performing some basic actions on Object Store objects such as renaming, moving and deleting.</li>
+			<li>Editing of folder, document and custom object properties.
 			<li>Java code wizards for event action handlers, document lifecycle handlers and document classifiers.</li>
 			<li>An editor for updating code modules.</li>
 	</ul>
-
+	</p>
 	<p>
-	The plugin uses the Java API based on the WSI protocol to access the FileNet P8 system. 
+	The plug in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
 	This is the most generic way of accessing the system and does not depend on the underlying 
-	system architecture. Because the Java API is not distributed with this plugin, using this plugin 
-	requires access to the Java API. Information about installing the plugin can be found here. 
-	After the plugin is installed the Object Stores managed with this plugin must be imported. 
+	system architecture. Because the Java API is not distributed with this plug in, using this plug in 
+	requires access to the Java API. Information about installing the plug in can be found here. 
+	After the plug in is installed the Object Stores managed with this plug in must be imported. 
 	Information about importing an Object Store can be found here.
 	</p>
-		
+	<p>
+	This plug in is tested with the 4.5 version of the FileNet Content Engine. The JAR-file structure of
+	the API	is changed in version 4.5.1, therefore this plug in will not yet work with version 4.5.1.		
+	</p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->

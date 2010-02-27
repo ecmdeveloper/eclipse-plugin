@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>ECM Developer - screen shots</title>
+<title>ECM Developer - version history</title>
 <meta name="keywords" content="filenet,p8,eclipse" />
 <meta name="description" content="" />
 <link href="default.css" rel="stylesheet" type="text/css" />
@@ -12,13 +12,13 @@
 <!--#include virtual="/header.shtml" -->
 <div id="content">
 	<div id="left">
-	<h2>Screen Shots</h2>
-	<p><img width='446' height='433' alt='Code Module Editor' src='images/screen_shots/object_stores_view.jpg'></p>
-	Browsing Object Stores
-	<p><img width='584' height='337' alt='Properties Editor' src='images/screen_shots/document_editor.jpg'></p>
-	Properties Editor
-	<p><img width='820' height='594' alt='Code Module Editor' src='images/screen_shots/code_module_editor.jpg'></p>
-	Code Module editor
+	<h3>Version 1.1.0.0 3/xx/2010</h3>
+	<ul>
+	<li>Added support for folder, document and custom object editing.</li>
+	<li>Fixed bug in code module editor, code modules with multiple content elements 
+	where not correctly updated.</li>
+	<li>Fixed bug in refresh, changes made outside the plug in caused an exception.</li> 
+	</ul>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->

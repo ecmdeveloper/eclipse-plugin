@@ -30,6 +30,10 @@
 	(<img width='16' height='16' alt='Import' src='images/icons/database_add.png'/>). Next the operations
 	currently possible on Object Store items will be discussed.
 	
+	<h3>Edit</h3>
+	The properties of an Object Store item can be edited using the <strong>Edit</strong> command of the 
+	context menu. This command will open the <a href='editing_objects.shtml'>properties editor</a> window.
+
 	<h3>Refresh</h3>
 	An Object Store item can be refreshed using either the <strong>File &gt; Refresh</strong> command
 	or the <strong>Refresh</strong> command of the context menu. This command will get a fresh copy
