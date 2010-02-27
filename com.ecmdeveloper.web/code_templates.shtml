@@ -14,6 +14,7 @@
 	<div id="left">
 
 	<h2>Code Templates</h2>
+	<p>
 	Although its is not very difficult to start developing code modules, a convenient
 	way to generate the starting Java code is by using the templates in the ECM Developer
 	plug-in. There are templates for the following code module types:
@@ -28,13 +29,20 @@
 	The code modules can be generated
 	by using the <strong>File &gt; New &gt; Other</strong> command and next selecting the desired
 	Java class in the <strong>Content Engine</strong> category:
+	</p>
 	<p><img alt='New Class' src='images/code_templates/new_class.jpg'></p>
+	<p>
 	In the next page of the wizard the necessary information can be supplied to generate the
 	Java class:
+	</p>
 	<p><img alt='New Class' src='images/code_templates/new_event_action.jpg'></p>
+	<p>
 	If the wizard is finished the Java class will be generated at the desired location:
+	</p>
 	<p><img alt='Event Action Class' src='images/code_templates/my_event_action.jpg'></p>
+	<p>
 	The wizards for the other code modules work in the same way.
+	</p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
