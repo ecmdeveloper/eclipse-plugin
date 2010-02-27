@@ -63,7 +63,7 @@ public class CustomObject extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
-		customObject.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID } );
+		customObject.refresh( new String[] { PropertyNames.NAME, PropertyNames.ID } );
 		name = customObject.get_Name();
 		id = customObject.get_Id().toString();
 	}

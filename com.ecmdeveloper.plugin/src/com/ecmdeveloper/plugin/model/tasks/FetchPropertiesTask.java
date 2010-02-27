@@ -40,7 +40,8 @@ public class FetchPropertiesTask extends BaseTask {
 	public Object call() throws Exception {
 
 		IndependentlyPersistableObject objectStoreObject = objectStoreItem.getObjectStoreObject();
-		objectStoreObject.fetchProperties(propertyNames);
+		objectStoreObject.refresh(propertyNames);
+		//objectStoreObject.fetchProperties(propertyNames);
 
 		return null;
 	}

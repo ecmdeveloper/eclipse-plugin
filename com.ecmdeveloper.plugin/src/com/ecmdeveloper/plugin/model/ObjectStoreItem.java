@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -21,20 +21,15 @@ package com.ecmdeveloper.plugin.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 
-import com.filenet.api.collection.BooleanList;
 import com.filenet.api.constants.RefreshMode;
-import com.filenet.api.core.Factory;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.property.Properties;
-import com.filenet.api.property.Property;
 
 /**
  * 
@@ -127,6 +122,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		// Stub for childless objects 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(String propertyName) {
 		Properties properties = getProperties();
@@ -193,18 +189,6 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return null;
 	}
 
-	private Method getGetListValueMethod( com.filenet.api.property.Property property ) 
-	{
-		Method methods[] = property.getClass().getMethods();
-		
-		for (int i = 0; i < methods.length; i++) {
-			if ( methods[i].getName().endsWith( "ListValue" ) ) {
-				return methods[i];
-			}
-		}
-		return null;
-	}
-	
 	public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();

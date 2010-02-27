@@ -257,7 +257,7 @@ public class ExceptionDetailsDialog extends AbstractDetailsDialog
             e = ((InvocationTargetException) e).getTargetException();
          if (message == null)
             return e.toString();
-         return MessageFormat.format(message, new Object[] { e.toString() });
+         return MessageFormat.format(message, new Object[] { e.getMessage() });
       }
       if (details instanceof IStatus) {
          String statusMessage = ((IStatus) details).getMessage();

@@ -56,7 +56,7 @@ public class CodeModule extends ObjectStoreItem{
 
 	@Override
 	public void refresh() {
-		versionSeries.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.CURRENT_VERSION } );
+		versionSeries.refresh( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.CURRENT_VERSION } );
 		name = ((Document) versionSeries.get_CurrentVersion()).get_Name();
 		id = versionSeries.get_Id().toString();
 		versionSeries.fetchProperties( new String[]  { PropertyNames.CURRENT_VERSION } );

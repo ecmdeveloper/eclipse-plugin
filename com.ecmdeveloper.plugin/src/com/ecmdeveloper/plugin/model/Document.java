@@ -49,7 +49,7 @@ public class Document extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
-		document.fetchProperties( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.VERSION_SERIES } );
+		document.refresh( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.VERSION_SERIES } );
 		name = document.get_Name();
 		id = document.get_Id().toString();
 		versionSeriesId = document.get_VersionSeries().get_Id().toString(); 
