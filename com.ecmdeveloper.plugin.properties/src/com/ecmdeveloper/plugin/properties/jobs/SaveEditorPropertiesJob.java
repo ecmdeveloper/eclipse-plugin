@@ -20,6 +20,9 @@
 
 package com.ecmdeveloper.plugin.properties.jobs;
 
+import java.text.MessageFormat;
+import java.util.concurrent.ExecutionException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -40,7 +43,7 @@ public class SaveEditorPropertiesJob extends AbstractEditorJob {
 
 	private static final String JOB_NAME = "Save Editor Properties";
 	private static final String MONITOR_MESSAGE = "Saving Editor Properties";
-	private static final String FAILED_MESSAGE = "Saving Editor Properties for \"{0}\" failed";
+	private static final String FAILED_MESSAGE = "Saving Editor Properties for \"{0}\" failed. '{0}'";
 
 	public SaveEditorPropertiesJob(ObjectStoreItemEditor editor,IWorkbenchWindow window) {
 		super(editor, window, JOB_NAME);
@@ -48,7 +51,7 @@ public class SaveEditorPropertiesJob extends AbstractEditorJob {
 
 	@Override
 	protected String getFailedMessage() {
-		return FAILED_MESSAGE;
+		return MessageFormat.format( FAILED_MESSAGE, objectStoreItem.getName() );		
 	}
 
 	@Override
@@ -58,6 +61,18 @@ public class SaveEditorPropertiesJob extends AbstractEditorJob {
 
 	@Override
 	protected void runEditorJob() throws Exception {
+		update();
+		scheduleRefresh();
+	}
+
+	private void scheduleRefresh() {
+		RefreshEditorPropertiesJob refreshJob = new RefreshEditorPropertiesJob((ObjectStoreItemEditor) editor, window );
+		refreshJob.setUser(true);
+		refreshJob.setRule( new EditorSchedulingRule(2) );
+		refreshJob.schedule();
+	}
+
+	private void update() throws ExecutionException {
 		UpdateTask task = new UpdateTask(objectStoreItem);
 		ObjectStoresManager.getManager().executeTaskSync(task);
 

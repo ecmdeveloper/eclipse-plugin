@@ -62,7 +62,7 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 			objectStoreItem = (ObjectStoreItem) getEditorInput().getAdapter( ObjectStoreItem.class);
 			objectStoreItem.addPropertyChangeListener(this);
 			isPageModified = false;
-			
+		
 			updateTitle();
 			
 		} catch (PartInitException e) {
@@ -122,7 +122,7 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	
 	private void updateTitle() {
 		setPartName( objectStoreItem.getName() );
-		setTitleToolTip( "Folder: " + objectStoreItem.getName() );
+		setTitleToolTip( objectStoreItem.getName() );
 	}
 	
 	@Override

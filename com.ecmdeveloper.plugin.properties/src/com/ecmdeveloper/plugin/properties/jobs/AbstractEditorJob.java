@@ -60,11 +60,11 @@ public abstract class AbstractEditorJob extends Job {
 		try {
 			monitor.beginTask(getMonitorMessage(), IProgressMonitor.UNKNOWN );
 			runEditorJob();
+			return Status.OK_STATUS;
 		} catch (Exception e) {
-			PluginMessage.openErrorFromThread(window.getShell(), getName(), MessageFormat.format(
-					getFailedMessage(), objectStoreItem.getName()), e);
+			PluginMessage.openErrorFromThread(window.getShell(), getName(), getFailedMessage(), e);
+			return Status.CANCEL_STATUS;
 		}
-		return Status.OK_STATUS;
 	}
 
 	@Override

@@ -67,10 +67,5 @@ public class SaveEditorPropertiesHandler extends AbstractHandler {
 		saveJob.setUser(true);
 		saveJob.setRule( new EditorSchedulingRule(1) );
 		saveJob.schedule();
-		
-		RefreshEditorPropertiesJob refreshJob = new RefreshEditorPropertiesJob((ObjectStoreItemEditor) editorObject, window );
-		refreshJob.setUser(true);
-		refreshJob.setRule( new EditorSchedulingRule(2) );
-		refreshJob.schedule();
 	}
 }

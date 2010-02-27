@@ -27,7 +27,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.CustomObject;
@@ -37,7 +40,9 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
 import com.ecmdeveloper.plugin.properties.editors.DocumentEditor;
 import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
+import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditorInput;
 import com.ecmdeveloper.plugin.properties.jobs.OpenObjectStoreItemEditorJob;
+import com.ecmdeveloper.plugin.properties.util.PluginLog;
 
 /**
  * @author Ricardo.Belfor
@@ -68,18 +73,58 @@ public class EditObjectStoreItemHandler extends AbstractHandler {
 		while ( iterator.hasNext() ) {
 			ObjectStoreItem objectStoreItem = (ObjectStoreItem) iterator.next();
 			if (objectStoreItem instanceof Folder ) {
-				openEditor( objectStoreItem, FolderEditor.EDITOR_ID );
+				showEditor( objectStoreItem, FolderEditor.EDITOR_ID );
 			} else if (objectStoreItem instanceof Document ) {
-				openEditor( objectStoreItem, DocumentEditor.EDITOR_ID );
+				showEditor( objectStoreItem, DocumentEditor.EDITOR_ID );
 			} else if (objectStoreItem instanceof CustomObject ) {
-				openEditor( objectStoreItem, CustomObjectEditor.EDITOR_ID );
+				showEditor( objectStoreItem, CustomObjectEditor.EDITOR_ID );
 			}
 		}
 	}
 
-	private void openEditor(ObjectStoreItem objectStoreItem, String editorId ) {
+	private void showEditor(ObjectStoreItem objectStoreItem, String editorId ) {
+		
+		try {
+			IWorkbenchPage activePage = window.getActivePage();
+			IEditorReference objectStoreItemEditor = getObjectStoreItemEditor(activePage, objectStoreItem );
+			if ( objectStoreItemEditor == null ) {
+				openEditor(objectStoreItem, editorId);
+			} else {
+				activePage.activate( objectStoreItemEditor.getEditor(true) );
+			}
+		} catch (PartInitException e) {
+			PluginLog.error(e);
+		}
+	}
+
+	private void openEditor(ObjectStoreItem objectStoreItem, String editorId) {
 		OpenObjectStoreItemEditorJob job = new OpenObjectStoreItemEditorJob(objectStoreItem, editorId, window);
 		job.setUser(true);
 		job.schedule();
 	}
+	
+	private IEditorReference getObjectStoreItemEditor(IWorkbenchPage activePage, ObjectStoreItem objectStoreItem) throws PartInitException {
+		
+		IEditorReference[] editors = activePage.getEditorReferences();
+		
+		for ( int i = 0; i < editors.length; i++ ) {
+			if ( isObjectStoreItemEditor( editors[i], objectStoreItem ) ) {
+				return editors[i];
+			}
+		}
+		return null;
+	}
+	
+	private boolean isObjectStoreItemEditor(IEditorReference editor, ObjectStoreItem objectStoreItem) throws PartInitException {
+		
+		if ( ! ( editor.getEditorInput() instanceof ObjectStoreItemEditorInput ) ) {
+			return false;
+		}
+		
+		ObjectStoreItemEditorInput editorInput = (ObjectStoreItemEditorInput) editor.getEditorInput();
+		ObjectStoreItem editorItem = (ObjectStoreItem) editorInput.getAdapter( ObjectStoreItem.class);
+		
+		return editorItem.getId().equalsIgnoreCase( objectStoreItem.getId() );
+	}
+	
 }
