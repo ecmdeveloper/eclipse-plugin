@@ -11,13 +11,13 @@ import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
 
-public class ResourceFigure extends Figure
+public class NoteFigure extends Figure
 {
    private static final int FOLDED_CORNER_LENGTH = 12;
    
    private Label label;
 
-   public ResourceFigure() {
+   public NoteFigure() {
       super();
       label = new Label();
       label.setTextAlignment(PositionConstants.LEFT);

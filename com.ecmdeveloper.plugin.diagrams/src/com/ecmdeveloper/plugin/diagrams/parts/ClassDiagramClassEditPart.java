@@ -27,16 +27,17 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 
-import com.ecmdeveloper.plugin.diagrams.figures.ResourceFigure;
 import com.ecmdeveloper.plugin.diagrams.figures.UMLClassFigure;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
+import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
 import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy;
 
 /**
@@ -46,11 +47,8 @@ import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy
 public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 		implements PropertyChangeListener {
 
-	private final ResourceFigure resourceFigure = new ResourceFigure();
-	
 	public ClassDiagramClassEditPart(ClassDiagramClass classDiagramClass) {
 		setModel(classDiagramClass);
-	    resourceFigure.setText( getClassDiagramClass().getName());
 	}
 
 	public ClassDiagramClass getClassDiagramClass() {
@@ -76,14 +74,25 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List getModelSourceConnections() {
-		return getClassDiagramClass().getChildRelations();
+		List<InheritRelationship> relations = getClassDiagramClass().getChildRelations();
+		debugRelations(relations, "Source: ");
+		return relations;
+	}
+
+	private void debugRelations(List<InheritRelationship> relations, String prefix) {
+		for (InheritRelationship relation : relations) {
+			System.out.println( prefix + relation.getParent().getName() + " is a parent of " + relation.getChild().getName());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List getModelTargetConnections() {
 		List targetList = new ArrayList();
-		targetList.add( getClassDiagramClass().getParentRelation() );
+		if ( getClassDiagramClass().getParentRelation() != null ) {
+			targetList.add( getClassDiagramClass().getParentRelation() );
+		}
+		debugRelations(targetList, "Target: ");
 		return targetList;
 	}
 
@@ -112,8 +121,11 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 
 	@Override
 	protected void refreshVisuals() {
-		Rectangle bounds = new Rectangle(getClassDiagramClass().getLocation(),
-				getClassDiagramClass().getSize());
+//		Rectangle bounds = new Rectangle(getClassDiagramClass().getLocation(),
+//				getClassDiagramClass().getSize());
+		Point location = getClassDiagramClass().getLocation();
+		Rectangle bounds = new Rectangle(location.x, location.y, -1, -1 );
+
 		((GraphicalEditPart) getParent()).setLayoutConstraint(this,
 				getFigure(), bounds);
 		
@@ -126,6 +138,12 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 		if (ClassDiagramClass.SIZE_PROP.equals(propertyName)
 				|| ClassDiagramClass.LOCATION_PROP.equals(propertyName)) {
 			refreshVisuals();
-		}		
+		} else if ( ClassDiagramClass.SOURCE_CONNECTIONS_PROP.equals( propertyName) ) {
+			refreshSourceConnections();
+			refreshVisuals();
+		} else if ( ClassDiagramClass.TARGET_CONNECTIONS_PROP.equals( propertyName) ) {
+			refreshTargetConnections();
+			refreshVisuals();
+		}
 	}	
 }

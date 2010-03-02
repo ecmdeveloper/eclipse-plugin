@@ -39,17 +39,19 @@ public class ClassDiagramClass extends ClassDiagramElement {
 	private String displayName;
 	private boolean abstractClass;
 	private String id;
+	private String parentClassId;
 	private List<InheritRelationship> childRelations = new ArrayList<InheritRelationship>();
 	private InheritRelationship parentRelation;
 	
 	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
 
 	public ClassDiagramClass(String name, String displayName,
-			boolean abstractClass, String id) {
+			boolean abstractClass, String id, String parentClassId) {
 		super();
 		this.name = name;
 		this.displayName = displayName;
 		this.abstractClass = abstractClass;
+		this.parentClassId = parentClassId;
 		this.id = id;
 	}
 
@@ -70,6 +72,10 @@ public class ClassDiagramClass extends ClassDiagramElement {
 				addAttribute(attribute);
 			}
 		 }
+	
+		if ( classDescription.getParent() instanceof ClassDescription ) {
+			parentClassId = ((ClassDescription)classDescription.getParent()).getId();
+		}
 	}
 
 	public String getName() {
@@ -84,6 +90,11 @@ public class ClassDiagramClass extends ClassDiagramElement {
 		return id;
 	}
 
+	
+	public String getParentClassId() {
+		return parentClassId;
+	}
+
 	public boolean isAbstractClass() {
 		return abstractClass;
 	}
@@ -96,13 +107,50 @@ public class ClassDiagramClass extends ClassDiagramElement {
 		return attributes;
 	}
 	
-	public void connectChild(InheritRelationship inheritRelationship ) {
+	public void connectParent(InheritRelationship inheritRelationship ) {
 		parentRelation = inheritRelationship;
+		firePropertyChange(TARGET_CONNECTIONS_PROP, null, parentRelation );
 	}
 	
-	public void addChild(ClassDiagramClass parentClass ) {
-		parentRelation = new InheritRelationship(parentClass, this);
-		childRelations.add( parentRelation );
+	public void disconnectParent() {
+		InheritRelationship oldParentRelation = parentRelation;
+		parentRelation = null;
+		firePropertyChange(TARGET_CONNECTIONS_PROP, oldParentRelation, null );
+	}
+
+	public void addChild(ClassDiagramClass childClass ) {
+		
+		System.out.println( getDisplayName() + " is the parent class of " + childClass.getDisplayName() );
+
+		InheritRelationship childRelation = getChildRelation( childClass);
+		
+		if ( childRelation == null ) {
+//			parentRelation = new InheritRelationship(this, childClass );
+//			childRelations.add( parentRelation );
+//			childClass.connectParent( parentRelation );
+//			firePropertyChange(SOURCE_CONNECTIONS_PROP, null, parentRelation );
+			childRelation = new InheritRelationship(this, childClass );
+			childRelations.add( childRelation );
+			childClass.connectParent( childRelation );
+			firePropertyChange(SOURCE_CONNECTIONS_PROP, null, childRelation );
+		} else {
+			childClass.connectParent( childRelation );
+		}
+	}
+
+	private InheritRelationship getChildRelation(ClassDiagramClass childClass) {
+		for ( InheritRelationship childRelation : childRelations ) {
+			if ( childRelation.getChild().equals( childClass ) ) {
+				return childRelation;
+			}
+		}
+		return null;
+	}
+
+	public void disconnectChild(InheritRelationship inheritRelationship ) {
+		if ( childRelations.remove( inheritRelationship ) ) {
+			firePropertyChange(SOURCE_CONNECTIONS_PROP, inheritRelationship, null);
+		}
 	}
 
 	public List<InheritRelationship> getChildRelations() {
@@ -111,5 +159,14 @@ public class ClassDiagramClass extends ClassDiagramElement {
 	
 	public InheritRelationship getParentRelation() {
 		return parentRelation;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if ( object instanceof ClassDiagramClass )
+		{
+			return ((ClassDiagramClass)object).getId().equalsIgnoreCase( getId() );
+		}
+		return false;
 	}
 }

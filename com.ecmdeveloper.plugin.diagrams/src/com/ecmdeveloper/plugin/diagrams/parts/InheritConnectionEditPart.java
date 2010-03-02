@@ -20,10 +20,10 @@
 
 package com.ecmdeveloper.plugin.diagrams.parts;
 
-import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
@@ -35,6 +35,8 @@ import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
  */
 public class InheritConnectionEditPart extends AbstractClassesConnectionEditPart {
 
+	private static final int INHERIT_DECORTATION_SIZE = 3;
+
 	public InheritConnectionEditPart(InheritRelationship model ) {
 		setModel(model);
 	}
@@ -45,15 +47,32 @@ public class InheritConnectionEditPart extends AbstractClassesConnectionEditPart
 	
 	@Override
 	protected void createEditPolicies() {
-		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
+//		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
 //		installEditPolicy(EditPolicy.COMPONENT_ROLE, new RelationshipEditPolicy());
 	}
 
 	@Override
-	public IFigure getFigure() {
-		PolylineConnection conn = (PolylineConnection) super.createFigure();
-		conn.setConnectionRouter(new BendpointConnectionRouter());
-		conn.setTargetDecoration(new PolygonDecoration());
-		return conn;
+	public IFigure createFigure() {
+		PolylineConnection connection = (PolylineConnection) super.createFigure();
+		PolygonDecoration decoration = createInheritDecoration();
+		connection.setSourceDecoration(decoration);
+		return connection;
+	}
+
+	private PolygonDecoration createInheritDecoration() {
+		PolygonDecoration decoration = new PolygonDecoration();
+		decoration.setFill(true);
+		decoration.setBackgroundColor( org.eclipse.draw2d.ColorConstants.white );
+		PointList decorationPointList = createDecorationPointList();
+		decoration.setTemplate(decorationPointList);
+		return decoration;
+	}
+
+	private PointList createDecorationPointList() {
+		PointList decorationPointList = new PointList();
+		decorationPointList.addPoint(0,0);
+		decorationPointList.addPoint(-INHERIT_DECORTATION_SIZE,INHERIT_DECORTATION_SIZE);
+		decorationPointList.addPoint(-INHERIT_DECORTATION_SIZE,-INHERIT_DECORTATION_SIZE);
+		return decorationPointList;
 	}
 }

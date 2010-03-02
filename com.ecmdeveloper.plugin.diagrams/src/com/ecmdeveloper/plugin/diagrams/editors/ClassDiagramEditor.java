@@ -26,11 +26,13 @@ import java.util.EventObject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.DeleteAction;
+import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -68,9 +70,22 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 	@Override
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
+		GraphicalViewer viewer = configureViewer();
+		configureContextMenu(viewer);
+	}
+
+	private GraphicalViewer configureViewer() {
 		GraphicalViewer viewer = getGraphicalViewer();
 	    viewer.setEditPartFactory(new ClassesEditPartFactory() );
 	    viewer.setRootEditPart(new ScalableFreeformRootEditPart());
+		return viewer;
+	}
+
+	private void configureContextMenu(GraphicalViewer viewer) {
+		ContextMenuProvider contextMenuProvider = new ClassDiagramEditorContextMenuProvider(viewer,
+				getActionRegistry());
+		viewer.setContextMenu(contextMenuProvider);
+		getSite().registerContextMenu(contextMenuProvider, viewer);
 	}
 
 	@Override
@@ -106,8 +121,7 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 
 	@Override
 	protected PaletteRoot getPaletteRoot() {
-		// TODO Auto-generated method stub
-		return null;
+		return ClassDiagramEditorPaletteFactory.createPalette();
 	}
 
 	@Override
@@ -143,4 +157,7 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 			return model;
 		return super.getAdapter(type);
 	}
+
+	
+	
 }
