@@ -44,6 +44,7 @@ public class ClassDescription implements IAdaptable {
 	protected Object parent;
 	protected ArrayList<Object> children;
 	protected Boolean hasChildren;
+	private String id;
 	List<PropertyDescription> propertyDescriptions;
 	
 	public ClassDescription(Object classDescription, Object parent, ObjectStore objectStore) {
@@ -53,6 +54,7 @@ public class ClassDescription implements IAdaptable {
 			this.objectStore = objectStore;
 			this.name = this.classDescription.get_Name();
 			this.parent = parent;
+			this.id = this.classDescription.get_Id().toString();
 			this.hasChildren = ! this.classDescription.get_ImmediateSubclassDescriptions().isEmpty();
 
 			getPropertyDescriptions();
@@ -88,6 +90,10 @@ public class ClassDescription implements IAdaptable {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	@Override
