@@ -41,11 +41,34 @@ public class ClassDiagram extends ClassDiagramBase {
 		if ( classDiagramClass != null && classDiagramClasses.add(classDiagramClass) ) {
 			classDiagramClass.setParent(this);
 			firePropertyChange(CHILD_ADDED_PROP, null, classDiagramClass);
+			connectClassToParent(classDiagramClass);
+			connectClassToChildren(classDiagramClass);
 			return true;
 		}
 		return false;
 	}
 
+	private void connectClassToParent(ClassDiagramClass classDiagramClass) {
+		for ( ClassDiagramClass parentClass : classDiagramClasses ) {
+			if ( isChildClass( parentClass,classDiagramClass ) ) {
+				parentClass.addChild( classDiagramClass );
+				return;
+			}
+		}
+	}
+
+	private void connectClassToChildren(ClassDiagramClass classDiagramClass) {
+		for ( ClassDiagramClass childClass : classDiagramClasses ) {
+			if ( isChildClass(classDiagramClass, childClass) ) {
+				classDiagramClass.addChild(childClass);
+			}
+		}
+	}
+
+	private boolean isChildClass(ClassDiagramClass parentClass, ClassDiagramClass childClass) {
+		return childClass.getParentClassId() != null && childClass.getParentClassId().equalsIgnoreCase( parentClass.getId() );
+	}
+	
 	public List<ClassDiagramClass> getClassDiagramClasses() {
 		return classDiagramClasses;
 	}
@@ -76,9 +99,36 @@ public class ClassDiagram extends ClassDiagramBase {
 
 	public void deleteClassDiagramElement(ClassDiagramElement object) {
 		if ( object instanceof ClassDiagramClass ) {
-			if ( classDiagramClasses.remove( object ) ) {
-				firePropertyChange(CHILD_REMOVED_PROP, null, object );
+			
+			ClassDiagramClass classDiagramClass = (ClassDiagramClass) object;
+			
+			disconnectClassFromChildren(classDiagramClass);
+			disconnectClassFromParent(classDiagramClass);
+			
+			if ( classDiagramClasses.remove( classDiagramClass ) ) {
+				firePropertyChange(CHILD_REMOVED_PROP, null, classDiagramClass );
 			}
+		}
+	}
+
+	private void disconnectClassFromParent(ClassDiagramClass classDiagramClass) {
+		if ( classDiagramClass.getParentRelation() != null ) {
+			InheritRelationship parentRelation = classDiagramClass.getParentRelation();
+			classDiagramClass.disconnectParent();
+			parentRelation.getParent().disconnectChild(parentRelation);
+		}
+	}
+
+	private void disconnectClassFromChildren(ClassDiagramClass classDiagramClass) {
+		
+		ArrayList<InheritRelationship> oldRelationships = new ArrayList<InheritRelationship>(); 
+		for ( InheritRelationship childRelation : classDiagramClass.getChildRelations() ) {
+			childRelation.getChild().disconnectParent();
+			oldRelationships.add(childRelation);
+		}
+		
+		for ( InheritRelationship oldRelation : oldRelationships ) {
+			classDiagramClass.disconnectChild(oldRelation);
 		}
 	}
 

@@ -76,10 +76,6 @@ public abstract class ClassDiagramElement extends ClassDiagramBase {
 	private Point location = new Point(0, 0);
 	/** Size of this shape. */
 	private Dimension size = new Dimension(50, 50);
-	/** List of outgoing Connections. */
-	private List sourceConnections = new ArrayList();
-	/** List of incoming Connections. */
-	private List targetConnections = new ArrayList();
 	
 	protected ClassDiagram parent;
 	

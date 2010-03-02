@@ -105,8 +105,8 @@ public class ClassDiagramFile {
 		String displayName = clazz.getString( PluginTagNames.DISPLAY_NAME );
 		boolean abstractClass = clazz.getBoolean( PluginTagNames.ABSTRACT_CLASS );
 		String id = clazz.getString( PluginTagNames.ID );
-		
-		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName, abstractClass, id );
+		String parentClassId = clazz.getString( PluginTagNames.PARENT_CLASS_ID );
+		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName, abstractClass, id, parentClassId );
 		
 		Point location = new Point(clazz.getInteger(PluginTagNames.XPOS), clazz
 				.getInteger(PluginTagNames.YPOS));
@@ -175,6 +175,7 @@ public class ClassDiagramFile {
 		classChild.putInteger( PluginTagNames.HEIGHT, size.height );
 		classChild.putInteger( PluginTagNames.WIDTH, size.width );
 		classChild.putString( PluginTagNames.ID, classDiagramClass.getId() );
+		classChild.putString( PluginTagNames.PARENT_CLASS_ID, classDiagramClass.getParentClassId() );
 		
 		IMemento attributesChild = classChild.createChild(PluginTagNames.ATTRIBUTES);
 		initializeAttributesChild(classDiagramClass, attributesChild);

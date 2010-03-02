@@ -22,6 +22,8 @@ package com.ecmdeveloper.plugin.diagrams;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -29,31 +31,23 @@ import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttributeAdapterFactory;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClassAdapterFactory;
+import com.ecmdeveloper.plugin.diagrams.util.ImageCache;
 
 /**
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin.diagrams";
-
-	// The shared instance
+	
+	private static final ImageCache imageCache = new ImageCache();
 	private static Activator plugin;
 
 	private IAdapterFactory classDiagramClassAdapterFactory;
 	private IAdapterFactory classDiagramAttributeAdapterFactory;
 	
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
+	public Activator() {}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -66,10 +60,6 @@ public class Activator extends AbstractUIPlugin {
 		adapterManager.registerAdapters( classDiagramAttributeAdapterFactory, PropertyDescription.class);		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		
@@ -84,13 +74,15 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
 
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	public static Image getImage( String path ) {
+		return imageCache.getImage( getImageDescriptor( path ) );		
+	}
 }

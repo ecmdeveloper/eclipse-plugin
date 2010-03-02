@@ -42,4 +42,5 @@ public class PluginTagNames {
 	public static final String MULTIPLICITY = "multiplicity";
 	public static final String DEFAULT_VALUE = "defaultValue";
 	public static final String ABSTRACT_CLASS = "abstractClass";
+	public static final String PARENT_CLASS_ID = "parentClassId";
 }
