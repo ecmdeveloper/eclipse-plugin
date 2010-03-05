@@ -23,55 +23,57 @@ package com.ecmdeveloper.plugin.diagrams.parts;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.GraphicalEditPart;
 
-import com.ecmdeveloper.plugin.diagrams.figures.NoteFigure;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramNote;
 import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class ClassDiagramNoteEditPart extends ClassDiagramElementEditPart {
+public abstract class ClassDiagramElementEditPart extends AbstractClassesGraphicalEditPart
+		implements PropertyChangeListener {
 
-	private final NoteFigure noteFigure = new NoteFigure();
-
-	public ClassDiagramNoteEditPart(ClassDiagramNote classDiagramNote) {
-		setModel( classDiagramNote );
-		noteFigure.setText( classDiagramNote.getNoteText() );
+	public ClassDiagramElement getClassDiagramElement() {
+		return (ClassDiagramElement) getModel();
 	}
-
-	public ClassDiagramNote getClassDiagramNote() {
-		return (ClassDiagramNote) getModel();
-	}
-		
+	
 	@Override
-	protected IFigure createFigure() {
-		return noteFigure;
+	public void activate() {
+		if (!isActive()) {
+			super.activate();
+			getClassDiagramElement().addPropertyChangeListener(this);
+		}
 	}
 
 	@Override
-	protected void refreshVisuals() {
-		Rectangle bounds = new Rectangle(getClassDiagramNote().getLocation(),
-				getClassDiagramNote().getSize());
-
-		((GraphicalEditPart) getParent()).setLayoutConstraint(this,
-				getFigure(), bounds);
-		noteFigure.setText( getClassDiagramNote().getNoteText() );
+	public void deactivate() {
+		if (isActive()) {
+			super.deactivate();
+			getClassDiagramElement().removePropertyChangeListener(this);
+		}
+	}
+	
+	@Override
+	protected void createEditPolicies() {
+		installEditPolicy(EditPolicy.COMPONENT_ROLE,
+				new ClassDiagramComponentEditPolicy() );
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		super.propertyChange(evt);
 		String propertyName = evt.getPropertyName();
-		if (ClassDiagramNote.TEXT_PROP.equals(propertyName) ) {
+		if (ClassDiagramElement.SIZE_PROP.equals(propertyName)
+				|| ClassDiagramElement.LOCATION_PROP.equals(propertyName)) {
+			refreshVisuals();
+		} else if ( ClassDiagramElement.SOURCE_CONNECTIONS_PROP.equals( propertyName) ) {
+			refreshSourceConnections();
+			refreshVisuals();
+		} else if ( ClassDiagramElement.TARGET_CONNECTIONS_PROP.equals( propertyName) ) {
+			refreshTargetConnections();
 			refreshVisuals();
 		}
-	}
+	}	
 }

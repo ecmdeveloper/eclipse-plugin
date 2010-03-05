@@ -45,7 +45,7 @@ public class ClassDiagramComponentEditPolicy extends ComponentEditPolicy {
 		CompoundCommand delete = new CompoundCommand();
 	      for (Iterator<?> iterator = deleteRequest.getEditParts().iterator(); iterator.hasNext();) {
 	         Object item = ((EditPart) iterator.next()).getModel();
-	         if (!(item instanceof ClassDiagramClass))
+	         if (!(item instanceof ClassDiagramElement))
 	            continue;
 	         delete.add(new ClassDiagramElementDeleteCommand(
 					(ClassDiagramElement) item, 
