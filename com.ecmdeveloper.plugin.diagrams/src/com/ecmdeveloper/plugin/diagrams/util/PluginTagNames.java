@@ -43,4 +43,7 @@ public class PluginTagNames {
 	public static final String DEFAULT_VALUE = "defaultValue";
 	public static final String ABSTRACT_CLASS = "abstractClass";
 	public static final String PARENT_CLASS_ID = "parentClassId";
+	public static final String NOTES = "notes";
+	public static final String NOTE = "note";
+	public static final String TEXT = "text";
 }

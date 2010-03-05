@@ -44,8 +44,7 @@ import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy
  * @author Ricardo Belfor
  *
  */
-public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
-		implements PropertyChangeListener {
+public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 
 	public ClassDiagramClassEditPart(ClassDiagramClass classDiagramClass) {
 		setModel(classDiagramClass);
@@ -55,22 +54,6 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 		return (ClassDiagramClass) getModel();
 	}
 	
-	@Override
-	public void activate() {
-		if (!isActive()) {
-			super.activate();
-			getClassDiagramClass().addPropertyChangeListener(this);
-		}
-	}
-
-	@Override
-	public void deactivate() {
-		if (isActive()) {
-			super.deactivate();
-			getClassDiagramClass().removePropertyChangeListener(this);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List getModelSourceConnections() {
@@ -114,36 +97,11 @@ public class ClassDiagramClassEditPart extends AbstractClassesGraphicalEditPart
 	}
 
 	@Override
-	protected void createEditPolicies() {
-		installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new ClassDiagramComponentEditPolicy() );
-	}
-
-	@Override
 	protected void refreshVisuals() {
-//		Rectangle bounds = new Rectangle(getClassDiagramClass().getLocation(),
-//				getClassDiagramClass().getSize());
 		Point location = getClassDiagramClass().getLocation();
 		Rectangle bounds = new Rectangle(location.x, location.y, -1, -1 );
 
 		((GraphicalEditPart) getParent()).setLayoutConstraint(this,
 				getFigure(), bounds);
-		
-		System.out.println( "refreshVisuals called " + bounds.toString() );
 	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		String propertyName = evt.getPropertyName();
-		if (ClassDiagramClass.SIZE_PROP.equals(propertyName)
-				|| ClassDiagramClass.LOCATION_PROP.equals(propertyName)) {
-			refreshVisuals();
-		} else if ( ClassDiagramClass.SOURCE_CONNECTIONS_PROP.equals( propertyName) ) {
-			refreshSourceConnections();
-			refreshVisuals();
-		} else if ( ClassDiagramClass.TARGET_CONNECTIONS_PROP.equals( propertyName) ) {
-			refreshTargetConnections();
-			refreshVisuals();
-		}
-	}	
 }

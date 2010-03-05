@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -21,7 +21,13 @@
 package com.ecmdeveloper.plugin.diagrams.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 /**
  * @author Ricardo Belfor
@@ -29,13 +35,35 @@ import java.util.List;
  */
 public class ClassDiagram extends ClassDiagramBase {
 
-	/** Property ID to use when a child is added to this diagram. */
+	private static IPropertyDescriptor[] descriptors;
+	
 	public static final String CHILD_ADDED_PROP = "ClassDiagram.ChildAdded";
-	/** Property ID to use when a child is removed from this diagram. */
 	public static final String CHILD_REMOVED_PROP = "ClassDiagram.ChildRemoved";
 	
 	private ArrayList<ClassDiagramClass> classDiagramClasses = new ArrayList<ClassDiagramClass>();
+	private ArrayList<ClassDiagramNote> classDiagramNotes = new ArrayList<ClassDiagramNote>();
 	
+	public static final String DEFAULT_FILL_COLOR_PROP = "ClassDiagram.DefaultFillColor";
+	public static final String DEFAULT_LINE_COLOR_PROP = "ClassDiagram.DefaultLineColor";
+
+	static {
+		descriptors = new IPropertyDescriptor[] { 
+			new ColorPropertyDescriptor( DEFAULT_FILL_COLOR_PROP, "Default Fill Color"), 
+			new ColorPropertyDescriptor( DEFAULT_LINE_COLOR_PROP, "Default Line Color") 
+		};
+	}
+	
+	private RGB defaultFillColor;
+	private RGB defaultLineColor;
+	
+	public void addClassDiagramElement(ClassDiagramElement object) {
+		if ( object instanceof ClassDiagramClass ) {
+			addClassDiagramClass((ClassDiagramClass) object);
+		} else if ( object instanceof ClassDiagramNote ) {
+			addClassDiagramNote((ClassDiagramNote) object);
+		}
+	}
+
 	public boolean addClassDiagramClass( ClassDiagramClass classDiagramClass )
 	{
 		if ( classDiagramClass != null && classDiagramClasses.add(classDiagramClass) ) {
@@ -69,53 +97,32 @@ public class ClassDiagram extends ClassDiagramBase {
 		return childClass.getParentClassId() != null && childClass.getParentClassId().equalsIgnoreCase( parentClass.getId() );
 	}
 	
-	public List<ClassDiagramClass> getClassDiagramClasses() {
-		return classDiagramClasses;
-	}
-
-	@Override
-	public Object getPropertyValue(Object id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isPropertySet(Object id) {
-		// TODO Auto-generated method stub
+	public boolean addClassDiagramNote(ClassDiagramNote classDiagramNote) {
+		if ( classDiagramNote != null && classDiagramNotes.add(classDiagramNote) ) {
+			classDiagramNote.setParent(this);
+			firePropertyChange(CHILD_ADDED_PROP, null, classDiagramNote);
+			return true;
+		}
 		return false;
-	}
-
-	@Override
-	public void resetPropertyValue(Object id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setPropertyValue(Object id, Object value) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void deleteClassDiagramElement(ClassDiagramElement object) {
 		if ( object instanceof ClassDiagramClass ) {
-			
-			ClassDiagramClass classDiagramClass = (ClassDiagramClass) object;
-			
-			disconnectClassFromChildren(classDiagramClass);
-			disconnectClassFromParent(classDiagramClass);
-			
-			if ( classDiagramClasses.remove( classDiagramClass ) ) {
-				firePropertyChange(CHILD_REMOVED_PROP, null, classDiagramClass );
-			}
+			deleteClassDiagramClass(object);
+		} else if ( object instanceof ClassDiagramNote ) {
+			deleteClassDiagramNote(object);
 		}
+		
 	}
 
-	private void disconnectClassFromParent(ClassDiagramClass classDiagramClass) {
-		if ( classDiagramClass.getParentRelation() != null ) {
-			InheritRelationship parentRelation = classDiagramClass.getParentRelation();
-			classDiagramClass.disconnectParent();
-			parentRelation.getParent().disconnectChild(parentRelation);
+	private void deleteClassDiagramClass(ClassDiagramElement object) {
+		ClassDiagramClass classDiagramClass = (ClassDiagramClass) object;
+		
+		disconnectClassFromChildren(classDiagramClass);
+		disconnectClassFromParent(classDiagramClass);
+		
+		if ( classDiagramClasses.remove( classDiagramClass ) ) {
+			firePropertyChange(CHILD_REMOVED_PROP, null, classDiagramClass );
 		}
 	}
 
@@ -132,9 +139,63 @@ public class ClassDiagram extends ClassDiagramBase {
 		}
 	}
 
-	public void addClassDiagramElement(ClassDiagramElement object) {
-		if ( object instanceof ClassDiagramClass ) {
-			addClassDiagramClass((ClassDiagramClass) object);
+	private void disconnectClassFromParent(ClassDiagramClass classDiagramClass) {
+		if ( classDiagramClass.getParentRelation() != null ) {
+			InheritRelationship parentRelation = classDiagramClass.getParentRelation();
+			classDiagramClass.disconnectParent();
+			parentRelation.getParent().disconnectChild(parentRelation);
 		}
+	}
+
+	private void deleteClassDiagramNote(ClassDiagramElement object) {
+		ClassDiagramNote classDiagramNote = (ClassDiagramNote) object;
+		if ( classDiagramNotes.remove( classDiagramNote ) ) {
+			firePropertyChange(CHILD_REMOVED_PROP, null, classDiagramNote );
+		}
+	}
+
+	public List<ClassDiagramClass> getClassDiagramClasses() {
+		return classDiagramClasses;
+	}
+
+	public Collection<ClassDiagramNote> getClassDiagramNotes() {
+		return classDiagramNotes;
+	}
+
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+		return descriptors;
+	}
+	
+	@Override
+	public void setPropertyValue(Object propertyId, Object value) {
+		
+		if (DEFAULT_FILL_COLOR_PROP.equals(propertyId)) {
+			defaultFillColor = (RGB) value;
+		} else if (DEFAULT_LINE_COLOR_PROP.equals(propertyId)) {
+			defaultLineColor = (RGB) value;
+		}
+	}
+
+	@Override
+	public Object getPropertyValue(Object propertyId) {
+		if ( DEFAULT_FILL_COLOR_PROP.equals(propertyId)) {
+			return defaultFillColor;
+		} else if ( DEFAULT_LINE_COLOR_PROP.equals(propertyId)) {
+			return defaultLineColor;
+		}  
+		
+		return null;
+	}
+
+	@Override
+	public boolean isPropertySet(Object id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void resetPropertyValue(Object id) {
+		// TODO Auto-generated method stub
+		
 	}
 }

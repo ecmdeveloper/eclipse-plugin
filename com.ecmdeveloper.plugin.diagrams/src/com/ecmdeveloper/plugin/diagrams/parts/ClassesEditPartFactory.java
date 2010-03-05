@@ -25,6 +25,7 @@ import org.eclipse.gef.EditPartFactory;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramNote;
 import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
 
 /**
@@ -45,6 +46,10 @@ public class ClassesEditPartFactory implements EditPartFactory {
 		if (model instanceof ClassDiagramClass)
 			return new ClassDiagramClassEditPart((ClassDiagramClass) model);
 
+		if (model instanceof ClassDiagramNote) {
+			return new ClassDiagramNoteEditPart( (ClassDiagramNote) model);
+		}
+		
 		if ( model instanceof InheritRelationship )
 			return new InheritConnectionEditPart( (InheritRelationship) model);
 		

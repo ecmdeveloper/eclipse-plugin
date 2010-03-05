@@ -88,7 +88,31 @@ public class ClassDiagramFile {
 		if ( classes != null ) {
 			getClassDiagramClasses(classDiagram, classes);
 		}		
+
+		IMemento notes = memento.getChild(PluginTagNames.NOTES);
+		
+		if ( notes != null ) {
+			getClassDiagramNotes(classDiagram, notes);
+		}		
 		return classDiagram;
+	}
+
+	private void getClassDiagramNotes(ClassDiagram classDiagram, IMemento notes) {
+
+		for (IMemento noteChild : notes.getChildren( PluginTagNames.NOTE ) ) {
+			ClassDiagramNote classDiagramNote = getClassDiagramNote(noteChild);
+			classDiagram.addClassDiagramNote(classDiagramNote);
+		}
+	}
+
+	private ClassDiagramNote getClassDiagramNote(IMemento noteChild) {
+		ClassDiagramNote classDiagramNote = new ClassDiagramNote();
+		getLocation(noteChild, classDiagramNote);
+		getSize(noteChild, classDiagramNote);
+		String text = noteChild.getString( PluginTagNames.TEXT );
+		classDiagramNote.setNoteText(text);
+		
+		return classDiagramNote;
 	}
 
 	private void getClassDiagramClasses(ClassDiagram classDiagram, IMemento classes) {
@@ -108,19 +132,24 @@ public class ClassDiagramFile {
 		String parentClassId = clazz.getString( PluginTagNames.PARENT_CLASS_ID );
 		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName, abstractClass, id, parentClassId );
 		
-		Point location = new Point(clazz.getInteger(PluginTagNames.XPOS), clazz
-				.getInteger(PluginTagNames.YPOS));
-		classDiagramClass.setLocation(location);
-
-		Dimension size = new Dimension(
-				clazz.getInteger(PluginTagNames.WIDTH), 
-				clazz.getInteger(PluginTagNames.HEIGHT));
-		classDiagramClass.setSize(size);
-
+		getLocation(clazz, classDiagramClass);
+		getSize(clazz, classDiagramClass);
 		
 		getClassDiagramAttributes(clazz, classDiagramClass);
 		
 		return classDiagramClass;
+	}
+
+	private void getSize(IMemento elementChild, ClassDiagramElement classDiagramElement) {
+		Dimension size = new Dimension(elementChild.getInteger(PluginTagNames.WIDTH), elementChild
+				.getInteger(PluginTagNames.HEIGHT));
+		classDiagramElement.setSize(size);
+	}
+
+	private void getLocation(IMemento elementChild, ClassDiagramElement classDiagramElement) {
+		Point location = new Point(elementChild.getInteger(PluginTagNames.XPOS), elementChild
+				.getInteger(PluginTagNames.YPOS));
+		classDiagramElement.setLocation(location);
 	}
 
 	private void getClassDiagramAttributes(IMemento clazz, ClassDiagramClass classDiagramClass) {
@@ -158,7 +187,21 @@ public class ClassDiagramFile {
 			initializeClassChild(classDiagramClass, classChild);
 		}
 		
+		IMemento notesChild = memento.createChild(PluginTagNames.NOTES); 
+
+		for ( ClassDiagramNote classDiagramNote : classDiagram.getClassDiagramNotes() ) {
+			
+			IMemento noteChild = notesChild.createChild(PluginTagNames.NOTE);
+			initializeNoteChild(classDiagramNote, noteChild);
+		}
+		
 		return memento;
+	}
+
+	private void initializeNoteChild(ClassDiagramNote classDiagramNote, IMemento noteChild) {
+		noteChild.putString( PluginTagNames.TEXT, classDiagramNote.getNoteText() );
+		addLocation(classDiagramNote, noteChild);
+		addSize(classDiagramNote, noteChild);
 	}
 
 	private void initializeClassChild(ClassDiagramClass classDiagramClass, IMemento classChild) {
@@ -167,18 +210,26 @@ public class ClassDiagramFile {
 		classChild.putString( PluginTagNames.DISPLAY_NAME, classDiagramClass.getDisplayName() );
 		classChild.putBoolean( PluginTagNames.ABSTRACT_CLASS, classDiagramClass.isAbstractClass() );
 		
-		Point location = classDiagramClass.getLocation();
-		classChild.putInteger( PluginTagNames.XPOS, location.x );
-		classChild.putInteger( PluginTagNames.YPOS, location.y );
-		
-		Dimension size = classDiagramClass.getSize();
-		classChild.putInteger( PluginTagNames.HEIGHT, size.height );
-		classChild.putInteger( PluginTagNames.WIDTH, size.width );
+		addLocation(classDiagramClass, classChild);
+		addSize(classDiagramClass, classChild);
+
 		classChild.putString( PluginTagNames.ID, classDiagramClass.getId() );
 		classChild.putString( PluginTagNames.PARENT_CLASS_ID, classDiagramClass.getParentClassId() );
 		
 		IMemento attributesChild = classChild.createChild(PluginTagNames.ATTRIBUTES);
 		initializeAttributesChild(classDiagramClass, attributesChild);
+	}
+
+	private void addSize(ClassDiagramElement classDiagramElement, IMemento elementChild) {
+		Dimension size = classDiagramElement.getSize();
+		elementChild.putInteger( PluginTagNames.HEIGHT, size.height );
+		elementChild.putInteger( PluginTagNames.WIDTH, size.width );
+	}
+
+	private void addLocation(ClassDiagramElement classDiagramElement, IMemento elementChild) {
+		Point location = classDiagramElement.getLocation();
+		elementChild.putInteger( PluginTagNames.XPOS, location.x );
+		elementChild.putInteger( PluginTagNames.YPOS, location.y );
 	}
 
 	private void initializeAttributesChild(ClassDiagramClass classDiagramClass,

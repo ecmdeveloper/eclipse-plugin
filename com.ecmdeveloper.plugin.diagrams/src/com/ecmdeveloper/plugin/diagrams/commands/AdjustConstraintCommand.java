@@ -28,6 +28,7 @@ import org.eclipse.gef.commands.Command;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramNote;
 import com.ecmdeveloper.plugin.diagrams.parts.ClassDiagramEditPart;
 
 /**
@@ -69,7 +70,11 @@ public class AdjustConstraintCommand extends Command
       Object model = editPart.getModel();
       if (model instanceof ClassDiagramClass)
          return ((ClassDiagramClass) model).getName();
-      return "Favorites Element";
+      
+      if ( model instanceof ClassDiagramNote)
+    	  return "Note";
+      
+      return "Unknown Item";
    }
 
    public void execute() {

@@ -78,7 +78,11 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart
 	}
 
 	protected List<Object> getModelChildren() {
-		return new ArrayList<Object>(getClassDiagram().getClassDiagramClasses());
+		
+		ArrayList<Object> modelChildren = new ArrayList<Object>();
+		modelChildren.addAll(getClassDiagram().getClassDiagramClasses() );
+		modelChildren.addAll(getClassDiagram().getClassDiagramNotes() );
+		return modelChildren;
 	}
 	
 	/* (non-Javadoc)

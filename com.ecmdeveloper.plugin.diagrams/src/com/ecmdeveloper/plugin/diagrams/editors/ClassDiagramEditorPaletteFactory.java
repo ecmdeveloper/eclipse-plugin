@@ -71,7 +71,8 @@ public class ClassDiagramEditorPaletteFactory {
    		
    		PaletteDrawer componentsDrawer = new PaletteDrawer( "Diagram Elements" );
    		
-   		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry("Diagram Note", "Note", new SimpleFactory(ClassDiagramNote.class), null, null) ;   		
+   		CombinedTemplateCreationEntry noteCreationEntry = new CombinedTemplateCreationEntry("Diagram Note", "Note", new SimpleFactory(ClassDiagramNote.class), null, null) ;
+   		componentsDrawer.add( noteCreationEntry );
         return componentsDrawer;
 
    	}
