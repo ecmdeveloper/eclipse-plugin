@@ -24,9 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 /**
@@ -34,6 +33,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
  *
  */
 public class ClassDiagram extends ClassDiagramBase {
+
 
 	private static IPropertyDescriptor[] descriptors;
 	
@@ -45,16 +45,22 @@ public class ClassDiagram extends ClassDiagramBase {
 	
 	public static final String DEFAULT_FILL_COLOR_PROP = "ClassDiagram.DefaultFillColor";
 	public static final String DEFAULT_LINE_COLOR_PROP = "ClassDiagram.DefaultLineColor";
+	public static final String SHOW_ICONS_PROP = "ClassDiagram.showIcons";
+
+	private static final int TRUE_INDEX = 0;
+	private static final int FALSE_INDEX = 1;
 
 	static {
 		descriptors = new IPropertyDescriptor[] { 
-			new ColorPropertyDescriptor( DEFAULT_FILL_COLOR_PROP, "Default Fill Color"), 
-			new ColorPropertyDescriptor( DEFAULT_LINE_COLOR_PROP, "Default Line Color") 
+//			new ColorPropertyDescriptor( DEFAULT_FILL_COLOR_PROP, "Default Fill Color"), 
+//			new ColorPropertyDescriptor( DEFAULT_LINE_COLOR_PROP, "Default Line Color")
+			new ComboBoxPropertyDescriptor(SHOW_ICONS_PROP, "Show Icons", new String[] { "Yes", "No" } )
 		};
 	}
 	
 	private RGB defaultFillColor;
 	private RGB defaultLineColor;
+	private boolean showIcons = true;
 	
 	public void addClassDiagramElement(ClassDiagramElement object) {
 		if ( object instanceof ClassDiagramClass ) {
@@ -69,11 +75,19 @@ public class ClassDiagram extends ClassDiagramBase {
 		if ( classDiagramClass != null && classDiagramClasses.add(classDiagramClass) ) {
 			classDiagramClass.setParent(this);
 			firePropertyChange(CHILD_ADDED_PROP, null, classDiagramClass);
-			connectClassToParent(classDiagramClass);
-			connectClassToChildren(classDiagramClass);
+			connectClass(classDiagramClass);
 			return true;
 		}
 		return false;
+	}
+
+	private void connectClass(ClassDiagramClass classDiagramClass) {
+		
+		connectClassToParent(classDiagramClass);
+		connectClassToChildren(classDiagramClass);
+		
+		connectClassToAttributeClass(classDiagramClass);
+		connectAttributeClassToClass(classDiagramClass);
 	}
 
 	private void connectClassToParent(ClassDiagramClass classDiagramClass) {
@@ -85,6 +99,42 @@ public class ClassDiagram extends ClassDiagramBase {
 		}
 	}
 
+	private void connectClassToAttributeClass(ClassDiagramClass classDiagramClass) {
+		for ( AttributeRelationship attributeRelationship : classDiagramClass.getSourceRelations() ) {
+			ClassDiagramClass attributeClass = getAttributeRelationshipClass(attributeRelationship);
+			if ( attributeClass != null ) {
+				classDiagramClass.connectSource( attributeRelationship );
+				attributeClass.addTarget( attributeRelationship );
+			}
+		}
+	}
+
+	private void connectAttributeClassToClass(ClassDiagramClass attributeClass) {
+		for ( ClassDiagramClass classDiagramClass : classDiagramClasses ) {
+			for ( AttributeRelationship attributeRelationship : classDiagramClass.getSourceRelations() ) {
+				if ( isAttributeRelationshipClass(attributeRelationship, attributeClass ) ) {
+					classDiagramClass.connectSource( attributeRelationship );
+					attributeClass.addTarget( attributeRelationship );
+				}
+			}
+		}
+	}
+
+	private ClassDiagramClass getAttributeRelationshipClass(
+			AttributeRelationship attributeRelationship) {
+		for (ClassDiagramClass attributeClass : classDiagramClasses) {
+			if (isAttributeRelationshipClass(attributeRelationship, attributeClass)) {
+				return attributeClass;
+			}
+		}
+		return null;
+	}
+
+	private boolean isAttributeRelationshipClass(AttributeRelationship attributeRelationship,
+			ClassDiagramClass attributeClass) {
+		return attributeClass.getId().equals( attributeRelationship.getRequiredClassId() );
+	}
+	
 	private void connectClassToChildren(ClassDiagramClass classDiagramClass) {
 		for ( ClassDiagramClass childClass : classDiagramClasses ) {
 			if ( isChildClass(classDiagramClass, childClass) ) {
@@ -173,6 +223,8 @@ public class ClassDiagram extends ClassDiagramBase {
 			defaultFillColor = (RGB) value;
 		} else if (DEFAULT_LINE_COLOR_PROP.equals(propertyId)) {
 			defaultLineColor = (RGB) value;
+		} if ( SHOW_ICONS_PROP.equals(propertyId) ) {
+			setShowIcons( value == null || ((Integer)value).intValue() == TRUE_INDEX );
 		}
 	}
 
@@ -182,7 +234,9 @@ public class ClassDiagram extends ClassDiagramBase {
 			return defaultFillColor;
 		} else if ( DEFAULT_LINE_COLOR_PROP.equals(propertyId)) {
 			return defaultLineColor;
-		}  
+		}  else if ( SHOW_ICONS_PROP.equals(propertyId) ) {
+			return new Integer( showIcons ? TRUE_INDEX : FALSE_INDEX );
+		}
 		
 		return null;
 	}
@@ -197,5 +251,25 @@ public class ClassDiagram extends ClassDiagramBase {
 	public void resetPropertyValue(Object id) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public boolean isShowIcons() {
+		return showIcons;
+	}
+
+	public void setShowIcons(boolean showIcons) {
+		this.showIcons = showIcons;
+		firePropertyChange(SHOW_ICONS_PROP, null, new Boolean(showIcons) );
+		notifyClassDiagramSettingsChanged(SHOW_ICONS_PROP);
+	}
+
+	private void notifyClassDiagramSettingsChanged(String propertyId) {
+		for ( ClassDiagramElement classDiagramElement : getClassDiagramClasses() ) {
+			classDiagramElement.notifyClassDiagramSettingsChanged(propertyId);
+		}
+		
+		for ( ClassDiagramElement classDiagramNote : getClassDiagramNotes() ) {
+			classDiagramNote.notifyClassDiagramSettingsChanged(propertyId);
+		}
 	}
 }

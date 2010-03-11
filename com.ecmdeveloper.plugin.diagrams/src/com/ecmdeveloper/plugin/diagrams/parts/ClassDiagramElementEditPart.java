@@ -23,7 +23,12 @@ package com.ecmdeveloper.plugin.diagrams.parts;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.draw2d.ChopboxAnchor;
+import org.eclipse.draw2d.ConnectionAnchor;
+import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.NodeEditPart;
+import org.eclipse.gef.Request;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
@@ -34,7 +39,9 @@ import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy
  *
  */
 public abstract class ClassDiagramElementEditPart extends AbstractClassesGraphicalEditPart
-		implements PropertyChangeListener {
+		implements PropertyChangeListener, NodeEditPart {
+
+	private ConnectionAnchor anchor;
 
 	public ClassDiagramElement getClassDiagramElement() {
 		return (ClassDiagramElement) getModel();
@@ -66,7 +73,7 @@ public abstract class ClassDiagramElementEditPart extends AbstractClassesGraphic
 	public void propertyChange(PropertyChangeEvent evt) {
 		String propertyName = evt.getPropertyName();
 		if (ClassDiagramElement.SIZE_PROP.equals(propertyName)
-				|| ClassDiagramElement.LOCATION_PROP.equals(propertyName)) {
+				|| ClassDiagramElement.LOCATION_PROP.equals(propertyName) ) {
 			refreshVisuals();
 		} else if ( ClassDiagramElement.SOURCE_CONNECTIONS_PROP.equals( propertyName) ) {
 			refreshSourceConnections();
@@ -74,6 +81,35 @@ public abstract class ClassDiagramElementEditPart extends AbstractClassesGraphic
 		} else if ( ClassDiagramElement.TARGET_CONNECTIONS_PROP.equals( propertyName) ) {
 			refreshTargetConnections();
 			refreshVisuals();
+		} else if ( ClassDiagramElement.CLASS_DIAGRAM_SETTINGS_CHANGED_PROP.equals(propertyName) ) {
+			refreshVisuals();
 		}
 	}	
+
+	protected ConnectionAnchor getConnectionAnchor() {
+		if (anchor == null) {
+			anchor = new ChopboxAnchor(getFigure());
+		}
+		return anchor;
+	}
+
+	@Override
+	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart arg0) {
+		return getConnectionAnchor();
+	}
+
+	@Override
+	public ConnectionAnchor getSourceConnectionAnchor(Request arg0) {
+		return getConnectionAnchor();
+	}
+
+	@Override
+	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart arg0) {
+		return getConnectionAnchor();
+	}
+
+	@Override
+	public ConnectionAnchor getTargetConnectionAnchor(Request arg0) {
+		return getConnectionAnchor();
+	}
 }

@@ -25,20 +25,28 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.Request;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 
+import com.ecmdeveloper.plugin.diagrams.Activator;
 import com.ecmdeveloper.plugin.diagrams.figures.UMLClassFigure;
+import com.ecmdeveloper.plugin.diagrams.model.AttributeRelationship;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
 import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
 import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy;
+import com.ecmdeveloper.plugin.diagrams.util.IconFiles;
 
 /**
  * @author Ricardo Belfor
@@ -46,6 +54,9 @@ import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy
  */
 public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 
+	private Label classLabel;
+	private ArrayList<Label> attributeLabels = new ArrayList<Label>();
+	
 	public ClassDiagramClassEditPart(ClassDiagramClass classDiagramClass) {
 		setModel(classDiagramClass);
 	}
@@ -57,9 +68,16 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List getModelSourceConnections() {
-		List<InheritRelationship> relations = getClassDiagramClass().getChildRelations();
-		debugRelations(relations, "Source: ");
-		return relations;
+		List sourceList = new ArrayList();
+		sourceList.addAll( getClassDiagramClass().getChildRelations() );
+		
+		for ( AttributeRelationship sourceRelation : getClassDiagramClass().getSourceRelations() ) {
+			if ( sourceRelation.isConnected() ) {
+				sourceList.add(sourceRelation);
+			}
+		}
+
+		return sourceList;
 	}
 
 	private void debugRelations(List<InheritRelationship> relations, String prefix) {
@@ -76,26 +94,41 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 			targetList.add( getClassDiagramClass().getParentRelation() );
 		}
 		debugRelations(targetList, "Target: ");
+		targetList.addAll( getClassDiagramClass().getTargetRelations() );
 		return targetList;
 	}
 
 	@Override
 	protected IFigure createFigure() {
 		ClassDiagramClass classDiagramClass = getClassDiagramClass();
-		Font classFont = new Font(null, "Arial", 12, SWT.BOLD
-				+ (classDiagramClass.isAbstractClass() ? SWT.ITALIC : 0));
-		Label classLabel1 = new Label( classDiagramClass.getName() );
-		classLabel1.setFont(classFont);
 		
-		UMLClassFigure classFigure = new UMLClassFigure( classLabel1 );
-	
-		for ( ClassDiagramAttribute attribute : classDiagramClass.getAttributes() ) {
-			Label attributeLabel = new Label( attribute.toString() );
-			classFigure.getAttributesCompartment().add( attributeLabel );
-		}
+		createClassLabel(classDiagramClass);
+		updateClassLabelIcon(classDiagramClass);
+		UMLClassFigure classFigure = new UMLClassFigure( classLabel );
+		createAttributeLabels(classDiagramClass, classFigure);
+		updateAttributeLabelIcons(classDiagramClass);
+
 		return classFigure;
 	}
 
+	private void createAttributeLabels(ClassDiagramClass classDiagramClass,
+			UMLClassFigure classFigure) {
+		attributeLabels.clear();
+		boolean showIcons = classDiagramClass.getParent().isShowIcons();
+		for ( ClassDiagramAttribute attribute : classDiagramClass.getAttributes() ) {
+			Label attributeLabel = new Label( attribute.toString().substring( showIcons ? 1 : 0) );
+			attributeLabels.add(attributeLabel);
+			classFigure.getAttributesCompartment().add( attributeLabel );
+		}
+	}
+
+	private void createClassLabel(ClassDiagramClass classDiagramClass) {
+		Font classFont = new Font(null, "Arial", 12, SWT.BOLD
+				+ (classDiagramClass.isAbstractClass() ? SWT.ITALIC : 0));
+		classLabel = new Label( classDiagramClass.getName() );
+		classLabel.setFont(classFont);
+	}
+	
 	@Override
 	protected void refreshVisuals() {
 		Point location = getClassDiagramClass().getLocation();
@@ -103,5 +136,39 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 
 		((GraphicalEditPart) getParent()).setLayoutConstraint(this,
 				getFigure(), bounds);
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		String propertyName = evt.getPropertyName();
+		if ( ClassDiagramElement.CLASS_DIAGRAM_SETTINGS_CHANGED_PROP.equals(propertyName) ) {
+			if ( evt.getNewValue().equals( ClassDiagram.SHOW_ICONS_PROP ) ) {
+				ClassDiagramClass classDiagramClass = getClassDiagramClass();
+				updateClassLabelIcon( classDiagramClass );
+				updateAttributeLabelIcons(classDiagramClass);
+				refreshVisuals();
+			}
+		}
+		super.propertyChange(evt);
+	}
+
+	private void updateClassLabelIcon(ClassDiagramClass classDiagramClass) {
+		boolean showIcons = classDiagramClass.getParent().isShowIcons();
+		if ( ! showIcons ) {
+			classLabel.setIcon(null);
+		} else {
+			classLabel.setIcon( Activator.getImage( IconFiles.CLASS_ICON ) );
+		}
+	}
+	
+	private void updateAttributeLabelIcons(ClassDiagramClass classDiagramClass) {
+		boolean showIcons = classDiagramClass.getParent().isShowIcons();
+		for (Label attributeLabel : attributeLabels ) {
+			if ( showIcons ) {
+				attributeLabel.setIcon( Activator.getImage( IconFiles.PUBLIC_ATTRIBUTE_ICON ) );
+			} else {
+				attributeLabel.setIcon( null );
+			}
+		}
 	}
 }

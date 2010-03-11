@@ -26,22 +26,32 @@ import java.util.EventObject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.draw2d.ConnectionLayer;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ManhattanConnectionRouter;
+import org.eclipse.draw2d.ShortestPathConnectionRouter;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.LayerConstants;
+import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
+import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.DeleteAction;
 import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
+import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramAction;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
@@ -76,6 +86,14 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		super.configureGraphicalViewer();
 		GraphicalViewer viewer = configureViewer();
 		configureContextMenu(viewer);
+		
+//		RootEditPart rootEditPart = viewer.getRootEditPart();
+//		if ( rootEditPart instanceof LayerManager ) {
+//			LayerManager layerManager = (LayerManager) rootEditPart;
+//			ConnectionLayer layer = (ConnectionLayer) layerManager.getLayer( LayerConstants.CONNECTION_LAYER );
+//			layer.setConnectionRouter( new ManhattanConnectionRouter() );
+////			layer.setConnectionRouter( new ShortestPathConnectionRouter( null ) );
+//		}
 	}
 
 	private GraphicalViewer configureViewer() {
@@ -85,11 +103,15 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		return viewer;
 	}
 
+	
 	private void configureContextMenu(GraphicalViewer viewer) {
-		ContextMenuProvider contextMenuProvider = new ClassDiagramEditorContextMenuProvider(viewer,
-				getActionRegistry());
-		viewer.setContextMenu(contextMenuProvider);
-		getSite().registerContextMenu(contextMenuProvider, viewer);
+		
+		MenuManager menuManager = new ClassDiagramContextMenuManager( getActionRegistry() );
+		viewer.setContextMenu( menuManager );
+//		ContextMenuProvider contextMenuProvider = new ClassDiagramEditorContextMenuProvider(viewer,
+//				getActionRegistry());
+//		viewer.setContextMenu(contextMenuProvider);
+//		getSite().registerContextMenu(contextMenuProvider, viewer);
 	}
 
 	@Override
@@ -173,5 +195,14 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
 			}
 		};
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void createActions() {
+		super.createActions();
+		IAction action = new ExportDiagramAction(this);
+		getActionRegistry().registerAction(action);
+		getSelectionActions().add( action.getId() );
 	}
 }

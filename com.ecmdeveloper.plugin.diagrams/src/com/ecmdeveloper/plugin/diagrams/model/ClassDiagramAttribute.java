@@ -21,8 +21,14 @@ package com.ecmdeveloper.plugin.diagrams.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 
+import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
+import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
 import com.filenet.api.constants.Cardinality;
+import com.filenet.api.meta.ClassDescription;
+import com.filenet.api.meta.PropertyDescriptionObject;
 
 /**
  * 
@@ -45,7 +51,7 @@ public class ClassDiagramAttribute {
 	private String multiplicity;
 	private String modifiers;
 	private String displayName;
-
+	
 	public ClassDiagramAttribute(String name, String displayName, String type,
 			String defaultValue, String multiplicity, String modifiers) {
 
@@ -64,12 +70,26 @@ public class ClassDiagramAttribute {
 		com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) adaptableObject
 				.getAdapter(com.filenet.api.meta.PropertyDescription.class );
 		
-		this.multiplicity = getMultiplicity( internalPropertyDescription );
+		this.multiplicity = MultiplicityFormatter.getMultiplicity( internalPropertyDescription );
 		this.modifiers = getModifiers( internalPropertyDescription );
 		this.name = internalPropertyDescription.get_Name();
 		this.displayName = internalPropertyDescription.get_DisplayName();
 		this.type = propertyDescription.getPropertyType().toString();
 		this.defaultValue = getDefaultValue();
+		
+		if ( propertyDescription.getPropertyType().equals( PropertyType.OBJECT ) ) {
+			PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
+			try {
+				// TODO: make this asynchronous?
+				GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
+				com.filenet.api.meta.ClassDescription requiredClass = (ClassDescription) ClassesManager.getManager().executeTaskSync( task );
+				this.type = requiredClass.get_DisplayName();
+//				this.requiredClassId = requiredClass.get_Id().toString();
+//				this.requiredClassName = requiredClass.get_Name();
+			} catch (Exception e) {
+				PluginLog.error(e);
+			}
+		}
 	}
 
 	public String getName() {
@@ -104,23 +124,23 @@ public class ClassDiagramAttribute {
 		return getUMLString(false, true, true, true, true );
 	}
 
-	private String getMultiplicity( com.filenet.api.meta.PropertyDescription internalPropertyDescription ) {
-		
-		if ( Cardinality.SINGLE.equals( internalPropertyDescription.get_Cardinality() ) ) {
-			
-			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
-				return MULTIPLICITY_SINGLE_NOT_REQUIRED;
-			} else {
-				return MULTIPLICITY_SINGLE_REQUIRED;
-			}
-		} else {
-			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
-				return MULTIPLICITY_MULTI_NOT_REQUIRED;
-			} else {
-				return MULTIPLICITY_MULTI_REQUIRED;
-			}
-		}
-	}
+//	private String getMultiplicity( com.filenet.api.meta.PropertyDescription internalPropertyDescription ) {
+//		
+//		if ( Cardinality.SINGLE.equals( internalPropertyDescription.get_Cardinality() ) ) {
+//			
+//			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
+//				return MULTIPLICITY_SINGLE_NOT_REQUIRED;
+//			} else {
+//				return MULTIPLICITY_SINGLE_REQUIRED;
+//			}
+//		} else {
+//			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
+//				return MULTIPLICITY_MULTI_NOT_REQUIRED;
+//			} else {
+//				return MULTIPLICITY_MULTI_REQUIRED;
+//			}
+//		}
+//	}
 
 	private String getModifiers(com.filenet.api.meta.PropertyDescription internalPropertyDescription) {
 	

@@ -24,8 +24,12 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LineBorder;
+import org.eclipse.draw2d.SchemeBorder;
 import org.eclipse.draw2d.ToolbarLayout;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.swt.graphics.Color;
+
+import com.ecmdeveloper.plugin.diagrams.Activator;
 
 /**
  * @author Ricardo.Belfor
@@ -42,10 +46,11 @@ public class UMLClassFigure extends Figure {
 
 		ToolbarLayout layout = new ToolbarLayout();
 		setLayoutManager(layout);
-		setBorder(new LineBorder(ColorConstants.black, 1));
-		setBackgroundColor(classColor);
+		setBorder(new LineBorder(ColorConstants.gray, 1));
+//		setBorder( new SchemeBorder(SchemeBorder.SCHEMES.RIDGED ) );
+//		setBorder( new ShadowBorder( new Dimension(20,20)) );
+//		setBackgroundColor(classColor);
 		setOpaque(true);
-
 		add(name);
 		add(attributeFigure);
 		//add(methodFigure);
