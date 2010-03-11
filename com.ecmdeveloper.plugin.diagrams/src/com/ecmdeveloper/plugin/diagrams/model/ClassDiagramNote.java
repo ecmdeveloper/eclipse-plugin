@@ -26,29 +26,26 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-import com.ecmdeveloper.plugin.diagrams.model.validators.PositiveIntegerValidator;
-
 /**
  * 
  * @author Ricardo.Belfor
  *
  */
-public class ClassDiagramNote extends ClassDiagramElement {
+public class ClassDiagramNote extends ClassDiagramElementWithResize {
 
-	private static IPropertyDescriptor[] noteDescriptors;
 	public static final String TEXT_PROP = "ClassDiagramNote.Text";
 	
+	private static final TextPropertyDescriptor TEXT_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(TEXT_PROP, "Text");
+	
 	static {
-		noteDescriptors = new IPropertyDescriptor[] { 
-				new TextPropertyDescriptor(TEXT_PROP, "Text")
-		};
-		
-		for (int i = 0; i < noteDescriptors.length; i++) {
-			((PropertyDescriptor) noteDescriptors[i]).setCategory( "Note Properties" );
-		}
-		
+		TEXT_PROPERTY_DESCRIPTOR.setCategory("Note Properties");
 	}
-	private String noteText = "My first note";
+
+	private static IPropertyDescriptor[] noteDescriptors = { WIDTH_PROPERTY_DESCRIPTOR,
+		HEIGHT_PROPERTY_DESCRIPTOR, XPOS_PROPERTY_DESCRIPTOR, YPOS_PROPERTY_DESCRIPTOR, 
+		TEXT_PROPERTY_DESCRIPTOR };
+
+	private String noteText;
 	
 	public String getNoteText() {
 		return noteText;
@@ -61,14 +58,7 @@ public class ClassDiagramNote extends ClassDiagramElement {
 
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
-		ArrayList<IPropertyDescriptor> propertyDescriptors = new ArrayList<IPropertyDescriptor>();
-		for ( IPropertyDescriptor propertyDescriptor : descriptors ) {
-			propertyDescriptors.add( propertyDescriptor);
-		}
-		for ( IPropertyDescriptor propertyDescriptor : noteDescriptors ) {
-			propertyDescriptors.add( propertyDescriptor);
-		}
-		return propertyDescriptors.toArray( new IPropertyDescriptor[0] );
+		return noteDescriptors;
 	}
 
 	@Override
@@ -85,6 +75,6 @@ public class ClassDiagramNote extends ClassDiagramElement {
 			setNoteText((String) value);
 			return;
 		}
-		super.getPropertyValue(propertyId);
+		super.setPropertyValue(propertyId, value);
 	}
 }

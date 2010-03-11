@@ -45,11 +45,14 @@ public class ClassDiagramEditorContextMenuProvider extends ContextMenuProvider {
 	@Override
 	public void buildContextMenu(IMenuManager menu) {
 		
-		GEFActionConstants.addStandardActionGroups(menu);
+//		GEFActionConstants.addStandardActionGroups(menu);
 		
-		menu.appendToGroup(GEFActionConstants.GROUP_UNDO, getAction(ActionFactory.UNDO.getId()));
-		menu.appendToGroup(GEFActionConstants.GROUP_UNDO, getAction(ActionFactory.REDO.getId()));
-		menu.appendToGroup(GEFActionConstants.GROUP_EDIT, getAction(ActionFactory.DELETE.getId()));
+		menu.add( getAction(ActionFactory.UNDO.getId() ) );
+		menu.add( getAction(ActionFactory.REDO.getId() ) );
+		menu.add( getAction(ActionFactory.DELETE.getId() ) );
+//		menu.appendToGroup(GEFActionConstants.GROUP_UNDO, getAction(ActionFactory.UNDO.getId()));
+//		menu.appendToGroup(GEFActionConstants.GROUP_UNDO, getAction(ActionFactory.REDO.getId()));
+//		menu.appendToGroup(GEFActionConstants.GROUP_EDIT, getAction(ActionFactory.DELETE.getId()));
 	}
 
 	private IAction getAction(String actionId) {

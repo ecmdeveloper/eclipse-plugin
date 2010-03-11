@@ -34,38 +34,29 @@ import com.ecmdeveloper.plugin.diagrams.model.validators.PositiveIntegerValidato
  */
 public abstract class ClassDiagramElement extends ClassDiagramBase {
 
-	protected static IPropertyDescriptor[] descriptors;
-	
-	private static final String HEIGHT_PROP = "ClassDiagramElement.Height";
-	private static final String WIDTH_PROP = "ClassDiagramElement.Width";
 	private static final String XPOS_PROP = "ClassDiagramElement.xPos";
 	private static final String YPOS_PROP = "ClassDiagramElement.yPos";
 
 	public static final String LOCATION_PROP = "ClassDiagramElement.Location";
 	public static final String SIZE_PROP = "ClassDiagramElement.Size";
-	
+	public static final String CLASS_DIAGRAM_SETTINGS_CHANGED_PROP = "ClassDiagramElement.ClassDiagramSettingsChanged";
+
 	public static final String SOURCE_CONNECTIONS_PROP = "ClassDiagramElement.SourceConn";
 	public static final String TARGET_CONNECTIONS_PROP = "ClassDiagramElement.TargetConn";
 
-	static {
-		descriptors = new IPropertyDescriptor[] { 
-				new TextPropertyDescriptor(XPOS_PROP, "X"),
-				new TextPropertyDescriptor(YPOS_PROP, "Y"),
-				new TextPropertyDescriptor(WIDTH_PROP, "Width"),
-				new TextPropertyDescriptor(HEIGHT_PROP, "Height"),
-		};
-
-		for (int i = 0; i < descriptors.length; i++) {
-			((PropertyDescriptor) descriptors[i]).setValidator(new PositiveIntegerValidator() );
-			((PropertyDescriptor) descriptors[i]).setCategory( "Appearance" );
-		}
-	}
-
-	/** Location of this shape. */
-	private Point location = new Point(0, 0);
-	/** Size of this shape. */
-	private Dimension size = new Dimension(150, 50);
+	protected static final TextPropertyDescriptor XPOS_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(XPOS_PROP, "X");
+	protected static final TextPropertyDescriptor YPOS_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(YPOS_PROP, "Y");
 	
+	static {
+
+		XPOS_PROPERTY_DESCRIPTOR.setCategory("Appearance");
+		XPOS_PROPERTY_DESCRIPTOR.setValidator( new PositiveIntegerValidator() );
+
+		YPOS_PROPERTY_DESCRIPTOR.setCategory("Appearance");
+		YPOS_PROPERTY_DESCRIPTOR.setValidator( new PositiveIntegerValidator() );
+	}
+	
+	private Point location = new Point(0, 0);
 	protected ClassDiagram parent;
 	
 	public void setParent( ClassDiagram parent ) {
@@ -88,33 +79,16 @@ public abstract class ClassDiagramElement extends ClassDiagramBase {
 		firePropertyChange(LOCATION_PROP, null, this.location);
 	}
 
-	public Dimension getSize() {
-		return size.getCopy();
+	public void notifyClassDiagramSettingsChanged(String propertyId) {
+		firePropertyChange(CLASS_DIAGRAM_SETTINGS_CHANGED_PROP, null, propertyId);
 	}
-
-	public void setSize(Dimension size) {
-		if (size != null) {
-			this.size.setSize(size);
-			firePropertyChange(SIZE_PROP, null, this.size);
-		}
-	}
-
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return descriptors;
-	}
-
+	
 	public Object getPropertyValue(Object propertyId) {
 		if (XPOS_PROP.equals(propertyId)) {
 			return Integer.toString(location.x);
 		}
 		if (YPOS_PROP.equals(propertyId)) {
 			return Integer.toString(location.y);
-		}
-		if (HEIGHT_PROP.equals(propertyId)) {
-			return Integer.toString(size.height);
-		}
-		if (WIDTH_PROP.equals(propertyId)) {
-			return Integer.toString(size.width);
 		}
 		return null;
 	}
@@ -126,12 +100,6 @@ public abstract class ClassDiagramElement extends ClassDiagramBase {
 		} else if (YPOS_PROP.equals(propertyId)) {
 			int y = Integer.parseInt((String) value);
 			setLocation(new Point(location.x, y));
-		} else if (HEIGHT_PROP.equals(propertyId)) {
-			int height = Integer.parseInt((String) value);
-			setSize(new Dimension(size.width, height));
-		} else if (WIDTH_PROP.equals(propertyId)) {
-			int width = Integer.parseInt((String) value);
-			setSize(new Dimension(width, size.height));
 		}
 	}
 

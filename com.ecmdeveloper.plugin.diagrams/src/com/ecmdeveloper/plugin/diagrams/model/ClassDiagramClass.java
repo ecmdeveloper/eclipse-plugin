@@ -24,9 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
+import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
+import com.filenet.api.meta.PropertyDescriptionObject;
 
 
 /**
@@ -42,9 +48,13 @@ public class ClassDiagramClass extends ClassDiagramElement {
 	private String parentClassId;
 	private List<InheritRelationship> childRelations = new ArrayList<InheritRelationship>();
 	private InheritRelationship parentRelation;
-	
+	private List<AttributeRelationship> sourceRelations = new ArrayList<AttributeRelationship>();
+	private List<AttributeRelationship> targetRelations = new ArrayList<AttributeRelationship>();
 	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
 
+	private static IPropertyDescriptor[] classDescriptors = { XPOS_PROPERTY_DESCRIPTOR,
+			YPOS_PROPERTY_DESCRIPTOR };
+	
 	public ClassDiagramClass(String name, String displayName,
 			boolean abstractClass, String id, String parentClassId) {
 		super();
@@ -66,16 +76,58 @@ public class ClassDiagramClass extends ClassDiagramElement {
 		name = internalClassDescription.get_Name();
 		
 		ClassDescription classDescription = (ClassDescription) adaptableObject.getAdapter(ClassDescription.class);
+		createClassDiagramAttributes(classDescription);
+		createClassDiagramAttributeRelations(classDescription);
+		
+		if ( classDescription.getParent() instanceof ClassDescription ) {
+			parentClassId = ((ClassDescription)classDescription.getParent()).getId();
+		}
+	}
+
+	private void createClassDiagramAttributeRelations(ClassDescription classDescription) {
+		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
+			if (!propertyDescription.isReadOnly()
+					&& propertyDescription.getPropertyType().equals(PropertyType.OBJECT)) {
+				createClassDiagramAttributeRelation(propertyDescription);
+			}
+		}		
+	}
+
+	private void createClassDiagramAttributeRelation(PropertyDescription propertyDescription) {
+		com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) propertyDescription
+		.getAdapter(com.filenet.api.meta.PropertyDescription.class );
+		PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
+		try {
+			AttributeRelationship attributeRelationship = new AttributeRelationship(objectPropertyDescription);
+			sourceRelations.add(attributeRelationship);
+		} catch (Exception e) {
+			PluginLog.error(e);
+		}
+	}
+
+//	private AttributeRelationship createAttributeRelationship(PropertyDescriptionObject objectPropertyDescription)
+//			throws Exception {
+//		// TODO: make this asynchronous?
+//		GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
+//		com.filenet.api.meta.ClassDescription requiredClass = (com.filenet.api.meta.ClassDescription) ClassesManager.getManager().executeTaskSync( task );
+//		
+//		AttributeRelationship attributeRelationship = new AttributeRelationship();
+//		attributeRelationship.setRequiredClassId( requiredClass.get_Id().toString() );
+//		attributeRelationship.setRequiredClassName( requiredClass.get_Name() );
+//		attributeRelationship.setName( objectPropertyDescription.get_DisplayName() );
+//		String multiplicity = MultiplicityFormatter.getMultiplicity( objectPropertyDescription );
+//		attributeRelationship.setTargetMultiplicity( multiplicity );
+//		
+//		return attributeRelationship;
+//	}
+
+	private void createClassDiagramAttributes(ClassDescription classDescription) {
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
 			if ( ! propertyDescription.isReadOnly() ) {
 				ClassDiagramAttribute attribute = (ClassDiagramAttribute) propertyDescription.getAdapter(ClassDiagramAttribute.class);
 				addAttribute(attribute);
 			}
 		 }
-	
-		if ( classDescription.getParent() instanceof ClassDescription ) {
-			parentClassId = ((ClassDescription)classDescription.getParent()).getId();
-		}
 	}
 
 	public String getName() {
@@ -120,15 +172,9 @@ public class ClassDiagramClass extends ClassDiagramElement {
 
 	public void addChild(ClassDiagramClass childClass ) {
 		
-		System.out.println( getDisplayName() + " is the parent class of " + childClass.getDisplayName() );
-
 		InheritRelationship childRelation = getChildRelation( childClass);
 		
 		if ( childRelation == null ) {
-//			parentRelation = new InheritRelationship(this, childClass );
-//			childRelations.add( parentRelation );
-//			childClass.connectParent( parentRelation );
-//			firePropertyChange(SOURCE_CONNECTIONS_PROP, null, parentRelation );
 			childRelation = new InheritRelationship(this, childClass );
 			childRelations.add( childRelation );
 			childClass.connectParent( childRelation );
@@ -168,5 +214,30 @@ public class ClassDiagramClass extends ClassDiagramElement {
 			return ((ClassDiagramClass)object).getId().equalsIgnoreCase( getId() );
 		}
 		return false;
+	}
+
+	@Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+		return classDescriptors;
+	}
+
+	public void addTarget(AttributeRelationship relationship) {
+		if ( ! targetRelations.contains(relationship) ) {
+			targetRelations.add( relationship );
+			firePropertyChange(TARGET_CONNECTIONS_PROP, null, relationship);
+		}
+	}
+	
+	public List<AttributeRelationship> getSourceRelations() {
+		return sourceRelations;
+	}
+
+	public List<AttributeRelationship> getTargetRelations() {
+		return targetRelations;
+	}
+
+	public void connectSource(AttributeRelationship attributeRelationship) {
+		attributeRelationship.setConnected(true);
+		firePropertyChange(SOURCE_CONNECTIONS_PROP, null, attributeRelationship);
 	}
 }

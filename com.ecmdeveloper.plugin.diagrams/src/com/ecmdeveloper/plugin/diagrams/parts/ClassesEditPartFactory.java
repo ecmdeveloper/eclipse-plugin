@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.diagrams.parts;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 
+import com.ecmdeveloper.plugin.diagrams.model.AttributeRelationship;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramNote;
@@ -34,9 +35,6 @@ import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
  */
 public class ClassesEditPartFactory implements EditPartFactory {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.EditPartFactory#createEditPart(org.eclipse.gef.EditPart, java.lang.Object)
-	 */
 	@Override
 	public EditPart createEditPart(EditPart context, Object model) {
 
@@ -48,6 +46,10 @@ public class ClassesEditPartFactory implements EditPartFactory {
 
 		if (model instanceof ClassDiagramNote) {
 			return new ClassDiagramNoteEditPart( (ClassDiagramNote) model);
+		}
+		
+		if ( model instanceof AttributeRelationship ) {
+			return new AttributeRelationshipEditPart( (AttributeRelationship) model );
 		}
 		
 		if ( model instanceof InheritRelationship )

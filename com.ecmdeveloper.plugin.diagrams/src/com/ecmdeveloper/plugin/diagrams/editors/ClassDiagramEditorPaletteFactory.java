@@ -29,8 +29,10 @@ import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PanningSelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.requests.SimpleFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramNote;
+import com.ecmdeveloper.plugin.diagrams.util.IconFiles;
 import com.ecmdeveloper.plugin.diagrams.Activator;
 /**
  * 
@@ -71,7 +73,12 @@ public class ClassDiagramEditorPaletteFactory {
    		
    		PaletteDrawer componentsDrawer = new PaletteDrawer( "Diagram Elements" );
    		
-   		CombinedTemplateCreationEntry noteCreationEntry = new CombinedTemplateCreationEntry("Diagram Note", "Note", new SimpleFactory(ClassDiagramNote.class), null, null) ;
+   		ImageDescriptor noteImageSmall = Activator.getImageDescriptor( IconFiles.NOTE );
+   		ImageDescriptor noteImageLarge = Activator.getImageDescriptor( IconFiles.NOTE_LARGE );
+   		
+   		CombinedTemplateCreationEntry noteCreationEntry = new CombinedTemplateCreationEntry(
+				"Diagram Note", "Note", new SimpleFactory(ClassDiagramNote.class), noteImageSmall,
+				noteImageLarge);
    		componentsDrawer.add( noteCreationEntry );
         return componentsDrawer;
 

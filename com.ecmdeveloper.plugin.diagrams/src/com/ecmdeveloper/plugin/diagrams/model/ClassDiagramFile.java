@@ -133,14 +133,13 @@ public class ClassDiagramFile {
 		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName, abstractClass, id, parentClassId );
 		
 		getLocation(clazz, classDiagramClass);
-		getSize(clazz, classDiagramClass);
 		
 		getClassDiagramAttributes(clazz, classDiagramClass);
 		
 		return classDiagramClass;
 	}
 
-	private void getSize(IMemento elementChild, ClassDiagramElement classDiagramElement) {
+	private void getSize(IMemento elementChild, ClassDiagramElementWithResize classDiagramElement) {
 		Dimension size = new Dimension(elementChild.getInteger(PluginTagNames.WIDTH), elementChild
 				.getInteger(PluginTagNames.HEIGHT));
 		classDiagramElement.setSize(size);
@@ -211,7 +210,6 @@ public class ClassDiagramFile {
 		classChild.putBoolean( PluginTagNames.ABSTRACT_CLASS, classDiagramClass.isAbstractClass() );
 		
 		addLocation(classDiagramClass, classChild);
-		addSize(classDiagramClass, classChild);
 
 		classChild.putString( PluginTagNames.ID, classDiagramClass.getId() );
 		classChild.putString( PluginTagNames.PARENT_CLASS_ID, classDiagramClass.getParentClassId() );
@@ -220,7 +218,7 @@ public class ClassDiagramFile {
 		initializeAttributesChild(classDiagramClass, attributesChild);
 	}
 
-	private void addSize(ClassDiagramElement classDiagramElement, IMemento elementChild) {
+	private void addSize(ClassDiagramElementWithResize classDiagramElement, IMemento elementChild) {
 		Dimension size = classDiagramElement.getSize();
 		elementChild.putInteger( PluginTagNames.HEIGHT, size.height );
 		elementChild.putInteger( PluginTagNames.WIDTH, size.width );

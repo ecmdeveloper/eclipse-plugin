@@ -28,6 +28,7 @@ import org.eclipse.gef.commands.Command;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElementWithResize;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramNote;
 import com.ecmdeveloper.plugin.diagrams.parts.ClassDiagramEditPart;
 
@@ -46,18 +47,8 @@ public class AdjustConstraintCommand extends Command
       this.manager = (ClassDiagramEditPart) editPart.getParent();
       this.model = (ClassDiagramElement) editPart.getModel();
       this.newBounds = contraint;
-      System.out.println( contraint.toString() );
       this.oldBounds = new Rectangle(editPart.getFigure().getBounds());
       setLabel(getOp(oldBounds, newBounds) + " " + getName(editPart));
-//      
-//      if ( this.model instanceof ClassDiagramClass ) {
-//    	  if ( ! newBounds.getSize().equals( oldBounds.getSize() ) ) {
-//    		  ((ClassDiagramClass)model).setSize( newBounds.getSize() );
-//    	  }
-//    	  if ( ! newBounds.getLocation().equals( oldBounds.getLocation() ) ) {
-//    		  ((ClassDiagramClass)model).setLocation( newBounds.getLocation() );
-//    	  }
-//      }
    }
 
    private String getOp(Rectangle oldBounds, Rectangle newBounds) {
@@ -78,24 +69,27 @@ public class AdjustConstraintCommand extends Command
    }
 
    public void execute() {
-      redo();
+	   redo();
    }
 
    public void redo() {
-      GraphicalEditPart editPart = getEditPart();
-      if (editPart == null)
-         return;
-	  	model.setSize(newBounds.getSize());
+		GraphicalEditPart editPart = getEditPart();
+		if (editPart == null)
+			return;
+
+		if (model instanceof ClassDiagramElementWithResize) {
+			((ClassDiagramElementWithResize) model).setSize(newBounds.getSize());
+		}
 		model.setLocation(newBounds.getLocation());
-      //manager.setLayoutConstraint(editPart, editPart.getFigure(), newBounds);
-   }
+	}
 
    public void undo() {
       GraphicalEditPart editPart = getEditPart();
       if (editPart == null)
          return;
-//      manager.setLayoutConstraint(editPart, editPart.getFigure(), oldBounds);
-		model.setSize(oldBounds.getSize());
+		if (model instanceof ClassDiagramElementWithResize) {
+			((ClassDiagramElementWithResize) model).setSize(newBounds.getSize());
+		}
 		model.setLocation(oldBounds.getLocation());
 
    }

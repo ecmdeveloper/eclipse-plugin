@@ -25,12 +25,15 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ShortestPathConnectionRouter;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.LayerConstants;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramLayoutEditPolicy;
@@ -100,5 +103,11 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart
 				|| ClassDiagram.CHILD_REMOVED_PROP.equals(prop)) {
 			refreshChildren();
 		}
+	}
+
+	@Override
+	protected void registerVisuals() {
+		ConnectionLayer cLayer = (ConnectionLayer) getLayer(LayerConstants.CONNECTION_LAYER);
+		cLayer.setConnectionRouter(new ShortestPathConnectionRouter(getFigure()));
 	}
 }

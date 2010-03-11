@@ -20,59 +20,56 @@
 
 package com.ecmdeveloper.plugin.diagrams.parts;
 
+import org.eclipse.draw2d.ConnectionEndpointLocator;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
-import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
-import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
+import com.ecmdeveloper.plugin.diagrams.model.AttributeRelationship;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class InheritConnectionEditPart extends AbstractClassesConnectionEditPart {
+public class AttributeRelationshipEditPart extends AbstractClassesConnectionEditPart {
 
-	private static final int INHERIT_DECORTATION_SIZE = 3;
-
-	public InheritConnectionEditPart(InheritRelationship model ) {
+	public AttributeRelationshipEditPart(AttributeRelationship model) {
 		setModel(model);
 	}
-	
-	public InheritRelationship getInheritRelationship() {
-		return (InheritRelationship) getModel();
+
+	public AttributeRelationship getAttributeRelationship() {
+		return (AttributeRelationship) getModel();
 	}
-	
 	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
-//		installEditPolicy(EditPolicy.COMPONENT_ROLE, new RelationshipEditPolicy());
 	}
 
 	@Override
-	public IFigure createFigure() {
+	protected IFigure createFigure() {
+		
+		AttributeRelationship attributeRelationship = getAttributeRelationship();
+		
 		PolylineConnection connection = (PolylineConnection) super.createFigure();
-		PolygonDecoration decoration = createInheritDecoration();
-		connection.setSourceDecoration(decoration);
+		connection.setTargetDecoration(new PolygonDecoration() );
+		
+		if ( attributeRelationship.getReflectivePropertyId() != null ) {
+			connection.setSourceDecoration( new PolygonDecoration() );
+		}
+		
+		connection.setLineStyle(Graphics.LINE_DASH);
+		
+		String targetMultiplicity = attributeRelationship.getTargetMultiplicity();
+		
+		if ( !targetMultiplicity.isEmpty() ) {
+			ConnectionEndpointLocator targetEndpointLocator = new ConnectionEndpointLocator(connection, true);
+			targetEndpointLocator.setVDistance(15);
+			Label targetMultiplicityLabel = new Label( targetMultiplicity );
+			connection.add(targetMultiplicityLabel, targetEndpointLocator);
+		}
 		return connection;
-	}
-
-	private PolygonDecoration createInheritDecoration() {
-		PolygonDecoration decoration = new PolygonDecoration();
-		decoration.setFill(true);
-		decoration.setBackgroundColor( org.eclipse.draw2d.ColorConstants.white );
-		PointList decorationPointList = createDecorationPointList();
-		decoration.setTemplate(decorationPointList);
-		return decoration;
-	}
-
-	private PointList createDecorationPointList() {
-		PointList decorationPointList = new PointList();
-		decorationPointList.addPoint(0,0);
-		decorationPointList.addPoint(-INHERIT_DECORTATION_SIZE,INHERIT_DECORTATION_SIZE);
-		decorationPointList.addPoint(-INHERIT_DECORTATION_SIZE,-INHERIT_DECORTATION_SIZE);
-		return decorationPointList;
-	}
-}
+	}}
