@@ -59,6 +59,33 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.diagrams.classDiagramEditor?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.diagrams.addClassToDiagram"
+               icon="icons/table_add.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <with
+                        variable="selection">
+                     <iterate>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.classes.model.ClassDescription">
+                        </instanceof>
+                     </iterate>
+                  </with>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="com.ecmdeveloper.plugin.diagrams.classDiagramEditor">
+                     </equals>
+                  </with>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

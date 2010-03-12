@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.diagrams.parts;
 
+import java.beans.PropertyChangeEvent;
+
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
@@ -74,5 +76,11 @@ public class InheritConnectionEditPart extends AbstractClassesConnectionEditPart
 		decorationPointList.addPoint(-INHERIT_DECORTATION_SIZE,INHERIT_DECORTATION_SIZE);
 		decorationPointList.addPoint(-INHERIT_DECORTATION_SIZE,-INHERIT_DECORTATION_SIZE);
 		return decorationPointList;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

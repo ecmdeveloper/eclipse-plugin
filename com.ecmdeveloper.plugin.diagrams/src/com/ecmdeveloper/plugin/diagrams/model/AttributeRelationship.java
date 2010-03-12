@@ -30,43 +30,51 @@ import com.filenet.api.meta.PropertyDescriptionObject;
  */
 public class AttributeRelationship {
 
-	private String targetClassId;
-	private String targetClassName;
 	private String name;
-	private String targetMultiplicity;
 	private boolean connected;
-	private String targetPropertyId;
-
-	public AttributeRelationship(PropertyDescriptionObject objectPropertyDescription) throws Exception {
+	private ClassConnector sourceConnector;
+	private ClassConnector targetConnector;
+	
+	public AttributeRelationship(PropertyDescriptionObject objectPropertyDescription, ClassDiagramClass parent ) throws Exception {
 
 		GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
 		com.filenet.api.meta.ClassDescription requiredClass = (com.filenet.api.meta.ClassDescription) ClassesManager.getManager().executeTaskSync( task );
-		
-		targetClassId = requiredClass.get_Id().toString();
-		targetClassName = requiredClass.get_Name();
+
 		name = objectPropertyDescription.get_DisplayName();
-		targetMultiplicity = MultiplicityFormatter.getMultiplicity( objectPropertyDescription );
+		initializeTargetConnector(objectPropertyDescription, requiredClass);
+		initalizeSourceConnector(objectPropertyDescription, parent);
+	}
+
+	private void initializeTargetConnector(PropertyDescriptionObject objectPropertyDescription,
+			com.filenet.api.meta.ClassDescription requiredClass) {
+		
+		targetConnector = new ClassConnector();
+		targetConnector.setClassId( requiredClass.get_Id().toString() );
+		targetConnector.setClassName( requiredClass.get_Name() );
+		targetConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( objectPropertyDescription ) );
+
 		if ( objectPropertyDescription.get_ReflectivePropertyId() != null ) {
-			targetPropertyId = objectPropertyDescription.get_ReflectivePropertyId().toString();
-		} else {
-			targetPropertyId = null; 
+			targetConnector.setPropertyId( objectPropertyDescription.get_ReflectivePropertyId().toString() );
 		}
 	}
 
-	public String getRequiredClassId() {
-		return targetClassId;
+	public ClassConnector getSourceConnector() {
+		return sourceConnector;
 	}
 
-	public void setRequiredClassId(String requiredClassId) {
-		this.targetClassId = requiredClassId;
+	public ClassConnector getTargetConnector() {
+		return targetConnector;
 	}
 
-	public String getRequiredClassName() {
-		return targetClassName;
-	}
+	private void initalizeSourceConnector(PropertyDescriptionObject objectPropertyDescription,
+			ClassDiagramClass parent) {
 
-	public void setTargetClassName(String targetClassName) {
-		this.targetClassName = targetClassName;
+		sourceConnector = new ClassConnector();
+		sourceConnector.setClassId( parent.getId() );
+		sourceConnector.setClassName( parent.getName() );
+		sourceConnector.setPropertyId( objectPropertyDescription.get_Id().toString() );
+		sourceConnector.setPropertyName( objectPropertyDescription.get_Name() );
+		sourceConnector.setMultiplicity( "1" ); // TODO
 	}
 
 	public String getName() {
@@ -77,28 +85,12 @@ public class AttributeRelationship {
 		this.name = name;
 	}
 
-	public String getTargetMultiplicity() {
-		return targetMultiplicity;
-	}
-
-	public void setTargetMultiplicity(String targetMultiplicity) {
-		this.targetMultiplicity = targetMultiplicity;
-	}
-
 	public boolean isConnected() {
 		return connected;
 	}
 
 	public void setConnected(boolean connected) {
 		this.connected = connected;
-	}
-
-	public String getReflectivePropertyId() {
-		return targetPropertyId;
-	}
-
-	public void setReflectivePropertyId(String reflectivePropertyId) {
-		this.targetPropertyId = reflectivePropertyId;
 	}
 
 //	private ClassDiagramClass source;

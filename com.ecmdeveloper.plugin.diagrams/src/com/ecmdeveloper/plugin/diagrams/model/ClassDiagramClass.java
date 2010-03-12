@@ -98,7 +98,7 @@ public class ClassDiagramClass extends ClassDiagramElement {
 		.getAdapter(com.filenet.api.meta.PropertyDescription.class );
 		PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
 		try {
-			AttributeRelationship attributeRelationship = new AttributeRelationship(objectPropertyDescription);
+			AttributeRelationship attributeRelationship = new AttributeRelationship(objectPropertyDescription,this);
 			sourceRelations.add(attributeRelationship);
 		} catch (Exception e) {
 			PluginLog.error(e);

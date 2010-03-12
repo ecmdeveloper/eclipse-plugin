@@ -112,9 +112,11 @@ public class ClassDiagram extends ClassDiagramBase {
 	private void connectAttributeClassToClass(ClassDiagramClass attributeClass) {
 		for ( ClassDiagramClass classDiagramClass : classDiagramClasses ) {
 			for ( AttributeRelationship attributeRelationship : classDiagramClass.getSourceRelations() ) {
-				if ( isAttributeRelationshipClass(attributeRelationship, attributeClass ) ) {
-					classDiagramClass.connectSource( attributeRelationship );
-					attributeClass.addTarget( attributeRelationship );
+				if ( !attributeClass.getId().equals( attributeRelationship.getSourceConnector().getClassId() ) ) {
+					if ( isAttributeRelationshipClass(attributeRelationship, attributeClass ) ) {
+						classDiagramClass.connectSource( attributeRelationship );
+						attributeClass.addTarget( attributeRelationship );
+					}
 				}
 			}
 		}
@@ -132,7 +134,7 @@ public class ClassDiagram extends ClassDiagramBase {
 
 	private boolean isAttributeRelationshipClass(AttributeRelationship attributeRelationship,
 			ClassDiagramClass attributeClass) {
-		return attributeClass.getId().equals( attributeRelationship.getRequiredClassId() );
+		return attributeClass.getId().equals( attributeRelationship.getSourceConnector().getClassId() );
 	}
 	
 	private void connectClassToChildren(ClassDiagramClass classDiagramClass) {

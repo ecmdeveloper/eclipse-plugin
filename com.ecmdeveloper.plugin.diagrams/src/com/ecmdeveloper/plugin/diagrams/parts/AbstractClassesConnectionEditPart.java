@@ -31,21 +31,21 @@ import org.eclipse.gef.editparts.AbstractConnectionEditPart;
  */
 public abstract class AbstractClassesConnectionEditPart extends AbstractConnectionEditPart implements PropertyChangeListener{
 
-	@Override
-	public void activate() {
-		// TODO Auto-generated method stub
-		super.activate();
-	}
-
-	@Override
-	public void deactivate() {
-		// TODO Auto-generated method stub
-		super.deactivate();
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+//	@Override
+//	public void activate() {
+//		// TODO Auto-generated method stub
+//		super.activate();
+//	}
+//
+//	@Override
+//	public void deactivate() {
+//		// TODO Auto-generated method stub
+//		super.deactivate();
+//	}
+//
+//	@Override
+//	public void propertyChange(PropertyChangeEvent arg0) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 }

@@ -21,19 +21,14 @@
 package com.ecmdeveloper.plugin.diagrams.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.ConnectionEditPart;
-import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.Request;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 
@@ -45,7 +40,6 @@ import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
 import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
-import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy;
 import com.ecmdeveloper.plugin.diagrams.util.IconFiles;
 
 /**
@@ -56,11 +50,15 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 
 	private Label classLabel;
 	private ArrayList<Label> attributeLabels = new ArrayList<Label>();
+	private UMLClassFigure classFigure;
 	
 	public ClassDiagramClassEditPart(ClassDiagramClass classDiagramClass) {
 		setModel(classDiagramClass);
 	}
 
+	public Rectangle getBounds() {
+		return classFigure.getBounds();
+	}
 	public ClassDiagramClass getClassDiagramClass() {
 		return (ClassDiagramClass) getModel();
 	}
@@ -104,7 +102,7 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 		
 		createClassLabel(classDiagramClass);
 		updateClassLabelIcon(classDiagramClass);
-		UMLClassFigure classFigure = new UMLClassFigure( classLabel );
+		classFigure = new UMLClassFigure( classLabel );
 		createAttributeLabels(classDiagramClass, classFigure);
 		updateAttributeLabelIcons(classDiagramClass);
 
