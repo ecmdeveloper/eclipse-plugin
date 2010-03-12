@@ -35,6 +35,7 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.LayerConstants;
 
+import com.ecmdeveloper.plugin.diagrams.layout.ClassDiagramLayoutManager;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramLayoutEditPolicy;
 
@@ -75,7 +76,7 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart
 	@Override
 	protected IFigure createFigure() {
 	   IFigure figure = new FreeformLayer();
-	   figure.setLayoutManager(new FreeformLayout());
+	   figure.setLayoutManager(new ClassDiagramLayoutManager(this) );
 //     figure.setToolTip(createToolTipLabel());
 	   return figure;
 	}

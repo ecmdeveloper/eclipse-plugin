@@ -20,13 +20,26 @@
 
 package com.ecmdeveloper.plugin.diagrams.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.draw2d.AbsoluteBendpoint;
+import org.eclipse.draw2d.Bendpoint;
+import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionEndpointLocator;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.draw2d.RelativeBendpoint;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
 import com.ecmdeveloper.plugin.diagrams.model.AttributeRelationship;
@@ -50,6 +63,71 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 	}
 
 	@Override
+	protected void activateFigure() {
+		super.activateFigure();
+		getFigure().addPropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this );
+	}
+
+	@Override
+	protected void deactivateFigure() {
+		getFigure().removePropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this);
+		super.deactivateFigure();
+	}
+
+//	@Override
+//	protected void refreshVisuals() {
+	public void refreshIt() {
+		AttributeRelationship attributeRelationship = getAttributeRelationship();
+
+		if ( attributeRelationship.getSourceConnector().getClassId().equals( attributeRelationship.getTargetConnector().getClassId() ) ) {
+
+			Rectangle bounds = ((AbstractGraphicalEditPart)getSource()).getFigure().getBounds();
+			System.out.println( "bounds: " + bounds.toString() );
+
+			int outerX = bounds.width/2 + 20;
+			int outerY = -(bounds.height/2 + 20);
+			
+//			AbsoluteBendpoint point1 = new AbsoluteBendpoint(100,100);
+//			AbsoluteBendpoint point2 = new AbsoluteBendpoint(10,200);
+//			RelativeBendpoint point = new RelativeBendpoint();
+//			point.setRelativeDimensions(new Dimension(10,10), new Dimension(100,100) );
+//			point.setWeight(0);
+//			point.setConnection(this.getConnectionFigure());
+
+			RelativeBendpoint point = new RelativeBendpoint(getConnectionFigure());
+			point.setRelativeDimensions(new Dimension(outerX,0), new Dimension(outerX,0) );
+			point.setWeight(0.5f);
+
+			RelativeBendpoint point2 = new RelativeBendpoint(getConnectionFigure());
+			point2.setRelativeDimensions(new Dimension(outerX,outerY), new Dimension(outerX,outerY) );
+			point2.setWeight(0.5f);
+			
+			RelativeBendpoint point3 = new RelativeBendpoint(getConnectionFigure());
+			point3.setRelativeDimensions(new Dimension(0,outerY), new Dimension(0,outerY) );
+			point3.setWeight(0.5f);
+			
+			List<Bendpoint> constraint = new ArrayList<org.eclipse.draw2d.Bendpoint>();
+			constraint.add(point);
+			constraint.add(point2);
+			constraint.add(point3);
+			
+//			Rectangle bounds = ((ClassDiagramClassEditPart)getSource()).getBounds();
+////			List<Bendpoint> constraint = new ArrayList<org.eclipse.draw2d.Bendpoint>();
+////			constraint.add( point1 );
+////			constraint.add( point2 );
+			this.getConnectionFigure().setRoutingConstraint(constraint);
+			
+			System.err.println( attributeRelationship.getSourceConnector().getPropertyName() + " is in a loop" );
+		}
+	}
+	
+	@Override
+	public void setLayoutConstraint(EditPart child, IFigure childFigure, Object constraint) {
+		// TODO Auto-generated method stub
+		super.setLayoutConstraint(child, childFigure, constraint);
+	}
+
+	@Override
 	protected IFigure createFigure() {
 		
 		AttributeRelationship attributeRelationship = getAttributeRelationship();
@@ -57,19 +135,29 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 		PolylineConnection connection = (PolylineConnection) super.createFigure();
 		connection.setTargetDecoration(new PolygonDecoration() );
 		
-		if ( attributeRelationship.getReflectivePropertyId() != null ) {
+		if ( attributeRelationship.getTargetConnector().getPropertyId() != null ) {
 			connection.setSourceDecoration( new PolygonDecoration() );
 		}
 		
 		connection.setLineStyle(Graphics.LINE_DASH);
 		
-		String targetMultiplicity = attributeRelationship.getTargetMultiplicity();
+		String targetMultiplicity = attributeRelationship.getTargetConnector().getMultiplicity();
 		
 		if ( !targetMultiplicity.isEmpty() ) {
 			ConnectionEndpointLocator targetEndpointLocator = new ConnectionEndpointLocator(connection, true);
-			targetEndpointLocator.setVDistance(15);
+			targetEndpointLocator.setVDistance(20);
+			targetEndpointLocator.setUDistance(20);
 			Label targetMultiplicityLabel = new Label( targetMultiplicity );
 			connection.add(targetMultiplicityLabel, targetEndpointLocator);
 		}
+		
 		return connection;
-	}}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent arg0) {
+		System.out.println( "Property change?");
+	}
+	
+	
+}
