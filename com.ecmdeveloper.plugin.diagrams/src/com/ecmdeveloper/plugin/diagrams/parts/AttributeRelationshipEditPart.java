@@ -62,21 +62,20 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
 	}
 
-	@Override
-	protected void activateFigure() {
-		super.activateFigure();
-		getFigure().addPropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this );
-	}
-
-	@Override
-	protected void deactivateFigure() {
-		getFigure().removePropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this);
-		super.deactivateFigure();
-	}
-
 //	@Override
-//	protected void refreshVisuals() {
-	public void refreshIt() {
+//	protected void activateFigure() {
+//		super.activateFigure();
+//		getFigure().addPropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this );
+//	}
+//
+//	@Override
+//	protected void deactivateFigure() {
+//		getFigure().removePropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this);
+//		super.deactivateFigure();
+//	}
+
+	public void positionConnections() {
+		
 		AttributeRelationship attributeRelationship = getAttributeRelationship();
 
 		if ( attributeRelationship.getSourceConnector().getClassId().equals( attributeRelationship.getTargetConnector().getClassId() ) ) {
@@ -87,13 +86,6 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 			int outerX = bounds.width/2 + 20;
 			int outerY = -(bounds.height/2 + 20);
 			
-//			AbsoluteBendpoint point1 = new AbsoluteBendpoint(100,100);
-//			AbsoluteBendpoint point2 = new AbsoluteBendpoint(10,200);
-//			RelativeBendpoint point = new RelativeBendpoint();
-//			point.setRelativeDimensions(new Dimension(10,10), new Dimension(100,100) );
-//			point.setWeight(0);
-//			point.setConnection(this.getConnectionFigure());
-
 			RelativeBendpoint point = new RelativeBendpoint(getConnectionFigure());
 			point.setRelativeDimensions(new Dimension(outerX,0), new Dimension(outerX,0) );
 			point.setWeight(0.5f);
@@ -111,10 +103,6 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 			constraint.add(point2);
 			constraint.add(point3);
 			
-//			Rectangle bounds = ((ClassDiagramClassEditPart)getSource()).getBounds();
-////			List<Bendpoint> constraint = new ArrayList<org.eclipse.draw2d.Bendpoint>();
-////			constraint.add( point1 );
-////			constraint.add( point2 );
 			this.getConnectionFigure().setRoutingConstraint(constraint);
 			
 			System.err.println( attributeRelationship.getSourceConnector().getPropertyName() + " is in a loop" );
@@ -122,21 +110,15 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 	}
 	
 	@Override
-	public void setLayoutConstraint(EditPart child, IFigure childFigure, Object constraint) {
-		// TODO Auto-generated method stub
-		super.setLayoutConstraint(child, childFigure, constraint);
-	}
-
-	@Override
 	protected IFigure createFigure() {
 		
 		AttributeRelationship attributeRelationship = getAttributeRelationship();
 		
 		PolylineConnection connection = (PolylineConnection) super.createFigure();
-		connection.setTargetDecoration(new PolygonDecoration() );
+		connection.setSourceDecoration(new PolygonDecoration() );
 		
 		if ( attributeRelationship.getTargetConnector().getPropertyId() != null ) {
-			connection.setSourceDecoration( new PolygonDecoration() );
+			connection.setTargetDecoration( new PolygonDecoration() );
 		}
 		
 		connection.setLineStyle(Graphics.LINE_DASH);

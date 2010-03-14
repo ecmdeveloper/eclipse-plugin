@@ -31,7 +31,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * 
  * @author Ricardo Belfor
  */
-public abstract class ClassDiagramBase implements IPropertySource {
+public abstract class ClassDiagramBase {
 
 	/** The Constant EMPTY_ARRAY. */
 	private static final IPropertyDescriptor[] EMPTY_ARRAY = new IPropertyDescriptor[0];
@@ -77,29 +77,16 @@ public abstract class ClassDiagramBase implements IPropertySource {
 		}
 	}
 
-	/**
-	 * Gets the editable value. Returns a value for this property source that
-	 * can be edited in a property sheet.
-	 * 
-	 * @return the editable value
-	 * 
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
-	 */
-	@Override
-	public Object getEditableValue() {
-		return this;
-	}
-
-	/**
-	 * Gets the property descriptors. Children should override this. The default
-	 * implementation returns an empty array.
-	 * 
-	 * @return the property descriptors
-	 * 
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
-	 */
-	@Override
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return EMPTY_ARRAY;	
-	}
+//	/**
+//	 * Gets the property descriptors. Children should override this. The default
+//	 * implementation returns an empty array.
+//	 * 
+//	 * @return the property descriptors
+//	 * 
+//	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
+//	 */
+//	@Override
+//	public IPropertyDescriptor[] getPropertyDescriptors() {
+//		return EMPTY_ARRAY;	
+//	}
 }

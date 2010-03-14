@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.diagrams.model;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
@@ -32,7 +33,7 @@ import com.ecmdeveloper.plugin.diagrams.model.validators.PositiveIntegerValidato
  * @author Ricardo Belfor
  *
  */
-public abstract class ClassDiagramElement extends ClassDiagramBase {
+public abstract class ClassDiagramElement extends ClassDiagramBase implements IPropertySource {
 
 	private static final String XPOS_PROP = "ClassDiagramElement.xPos";
 	private static final String YPOS_PROP = "ClassDiagramElement.yPos";
@@ -115,5 +116,10 @@ public abstract class ClassDiagramElement extends ClassDiagramBase {
 
 	public String getName() {
 		return null;
+	}
+
+	@Override
+	public Object getEditableValue() {
+		return this;
 	}
 }

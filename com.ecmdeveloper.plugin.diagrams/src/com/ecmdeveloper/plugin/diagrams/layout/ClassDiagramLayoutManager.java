@@ -46,23 +46,18 @@ public class ClassDiagramLayoutManager extends FreeformLayout {
 	public void layout(IFigure parent) {
 		super.layout(parent);
 		
-		System.out.println( "Do some layouting!" );
-
-		IFigure fig = classDiagramEditPart.getFigure();
 		for (int i = 0; i < classDiagramEditPart.getChildren().size(); i++)
 		{
 			AbstractGraphicalEditPart part = (AbstractGraphicalEditPart) classDiagramEditPart.getChildren().get(i);
 			List sourceConnections = part.getSourceConnections();
 			for (Object sourceConnection : sourceConnections ) {
 				if ( sourceConnection instanceof AttributeRelationshipEditPart ) {
-					((AttributeRelationshipEditPart)sourceConnection).refreshIt();
+					((AttributeRelationshipEditPart)sourceConnection).positionConnections();
 				}
-				System.out.println( sourceConnection.toString() );
+//				System.out.println( sourceConnection.toString() );
 			}
-			System.out.println(part.getFigure().getBounds() );
-//			TablePart tp = (TablePart) diagram.getChildren().get(i);
-//			addNodes(tp);
-			System.out.println( classDiagramEditPart.getChildren().get(i).toString() );
+//			System.out.println(part.getFigure().getBounds() );
+//			System.out.println( classDiagramEditPart.getChildren().get(i).toString() );
 		}
 	}
 

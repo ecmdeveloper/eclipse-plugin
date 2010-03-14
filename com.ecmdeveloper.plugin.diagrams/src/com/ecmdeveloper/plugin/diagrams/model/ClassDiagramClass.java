@@ -27,10 +27,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
-import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
 import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
 import com.filenet.api.meta.PropertyDescriptionObject;
 
@@ -104,22 +102,6 @@ public class ClassDiagramClass extends ClassDiagramElement {
 			PluginLog.error(e);
 		}
 	}
-
-//	private AttributeRelationship createAttributeRelationship(PropertyDescriptionObject objectPropertyDescription)
-//			throws Exception {
-//		// TODO: make this asynchronous?
-//		GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
-//		com.filenet.api.meta.ClassDescription requiredClass = (com.filenet.api.meta.ClassDescription) ClassesManager.getManager().executeTaskSync( task );
-//		
-//		AttributeRelationship attributeRelationship = new AttributeRelationship();
-//		attributeRelationship.setRequiredClassId( requiredClass.get_Id().toString() );
-//		attributeRelationship.setRequiredClassName( requiredClass.get_Name() );
-//		attributeRelationship.setName( objectPropertyDescription.get_DisplayName() );
-//		String multiplicity = MultiplicityFormatter.getMultiplicity( objectPropertyDescription );
-//		attributeRelationship.setTargetMultiplicity( multiplicity );
-//		
-//		return attributeRelationship;
-//	}
 
 	private void createClassDiagramAttributes(ClassDescription classDescription) {
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {

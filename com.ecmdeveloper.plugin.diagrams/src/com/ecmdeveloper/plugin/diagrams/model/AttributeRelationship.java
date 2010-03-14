@@ -31,7 +31,7 @@ import com.filenet.api.meta.PropertyDescriptionObject;
 public class AttributeRelationship {
 
 	private String name;
-	private boolean connected;
+	private boolean connected = false;
 	private ClassConnector sourceConnector;
 	private ClassConnector targetConnector;
 	
@@ -43,6 +43,11 @@ public class AttributeRelationship {
 		name = objectPropertyDescription.get_DisplayName();
 		initializeTargetConnector(objectPropertyDescription, requiredClass);
 		initalizeSourceConnector(objectPropertyDescription, parent);
+		
+		System.out.println( getSourceConnector().getPropertyName() );
+		System.out.println( getSourceConnector().getClassName() );
+		System.out.println( isConnected() );
+		
 	}
 
 	private void initializeTargetConnector(PropertyDescriptionObject objectPropertyDescription,

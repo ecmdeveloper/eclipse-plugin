@@ -52,6 +52,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramAction;
+import com.ecmdeveloper.plugin.diagrams.actions.ShowPropertiesAction;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
@@ -201,8 +202,12 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 	@Override
 	protected void createActions() {
 		super.createActions();
-		IAction action = new ExportDiagramAction(this);
-		getActionRegistry().registerAction(action);
-		getSelectionActions().add( action.getId() );
+		IAction exportAction = new ExportDiagramAction(this);
+		getActionRegistry().registerAction(exportAction);
+		getSelectionActions().add( exportAction.getId() );
+		
+		IAction propertiesAction = new ShowPropertiesAction(this);
+		getActionRegistry().registerAction(propertiesAction);
+		getSelectionActions().add( propertiesAction.getId() );
 	}
 }

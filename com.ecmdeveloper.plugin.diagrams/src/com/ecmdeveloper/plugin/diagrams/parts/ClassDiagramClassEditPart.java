@@ -69,8 +69,10 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 		List sourceList = new ArrayList();
 		sourceList.addAll( getClassDiagramClass().getChildRelations() );
 		
+		debugAttributeRelations( getClassDiagramClass().getSourceRelations(), "Source " );
 		for ( AttributeRelationship sourceRelation : getClassDiagramClass().getSourceRelations() ) {
 			if ( sourceRelation.isConnected() ) {
+				
 				sourceList.add(sourceRelation);
 			}
 		}
@@ -84,6 +86,16 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 		}
 	}
 
+	private void debugAttributeRelations(List<AttributeRelationship> relations, String prefix) {
+		System.out.println( ">>>>>>>>>>>>>>>>>> ");
+		for (AttributeRelationship relation : relations) {
+			System.out.println( prefix + relation.getSourceConnector().getPropertyName()  + " "  + relation.toString());
+			System.out.println( prefix + relation.getSourceConnector().getClassName() );
+			System.out.println( prefix + relation.isConnected() );
+		}
+		System.out.println( "<<<<<<<<<<<<<<<<<< ");
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List getModelTargetConnections() {
@@ -92,6 +104,7 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 			targetList.add( getClassDiagramClass().getParentRelation() );
 		}
 		debugRelations(targetList, "Target: ");
+		debugAttributeRelations( getClassDiagramClass().getTargetRelations(), "Target " );
 		targetList.addAll( getClassDiagramClass().getTargetRelations() );
 		return targetList;
 	}

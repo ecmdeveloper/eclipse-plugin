@@ -21,9 +21,9 @@
 package com.ecmdeveloper.plugin.diagrams.actions;
 
 import org.eclipse.gef.ui.actions.SelectionAction;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
@@ -31,13 +31,13 @@ import org.eclipse.ui.PartInitException;
  * @author Ricardo.Belfor
  *
  */
-public class ExportDiagramAction extends SelectionAction {
+public class ShowPropertiesAction extends SelectionAction {
 
-	public static final String ID = "com.ecmdeveloper.plugin.diagrams.actions.exportDiagramAction";
+	public static final String ID = "com.ecmdeveloper.plugin.diagrams.actions.showPropertiesAction";
 
-	private static final String ACTION_NAME = "Export Diagram";
-	
-	public ExportDiagramAction(IWorkbenchPart part) {
+	private static final String ACTION_NAME = "Show Properties";
+
+	public ShowPropertiesAction(IWorkbenchPart part) {
 		super(part);
 		setId( ID );
 		setText( ACTION_NAME );
@@ -50,7 +50,11 @@ public class ExportDiagramAction extends SelectionAction {
 
 	@Override
 	public void run() {
-		Shell shell = getWorkbenchPart().getSite().getShell();
-		MessageDialog.openInformation( shell, ACTION_NAME, "Exporting diagram " + getWorkbenchPart().getTitle() + " to file" );
+		try {
+			getWorkbenchPart().getSite().getPage().showView( IPageLayout.ID_PROP_SHEET );
+		} catch (PartInitException e) {
+			Shell shell = getWorkbenchPart().getSite().getShell();
+			MessageDialog.openError(shell, ACTION_NAME, e.getLocalizedMessage() );
+		}
 	}
 }
