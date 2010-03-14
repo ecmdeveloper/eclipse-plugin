@@ -24,19 +24,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.views.properties.IPropertySource;
+
+import com.ecmdeveloper.plugin.diagrams.properties.ClassDiagramProperties;
 
 /**
  * @author Ricardo Belfor
  *
  */
-public class ClassDiagram extends ClassDiagramBase {
+public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 
-
-	private static IPropertyDescriptor[] descriptors;
-	
 	public static final String CHILD_ADDED_PROP = "ClassDiagram.ChildAdded";
 	public static final String CHILD_REMOVED_PROP = "ClassDiagram.ChildRemoved";
 	
@@ -47,18 +47,9 @@ public class ClassDiagram extends ClassDiagramBase {
 	public static final String DEFAULT_LINE_COLOR_PROP = "ClassDiagram.DefaultLineColor";
 	public static final String SHOW_ICONS_PROP = "ClassDiagram.showIcons";
 
-	private static final int TRUE_INDEX = 0;
-	private static final int FALSE_INDEX = 1;
-
-	static {
-		descriptors = new IPropertyDescriptor[] { 
-//			new ColorPropertyDescriptor( DEFAULT_FILL_COLOR_PROP, "Default Fill Color"), 
-//			new ColorPropertyDescriptor( DEFAULT_LINE_COLOR_PROP, "Default Line Color")
-			new ComboBoxPropertyDescriptor(SHOW_ICONS_PROP, "Show Icons", new String[] { "Yes", "No" } )
-		};
-	}
-	
+	@SuppressWarnings("unused")
 	private RGB defaultFillColor;
+	@SuppressWarnings("unused")
 	private RGB defaultLineColor;
 	private boolean showIcons = true;
 	
@@ -112,18 +103,18 @@ public class ClassDiagram extends ClassDiagramBase {
 	private void connectAttributeClassToClass(ClassDiagramClass attributeClass) {
 		for ( ClassDiagramClass classDiagramClass : classDiagramClasses ) {
 			for ( AttributeRelationship attributeRelationship : classDiagramClass.getSourceRelations() ) {
-				if ( !attributeClass.getId().equals( attributeRelationship.getSourceConnector().getClassId() ) ) {
+//				if ( !attributeClass.getId().equals( attributeRelationship.getSourceConnector().getClassId() ) ) {
+				
 					if ( isAttributeRelationshipClass(attributeRelationship, attributeClass ) ) {
 						classDiagramClass.connectSource( attributeRelationship );
 						attributeClass.addTarget( attributeRelationship );
 					}
-				}
+//				}
 			}
 		}
 	}
 
-	private ClassDiagramClass getAttributeRelationshipClass(
-			AttributeRelationship attributeRelationship) {
+	private ClassDiagramClass getAttributeRelationshipClass( AttributeRelationship attributeRelationship) {
 		for (ClassDiagramClass attributeClass : classDiagramClasses) {
 			if (isAttributeRelationshipClass(attributeRelationship, attributeClass)) {
 				return attributeClass;
@@ -134,7 +125,7 @@ public class ClassDiagram extends ClassDiagramBase {
 
 	private boolean isAttributeRelationshipClass(AttributeRelationship attributeRelationship,
 			ClassDiagramClass attributeClass) {
-		return attributeClass.getId().equals( attributeRelationship.getSourceConnector().getClassId() );
+		return attributeClass.getId().equals( attributeRelationship.getTargetConnector().getClassId() );
 	}
 	
 	private void connectClassToChildren(ClassDiagramClass classDiagramClass) {
@@ -214,47 +205,6 @@ public class ClassDiagram extends ClassDiagramBase {
 		return classDiagramNotes;
 	}
 
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return descriptors;
-	}
-	
-	@Override
-	public void setPropertyValue(Object propertyId, Object value) {
-		
-		if (DEFAULT_FILL_COLOR_PROP.equals(propertyId)) {
-			defaultFillColor = (RGB) value;
-		} else if (DEFAULT_LINE_COLOR_PROP.equals(propertyId)) {
-			defaultLineColor = (RGB) value;
-		} if ( SHOW_ICONS_PROP.equals(propertyId) ) {
-			setShowIcons( value == null || ((Integer)value).intValue() == TRUE_INDEX );
-		}
-	}
-
-	@Override
-	public Object getPropertyValue(Object propertyId) {
-		if ( DEFAULT_FILL_COLOR_PROP.equals(propertyId)) {
-			return defaultFillColor;
-		} else if ( DEFAULT_LINE_COLOR_PROP.equals(propertyId)) {
-			return defaultLineColor;
-		}  else if ( SHOW_ICONS_PROP.equals(propertyId) ) {
-			return new Integer( showIcons ? TRUE_INDEX : FALSE_INDEX );
-		}
-		
-		return null;
-	}
-
-	@Override
-	public boolean isPropertySet(Object id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void resetPropertyValue(Object id) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public boolean isShowIcons() {
 		return showIcons;
 	}
@@ -273,5 +223,15 @@ public class ClassDiagram extends ClassDiagramBase {
 		for ( ClassDiagramElement classDiagramNote : getClassDiagramNotes() ) {
 			classDiagramNote.notifyClassDiagramSettingsChanged(propertyId);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class)
+			return this;
+		if (adapter == IPropertySource.class)
+			return new ClassDiagramProperties(this);
+		return null;
 	}
 }
