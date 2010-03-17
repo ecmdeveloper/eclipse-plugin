@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -23,9 +23,6 @@ package com.ecmdeveloper.plugin.diagrams.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-
 /**
  * The Class ClassDiagramBase.
  * 
@@ -33,19 +30,8 @@ import org.eclipse.ui.views.properties.IPropertySource;
  */
 public abstract class ClassDiagramBase {
 
-	/** The Constant EMPTY_ARRAY. */
-	private static final IPropertyDescriptor[] EMPTY_ARRAY = new IPropertyDescriptor[0];
-	
-	/** The pcs delegate. */
 	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
 
-	/**
-	 * Attach a non-null PropertyChangeListener to this object.
-	 * 
-	 * @param listener a non-null PropertyChangeListener instance
-	 * 
-	 * @throws IllegalArgumentException if the parameter is null
-	 */
 	public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();
@@ -53,40 +39,15 @@ public abstract class ClassDiagramBase {
 		pcsDelegate.addPropertyChangeListener(listener);
 	}
 	
-	/**
-	 * Remove a PropertyChangeListener from this component.
-	 * 
-	 * @param listener a PropertyChangeListener instance
-	 */
 	public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
 		if (listener != null) {
 			pcsDelegate.removePropertyChangeListener(listener);
 		}
 	}
 	
-	/**
-	 * Report a property change to registered listeners (for example edit parts).
-	 * 
-	 * @param property the programmatic name of the property that changed
-	 * @param oldValue the old value of this property
-	 * @param newValue the new value of this property
-	 */
 	protected void firePropertyChange(String property, Object oldValue, Object newValue) {
 		if (pcsDelegate.hasListeners(property)) {
 			pcsDelegate.firePropertyChange(property, oldValue, newValue);
 		}
 	}
-
-//	/**
-//	 * Gets the property descriptors. Children should override this. The default
-//	 * implementation returns an empty array.
-//	 * 
-//	 * @return the property descriptors
-//	 * 
-//	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
-//	 */
-//	@Override
-//	public IPropertyDescriptor[] getPropertyDescriptors() {
-//		return EMPTY_ARRAY;	
-//	}
 }

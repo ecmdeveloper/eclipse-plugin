@@ -18,15 +18,17 @@
       <wizard
             category="com.ecmdeveloper.plugin.contentEngine"
             class="com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard"
+            finalPerspective="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
             icon="icons/table_edit.png"
             id="com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard"
-            name="New Class Diagram">
+            name="New Class Diagram"
+            preferredPerspectives="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective">
          <description>
             Creates a new Class Diagram
          </description>
       </wizard>
       <category
-            id="com.ecmdeveloper.plugin.contentEngine"
+            id="com.ecmdeveloper.plugin.category.contentEngine"
             name="Content Engine">
       </category>
    </extension>
@@ -113,6 +115,18 @@
             </with>
          </activeWhen>
       </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="com.ecmdeveloper.plugin.diagrams.perspectives.ClassDiagramPerspectiveFactory"
+            icon="icons/table_multiple.png"
+            id="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
+            name="Content Engine Class Diagram">
+         <description>
+            Edit Content Engine Class Diagrams.
+         </description>
+      </perspective>
    </extension>
 
 </plugin>

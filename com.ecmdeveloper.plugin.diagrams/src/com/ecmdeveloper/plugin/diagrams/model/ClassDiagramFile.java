@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -135,8 +136,39 @@ public class ClassDiagramFile {
 		getLocation(clazz, classDiagramClass);
 		
 		getClassDiagramAttributes(clazz, classDiagramClass);
-		
+		getClassDiagramAttributesRelationships(clazz, classDiagramClass);
 		return classDiagramClass;
+	}
+
+	private void getClassDiagramAttributesRelationships(IMemento clazz,
+			ClassDiagramClass classDiagramClass) {
+		
+		IMemento attributeRelationshipsChild = clazz.getChild(PluginTagNames.ATTRIBUTE_RELATIONSHIPS);
+		
+		if ( attributeRelationshipsChild == null ) {
+			return;
+		}
+		for ( IMemento attributeRelationshipChild : attributeRelationshipsChild.getChildren( PluginTagNames.ATTRIBUTE_RELATIONSHIP ) ) {
+
+			String name = attributeRelationshipChild.getString( PluginTagNames.NAME );
+			ClassConnector sourceConnector = getClassConnector(attributeRelationshipChild.getChild( PluginTagNames.SOURCE_CONNECTOR) );
+			ClassConnector targetConnector = getClassConnector(attributeRelationshipChild.getChild( PluginTagNames.TARGET_CONNECTOR) );
+
+			AttributeRelationship attributeRelationship = new AttributeRelationship(name, sourceConnector, targetConnector );
+			classDiagramClass.addSource( attributeRelationship );
+		}
+		
+	}
+
+	private ClassConnector getClassConnector(IMemento classConnectorChild) {
+		String classId = classConnectorChild.getString(PluginTagNames.CLASS_ID );
+		String className = classConnectorChild.getString(PluginTagNames.CLASS_NAME );
+		String multiplicity = classConnectorChild.getString(PluginTagNames.MULTIPLICITY);
+		String propertyId = classConnectorChild.getString(PluginTagNames.PROPERTY_ID );
+		String propertyName = classConnectorChild.getString(PluginTagNames.PROPERTY_NAME  );
+		
+		ClassConnector classConnector = new ClassConnector(classId, className, propertyId, propertyName, multiplicity );
+		return classConnector;
 	}
 
 	private void getSize(IMemento elementChild, ClassDiagramElementWithResize classDiagramElement) {
@@ -172,6 +204,9 @@ public class ClassDiagramFile {
 		
 		ClassDiagramAttribute classDiagramAttribute = new ClassDiagramAttribute(name, displayName, type, defaultValue, multiplicity,  modifiers );
 
+		boolean visible = attributeChild.getBoolean( PluginTagNames.VISIBLE );
+		classDiagramAttribute.setVisible(visible);
+		
 		return classDiagramAttribute;
 	}
 	
@@ -216,6 +251,39 @@ public class ClassDiagramFile {
 		
 		IMemento attributesChild = classChild.createChild(PluginTagNames.ATTRIBUTES);
 		initializeAttributesChild(classDiagramClass, attributesChild);
+		
+		IMemento attributeRelationshipsChild = classChild.createChild(PluginTagNames.ATTRIBUTE_RELATIONSHIPS );
+		initializeAttributeRelationshipsChild(classDiagramClass, attributeRelationshipsChild);
+	}
+
+	private void initializeAttributeRelationshipsChild(ClassDiagramClass classDiagramClass,
+			IMemento attributeRelationshipsChild) {
+
+		for ( AttributeRelationship attributeRelationship : classDiagramClass.getSourceRelations() ) {
+			IMemento attributeRelationshipChild = attributeRelationshipsChild.createChild(PluginTagNames.ATTRIBUTE_RELATIONSHIP );
+			initializeAttributeRelationshipChild(attributeRelationshipChild, attributeRelationship);
+		}
+	}
+
+	private void initializeAttributeRelationshipChild(IMemento attributeRelationshipChild,
+			AttributeRelationship attributeRelationship) {
+
+		attributeRelationshipChild.putString( PluginTagNames.NAME, attributeRelationship.getName() );
+
+		IMemento sourceConnectorChild = attributeRelationshipChild.createChild( PluginTagNames.SOURCE_CONNECTOR );
+		initializeClassConnectorChild(sourceConnectorChild, attributeRelationship.getSourceConnector() );
+		
+		IMemento targetConnectorChild  = attributeRelationshipChild.createChild( PluginTagNames.TARGET_CONNECTOR );
+		initializeClassConnectorChild(targetConnectorChild, attributeRelationship.getTargetConnector() );
+	}
+
+	private void initializeClassConnectorChild(IMemento classConnectorChild,
+			ClassConnector classConnector) {
+		classConnectorChild.putString(PluginTagNames.CLASS_ID, classConnector.getClassId() );
+		classConnectorChild.putString(PluginTagNames.CLASS_NAME, classConnector.getClassName() );
+		classConnectorChild.putString(PluginTagNames.MULTIPLICITY, classConnector.getMultiplicity() );
+		classConnectorChild.putString(PluginTagNames.PROPERTY_ID, classConnector.getPropertyId() );
+		classConnectorChild.putString(PluginTagNames.PROPERTY_NAME, classConnector.getPropertyName() );
 	}
 
 	private void addSize(ClassDiagramElementWithResize classDiagramElement, IMemento elementChild) {
@@ -247,5 +315,6 @@ public class ClassDiagramFile {
 		attributeChild.putString(PluginTagNames.MODIFIERS, attribute.getModifiers() );
 		attributeChild.putString(PluginTagNames.MULTIPLICITY, attribute.getMultiplicity() );
 		attributeChild.putString(PluginTagNames.DEFAULT_VALUE, attribute.getDefaultValue() );
+		attributeChild.putBoolean(PluginTagNames.VISIBLE, attribute.isVisible() );
 	}
 }

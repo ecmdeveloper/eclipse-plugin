@@ -20,30 +20,21 @@
 
 package com.ecmdeveloper.plugin.diagrams.model;
 
-import java.util.ArrayList;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.views.properties.IPropertySource;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import com.ecmdeveloper.plugin.diagrams.properties.ClassDiagramNoteProperties;
+
 
 /**
  * 
  * @author Ricardo.Belfor
  *
  */
-public class ClassDiagramNote extends ClassDiagramElementWithResize {
+public class ClassDiagramNote extends ClassDiagramElementWithResize implements IAdaptable {
 
 	public static final String TEXT_PROP = "ClassDiagramNote.Text";
-	
-	private static final TextPropertyDescriptor TEXT_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(TEXT_PROP, "Text");
-	
-	static {
-		TEXT_PROPERTY_DESCRIPTOR.setCategory("Note Properties");
-	}
-
-	private static IPropertyDescriptor[] noteDescriptors = { WIDTH_PROPERTY_DESCRIPTOR,
-		HEIGHT_PROPERTY_DESCRIPTOR, XPOS_PROPERTY_DESCRIPTOR, YPOS_PROPERTY_DESCRIPTOR, 
-		TEXT_PROPERTY_DESCRIPTOR };
 
 	private String noteText;
 	
@@ -56,25 +47,13 @@ public class ClassDiagramNote extends ClassDiagramElementWithResize {
 		firePropertyChange(TEXT_PROP, null, this.noteText);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return noteDescriptors;
-	}
-
-	@Override
-	public Object getPropertyValue(Object propertyId) {
-		if (TEXT_PROP.equals(propertyId)) {
-			return noteText;
-		}
-		return super.getPropertyValue(propertyId);
-	}
-
-	@Override
-	public void setPropertyValue(Object propertyId, Object value) {
-		if (TEXT_PROP.equals(propertyId)) {
-			setNoteText((String) value);
-			return;
-		}
-		super.setPropertyValue(propertyId, value);
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class)
+			return this;
+		if (adapter == IPropertySource.class)
+			return new ClassDiagramNoteProperties(this);
+		return null;
 	}
 }

@@ -36,14 +36,6 @@ import com.filenet.api.meta.PropertyDescriptionObject;
  *
  */
 public class ClassDiagramAttribute {
-
-// TODO the unicode value is not correctly saved to file
-//	private static final String HORIZONTAL_ELIPSIS = "\u2026";
-	private static final String HORIZONTAL_ELIPSIS = "...";
-	private static final String MULTIPLICITY_MULTI_REQUIRED = "[1" + HORIZONTAL_ELIPSIS + "n]";
-	private static final String MULTIPLICITY_MULTI_NOT_REQUIRED = "[0" + HORIZONTAL_ELIPSIS + "n]";
-	private static final String MULTIPLICITY_SINGLE_REQUIRED = "";
-	private static final String MULTIPLICITY_SINGLE_NOT_REQUIRED = "[0" + HORIZONTAL_ELIPSIS + "1]";
 	
 	private String name;
 	private String type;
@@ -51,6 +43,7 @@ public class ClassDiagramAttribute {
 	private String multiplicity;
 	private String modifiers;
 	private String displayName;
+	private boolean visible;
 	
 	public ClassDiagramAttribute(String name, String displayName, String type,
 			String defaultValue, String multiplicity, String modifiers) {
@@ -61,6 +54,7 @@ public class ClassDiagramAttribute {
 		this.defaultValue = defaultValue;
 		this.multiplicity = multiplicity;
 		this.modifiers = modifiers;
+		visible = true;
 	}
 
 	public ClassDiagramAttribute(IAdaptable adaptableObject) {
@@ -84,8 +78,6 @@ public class ClassDiagramAttribute {
 				GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
 				com.filenet.api.meta.ClassDescription requiredClass = (ClassDescription) ClassesManager.getManager().executeTaskSync( task );
 				this.type = requiredClass.get_DisplayName();
-//				this.requiredClassId = requiredClass.get_Id().toString();
-//				this.requiredClassName = requiredClass.get_Name();
 			} catch (Exception e) {
 				PluginLog.error(e);
 			}
@@ -119,28 +111,18 @@ public class ClassDiagramAttribute {
 		return "";
 	}
 	
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
 	@Override
 	public String toString() {
 		return getUMLString(false, true, true, true, true );
 	}
-
-//	private String getMultiplicity( com.filenet.api.meta.PropertyDescription internalPropertyDescription ) {
-//		
-//		if ( Cardinality.SINGLE.equals( internalPropertyDescription.get_Cardinality() ) ) {
-//			
-//			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
-//				return MULTIPLICITY_SINGLE_NOT_REQUIRED;
-//			} else {
-//				return MULTIPLICITY_SINGLE_REQUIRED;
-//			}
-//		} else {
-//			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
-//				return MULTIPLICITY_MULTI_NOT_REQUIRED;
-//			} else {
-//				return MULTIPLICITY_MULTI_REQUIRED;
-//			}
-//		}
-//	}
 
 	private String getModifiers(com.filenet.api.meta.PropertyDescription internalPropertyDescription) {
 	

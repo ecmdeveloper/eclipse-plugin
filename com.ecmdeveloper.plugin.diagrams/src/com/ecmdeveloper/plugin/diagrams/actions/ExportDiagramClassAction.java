@@ -20,31 +20,22 @@
 
 package com.ecmdeveloper.plugin.diagrams.actions;
 
-import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.SWTGraphics;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.LayerConstants;
-import org.eclipse.gef.editparts.LayerManager;
-import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditor;
+import com.ecmdeveloper.plugin.diagrams.parts.ClassDiagramClassEditPart;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class ExportDiagramAction extends ExportAction {
+public class ExportDiagramClassAction extends ExportAction {
 
-	public static final String ID = "com.ecmdeveloper.plugin.diagrams.actions.exportDiagramAction";
+	public static final String ID = "com.ecmdeveloper.plugin.diagrams.actions.exportDiagramClassAction";
 
-	private static final String ACTION_NAME = "Export diagram to image";
-	
-	public ExportDiagramAction(IWorkbenchPart part) {
+	private static final String ACTION_NAME = "Export class to image";
+
+	public ExportDiagramClassAction(IWorkbenchPart part) {
 		super(part);
 		setId( ID );
 		setText( ACTION_NAME );
@@ -52,13 +43,21 @@ public class ExportDiagramAction extends ExportAction {
 
 	@Override
 	protected boolean calculateEnabled() {
+		if (getSelectedObjects().size() != 1
+				|| !(getSelectedObjects().get(0) instanceof ClassDiagramClassEditPart)) {
+			return false;
+		}
 		return true;
 	}
 
 	protected IFigure getFigure() {
-		GraphicalViewer graphicalViewer = ((ClassDiagramEditor)getWorkbenchPart()).getViewer();
-		ScalableFreeformRootEditPart rootEditPart = (ScalableFreeformRootEditPart) graphicalViewer.getRootEditPart();
-		IFigure rootFigure = ((LayerManager)rootEditPart).getLayer(LayerConstants.PRINTABLE_LAYERS);
-		return rootFigure;
+		if (getSelectedObjects().size() != 1
+				|| !(getSelectedObjects().get(0) instanceof ClassDiagramClassEditPart)) {
+			throw new UnsupportedOperationException();
+		}
+		
+		ClassDiagramClassEditPart part = (ClassDiagramClassEditPart) getSelectedObjects().get(0);
+		IFigure figure = part.getFigure();
+		return figure;
 	}
 }

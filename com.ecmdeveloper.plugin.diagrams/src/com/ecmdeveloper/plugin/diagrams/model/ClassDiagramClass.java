@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.diagrams.properties.ClassDiagramClassProperties;
 import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
 import com.filenet.api.meta.PropertyDescriptionObject;
 
@@ -37,7 +39,9 @@ import com.filenet.api.meta.PropertyDescriptionObject;
  * @author Ricardo Belfor
  *
  */
-public class ClassDiagramClass extends ClassDiagramElement {
+public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable {
+
+	public static final String VISIBLE_ATTRIBUTE_PROP = "ClassDiagramClass.VisibleAttribute";
 
 	private String name;
 	private String displayName;
@@ -50,9 +54,6 @@ public class ClassDiagramClass extends ClassDiagramElement {
 	private List<AttributeRelationship> targetRelations = new ArrayList<AttributeRelationship>();
 	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
 
-	private static IPropertyDescriptor[] classDescriptors = { XPOS_PROPERTY_DESCRIPTOR,
-			YPOS_PROPERTY_DESCRIPTOR };
-	
 	public ClassDiagramClass(String name, String displayName,
 			boolean abstractClass, String id, String parentClassId) {
 		super();
@@ -141,14 +142,41 @@ public class ClassDiagramClass extends ClassDiagramElement {
 		return attributes;
 	}
 	
+	public ClassDiagramAttribute getClassDiagramAttribute(String attributeId ) {
+		
+		for ( ClassDiagramAttribute attribute : attributes ) {
+			if ( attribute.getName().equals(attributeId) ) {
+				return attribute; 
+			}
+		}
+		return null;
+	}
+	
+	public void setAttributeVisible(String attributeName, boolean visible) {
+		ClassDiagramAttribute classDiagramAttribute = getClassDiagramAttribute(attributeName);
+		if ( classDiagramAttribute != null ) {
+			classDiagramAttribute.setVisible( visible );
+			firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attributeName );
+		}
+	}
+
 	public void connectParent(InheritRelationship inheritRelationship ) {
 		parentRelation = inheritRelationship;
+		
+		for ( ClassDiagramAttribute attribute : parentRelation.getParent().getAttributes() ) {
+			setAttributeVisible( attribute.getName(), false);
+		}
 		firePropertyChange(TARGET_CONNECTIONS_PROP, null, parentRelation );
 	}
 	
 	public void disconnectParent() {
 		InheritRelationship oldParentRelation = parentRelation;
 		parentRelation = null;
+		
+		for ( ClassDiagramAttribute attribute : attributes ) {
+			attribute.setVisible(true);
+			firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attribute.getName() );
+		}
 		firePropertyChange(TARGET_CONNECTIONS_PROP, oldParentRelation, null );
 	}
 
@@ -198,11 +226,6 @@ public class ClassDiagramClass extends ClassDiagramElement {
 		return false;
 	}
 
-	@Override
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return classDescriptors;
-	}
-
 	public void addTarget(AttributeRelationship relationship) {
 		if ( ! targetRelations.contains(relationship) ) {
 			targetRelations.add( relationship );
@@ -221,5 +244,19 @@ public class ClassDiagramClass extends ClassDiagramElement {
 	public void connectSource(AttributeRelationship attributeRelationship) {
 		attributeRelationship.setConnected(true);
 		firePropertyChange(SOURCE_CONNECTIONS_PROP, null, attributeRelationship);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class)
+			return this;
+		if (adapter == IPropertySource.class)
+			return new ClassDiagramClassProperties(this);
+		return null;
+	}
+
+	public void addSource(AttributeRelationship attributeRelationship) {
+		sourceRelations.add( attributeRelationship );
 	}
 }

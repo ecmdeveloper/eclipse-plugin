@@ -46,4 +46,13 @@ public class PluginTagNames {
 	public static final String NOTES = "notes";
 	public static final String NOTE = "note";
 	public static final String TEXT = "text";
+	public static final String ATTRIBUTE_RELATIONSHIPS = "atrributeRelationships";
+	public static final String ATTRIBUTE_RELATIONSHIP = "atrributeRelationship";
+	public static final String SOURCE_CONNECTOR = "sourceConnector";
+	public static final String TARGET_CONNECTOR = "targetConnector";
+	public static final String CLASS_ID = "classId";
+	public static final String CLASS_NAME = "className";
+	public static final String PROPERTY_ID = "propertyId";
+	public static final String PROPERTY_NAME = "propertyName";
+	public static final String VISIBLE = "visible";
 }
