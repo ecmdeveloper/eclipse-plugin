@@ -25,14 +25,11 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FreeformLayer;
-import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.ShortestPathConnectionRouter;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.LayerConstants;
 
 import com.ecmdeveloper.plugin.diagrams.layout.ClassDiagramLayoutManager;
@@ -70,9 +67,6 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#createFigure()
-	 */
 	@Override
 	protected IFigure createFigure() {
 	   IFigure figure = new FreeformLayer();
@@ -89,9 +83,6 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart
 		return modelChildren;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.editparts.AbstractEditPart#createEditPolicies()
-	 */
 	@Override
 	protected void createEditPolicies() {
       installEditPolicy(EditPolicy.LAYOUT_ROLE, new ClassDiagramLayoutEditPolicy());
@@ -109,6 +100,11 @@ public class ClassDiagramEditPart extends AbstractClassesGraphicalEditPart
 	@Override
 	protected void registerVisuals() {
 		ConnectionLayer cLayer = (ConnectionLayer) getLayer(LayerConstants.CONNECTION_LAYER);
-		cLayer.setConnectionRouter(new ShortestPathConnectionRouter(getFigure()));
+		cLayer.setConnectionRouter( new BendpointConnectionRouter() );
+
+// TODO the ShortestPathConnectionRouter causes the layout manager to loop...
+//
+//		cLayer.setConnectionRouter(new  ShortestPathConnectionRouter(getFigure()));
+//		cLayer.setConnectionRouter( new ManhattanConnectionRouter() );
 	}
 }

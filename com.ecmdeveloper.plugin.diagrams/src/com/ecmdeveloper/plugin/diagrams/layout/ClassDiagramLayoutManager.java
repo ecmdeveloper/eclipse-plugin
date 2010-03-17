@@ -44,8 +44,9 @@ public class ClassDiagramLayoutManager extends FreeformLayout {
 
 	@Override
 	public void layout(IFigure parent) {
-		super.layout(parent);
 		
+		super.layout(parent);
+		System.err.println( "Doint layout! ");
 		for (int i = 0; i < classDiagramEditPart.getChildren().size(); i++)
 		{
 			AbstractGraphicalEditPart part = (AbstractGraphicalEditPart) classDiagramEditPart.getChildren().get(i);

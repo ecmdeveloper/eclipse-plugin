@@ -19,24 +19,14 @@
  */
 package com.ecmdeveloper.plugin.diagrams.model;
 
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
-
-import com.ecmdeveloper.plugin.diagrams.model.validators.PositiveIntegerValidator;
 
 /**
  * 
  * @author Ricardo Belfor
  *
  */
-public abstract class ClassDiagramElement extends ClassDiagramBase implements IPropertySource {
-
-	private static final String XPOS_PROP = "ClassDiagramElement.xPos";
-	private static final String YPOS_PROP = "ClassDiagramElement.yPos";
+public abstract class ClassDiagramElement extends ClassDiagramBase {
 
 	public static final String LOCATION_PROP = "ClassDiagramElement.Location";
 	public static final String SIZE_PROP = "ClassDiagramElement.Size";
@@ -45,18 +35,6 @@ public abstract class ClassDiagramElement extends ClassDiagramBase implements IP
 	public static final String SOURCE_CONNECTIONS_PROP = "ClassDiagramElement.SourceConn";
 	public static final String TARGET_CONNECTIONS_PROP = "ClassDiagramElement.TargetConn";
 
-	protected static final TextPropertyDescriptor XPOS_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(XPOS_PROP, "X");
-	protected static final TextPropertyDescriptor YPOS_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(YPOS_PROP, "Y");
-	
-	static {
-
-		XPOS_PROPERTY_DESCRIPTOR.setCategory("Appearance");
-		XPOS_PROPERTY_DESCRIPTOR.setValidator( new PositiveIntegerValidator() );
-
-		YPOS_PROPERTY_DESCRIPTOR.setCategory("Appearance");
-		YPOS_PROPERTY_DESCRIPTOR.setValidator( new PositiveIntegerValidator() );
-	}
-	
 	private Point location = new Point(0, 0);
 	protected ClassDiagram parent;
 	
@@ -84,42 +62,7 @@ public abstract class ClassDiagramElement extends ClassDiagramBase implements IP
 		firePropertyChange(CLASS_DIAGRAM_SETTINGS_CHANGED_PROP, null, propertyId);
 	}
 	
-	public Object getPropertyValue(Object propertyId) {
-		if (XPOS_PROP.equals(propertyId)) {
-			return Integer.toString(location.x);
-		}
-		if (YPOS_PROP.equals(propertyId)) {
-			return Integer.toString(location.y);
-		}
-		return null;
-	}
-
-	public void setPropertyValue(Object propertyId, Object value) {
-		if (XPOS_PROP.equals(propertyId)) {
-			int x = Integer.parseInt((String) value);
-			setLocation(new Point(x, location.y));
-		} else if (YPOS_PROP.equals(propertyId)) {
-			int y = Integer.parseInt((String) value);
-			setLocation(new Point(location.x, y));
-		}
-	}
-
-	@Override
-	public boolean isPropertySet(Object id) {
-		return false;
-	}
-
-	@Override
-	public void resetPropertyValue(Object id) {
-		// Do nothing
-	}
-
 	public String getName() {
 		return null;
-	}
-
-	@Override
-	public Object getEditableValue() {
-		return this;
 	}
 }

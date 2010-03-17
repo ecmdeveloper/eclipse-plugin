@@ -22,7 +22,9 @@ package com.ecmdeveloper.plugin.diagrams.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -49,16 +51,13 @@ import com.ecmdeveloper.plugin.diagrams.util.IconFiles;
 public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 
 	private Label classLabel;
-	private ArrayList<Label> attributeLabels = new ArrayList<Label>();
+	private Map<String,Label> attributeLabelsMap = new HashMap<String, Label>(); 
 	private UMLClassFigure classFigure;
 	
 	public ClassDiagramClassEditPart(ClassDiagramClass classDiagramClass) {
 		setModel(classDiagramClass);
 	}
 
-	public Rectangle getBounds() {
-		return classFigure.getBounds();
-	}
 	public ClassDiagramClass getClassDiagramClass() {
 		return (ClassDiagramClass) getModel();
 	}
@@ -80,6 +79,19 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 		return sourceList;
 	}
 
+	@SuppressWarnings("unchecked")
+		@Override
+		protected List getModelTargetConnections() {
+			List targetList = new ArrayList();
+			if ( getClassDiagramClass().getParentRelation() != null ) {
+				targetList.add( getClassDiagramClass().getParentRelation() );
+			}
+	//		debugRelations(targetList, "Target: ");
+	//		debugAttributeRelations( getClassDiagramClass().getTargetRelations(), "Target " );
+			targetList.addAll( getClassDiagramClass().getTargetRelations() );
+			return targetList;
+		}
+
 	private void debugRelations(List<InheritRelationship> relations, String prefix) {
 		for (InheritRelationship relation : relations) {
 			System.out.println( prefix + relation.getParent().getName() + " is a parent of " + relation.getChild().getName());
@@ -96,19 +108,6 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 		System.out.println( "<<<<<<<<<<<<<<<<<< ");
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	protected List getModelTargetConnections() {
-		List targetList = new ArrayList();
-		if ( getClassDiagramClass().getParentRelation() != null ) {
-			targetList.add( getClassDiagramClass().getParentRelation() );
-		}
-		debugRelations(targetList, "Target: ");
-		debugAttributeRelations( getClassDiagramClass().getTargetRelations(), "Target " );
-		targetList.addAll( getClassDiagramClass().getTargetRelations() );
-		return targetList;
-	}
-
 	@Override
 	protected IFigure createFigure() {
 		ClassDiagramClass classDiagramClass = getClassDiagramClass();
@@ -116,21 +115,8 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 		createClassLabel(classDiagramClass);
 		updateClassLabelIcon(classDiagramClass);
 		classFigure = new UMLClassFigure( classLabel );
-		createAttributeLabels(classDiagramClass, classFigure);
-		updateAttributeLabelIcons(classDiagramClass);
-
+		createAttributeLabels();
 		return classFigure;
-	}
-
-	private void createAttributeLabels(ClassDiagramClass classDiagramClass,
-			UMLClassFigure classFigure) {
-		attributeLabels.clear();
-		boolean showIcons = classDiagramClass.getParent().isShowIcons();
-		for ( ClassDiagramAttribute attribute : classDiagramClass.getAttributes() ) {
-			Label attributeLabel = new Label( attribute.toString().substring( showIcons ? 1 : 0) );
-			attributeLabels.add(attributeLabel);
-			classFigure.getAttributesCompartment().add( attributeLabel );
-		}
 	}
 
 	private void createClassLabel(ClassDiagramClass classDiagramClass) {
@@ -139,7 +125,64 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 		classLabel = new Label( classDiagramClass.getName() );
 		classLabel.setFont(classFont);
 	}
+
+	private void createAttributeLabels() {
+		ClassDiagramClass classDiagramClass = getClassDiagramClass();
+		attributeLabelsMap.clear();
+		boolean showIcons = classDiagramClass.getParent().isShowIcons();
+		boolean hasLabels = false;
+		for ( ClassDiagramAttribute attribute : classDiagramClass.getAttributes() ) {
+			if ( attribute.isVisible() ) {
+				Label attributeLabel = createAttributeLabel(attribute, showIcons);
+				attributeLabelsMap.put(attribute.getName(), attributeLabel);
+				hasLabels = true;
+			}
+		}
+		
+		classFigure.getAttributesCompartment().setVisible( hasLabels );
+	}
+
+	private Label createAttributeLabel(ClassDiagramAttribute attribute, boolean showIcons) {
+		Label attributeLabel = new Label( attribute.toString().substring( showIcons ? 1 : 0) );
+		classFigure.getAttributesCompartment().add( attributeLabel );
+		if ( showIcons ) {
+			attributeLabel.setIcon( Activator.getImage( IconFiles.PUBLIC_ATTRIBUTE_ICON ) );
+		} else {
+			attributeLabel.setIcon( null );
+		}
+		return attributeLabel;
+	}
+
+	private void updateClassLabelIcon(ClassDiagramClass classDiagramClass) {
+		boolean showIcons = classDiagramClass.getParent().isShowIcons();
+		if ( ! showIcons ) {
+			classLabel.setIcon(null);
+		} else {
+			classLabel.setIcon( Activator.getImage( IconFiles.CLASS_ICON ) );
+		}
+	}
+
+	private void updateAttributeLabels() {
+		ClassDiagramClass classDiagramClass = getClassDiagramClass();
+		boolean showIcons = classDiagramClass.getParent().isShowIcons();
 	
+		for ( ClassDiagramAttribute attribute : classDiagramClass.getAttributes() ) {
+			if ( attribute.isVisible() ) {
+				updateAttributeLabel(attribute, showIcons);
+			}
+		}
+	}
+
+	private void updateAttributeLabel(ClassDiagramAttribute attribute, boolean showIcons) {
+		Label attributeLabel = attributeLabelsMap.get( attribute.getName() ); 
+		attributeLabel.setText( attribute.toString().substring( showIcons ? 1 : 0) );
+		if ( showIcons ) {
+			attributeLabel.setIcon( Activator.getImage( IconFiles.PUBLIC_ATTRIBUTE_ICON ) );
+		} else {
+			attributeLabel.setIcon( null );
+		}
+	}
+
 	@Override
 	protected void refreshVisuals() {
 		Point location = getClassDiagramClass().getLocation();
@@ -156,30 +199,13 @@ public class ClassDiagramClassEditPart extends ClassDiagramElementEditPart {
 			if ( evt.getNewValue().equals( ClassDiagram.SHOW_ICONS_PROP ) ) {
 				ClassDiagramClass classDiagramClass = getClassDiagramClass();
 				updateClassLabelIcon( classDiagramClass );
-				updateAttributeLabelIcons(classDiagramClass);
+				updateAttributeLabels();
 				refreshVisuals();
 			}
+		} else if ( ClassDiagramClass.VISIBLE_ATTRIBUTE_PROP.equals( propertyName) ) {
+			classFigure.getAttributesCompartment().removeAll();
+			createAttributeLabels();
 		}
 		super.propertyChange(evt);
-	}
-
-	private void updateClassLabelIcon(ClassDiagramClass classDiagramClass) {
-		boolean showIcons = classDiagramClass.getParent().isShowIcons();
-		if ( ! showIcons ) {
-			classLabel.setIcon(null);
-		} else {
-			classLabel.setIcon( Activator.getImage( IconFiles.CLASS_ICON ) );
-		}
-	}
-	
-	private void updateAttributeLabelIcons(ClassDiagramClass classDiagramClass) {
-		boolean showIcons = classDiagramClass.getParent().isShowIcons();
-		for (Label attributeLabel : attributeLabels ) {
-			if ( showIcons ) {
-				attributeLabel.setIcon( Activator.getImage( IconFiles.PUBLIC_ATTRIBUTE_ICON ) );
-			} else {
-				attributeLabel.setIcon( null );
-			}
-		}
 	}
 }

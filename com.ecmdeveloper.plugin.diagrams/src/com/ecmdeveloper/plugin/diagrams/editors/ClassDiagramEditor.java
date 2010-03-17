@@ -41,6 +41,7 @@ import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.DeleteAction;
+import org.eclipse.gef.ui.actions.PrintAction;
 import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
@@ -52,6 +53,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramAction;
+import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramClassAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ShowPropertiesAction;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
@@ -82,6 +84,10 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		return model;
 	}
 	
+	public GraphicalViewer getViewer() {
+		return getGraphicalViewer();
+	}
+	
 	@Override
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
@@ -109,10 +115,6 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		
 		MenuManager menuManager = new ClassDiagramContextMenuManager( getActionRegistry() );
 		viewer.setContextMenu( menuManager );
-//		ContextMenuProvider contextMenuProvider = new ClassDiagramEditorContextMenuProvider(viewer,
-//				getActionRegistry());
-//		viewer.setContextMenu(contextMenuProvider);
-//		getSite().registerContextMenu(contextMenuProvider, viewer);
 	}
 
 	@Override
@@ -202,12 +204,37 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 	@Override
 	protected void createActions() {
 		super.createActions();
-		IAction exportAction = new ExportDiagramAction(this);
-		getActionRegistry().registerAction(exportAction);
-		getSelectionActions().add( exportAction.getId() );
-		
+		registerExportDiagramAction();
+		registerPropertiesAction();
+		registerExportDiagramClassAction();
+		registerPrintAction();
+	}
+
+	@SuppressWarnings("unchecked")
+	private void registerPrintAction() {
+		IAction printAction = new PrintAction(this);
+		getActionRegistry().registerAction(printAction);
+		getSelectionActions().add( printAction.getId() );
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void registerPropertiesAction() {
 		IAction propertiesAction = new ShowPropertiesAction(this);
 		getActionRegistry().registerAction(propertiesAction);
 		getSelectionActions().add( propertiesAction.getId() );
+	}
+
+	@SuppressWarnings("unchecked")
+	private void registerExportDiagramAction() {
+		IAction exportAction = new ExportDiagramAction(this);
+		getActionRegistry().registerAction(exportAction);
+		getSelectionActions().add( exportAction.getId() );
+	}
+
+	@SuppressWarnings("unchecked")
+	private void registerExportDiagramClassAction() {
+		IAction exportAction = new ExportDiagramClassAction(this);
+		getActionRegistry().registerAction(exportAction);
+		getSelectionActions().add( exportAction.getId() );
 	}
 }

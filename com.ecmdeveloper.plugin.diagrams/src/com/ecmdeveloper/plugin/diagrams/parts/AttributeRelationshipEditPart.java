@@ -21,13 +21,10 @@
 package com.ecmdeveloper.plugin.diagrams.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.draw2d.AbsoluteBendpoint;
 import org.eclipse.draw2d.Bendpoint;
-import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionEndpointLocator;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
@@ -36,8 +33,8 @@ import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.RelativeBendpoint;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
@@ -49,6 +46,9 @@ import com.ecmdeveloper.plugin.diagrams.model.AttributeRelationship;
  *
  */
 public class AttributeRelationshipEditPart extends AbstractClassesConnectionEditPart {
+
+	private static final int AGGREGATE_SIZE = 1;
+	private static final String SINGLE_MULTIPLICITY = "1";
 
 	public AttributeRelationshipEditPart(AttributeRelationship model) {
 		setModel(model);
@@ -78,10 +78,9 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 		
 		AttributeRelationship attributeRelationship = getAttributeRelationship();
 
-		if ( attributeRelationship.getSourceConnector().getClassId().equals( attributeRelationship.getTargetConnector().getClassId() ) ) {
+		if ( isLoop(attributeRelationship) ) {
 
 			Rectangle bounds = ((AbstractGraphicalEditPart)getSource()).getFigure().getBounds();
-			System.out.println( "bounds: " + bounds.toString() );
 
 			int outerX = bounds.width/2 + 20;
 			int outerY = -(bounds.height/2 + 20);
@@ -104,38 +103,75 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 			constraint.add(point3);
 			
 			this.getConnectionFigure().setRoutingConstraint(constraint);
-			
-			System.err.println( attributeRelationship.getSourceConnector().getPropertyName() + " is in a loop" );
 		}
+	}
+
+	private boolean isLoop(AttributeRelationship attributeRelationship) {
+		return attributeRelationship.getSourceConnector().getClassId().equals( attributeRelationship.getTargetConnector().getClassId() );
 	}
 	
 	@Override
 	protected IFigure createFigure() {
 		
-		AttributeRelationship attributeRelationship = getAttributeRelationship();
-		
 		PolylineConnection connection = (PolylineConnection) super.createFigure();
-		connection.setSourceDecoration(new PolygonDecoration() );
-		
-		if ( attributeRelationship.getTargetConnector().getPropertyId() != null ) {
-			connection.setTargetDecoration( new PolygonDecoration() );
-		}
-		
+
+		AttributeRelationship attributeRelationship = getAttributeRelationship();
+		addDecorations(attributeRelationship, connection);
 		connection.setLineStyle(Graphics.LINE_DASH);
-		
-		String targetMultiplicity = attributeRelationship.getTargetConnector().getMultiplicity();
-		
-		if ( !targetMultiplicity.isEmpty() ) {
-			ConnectionEndpointLocator targetEndpointLocator = new ConnectionEndpointLocator(connection, true);
-			targetEndpointLocator.setVDistance(20);
-			targetEndpointLocator.setUDistance(20);
-			Label targetMultiplicityLabel = new Label( targetMultiplicity );
-			connection.add(targetMultiplicityLabel, targetEndpointLocator);
-		}
-		
+		addMultiplicityLabels(attributeRelationship, connection);
+		addAggregate(connection);
 		return connection;
 	}
 
+	private void addDecorations(AttributeRelationship attributeRelationship,
+			PolylineConnection connection) {
+		connection.setTargetDecoration(new PolygonDecoration() );
+		
+		if ( attributeRelationship.getTargetConnector().getPropertyId() != null ) {
+			connection.setSourceDecoration( new PolygonDecoration() );
+		}
+	}
+
+	private void addMultiplicityLabels(AttributeRelationship attributeRelationship,
+			PolylineConnection connection) {
+		
+		addMultiplicityLabel(attributeRelationship.getSourceConnector().getMultiplicity(),
+				connection, false, false );
+
+		addMultiplicityLabel(attributeRelationship.getTargetConnector().getMultiplicity(),
+				connection, true, isLoop( attributeRelationship ) );
+	}
+
+	private void addMultiplicityLabel(String multiplicity,
+			PolylineConnection connection, boolean isEnd, boolean isLoop ) {
+	
+		if ( multiplicity.isEmpty() ) {
+			multiplicity = SINGLE_MULTIPLICITY;
+		}
+
+		ConnectionEndpointLocator targetEndpointLocator = new ConnectionEndpointLocator(connection, isEnd);
+		targetEndpointLocator.setVDistance(10);
+		
+		if ( isLoop ) {
+			targetEndpointLocator.setUDistance(20);
+		}
+		Label multiplicityLabel = new Label( multiplicity );
+		connection.add(multiplicityLabel, targetEndpointLocator);
+	}
+
+	private void addAggregate(PolylineConnection connection) {
+		
+		PolygonDecoration decoration = new PolygonDecoration();
+		
+		PointList decorationPointList = new PointList();
+		decorationPointList.addPoint(0,0);
+		decorationPointList.addPoint(-AGGREGATE_SIZE, AGGREGATE_SIZE);
+		decorationPointList.addPoint(-2*AGGREGATE_SIZE,0);
+		decorationPointList.addPoint(-AGGREGATE_SIZE,-AGGREGATE_SIZE);
+		decoration.setTemplate(decorationPointList);
+		connection.setSourceDecoration(decoration);
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
 		System.out.println( "Property change?");

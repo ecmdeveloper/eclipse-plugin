@@ -18,26 +18,30 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.diagrams.model;
+package com.ecmdeveloper.plugin.diagrams.perspectives;
 
-import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.ui.IFolderLayout;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveFactory;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public abstract class ClassDiagramElementWithResize extends ClassDiagramElement {
+public class ClassDiagramPerspectiveFactory implements IPerspectiveFactory {
 
-	private Dimension size = new Dimension(150, 50);
+	private static final String CLASSES_VIEW_ID = "com.ecmdeveloper.plugin.classes.views.ClassesView";
 
-	public Dimension getSize() {
-		return size.getCopy();
-	}
+	@Override
+	public void createInitialLayout(IPageLayout layout) {
 
-	public void setSize(Dimension size) {
-		if (size != null) {
-			this.size.setSize(size);
-			firePropertyChange(SIZE_PROP, null, this.size);
-		}
+		String editorArea = layout.getEditorArea();
+		
+		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, 0.25f, editorArea );
+		left.addView( CLASSES_VIEW_ID);
+		left.addView( IPageLayout.ID_RES_NAV );
+		
+		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.66f, editorArea );
+		bottom.addView( IPageLayout.ID_PROP_SHEET );
 	}
 }

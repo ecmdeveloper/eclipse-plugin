@@ -44,10 +44,16 @@ public class AttributeRelationship {
 		initializeTargetConnector(objectPropertyDescription, requiredClass);
 		initalizeSourceConnector(objectPropertyDescription, parent);
 		
-		System.out.println( getSourceConnector().getPropertyName() );
-		System.out.println( getSourceConnector().getClassName() );
-		System.out.println( isConnected() );
+//		System.out.println( getSourceConnector().getPropertyName() );
+//		System.out.println( getSourceConnector().getClassName() );
+//		System.out.println( isConnected() );
 		
+	}
+
+	public AttributeRelationship(String name, ClassConnector sourceConnector, ClassConnector targetConnector) {
+		this.name = name;
+		this.sourceConnector = sourceConnector;
+		this.targetConnector = targetConnector;
 	}
 
 	private void initializeTargetConnector(PropertyDescriptionObject objectPropertyDescription,

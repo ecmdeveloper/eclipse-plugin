@@ -31,25 +31,42 @@ public class ClassConnector {
 	private String multiplicity;
 	private String propertyId;
 	private String propertyName;
+
+	public ClassConnector() {}
 	
+	public ClassConnector(String classId, String className, String propertyId, String propertyName,
+			String multiplicity) {
+		this.classId = classId;
+		this.className = className;
+		this.propertyId = propertyId;
+		this.propertyName = propertyName;
+		this.multiplicity = multiplicity;
+	}
+
 	public String getClassId() {
 		return classId;
 	}
+	
 	public void setClassId(String classId) {
 		this.classId = classId;
 	}
+
 	public String getClassName() {
 		return className;
 	}
+
 	public void setClassName(String className) {
 		this.className = className;
 	}
+
 	public String getMultiplicity() {
 		return multiplicity;
 	}
+
 	public void setMultiplicity(String multiplicity) {
 		this.multiplicity = multiplicity;
 	}
+	
 	public String getPropertyId() {
 		return propertyId;
 	}
