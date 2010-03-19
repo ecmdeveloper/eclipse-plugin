@@ -46,6 +46,22 @@ public class InheritConnectionEditPart extends AbstractClassesConnectionEditPart
 	public InheritRelationship getInheritRelationship() {
 		return (InheritRelationship) getModel();
 	}
+
+	@Override
+	public void activate() {
+		if (!isActive()) {
+			super.activate();
+			getInheritRelationship().addPropertyChangeListener(this);
+		}
+	}
+
+	@Override
+	public void deactivate() {
+		if (isActive()) {
+			super.deactivate();
+			getInheritRelationship().removePropertyChangeListener(this);
+		}
+	}
 	
 	@Override
 	protected void createEditPolicies() {
@@ -79,8 +95,7 @@ public class InheritConnectionEditPart extends AbstractClassesConnectionEditPart
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void propertyChange(PropertyChangeEvent event) {
+		getFigure().setVisible( getInheritRelationship().isVisible() );
 	}
 }

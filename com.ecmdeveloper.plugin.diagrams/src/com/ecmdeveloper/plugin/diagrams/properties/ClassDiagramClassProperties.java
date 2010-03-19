@@ -32,17 +32,23 @@ import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 public class ClassDiagramClassProperties extends ClassDiagramElementProperties {
 
 	private static final String VISIBLE_ATTRIBUTES_PROPERTY = "ClassDiagramClass.visibleAttributes";
+	private static final String VISIBLE_RELATIONS_PROPERTY = "ClassDiagramClass.visibleRelations";
 
 	protected static final PropertyDescriptor VISIBLE_ATTRIBUTES_PROPERTY_DESCRIPTOR = new PropertyDescriptor(
 			VISIBLE_ATTRIBUTES_PROPERTY, "Visible Attributes");
+
+	protected static final PropertyDescriptor VISIBLE_RELATIONS_PROPERTY_DESCRIPTOR = new PropertyDescriptor(
+			VISIBLE_RELATIONS_PROPERTY, "Visible Relations");
 	
 	private static IPropertyDescriptor[] classDescriptors = { 
 		XPOS_PROPERTY_DESCRIPTOR,
 		YPOS_PROPERTY_DESCRIPTOR,
-		VISIBLE_ATTRIBUTES_PROPERTY_DESCRIPTOR };
+		VISIBLE_ATTRIBUTES_PROPERTY_DESCRIPTOR,
+		VISIBLE_RELATIONS_PROPERTY_DESCRIPTOR };
 
 	static {
 		VISIBLE_ATTRIBUTES_PROPERTY_DESCRIPTOR.setCategory( PropertyCategory.APPERANCE );
+		VISIBLE_RELATIONS_PROPERTY_DESCRIPTOR.setCategory( PropertyCategory.APPERANCE );
 	}
 	
 	private ClassDiagramClass classDiagramClass;
@@ -67,6 +73,10 @@ public class ClassDiagramClassProperties extends ClassDiagramElementProperties {
 
 		if ( VISIBLE_ATTRIBUTES_PROPERTY.equals( propertyId ) ) {
 			return new VisibleAttributesProperties(classDiagramClass);
+		}
+
+		if ( VISIBLE_RELATIONS_PROPERTY.equals( propertyId ) ) {
+			return new VisibleRelationsProperties(classDiagramClass);
 		}
 		
 		return super.getPropertyValue(propertyId);

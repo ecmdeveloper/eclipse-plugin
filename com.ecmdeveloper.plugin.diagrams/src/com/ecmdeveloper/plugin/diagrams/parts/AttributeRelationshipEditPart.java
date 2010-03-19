@@ -62,23 +62,27 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
 	}
 
-//	@Override
-//	protected void activateFigure() {
-//		super.activateFigure();
-//		getFigure().addPropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this );
-//	}
-//
-//	@Override
-//	protected void deactivateFigure() {
-//		getFigure().removePropertyChangeListener( Connection.PROPERTY_CONNECTION_ROUTER, this);
-//		super.deactivateFigure();
-//	}
+	@Override
+	public void activate() {
+		if (!isActive()) {
+			super.activate();
+			getAttributeRelationship().addPropertyChangeListener(this);
+		}
+	}
 
+	@Override
+	public void deactivate() {
+		if (isActive()) {
+			super.deactivate();
+			getAttributeRelationship().removePropertyChangeListener(this);
+		}
+	}
+	
 	public void positionConnections() {
 		
 		AttributeRelationship attributeRelationship = getAttributeRelationship();
 
-		if ( isLoop(attributeRelationship) ) {
+		if ( attributeRelationship.isLoop() ) {
 
 			Rectangle bounds = ((AbstractGraphicalEditPart)getSource()).getFigure().getBounds();
 
@@ -105,10 +109,6 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 			this.getConnectionFigure().setRoutingConstraint(constraint);
 		}
 	}
-
-	private boolean isLoop(AttributeRelationship attributeRelationship) {
-		return attributeRelationship.getSourceConnector().getClassId().equals( attributeRelationship.getTargetConnector().getClassId() );
-	}
 	
 	@Override
 	protected IFigure createFigure() {
@@ -119,10 +119,14 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 		addDecorations(attributeRelationship, connection);
 		connection.setLineStyle(Graphics.LINE_DASH);
 		addMultiplicityLabels(attributeRelationship, connection);
-		addAggregate(connection);
 		return connection;
 	}
 
+	@Override
+	protected void refreshVisuals() {
+		getFigure().setVisible( getAttributeRelationship().isVisible() );
+	}
+	
 	private void addDecorations(AttributeRelationship attributeRelationship,
 			PolylineConnection connection) {
 		connection.setTargetDecoration(new PolygonDecoration() );
@@ -130,6 +134,7 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 		if ( attributeRelationship.getTargetConnector().getPropertyId() != null ) {
 			connection.setSourceDecoration( new PolygonDecoration() );
 		}
+		//addAggregate(connection);
 	}
 
 	private void addMultiplicityLabels(AttributeRelationship attributeRelationship,
@@ -139,7 +144,7 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 				connection, false, false );
 
 		addMultiplicityLabel(attributeRelationship.getTargetConnector().getMultiplicity(),
-				connection, true, isLoop( attributeRelationship ) );
+				connection, true, attributeRelationship.isLoop() );
 	}
 
 	private void addMultiplicityLabel(String multiplicity,
@@ -173,9 +178,7 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 	}
 	
 	@Override
-	public void propertyChange(PropertyChangeEvent arg0) {
-		System.out.println( "Property change?");
+	public void propertyChange(PropertyChangeEvent event) {
+		getFigure().setVisible( getAttributeRelationship().isVisible() );
 	}
-	
-	
 }

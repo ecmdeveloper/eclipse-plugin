@@ -150,14 +150,24 @@ public class ClassDiagramFile {
 		}
 		for ( IMemento attributeRelationshipChild : attributeRelationshipsChild.getChildren( PluginTagNames.ATTRIBUTE_RELATIONSHIP ) ) {
 
-			String name = attributeRelationshipChild.getString( PluginTagNames.NAME );
-			ClassConnector sourceConnector = getClassConnector(attributeRelationshipChild.getChild( PluginTagNames.SOURCE_CONNECTOR) );
-			ClassConnector targetConnector = getClassConnector(attributeRelationshipChild.getChild( PluginTagNames.TARGET_CONNECTOR) );
-
-			AttributeRelationship attributeRelationship = new AttributeRelationship(name, sourceConnector, targetConnector );
+			AttributeRelationship attributeRelationship = getClassDiagramAttributeRelationship(attributeRelationshipChild);
 			classDiagramClass.addSource( attributeRelationship );
 		}
 		
+	}
+
+	private AttributeRelationship getClassDiagramAttributeRelationship( IMemento attributeRelationshipChild) {
+		
+		String name = attributeRelationshipChild.getString( PluginTagNames.NAME );
+		ClassConnector sourceConnector = getClassConnector(attributeRelationshipChild.getChild( PluginTagNames.SOURCE_CONNECTOR) );
+		ClassConnector targetConnector = getClassConnector(attributeRelationshipChild.getChild( PluginTagNames.TARGET_CONNECTOR) );
+
+		AttributeRelationship attributeRelationship = new AttributeRelationship(name, sourceConnector, targetConnector );
+		
+		boolean visible = attributeRelationshipChild.getBoolean( PluginTagNames.VISIBLE );
+		attributeRelationship.setVisible(visible);
+
+		return attributeRelationship;
 	}
 
 	private ClassConnector getClassConnector(IMemento classConnectorChild) {
@@ -269,6 +279,7 @@ public class ClassDiagramFile {
 			AttributeRelationship attributeRelationship) {
 
 		attributeRelationshipChild.putString( PluginTagNames.NAME, attributeRelationship.getName() );
+		attributeRelationshipChild.putBoolean(PluginTagNames.VISIBLE, attributeRelationship.isVisible() );
 
 		IMemento sourceConnectorChild = attributeRelationshipChild.createChild( PluginTagNames.SOURCE_CONNECTOR );
 		initializeClassConnectorChild(sourceConnectorChild, attributeRelationship.getSourceConnector() );
