@@ -25,7 +25,6 @@ import java.util.List;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 
@@ -72,6 +71,11 @@ public class VisibleAttributesProperties implements IPropertySource {
 	}
 
 	@Override
+	public void setPropertyValue(Object id, Object value) {
+		classDiagramClass.setAttributeVisible( (String) id, (Boolean)value );
+	}
+
+	@Override
 	public boolean isPropertySet(Object id) {
 		return false;
 	}
@@ -80,11 +84,6 @@ public class VisibleAttributesProperties implements IPropertySource {
 	public void resetPropertyValue(Object id) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void setPropertyValue(Object id, Object value) {
-		classDiagramClass.setAttributeVisible( (String) id, (Boolean)value );
 	}
 
 	@Override

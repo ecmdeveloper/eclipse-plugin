@@ -18,39 +18,38 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.diagrams.model;
+package com.ecmdeveloper.plugin.diagrams.editors;
+
+import org.eclipse.gef.EditPartViewer;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
+import org.eclipse.gef.requests.CreationFactory;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class InheritRelationship extends ClassDiagramBase {
+public class ClassDiagramDropTargetListener extends TemplateTransferDropTargetListener {
 
-	public static String VISIBLE_PROPERTY = "InheritRelationship.Visible";
-	
-	private ClassDiagramClass parent;
-	private ClassDiagramClass child;
-	private boolean visible = true;
-	
-	public InheritRelationship(ClassDiagramClass parent, ClassDiagramClass child) {
-		this.parent = parent;
-		this.child = child;
+	public ClassDiagramDropTargetListener(EditPartViewer viewer) {
+		super(viewer);
 	}
 
-	public ClassDiagramClass getParent() {
-		return parent;
+	@Override
+	protected CreationFactory getFactory(Object template) {
+		// TODO Auto-generated method stub
+		return super.getFactory(template);
 	}
 
-	public ClassDiagramClass getChild() {
-		return child;
+	@Override
+	protected void handleDragOver() {
+		// TODO Auto-generated method stub
+		super.handleDragOver();
 	}
 
-	public boolean isVisible() {
-		return visible;
-	}
-
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-		firePropertyChange(VISIBLE_PROPERTY, null, new Boolean( visible ) );
+	@Override
+	protected Request getTargetRequest() {
+		// TODO Auto-generated method stub
+		return super.getTargetRequest();
 	}
 }

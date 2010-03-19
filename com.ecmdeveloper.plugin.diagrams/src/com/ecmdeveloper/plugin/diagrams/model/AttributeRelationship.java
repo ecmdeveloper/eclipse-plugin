@@ -28,9 +28,12 @@ import com.filenet.api.meta.PropertyDescriptionObject;
  * @author Ricardo.Belfor
  *
  */
-public class AttributeRelationship {
+public class AttributeRelationship extends ClassDiagramBase {
+
+	public static String VISIBLE_PROPERTY = "AttributeRelationship.Visible";
 
 	private String name;
+	private boolean visible;
 	private boolean connected = false;
 	private ClassConnector sourceConnector;
 	private ClassConnector targetConnector;
@@ -96,6 +99,15 @@ public class AttributeRelationship {
 		this.name = name;
 	}
 
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+		firePropertyChange(VISIBLE_PROPERTY, null, new Boolean( visible ) );
+	}
+	
 	public boolean isConnected() {
 		return connected;
 	}
@@ -103,22 +115,9 @@ public class AttributeRelationship {
 	public void setConnected(boolean connected) {
 		this.connected = connected;
 	}
-
-//	private ClassDiagramClass source;
-//	private ClassDiagramClass target;
-//	
-//	public AttributeRelationship(ClassDiagramClass source, ClassDiagramClass target) {
-//		this.source = source;
-//		this.target = target;
-//	}
-//
-//	public ClassDiagramClass getSource() {
-//		return source;
-//	}
-//
-//	public ClassDiagramClass getTarget() {
-//		return target;
-//	}
 	
-	
+	public boolean isLoop() {
+		return getSourceConnector().getClassId().equals( getTargetConnector().getClassId() );
+		
+	}
 }
