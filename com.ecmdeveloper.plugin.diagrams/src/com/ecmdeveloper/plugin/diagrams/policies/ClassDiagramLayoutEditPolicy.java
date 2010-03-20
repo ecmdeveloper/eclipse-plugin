@@ -1,6 +1,5 @@
 package com.ecmdeveloper.plugin.diagrams.policies;
 
-import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
@@ -9,8 +8,10 @@ import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 
 import com.ecmdeveloper.plugin.diagrams.commands.AdjustConstraintCommand;
+import com.ecmdeveloper.plugin.diagrams.commands.ClassDiagramClassCreateCommand;
 import com.ecmdeveloper.plugin.diagrams.commands.ClassDiagramNoteCreateCommand;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramNote;
 import com.ecmdeveloper.plugin.diagrams.parts.AbstractClassesGraphicalEditPart;
 
@@ -33,6 +34,12 @@ public class ClassDiagramLayoutEditPolicy extends XYLayoutEditPolicy
 			ClassDiagramNote classDiagramNote = (ClassDiagramNote) request.getNewObject();
 			classDiagramNote.setLocation( request.getLocation() );
 			return new ClassDiagramNoteCreateCommand(classDiagram, classDiagramNote );
+		} if ( request.getNewObjectType() == ClassDiagramClass.class ) {
+			ClassDiagram classDiagram = (ClassDiagram) getHost().getModel();
+			ClassDiagramClass classDiagramClass = (ClassDiagramClass) request.getNewObject();
+			classDiagramClass.setLocation( request.getLocation() );
+			return new ClassDiagramClassCreateCommand(classDiagram, classDiagramClass );
+//			System.out.println( "Create class diagram class;");
 		}
 		return UnexecutableCommand.INSTANCE;
 	}

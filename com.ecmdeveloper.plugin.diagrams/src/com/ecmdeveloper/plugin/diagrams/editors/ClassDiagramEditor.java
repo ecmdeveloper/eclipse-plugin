@@ -94,7 +94,7 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		GraphicalViewer viewer = configureViewer();
 		configureContextMenu(viewer);
 	
-        viewer.addDropTargetListener(new ClassDiagramDropTargetListener(viewer) );
+//        viewer.addDropTargetListener(new ClassDiagramDropTargetListener(viewer) );
 		
 //		RootEditPart rootEditPart = viewer.getRootEditPart();
 //		if ( rootEditPart instanceof LayerManager ) {
@@ -133,9 +133,13 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 //	      connectionLayer.setConnectionRouter(new ShortestPathConnectionRouter(
 //	            managerPart.getFigure()));
 
+	      	      
 	      getGraphicalViewer().addDropTargetListener(
-				(TransferDropTargetListener) new TemplateTransferDropTargetListener(
-						getGraphicalViewer()));
+					(TransferDropTargetListener) new ClassDiagramDropTargetListener(
+							getGraphicalViewer()));
+//	      getGraphicalViewer().addDropTargetListener(
+//					(TransferDropTargetListener) new TemplateTransferDropTargetListener(
+//							getGraphicalViewer()));
 	}
 
 	@Override

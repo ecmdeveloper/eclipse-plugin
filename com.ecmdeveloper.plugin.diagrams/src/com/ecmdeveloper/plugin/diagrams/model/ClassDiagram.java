@@ -63,11 +63,24 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 
 	public boolean addClassDiagramClass( ClassDiagramClass classDiagramClass )
 	{
+		if ( isAlreadyAdded(classDiagramClass) ) {
+			return false;
+		}
+		
 		if ( classDiagramClass != null && classDiagramClasses.add(classDiagramClass) ) {
 			classDiagramClass.setParent(this);
 			firePropertyChange(CHILD_ADDED_PROP, null, classDiagramClass);
 			connectClass(classDiagramClass);
 			return true;
+		}
+		return false;
+	}
+
+	private boolean isAlreadyAdded(ClassDiagramClass classDiagramClass) {
+		for ( ClassDiagramClass existingClass : classDiagramClasses ) {
+			if ( existingClass.getId().equalsIgnoreCase( classDiagramClass.getId() ) ) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -101,15 +114,13 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 	}
 
 	private void connectAttributeClassToClass(ClassDiagramClass attributeClass) {
-		for ( ClassDiagramClass classDiagramClass : classDiagramClasses ) {
-			for ( AttributeRelationship attributeRelationship : classDiagramClass.getSourceRelations() ) {
-//				if ( !attributeClass.getId().equals( attributeRelationship.getSourceConnector().getClassId() ) ) {
-				
-					if ( isAttributeRelationshipClass(attributeRelationship, attributeClass ) ) {
-						classDiagramClass.connectSource( attributeRelationship );
-						attributeClass.addTarget( attributeRelationship );
-					}
-//				}
+		for (ClassDiagramClass classDiagramClass : classDiagramClasses) {
+			for (AttributeRelationship attributeRelationship : classDiagramClass
+					.getSourceRelations()) {
+				if (isAttributeRelationshipClass(attributeRelationship, attributeClass)) {
+					classDiagramClass.connectSource(attributeRelationship);
+					attributeClass.addTarget(attributeRelationship);
+				}
 			}
 		}
 	}
