@@ -82,6 +82,8 @@ public class ClassDiagramAttribute {
 				PluginLog.error(e);
 			}
 		}
+		
+		visible = true;
 	}
 
 	public String getName() {
