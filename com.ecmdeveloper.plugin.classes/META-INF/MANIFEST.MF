@@ -8,7 +8,8 @@ Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.ecmdeveloper.plugin;bundle-version="1.0.0",
- com.ecmdeveloper.plugin.lib;bundle-version="1.0.0"
+ com.ecmdeveloper.plugin.lib;bundle-version="1.0.0",
+ org.eclipse.gef
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: com.ecmdeveloper.plugin.classes.model,
