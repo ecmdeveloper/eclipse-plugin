@@ -46,12 +46,14 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 	public static final String DEFAULT_FILL_COLOR_PROP = "ClassDiagram.DefaultFillColor";
 	public static final String DEFAULT_LINE_COLOR_PROP = "ClassDiagram.DefaultLineColor";
 	public static final String SHOW_ICONS_PROP = "ClassDiagram.showIcons";
+	public static final String SHOW_DISPLAY_NAMES_PROP = "ClassDiagram.showDisplayNames";
 
 	@SuppressWarnings("unused")
 	private RGB defaultFillColor;
 	@SuppressWarnings("unused")
 	private RGB defaultLineColor;
 	private boolean showIcons = true;
+	private boolean showDisplayNames = true;
 	
 	public void addClassDiagramElement(ClassDiagramElement object) {
 		if ( object instanceof ClassDiagramClass ) {
@@ -118,8 +120,10 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 			for (AttributeRelationship attributeRelationship : classDiagramClass
 					.getSourceRelations()) {
 				if (isAttributeRelationshipClass(attributeRelationship, attributeClass)) {
-					classDiagramClass.connectSource(attributeRelationship);
-					attributeClass.addTarget(attributeRelationship);
+					if ( ! attributeRelationship.isLoop() ) {
+						classDiagramClass.connectSource(attributeRelationship);
+						attributeClass.addTarget(attributeRelationship);
+					}
 				}
 			}
 		}
@@ -170,13 +174,43 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 	}
 
 	private void deleteClassDiagramClass(ClassDiagramElement object) {
+
 		ClassDiagramClass classDiagramClass = (ClassDiagramClass) object;
-		
-		disconnectClassFromChildren(classDiagramClass);
-		disconnectClassFromParent(classDiagramClass);
+		disconnectClass(classDiagramClass);
 		
 		if ( classDiagramClasses.remove( classDiagramClass ) ) {
 			firePropertyChange(CHILD_REMOVED_PROP, null, classDiagramClass );
+		}
+	}
+
+	private void disconnectClass(ClassDiagramClass classDiagramClass) {
+		disconnectClassFromChildren(classDiagramClass);
+		disconnectClassFromParent(classDiagramClass);
+		disconnectClassFromTarget(classDiagramClass);
+		disconnectClassFromSource(classDiagramClass);
+	}
+
+	private void disconnectClassFromSource(ClassDiagramClass classDiagramClass) {
+		for ( AttributeRelationship targetRelation : classDiagramClass.getTargetRelations() ) {
+			String sourceClassId = targetRelation.getSourceConnector().getClassId();
+			for ( ClassDiagramClass sourceClass : classDiagramClasses ) {
+				if ( sourceClass.getId().equals( sourceClassId ) ) {
+					sourceClass.disconnectSource(targetRelation);
+					break;
+				}
+			}
+		}
+	}
+
+	private void disconnectClassFromTarget(ClassDiagramClass classDiagramClass) {
+		for ( AttributeRelationship sourceRelation : classDiagramClass.getSourceRelations() ) {
+			String targetClassId = sourceRelation.getTargetConnector().getClassId();
+			for ( ClassDiagramClass targetClass : classDiagramClasses ) {
+				if ( targetClass.getId().equals( targetClassId ) ) {
+					targetClass.removeTarget(sourceRelation);
+					break;
+				}
+			}
 		}
 	}
 
@@ -224,6 +258,15 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 		this.showIcons = showIcons;
 		firePropertyChange(SHOW_ICONS_PROP, null, new Boolean(showIcons) );
 		notifyClassDiagramSettingsChanged(SHOW_ICONS_PROP);
+	}
+
+	public boolean isShowDisplayNames() {
+		return showDisplayNames ;
+	}
+
+	public void setShowDisplayNames(boolean showDisplayNames) {
+		this.showDisplayNames = showDisplayNames;
+		notifyClassDiagramSettingsChanged(SHOW_DISPLAY_NAMES_PROP);
 	}
 
 	private void notifyClassDiagramSettingsChanged(String propertyId) {

@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.ConnectionEndpointLocator;
-import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
@@ -117,7 +116,6 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 
 		AttributeRelationship attributeRelationship = getAttributeRelationship();
 		addDecorations(attributeRelationship, connection);
-		connection.setLineStyle(Graphics.LINE_DASH);
 		addMultiplicityLabels(attributeRelationship, connection);
 		return connection;
 	}
@@ -131,10 +129,12 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 			PolylineConnection connection) {
 		connection.setTargetDecoration(new PolygonDecoration() );
 		
-		if ( attributeRelationship.getTargetConnector().getPropertyId() != null ) {
+		if ( attributeRelationship.getSourceConnector().isAggregate() )  {
+			addAggregate(connection);
+		} else if ( attributeRelationship.getTargetConnector().getPropertyId() != null ) {
 			connection.setSourceDecoration( new PolygonDecoration() );
 		}
-		//addAggregate(connection);
+		
 	}
 
 	private void addMultiplicityLabels(AttributeRelationship attributeRelationship,
@@ -150,12 +150,18 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 	private void addMultiplicityLabel(String multiplicity,
 			PolylineConnection connection, boolean isEnd, boolean isLoop ) {
 	
-		if ( multiplicity.isEmpty() ) {
+		if ( multiplicity == null || multiplicity.isEmpty() ) {
 			multiplicity = SINGLE_MULTIPLICITY;
 		}
 
 		ConnectionEndpointLocator targetEndpointLocator = new ConnectionEndpointLocator(connection, isEnd);
 		targetEndpointLocator.setVDistance(10);
+
+// TODO add attribute labels		
+//		ConnectionEndpointLocator targetEndpointLocator2 = new ConnectionEndpointLocator(connection, isEnd);
+//		targetEndpointLocator2.setVDistance(-10);
+//		Label bla = new Label("myAttribute" );
+//		connection.add( bla, targetEndpointLocator2 );
 		
 		if ( isLoop ) {
 			targetEndpointLocator.setUDistance(20);
@@ -165,16 +171,21 @@ public class AttributeRelationshipEditPart extends AbstractClassesConnectionEdit
 	}
 
 	private void addAggregate(PolylineConnection connection) {
-		
 		PolygonDecoration decoration = new PolygonDecoration();
-		
+		decoration.setFill(true);
+		decoration.setBackgroundColor( org.eclipse.draw2d.ColorConstants.white );
+		PointList decorationPointList = createDecorationPointList();
+		decoration.setTemplate(decorationPointList);
+		connection.setSourceDecoration(decoration);
+	}
+
+	private PointList createDecorationPointList() {
 		PointList decorationPointList = new PointList();
 		decorationPointList.addPoint(0,0);
 		decorationPointList.addPoint(-AGGREGATE_SIZE, AGGREGATE_SIZE);
 		decorationPointList.addPoint(-2*AGGREGATE_SIZE,0);
 		decorationPointList.addPoint(-AGGREGATE_SIZE,-AGGREGATE_SIZE);
-		decoration.setTemplate(decorationPointList);
-		connection.setSourceDecoration(decoration);
+		return decorationPointList;
 	}
 	
 	@Override

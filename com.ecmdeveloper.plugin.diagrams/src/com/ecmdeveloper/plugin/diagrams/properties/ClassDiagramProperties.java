@@ -37,8 +37,8 @@ public class ClassDiagramProperties implements IPropertySource {
 		descriptors = new IPropertyDescriptor[] { 
 //			new ColorPropertyDescriptor( DEFAULT_FILL_COLOR_PROP, "Default Fill Color"), 
 //			new ColorPropertyDescriptor( DEFAULT_LINE_COLOR_PROP, "Default Line Color")
-//			new ComboBoxPropertyDescriptor( ClassDiagram.SHOW_ICONS_PROP, "Show Icons", new String[] { "Yes", "No" } )
-			new CheckBoxPropertyDescriptor(ClassDiagram.SHOW_ICONS_PROP, "Show Icons")
+			new CheckBoxPropertyDescriptor(ClassDiagram.SHOW_ICONS_PROP, "Show Icons"),
+			new CheckBoxPropertyDescriptor(ClassDiagram.SHOW_DISPLAY_NAMES_PROP, "Show Display Names" )
 		};
 	}
 
@@ -65,10 +65,10 @@ public class ClassDiagramProperties implements IPropertySource {
 //		} else if ( DEFAULT_LINE_COLOR_PROP.equals(propertyId)) {
 //			return defaultLineColor;
 		if ( ClassDiagram.SHOW_ICONS_PROP.equals(propertyId) ) {
-//			return new Integer( classDiagram.isShowIcons() ? TRUE_INDEX : FALSE_INDEX );
 			return new Boolean( classDiagram.isShowIcons() );
-		}
-		
+		} if ( ClassDiagram.SHOW_DISPLAY_NAMES_PROP.equals( propertyId ) ) {
+			return new Boolean( classDiagram.isShowDisplayNames() );
+		}		
 		return null;
 	}
 
@@ -90,7 +90,8 @@ public class ClassDiagramProperties implements IPropertySource {
 //		} 
 		if ( ClassDiagram.SHOW_ICONS_PROP.equals(propertyId) ) {
 			classDiagram.setShowIcons( (Boolean) value );
-//			classDiagram.setShowIcons( value == null || ((Integer)value).intValue() == TRUE_INDEX );
+		} else if ( ClassDiagram.SHOW_DISPLAY_NAMES_PROP.equals(propertyId) ) {
+			classDiagram.setShowDisplayNames( (Boolean) value );
 		}
 	}
 }

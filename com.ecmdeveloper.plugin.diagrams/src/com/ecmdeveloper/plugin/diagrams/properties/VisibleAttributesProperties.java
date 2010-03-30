@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.diagrams.properties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -49,15 +50,17 @@ public class VisibleAttributesProperties implements IPropertySource {
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		
 		List<ClassDiagramAttribute> attributes = classDiagramClass.getAttributes();
-		IPropertyDescriptor[] descriptors = new IPropertyDescriptor[ attributes.size() ];
-		int index = 0;
+		ArrayList<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
+
 		for ( ClassDiagramAttribute attribute : attributes ) {
-			CheckBoxPropertyDescriptor propertyDescriptor = new CheckBoxPropertyDescriptor(
-					attribute.getName(), attribute.getDisplayName());
-			descriptors[index++] = propertyDescriptor;
+			if ( attribute.isActive() ) {
+				CheckBoxPropertyDescriptor propertyDescriptor = new CheckBoxPropertyDescriptor(
+						attribute.getName(), attribute.getDisplayName());
+				descriptors.add( propertyDescriptor );
+			}
 		}
 
-		return descriptors;
+		return descriptors.toArray( new IPropertyDescriptor[ descriptors.size() ] );
 	}
 
 	@Override
@@ -93,7 +96,7 @@ public class VisibleAttributesProperties implements IPropertySource {
 		List<ClassDiagramAttribute> attributes = classDiagramClass.getAttributes();
 		String concat = "";
 		for ( ClassDiagramAttribute attribute : attributes ) {
-			if ( attribute.isVisible() ) {
+			if ( attribute.isVisible() && attribute.isActive() ) {
 				visibleAttributes.append( concat );
 				visibleAttributes.append( attribute.getDisplayName() );
 				concat = ", ";

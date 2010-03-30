@@ -105,7 +105,9 @@ public abstract class ExportAction extends SelectionAction {
 	protected void exportDiagram(String outputFilename) {
 
 		IFigure figure = getFigure();
-		Rectangle figureBounds = figure.getBounds();
+		
+//		Rectangle figureBounds = figure.getBounds();
+		Rectangle figureBounds = getFigureBounds(figure);
 		
 		Image image = null;
 		GC imageGC = null;
@@ -130,4 +132,6 @@ public abstract class ExportAction extends SelectionAction {
 	}
 
 	protected abstract IFigure getFigure();
+	
+	protected abstract Rectangle getFigureBounds(IFigure figure);
 }

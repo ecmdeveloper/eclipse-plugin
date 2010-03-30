@@ -31,6 +31,7 @@ public class ClassConnector {
 	private String multiplicity;
 	private String propertyId;
 	private String propertyName;
+	private boolean aggregate;
 
 	public ClassConnector() {}
 	
@@ -79,4 +80,25 @@ public class ClassConnector {
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
+
+	public void setAggregate(boolean aggregate) {
+		this.aggregate = aggregate;
+	}
+
+	public boolean isAggregate() {
+		return aggregate;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append( className );
+		if ( propertyName != null ) {
+			stringBuffer.append(", " );
+			stringBuffer.append( propertyName );
+		}
+		return stringBuffer.toString();
+	}
+	
+	
 }

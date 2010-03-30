@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -44,6 +44,7 @@ public class ClassDiagramAttribute {
 	private String modifiers;
 	private String displayName;
 	private boolean visible;
+	private boolean active;
 	
 	public ClassDiagramAttribute(String name, String displayName, String type,
 			String defaultValue, String multiplicity, String modifiers) {
@@ -55,6 +56,7 @@ public class ClassDiagramAttribute {
 		this.multiplicity = multiplicity;
 		this.modifiers = modifiers;
 		visible = true;
+		active = true;
 	}
 
 	public ClassDiagramAttribute(IAdaptable adaptableObject) {
@@ -66,7 +68,7 @@ public class ClassDiagramAttribute {
 		
 		this.multiplicity = MultiplicityFormatter.getMultiplicity( internalPropertyDescription );
 		this.modifiers = getModifiers( internalPropertyDescription );
-		this.name = internalPropertyDescription.get_Name();
+		this.name = internalPropertyDescription.get_SymbolicName();
 		this.displayName = internalPropertyDescription.get_DisplayName();
 		this.type = propertyDescription.getPropertyType().toString();
 		this.defaultValue = getDefaultValue();
@@ -76,7 +78,8 @@ public class ClassDiagramAttribute {
 			try {
 				// TODO: make this asynchronous?
 				GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
-				com.filenet.api.meta.ClassDescription requiredClass = (ClassDescription) ClassesManager.getManager().executeTaskSync( task );
+				ClassesManager.getManager().executeTaskSync( task );
+				com.filenet.api.meta.ClassDescription requiredClass = task.getRequiredClass();
 				this.type = requiredClass.get_DisplayName();
 			} catch (Exception e) {
 				PluginLog.error(e);
@@ -84,6 +87,7 @@ public class ClassDiagramAttribute {
 		}
 		
 		visible = true;
+		active = true;
 	}
 
 	public String getName() {
@@ -119,6 +123,14 @@ public class ClassDiagramAttribute {
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override
@@ -178,8 +190,11 @@ public class ClassDiagramAttribute {
 		
 			attributeText.append( " : ");
 			attributeText.append( type );
-			attributeText.append( multiplicity );
-
+			if ( ! multiplicity.isEmpty() ) {
+				attributeText.append( '[' );
+				attributeText.append( multiplicity );
+				attributeText.append( ']' );
+			}
 			if ( showDefaultValue ) {
 				if ( defaultValue != null && defaultValue.toString().length() != 0 ) {
 					attributeText.append( " = ");

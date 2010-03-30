@@ -16,15 +16,16 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            category="com.ecmdeveloper.plugin.contentEngine"
+            category="com.ecmdeveloper.plugin.category.contentEngine"
             class="com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard"
             finalPerspective="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
             icon="icons/table_edit.png"
             id="com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard"
-            name="New Class Diagram"
-            preferredPerspectives="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective">
+            name="Content Engine Class Diagram"
+            preferredPerspectives="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
+            project="false">
          <description>
-            Creates a new Class Diagram
+            Creates a new Content Engine Class Diagram
          </description>
       </wizard>
       <category

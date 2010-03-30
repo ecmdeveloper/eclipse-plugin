@@ -35,6 +35,7 @@ public class InheritRelationship extends ClassDiagramBase {
 	public InheritRelationship(ClassDiagramClass parent, ClassDiagramClass child) {
 		this.parent = parent;
 		this.child = child;
+		visible = child.isParentVisible();
 	}
 
 	public ClassDiagramClass getParent() {
@@ -51,6 +52,7 @@ public class InheritRelationship extends ClassDiagramBase {
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+		child.setParentVisible( visible );
 		firePropertyChange(VISIBLE_PROPERTY, null, new Boolean( visible ) );
 	}
 }

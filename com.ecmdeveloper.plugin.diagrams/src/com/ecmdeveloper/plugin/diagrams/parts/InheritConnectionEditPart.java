@@ -98,4 +98,9 @@ public class InheritConnectionEditPart extends AbstractClassesConnectionEditPart
 	public void propertyChange(PropertyChangeEvent event) {
 		getFigure().setVisible( getInheritRelationship().isVisible() );
 	}
+
+	@Override
+	protected void refreshVisuals() {
+		getFigure().setVisible( getInheritRelationship().isVisible() );
+	}
 }

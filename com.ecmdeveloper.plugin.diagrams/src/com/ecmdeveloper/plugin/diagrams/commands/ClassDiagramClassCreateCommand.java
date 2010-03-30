@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.diagrams.commands;
 
+import java.text.MessageFormat;
+
 import org.eclipse.gef.commands.Command;
 
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
@@ -31,7 +33,7 @@ import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
  */
 public class ClassDiagramClassCreateCommand extends Command {
 
-	private static final String COMMAND_NAME = "Add Class";
+	private static final String COMMAND_NAME_FORMAT = "Add Class {0}";
 
 	private ClassDiagram classDiagram;
     private ClassDiagramClass classDiagramClass;
@@ -39,7 +41,7 @@ public class ClassDiagramClassCreateCommand extends Command {
 	public ClassDiagramClassCreateCommand(ClassDiagram classDiagram, ClassDiagramClass classDiagramClass) {
 		this.classDiagram = classDiagram;
 		this.classDiagramClass = classDiagramClass;
-		setLabel(COMMAND_NAME);
+		setLabel(MessageFormat.format(COMMAND_NAME_FORMAT, classDiagramClass.getDisplayName()));
 	}
 
 	public void execute() {

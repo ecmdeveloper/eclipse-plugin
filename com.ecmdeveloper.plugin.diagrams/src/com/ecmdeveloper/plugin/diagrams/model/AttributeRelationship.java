@@ -20,8 +20,12 @@
 
 package com.ecmdeveloper.plugin.diagrams.model;
 
+import org.eclipse.gef.ui.actions.DeleteAction;
+
 import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
+import com.filenet.api.constants.DeletionAction;
+import com.filenet.api.meta.ClassDescription;
 import com.filenet.api.meta.PropertyDescriptionObject;
 
 /**
@@ -38,19 +42,16 @@ public class AttributeRelationship extends ClassDiagramBase {
 	private ClassConnector sourceConnector;
 	private ClassConnector targetConnector;
 	
-	public AttributeRelationship(PropertyDescriptionObject objectPropertyDescription, ClassDiagramClass parent ) throws Exception {
+	public AttributeRelationship(PropertyDescriptionObject targetPropertyDescription, ClassDiagramClass parent ) throws Exception {
 
-		GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
-		com.filenet.api.meta.ClassDescription requiredClass = (com.filenet.api.meta.ClassDescription) ClassesManager.getManager().executeTaskSync( task );
-
-		name = objectPropertyDescription.get_DisplayName();
-		initializeTargetConnector(objectPropertyDescription, requiredClass);
-		initalizeSourceConnector(objectPropertyDescription, parent);
-		
-//		System.out.println( getSourceConnector().getPropertyName() );
-//		System.out.println( getSourceConnector().getClassName() );
-//		System.out.println( isConnected() );
-		
+		GetRequiredClassDescription task = new GetRequiredClassDescription( targetPropertyDescription );
+		ClassesManager.getManager().executeTaskSync( task );
+		ClassDescription requiredClass = task.getRequiredClass(); 
+		PropertyDescriptionObject sourcePropertyDescription = task.getReflectivePropertyDescription();
+		name = targetPropertyDescription.get_DisplayName();
+		initializeTargetConnector(targetPropertyDescription, sourcePropertyDescription, requiredClass);
+		initalizeSourceConnector(targetPropertyDescription, sourcePropertyDescription, parent);
+		visible = true;
 	}
 
 	public AttributeRelationship(String name, ClassConnector sourceConnector, ClassConnector targetConnector) {
@@ -59,16 +60,18 @@ public class AttributeRelationship extends ClassDiagramBase {
 		this.targetConnector = targetConnector;
 	}
 
-	private void initializeTargetConnector(PropertyDescriptionObject objectPropertyDescription,
-			com.filenet.api.meta.ClassDescription requiredClass) {
+	private void initializeTargetConnector(PropertyDescriptionObject targetPropertyDescription,
+			PropertyDescriptionObject sourcePropertyDescription,
+			ClassDescription requiredClass) {
 		
 		targetConnector = new ClassConnector();
 		targetConnector.setClassId( requiredClass.get_Id().toString() );
 		targetConnector.setClassName( requiredClass.get_Name() );
-		targetConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( objectPropertyDescription ) );
+		targetConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( targetPropertyDescription ) );
 
-		if ( objectPropertyDescription.get_ReflectivePropertyId() != null ) {
-			targetConnector.setPropertyId( objectPropertyDescription.get_ReflectivePropertyId().toString() );
+		if ( sourcePropertyDescription != null ) {
+			targetConnector.setPropertyId( sourcePropertyDescription.get_Id().toString() );
+			targetConnector.setPropertyName( sourcePropertyDescription.get_Name() );
 		}
 	}
 
@@ -80,15 +83,21 @@ public class AttributeRelationship extends ClassDiagramBase {
 		return targetConnector;
 	}
 
-	private void initalizeSourceConnector(PropertyDescriptionObject objectPropertyDescription,
+	private void initalizeSourceConnector(PropertyDescriptionObject targetPropertyDescription,
+			PropertyDescriptionObject sourcePropertyDescription,
 			ClassDiagramClass parent) {
 
 		sourceConnector = new ClassConnector();
 		sourceConnector.setClassId( parent.getId() );
 		sourceConnector.setClassName( parent.getName() );
-		sourceConnector.setPropertyId( objectPropertyDescription.get_Id().toString() );
-		sourceConnector.setPropertyName( objectPropertyDescription.get_Name() );
-		sourceConnector.setMultiplicity( "1" ); // TODO
+		sourceConnector.setPropertyId( targetPropertyDescription.get_Id().toString() );
+		sourceConnector.setPropertyName( targetPropertyDescription.get_Name() );
+		if ( sourcePropertyDescription != null ) {
+			sourceConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( sourcePropertyDescription ) );
+		}
+
+		DeletionAction deletionAction = targetPropertyDescription.get_DeletionAction();
+		sourceConnector.setAggregate( DeletionAction.CASCADE.equals( deletionAction ) );
 	}
 
 	public String getName() {
@@ -120,4 +129,11 @@ public class AttributeRelationship extends ClassDiagramBase {
 		return getSourceConnector().getClassId().equals( getTargetConnector().getClassId() );
 		
 	}
+
+	@Override
+	public String toString() {
+		return getSourceConnector().toString() + " --> " + getTargetConnector().toString();
+	}
+	
+	
 }
