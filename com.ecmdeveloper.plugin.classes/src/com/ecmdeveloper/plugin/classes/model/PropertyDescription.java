@@ -78,6 +78,7 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 	private boolean settableOnCreate;
 	private boolean settableOnCheckIn;
 	private boolean settableOnEdit;
+	private Boolean systemOwned;
 	
 	public PropertyDescription(Object internalPropertyDescription) {
 		this.propertyDescription = (com.filenet.api.meta.PropertyDescription) internalPropertyDescription;
@@ -87,6 +88,7 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 		choiceList = propertyDescription.get_ChoiceList();
 		required = propertyDescription.get_IsValueRequired();
 		multivalue = !Cardinality.SINGLE.equals( propertyDescription.get_Cardinality() );
+		systemOwned = propertyDescription.get_IsSystemOwned();
 	
 		initializeSettability();
 		initializeDescriptiveText();
@@ -147,6 +149,10 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 
 	public boolean isSettableOnEdit() {
 		return settableOnEdit;
+	}
+
+	public Boolean getSystemOwned() {
+		return systemOwned;
 	}
 
 	public boolean hasChoices() {

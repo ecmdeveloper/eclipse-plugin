@@ -19,11 +19,13 @@
  */
 package com.ecmdeveloper.plugin.classes.model.task;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.classes.model.Placeholder;
 import com.filenet.api.collection.ClassDescriptionSet;
 
 /**
@@ -33,16 +35,29 @@ import com.filenet.api.collection.ClassDescriptionSet;
 public class GetChildClassDescriptionsTask extends BaseTask {
 
 	private ClassDescription parent;
+	private Placeholder placeholder;
 	
 	public GetChildClassDescriptionsTask(ClassDescription parent) {
-		super();
+		this(parent,null);
+	}
+
+	public GetChildClassDescriptionsTask(ClassDescription parent, Placeholder placeholder) {
 		this.parent = parent;
+		this.placeholder = placeholder;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object call() throws Exception {
 
+//		if ( placeholder != null) {
+			getImmediateSubclassDescriptions();
+//		}
+
+		return null;
+	}
+
+	private void getImmediateSubclassDescriptions() {
 		com.filenet.api.meta.ClassDescription classDescriptionObject = 
 			(com.filenet.api.meta.ClassDescription) parent.getObjectStoreObject();
 
@@ -57,6 +72,11 @@ public class GetChildClassDescriptionsTask extends BaseTask {
 			ClassDescription classDescription = new ClassDescription(
 					childClassDescriptionObject, parent, parent.getObjectStore());
 			children.add(classDescription);
+			
+			if ( placeholder != null) {
+				placeholder.setMessage( MessageFormat.format("Loading \"{0}\"...", childClassDescriptionObject.get_DisplayName() ) );
+				fireClassDescriptionChanged( null, null, new ClassDescription[] { parent } );
+			}
 		}	
 
 		Collection<Object> oldChildren = parent.getChildren();
@@ -65,7 +85,5 @@ public class GetChildClassDescriptionsTask extends BaseTask {
 
 		fireClassDescriptionChanged( children.toArray( new ClassDescription[0] ), 
 				oldChildren != null ? oldChildren.toArray( new ClassDescription[0] ) : null, new ClassDescription[] { parent } );
-
-		return null;
 	}
 }

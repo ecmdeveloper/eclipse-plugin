@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -71,12 +71,12 @@ public class ClassDescription implements IAdaptable {
 
 	public Collection<Object> getChildren() {
 
-		if ( children == null )
-		{
+		if ( children == null ) {
 			children = new ArrayList<Object>();
-			children.add( new Placeholder() );
+			Placeholder placeholder = new Placeholder();
+			children.add( placeholder );
 
-			GetChildClassDescriptionsTask task = new GetChildClassDescriptionsTask( this );
+			GetChildClassDescriptionsTask task = new GetChildClassDescriptionsTask( this, placeholder );
 			ClassesManager.getManager().executeTaskASync(task);
 		}
 		
@@ -137,17 +137,15 @@ public class ClassDescription implements IAdaptable {
 			while (iterator.hasNext()) {
 				com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) iterator.next();
 				
-				if ( /*! internalPropertyDescription.get_IsSystemGenerated() && */
-						/*! internalPropertyDescription.get_IsSystemOwned() && */ 
-						! internalPropertyDescription.get_IsHidden()) {
-					System.out.println( "Adding " + internalPropertyDescription.get_Name() );
+				if (  ! internalPropertyDescription.get_IsHidden()) {
+//					System.out.println( "Adding " + internalPropertyDescription.get_Name() );
 					propertyDescriptions.add( new PropertyDescription(internalPropertyDescription) );
 				} else {
-					if ( internalPropertyDescription.get_IsHidden() ) {
-						System.out.println( "Skipping hidden " + internalPropertyDescription.get_Name() );
-					} else {
-						System.out.println( "Skipping " + internalPropertyDescription.get_Name() );
-					}
+//					if ( internalPropertyDescription.get_IsHidden() ) {
+//						System.out.println( "Skipping hidden " + internalPropertyDescription.get_Name() );
+//					} else {
+//						System.out.println( "Skipping " + internalPropertyDescription.get_Name() );
+//					}
 				}
 			}
 		}
