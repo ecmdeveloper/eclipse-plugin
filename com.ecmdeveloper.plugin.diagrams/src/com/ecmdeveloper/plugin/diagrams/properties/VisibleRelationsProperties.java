@@ -36,6 +36,7 @@ import com.ecmdeveloper.plugin.diagrams.model.InheritRelationship;
  */
 public class VisibleRelationsProperties implements IPropertySource {
 
+	private static final String RELATIONSHIP_FORMAT = "From Property \"{0}\" to Class \"{1}\"";
 	private static final String CHILD_CLASS_PROPERTY_ID_PREFIX = "Child";
 	private static final String SOURCE_PROPERTY_ID_PREFIX = "Source";
 	private static final String TARGET_PROPERTY_ID_PREFIX = "Target";
@@ -74,15 +75,17 @@ public class VisibleRelationsProperties implements IPropertySource {
 		ArrayList<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
 		
 		for ( AttributeRelationship sourceRelation : classDiagramClass.getSourceRelations() ) {
-			IPropertyDescriptor propertyDescriptor = getSourceRelationshipDescriptor(sourceRelation);  
-			descriptors.add( propertyDescriptor );
+			if ( sourceRelation.isConnected() ) {
+				IPropertyDescriptor propertyDescriptor = getSourceRelationshipDescriptor(sourceRelation);  
+				descriptors.add( propertyDescriptor );
+			}
 		}
 		return descriptors;
 	}
 
 	private IPropertyDescriptor getSourceRelationshipDescriptor(AttributeRelationship sourceRelation) {
 		String propertyId = SOURCE_PROPERTY_ID_PREFIX + sourceRelation.getSourceConnector().getPropertyId();
-		String displayName = MessageFormat.format("From \"{0}\" to Class \"{1}\"",
+		String displayName = MessageFormat.format(RELATIONSHIP_FORMAT,
 				sourceRelation.getSourceConnector().getPropertyName(), sourceRelation
 						.getTargetConnector().getClassName());
 		
@@ -96,7 +99,7 @@ public class VisibleRelationsProperties implements IPropertySource {
 		
 		for ( AttributeRelationship targetRelation : classDiagramClass.getTargetRelations() ) {
 			String targetPropertyId = targetRelation.getTargetConnector().getPropertyId();
-			if ( targetPropertyId != null && ! targetRelation.isLoop() ) {
+			if ( targetPropertyId != null && ! targetRelation.isLoop() && targetRelation.isConnected() ) {
 				IPropertyDescriptor propertyDescriptor = getTargetRelationshipDescriptor(targetRelation);  
 				descriptors.add( propertyDescriptor );
 			}
@@ -106,7 +109,8 @@ public class VisibleRelationsProperties implements IPropertySource {
 
 	private IPropertyDescriptor getTargetRelationshipDescriptor(AttributeRelationship targetRelation) {
 		String propertyId = TARGET_PROPERTY_ID_PREFIX + targetRelation.getTargetConnector().getPropertyId();
-		String displayName = MessageFormat.format("To Class \"{0}\"",
+		String displayName = MessageFormat.format(RELATIONSHIP_FORMAT,
+				 targetRelation.getTargetConnector().getPropertyName(),
 				 targetRelation.getSourceConnector().getClassName());
 		
 		IPropertyDescriptor propertyDescriptor = new CheckBoxPropertyDescriptor(propertyId, displayName );

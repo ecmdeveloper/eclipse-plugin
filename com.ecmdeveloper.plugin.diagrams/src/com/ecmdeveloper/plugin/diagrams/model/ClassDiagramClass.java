@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -48,6 +48,7 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 	private boolean abstractClass;
 	private String id;
 	private String parentClassId;
+	private boolean parentVisible;
 	private List<InheritRelationship> childRelations = new ArrayList<InheritRelationship>();
 	private InheritRelationship parentRelation;
 	private List<AttributeRelationship> sourceRelations = new ArrayList<AttributeRelationship>();
@@ -62,6 +63,7 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		this.abstractClass = abstractClass;
 		this.parentClassId = parentClassId;
 		this.id = id;
+		parentVisible = true;
 	}
 
 	public ClassDiagramClass(IAdaptable adaptableObject) {
@@ -72,7 +74,7 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		abstractClass = ! internalClassDescription.get_AllowsInstances();
 		id = internalClassDescription.get_Id().toString();
 		displayName = internalClassDescription.get_DisplayName();
-		name = internalClassDescription.get_Name();
+		name = internalClassDescription.get_SymbolicName();
 		
 		ClassDescription classDescription = (ClassDescription) adaptableObject.getAdapter(ClassDescription.class);
 		createClassDiagramAttributes(classDescription);
@@ -81,12 +83,13 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		if ( classDescription.getParent() instanceof ClassDescription ) {
 			parentClassId = ((ClassDescription)classDescription.getParent()).getId();
 		}
+		parentVisible = true;
 	}
 
 	private void createClassDiagramAttributeRelations(ClassDescription classDescription) {
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
-			if (!propertyDescription.isReadOnly()
-					&& propertyDescription.getPropertyType().equals(PropertyType.OBJECT)) {
+			if ( isAllowedAttribute(propertyDescription) && !propertyDescription.isReadOnly()
+					&& propertyDescription.getPropertyType().equals(PropertyType.OBJECT) ) {
 				createClassDiagramAttributeRelation(propertyDescription);
 			}
 		}		
@@ -104,9 +107,13 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		}
 	}
 
+	private boolean isAllowedAttribute(PropertyDescription propertyDescription) {
+		return !Boolean.TRUE.equals(propertyDescription.getSystemOwned());
+	}
+
 	private void createClassDiagramAttributes(ClassDescription classDescription) {
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
-			if ( ! propertyDescription.isReadOnly() ) {
+			if ( isAllowedAttribute(propertyDescription) ) {
 				ClassDiagramAttribute attribute = (ClassDiagramAttribute) propertyDescription.getAdapter(ClassDiagramAttribute.class);
 				addAttribute(attribute);
 			}
@@ -160,23 +167,47 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		}
 	}
 
+	public void setAttributeActive(String attributeName, boolean visible) {
+		ClassDiagramAttribute classDiagramAttribute = getClassDiagramAttribute(attributeName);
+		if ( classDiagramAttribute != null ) {
+			classDiagramAttribute.setVisible( visible );
+			firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attributeName );
+		}
+	}
+	
 	public void connectParent(InheritRelationship inheritRelationship ) {
 		parentRelation = inheritRelationship;
+		setParentAttributesVisibility(false);
+		firePropertyChange(TARGET_CONNECTIONS_PROP, null, parentRelation );
+	}
+
+	private void setParentAttributesVisibility(boolean visible ) {
 		
 		for ( ClassDiagramAttribute attribute : parentRelation.getParent().getAttributes() ) {
-			setAttributeVisible( attribute.getName(), false);
+			String attributeName = attribute.getName();
+			ClassDiagramAttribute classDiagramAttribute = getClassDiagramAttribute(attributeName );
+			if ( classDiagramAttribute != null ) {
+				setParentAttributeVisibility(classDiagramAttribute, visible);
+			}
 		}
-		firePropertyChange(TARGET_CONNECTIONS_PROP, null, parentRelation );
+	}
+
+	private void setParentAttributeVisibility( ClassDiagramAttribute classDiagramAttribute, boolean visibile ) {
+		String attributeName = classDiagramAttribute.getName();
+		classDiagramAttribute.setActive( visibile );
+		firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attributeName );
+		
+		for ( AttributeRelationship sourceRelation : sourceRelations ) {
+			if ( attributeName.equals( sourceRelation.getSourceConnector().getPropertyName() ) ) {
+				sourceRelation.setVisible(visibile);
+			}
+		}
 	}
 	
 	public void disconnectParent() {
+		setParentAttributesVisibility(true);
 		InheritRelationship oldParentRelation = parentRelation;
 		parentRelation = null;
-		
-		for ( ClassDiagramAttribute attribute : attributes ) {
-			attribute.setVisible(true);
-			firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attribute.getName() );
-		}
 		firePropertyChange(TARGET_CONNECTIONS_PROP, oldParentRelation, null );
 	}
 
@@ -233,6 +264,12 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		}
 	}
 	
+	public void removeTarget(AttributeRelationship relationship) {
+		if ( targetRelations.remove( relationship ) ) {
+			firePropertyChange(TARGET_CONNECTIONS_PROP, relationship, null);
+		}
+	}
+	
 	public List<AttributeRelationship> getSourceRelations() {
 		return sourceRelations;
 	}
@@ -246,6 +283,11 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		firePropertyChange(SOURCE_CONNECTIONS_PROP, null, attributeRelationship);
 	}
 
+	public void disconnectSource(AttributeRelationship attributeRelationship) {
+		attributeRelationship.setConnected(false);
+		firePropertyChange(SOURCE_CONNECTIONS_PROP, attributeRelationship, null );
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -258,5 +300,13 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 
 	public void addSource(AttributeRelationship attributeRelationship) {
 		sourceRelations.add( attributeRelationship );
+	}
+
+	public void setParentVisible(boolean parentVisible) {
+		this.parentVisible = parentVisible;
+	}
+
+	public boolean isParentVisible() {
+		return parentVisible;
 	}
 }

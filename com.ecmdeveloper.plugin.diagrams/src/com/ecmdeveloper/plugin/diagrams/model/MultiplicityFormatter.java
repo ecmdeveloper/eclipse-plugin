@@ -29,13 +29,11 @@ import com.filenet.api.constants.Cardinality;
  */
 public class MultiplicityFormatter {
 
-// TODO the unicode value is not correctly saved to file
-//	private static final String HORIZONTAL_ELIPSIS = "\u2026";
-	private static final String HORIZONTAL_ELIPSIS = "...";
-	private static final String MULTIPLICITY_MULTI_REQUIRED = "[1" + HORIZONTAL_ELIPSIS + "n]";
-	private static final String MULTIPLICITY_MULTI_NOT_REQUIRED = "[0" + HORIZONTAL_ELIPSIS + "n]";
+	private static final String MULTIPLICITY_SEPARATOR = "..";
+	private static final String MULTIPLICITY_MULTI_REQUIRED = "1" + MULTIPLICITY_SEPARATOR + "n";
+	private static final String MULTIPLICITY_MULTI_NOT_REQUIRED = "0" + MULTIPLICITY_SEPARATOR + "n";
 	private static final String MULTIPLICITY_SINGLE_REQUIRED = "";
-	private static final String MULTIPLICITY_SINGLE_NOT_REQUIRED = "[0" + HORIZONTAL_ELIPSIS + "1]";
+	private static final String MULTIPLICITY_SINGLE_NOT_REQUIRED = "0" + MULTIPLICITY_SEPARATOR + "1";
 
 	public static String getMultiplicity( com.filenet.api.meta.PropertyDescription internalPropertyDescription ) {
 		

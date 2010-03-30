@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -45,6 +44,8 @@ import com.ecmdeveloper.plugin.diagrams.util.PluginTagNames;
  *
  */
 public class ClassDiagramFile {
+
+	private static final int CURRENT_FILE_VERSION = 1;
 
 	private IFile classDiagramFile;
 
@@ -65,7 +66,7 @@ public class ClassDiagramFile {
 		memento.save(writer); 
 		writer.close(); 
 
-		dataOut.write( writer.toString().getBytes("UTF-8") );
+		dataOut.write( writer.toString().getBytes() );
 		System.out.println( writer.toString() );
 		classDiagramFile.setContents(new ByteArrayInputStream(out.toByteArray()), true, false, monitor);
 	}
@@ -83,7 +84,13 @@ public class ClassDiagramFile {
 	public ClassDiagram getClassDiagram(XMLMemento memento ) {
 	
 		ClassDiagram classDiagram = new ClassDiagram();
-
+		
+		boolean showIcons = memento.getBoolean( PluginTagNames.SHOW_ICONS );
+		classDiagram.setShowIcons(showIcons);
+		
+		boolean showDisplayNames = memento.getBoolean( PluginTagNames.SHOW_DISPLAY_NAMES );
+		classDiagram.setShowDisplayNames(showDisplayNames );
+		
 		IMemento classes = memento.getChild(PluginTagNames.CLASSES);
 		
 		if ( classes != null ) {
@@ -124,19 +131,23 @@ public class ClassDiagramFile {
 		}
 	}
 
-	private ClassDiagramClass getClassDiagramClass(IMemento clazz) {
+	private ClassDiagramClass getClassDiagramClass(IMemento classChild) {
 
-		String name = clazz.getString( PluginTagNames.NAME );
-		String displayName = clazz.getString( PluginTagNames.DISPLAY_NAME );
-		boolean abstractClass = clazz.getBoolean( PluginTagNames.ABSTRACT_CLASS );
-		String id = clazz.getString( PluginTagNames.ID );
-		String parentClassId = clazz.getString( PluginTagNames.PARENT_CLASS_ID );
+		String name = classChild.getString( PluginTagNames.NAME );
+		String displayName = classChild.getString( PluginTagNames.DISPLAY_NAME );
+		boolean abstractClass = classChild.getBoolean( PluginTagNames.ABSTRACT_CLASS );
+		String id = classChild.getString( PluginTagNames.ID );
+		String parentClassId = classChild.getString( PluginTagNames.PARENT_CLASS_ID );
 		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName, abstractClass, id, parentClassId );
 		
-		getLocation(clazz, classDiagramClass);
+		getLocation(classChild, classDiagramClass);
 		
-		getClassDiagramAttributes(clazz, classDiagramClass);
-		getClassDiagramAttributesRelationships(clazz, classDiagramClass);
+		getClassDiagramAttributes(classChild, classDiagramClass);
+		getClassDiagramAttributesRelationships(classChild, classDiagramClass);
+		
+		boolean parentVisible = classChild.getBoolean( PluginTagNames.PARENT_VISIBLE );
+		classDiagramClass.setParentVisible(parentVisible);
+		
 		return classDiagramClass;
 	}
 
@@ -176,8 +187,11 @@ public class ClassDiagramFile {
 		String multiplicity = classConnectorChild.getString(PluginTagNames.MULTIPLICITY);
 		String propertyId = classConnectorChild.getString(PluginTagNames.PROPERTY_ID );
 		String propertyName = classConnectorChild.getString(PluginTagNames.PROPERTY_NAME  );
-		
 		ClassConnector classConnector = new ClassConnector(classId, className, propertyId, propertyName, multiplicity );
+
+		boolean aggregate = classConnectorChild.getBoolean( PluginTagNames.AGGREGATE );
+		classConnector.setAggregate(aggregate);
+		
 		return classConnector;
 	}
 
@@ -223,6 +237,10 @@ public class ClassDiagramFile {
 	public XMLMemento getXMLMemento(ClassDiagram classDiagram ) {
 		
 		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.CLASSDIAGRAM);
+		memento.putInteger(PluginTagNames.VERSION_TAG, CURRENT_FILE_VERSION );
+		memento.putBoolean(PluginTagNames.SHOW_ICONS , classDiagram.isShowIcons() );
+		memento.putBoolean(PluginTagNames.SHOW_DISPLAY_NAMES, classDiagram.isShowDisplayNames() );
+		
 		IMemento classesChild = memento.createChild(PluginTagNames.CLASSES); 
 		
 		for ( ClassDiagramClass classDiagramClass : classDiagram.getClassDiagramClasses() ) {
@@ -258,6 +276,7 @@ public class ClassDiagramFile {
 
 		classChild.putString( PluginTagNames.ID, classDiagramClass.getId() );
 		classChild.putString( PluginTagNames.PARENT_CLASS_ID, classDiagramClass.getParentClassId() );
+		classChild.putBoolean( PluginTagNames.PARENT_VISIBLE, classDiagramClass.isParentVisible() );
 		
 		IMemento attributesChild = classChild.createChild(PluginTagNames.ATTRIBUTES);
 		initializeAttributesChild(classDiagramClass, attributesChild);
@@ -295,6 +314,7 @@ public class ClassDiagramFile {
 		classConnectorChild.putString(PluginTagNames.MULTIPLICITY, classConnector.getMultiplicity() );
 		classConnectorChild.putString(PluginTagNames.PROPERTY_ID, classConnector.getPropertyId() );
 		classConnectorChild.putString(PluginTagNames.PROPERTY_NAME, classConnector.getPropertyName() );
+		classConnectorChild.putBoolean(PluginTagNames.AGGREGATE, classConnector.isAggregate() );
 	}
 
 	private void addSize(ClassDiagramElementWithResize classDiagramElement, IMemento elementChild) {

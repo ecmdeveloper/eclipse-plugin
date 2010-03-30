@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.diagrams.actions;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.ecmdeveloper.plugin.diagrams.parts.ClassDiagramClassEditPart;
@@ -59,5 +60,10 @@ public class ExportDiagramClassAction extends ExportAction {
 		ClassDiagramClassEditPart part = (ClassDiagramClassEditPart) getSelectedObjects().get(0);
 		IFigure figure = part.getFigure();
 		return figure;
+	}
+
+	@Override
+	protected Rectangle getFigureBounds(IFigure figure) {
+		return figure.getBounds();
 	}
 }

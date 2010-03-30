@@ -34,8 +34,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditor;
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 
 /**
  * @author Ricardo.Belfor
@@ -55,24 +53,16 @@ public class AddClassToDiagramHandler extends AbstractHandler implements IHandle
 			return null;
 
 		IEditorPart activeEditor = window.getActivePage().getActiveEditor();
-		ClassDiagram classDiagram = null;
-		
+	
 		if ( activeEditor != null && activeEditor instanceof ClassDiagramEditor ) {
-			classDiagram = ((ClassDiagramEditor) activeEditor).getClassDiagram();
-		}
-		
-		if ( classDiagram == null ) {
-			return null;
-		}
-		
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+			ClassDiagramEditor classDiagramEditor = (ClassDiagramEditor) activeEditor;
+			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 
-		while ( iterator.hasNext() ) {
-			ClassDescription elem = (ClassDescription) iterator.next();
-			classDiagram.addClassDiagramClass((ClassDiagramClass) elem
-					.getAdapter(ClassDiagramClass.class)); 
+			while ( iterator.hasNext() ) {
+				ClassDescription classDescription = (ClassDescription) iterator.next();
+				classDiagramEditor.addClassDiagramClass(classDescription);
+			}
 		}
-
 		return null;
 	}
 }

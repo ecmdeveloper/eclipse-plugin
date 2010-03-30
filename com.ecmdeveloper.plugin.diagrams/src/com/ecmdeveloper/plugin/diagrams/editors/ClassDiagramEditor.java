@@ -52,6 +52,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
+import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.diagrams.actions.AddClassDiagramClassAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramClassAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ShowPropertiesAction;
@@ -190,6 +192,14 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
       getActionRegistry().getAction(DeleteAction.ID).run();
 	}
 	
+	public void addClassDiagramClass(ClassDescription classDescription) {
+		AddClassDiagramClassAction action = (AddClassDiagramClassAction) getActionRegistry()
+				.getAction(AddClassDiagramClassAction.ID);
+
+		action.setClassDescription(classDescription);
+		action.run();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class type) {
 		if (type == ClassDiagram.class)
@@ -206,7 +216,6 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		};
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void createActions() {
 		super.createActions();
@@ -214,6 +223,7 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		registerPropertiesAction();
 		registerExportDiagramClassAction();
 		registerPrintAction();
+		registerAddClassDiagramClassAction();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -242,5 +252,12 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		IAction exportAction = new ExportDiagramClassAction(this);
 		getActionRegistry().registerAction(exportAction);
 		getSelectionActions().add( exportAction.getId() );
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void registerAddClassDiagramClassAction() {
+		IAction addAction = new AddClassDiagramClassAction(this);
+		getActionRegistry().registerAction(addAction);
+		getSelectionActions().add( addAction.getId() );
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -32,9 +32,6 @@ public class ClassDiagramClassAdapterFactory implements IAdapterFactory {
 
 	private static Class<?>[] SUPPORTED_TYPES = new Class[] { ClassDiagramClass.class };	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		
@@ -47,9 +44,6 @@ public class ClassDiagramClassAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class[] getAdapterList() {

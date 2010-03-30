@@ -42,11 +42,13 @@ public class ClassDiagramLayoutManager extends FreeformLayout {
 		this.classDiagramEditPart = classDiagramEditPart;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void layout(IFigure parent) {
 		
 		super.layout(parent);
-		System.err.println( "Doint layout! ");
+		//System.err.println( "Doing diagram layout! ");
+		
 		for (int i = 0; i < classDiagramEditPart.getChildren().size(); i++)
 		{
 			AbstractGraphicalEditPart part = (AbstractGraphicalEditPart) classDiagramEditPart.getChildren().get(i);
@@ -55,10 +57,7 @@ public class ClassDiagramLayoutManager extends FreeformLayout {
 				if ( sourceConnection instanceof AttributeRelationshipEditPart ) {
 					((AttributeRelationshipEditPart)sourceConnection).positionConnections();
 				}
-//				System.out.println( sourceConnection.toString() );
 			}
-//			System.out.println(part.getFigure().getBounds() );
-//			System.out.println( classDiagramEditPart.getChildren().get(i).toString() );
 		}
 	}
 

@@ -55,4 +55,9 @@ public class PluginTagNames {
 	public static final String PROPERTY_ID = "propertyId";
 	public static final String PROPERTY_NAME = "propertyName";
 	public static final String VISIBLE = "visible";
+	public static final String AGGREGATE = "aggregate";
+	public static final String PARENT_VISIBLE = "parentVisible";
+	public static final String VERSION_TAG = "version";
+	public static final String SHOW_DISPLAY_NAMES = "showDisplayNames";
+	public static final String SHOW_ICONS = "showIcons";
 }
