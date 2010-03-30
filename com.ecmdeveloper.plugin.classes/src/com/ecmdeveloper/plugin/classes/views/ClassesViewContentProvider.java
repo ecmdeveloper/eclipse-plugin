@@ -183,7 +183,9 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 				}
 				
 				if ( event.getItemsUpdated() != null ) {
-					// Not used at this moment
+					for ( ClassDescription classDescription : event.getItemsUpdated() ) {
+						viewer.refresh( classDescription );
+					}
 				}
 
 				if ( event.getItemsRemoved() != null ) {

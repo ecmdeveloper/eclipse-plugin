@@ -30,6 +30,7 @@ import java.util.Collection;
 public class Placeholder extends ClassDescription {
 
 	private static final String LOADING_MESSAGE = "Loading class descriptions...";
+	private String message;
 
 	public Placeholder() {
 		super(null, null, null);
@@ -47,6 +48,10 @@ public class Placeholder extends ClassDescription {
 
 	@Override
 	public String toString() {
-		return LOADING_MESSAGE;
+		return message == null ? LOADING_MESSAGE : message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }
