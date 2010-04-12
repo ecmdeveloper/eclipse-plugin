@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -23,10 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
-
 
 public abstract class BaseTask implements Callable<Object>{
 
@@ -43,28 +39,6 @@ public abstract class BaseTask implements Callable<Object>{
 			TaskCompleteEvent taskCompleteEvent = new TaskCompleteEvent(this,taskResult);
 			taskListener.onTaskComplete(taskCompleteEvent );
 		}
+		listeners.clear();
 	}
-
-//	protected List<ObjectStoresManagerListener> listeners;
-//
-//	public BaseTask() {
-//	}
-//
-//	public void setListeners( List<ObjectStoresManagerListener> listeners ) {
-//		this.listeners = listeners;
-//	}
-//
-//	public void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
-//			IObjectStoreItem[] itemsRemoved, IObjectStoreItem[] itemsUpdated ) {
-//		
-//		if ( listeners == null || listeners.isEmpty() ) {
-//			return;
-//		}
-//		
-//		ObjectStoresManagerEvent event = new ObjectStoresManagerEvent(this,
-//				itemsAdded, itemsRemoved, itemsUpdated );
-//		for (ObjectStoresManagerListener listener : listeners) {
-//			listener.objectStoreItemsChanged(event);
-//		}
-//	}
 }

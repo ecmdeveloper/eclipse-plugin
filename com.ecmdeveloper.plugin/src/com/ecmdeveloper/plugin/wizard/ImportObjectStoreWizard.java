@@ -212,7 +212,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 
 	private void performConnect(final ContentEngineConnection connection, IProgressMonitor monitor) {
 		try {
-			objectStoresManager.connectConnection(connection.getName(), monitor );
+			objectStoresManager.connectConnection(connection, monitor );
 			connected = true;
 			connectionName = connection.getName();
 			
