@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.ActionFactory;
 
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramClassAction;
+import com.ecmdeveloper.plugin.diagrams.actions.RefreshDiagramClassAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ShowPropertiesAction;
 
 /**
@@ -44,6 +45,7 @@ public class ClassDiagramContextMenuManager extends MenuManager {
 		add( getAction(ActionFactory.UNDO.getId() ) );
 		add( getAction(ActionFactory.REDO.getId() ) );
 		add( getAction(ActionFactory.DELETE.getId() ) );
+		add( getAction(RefreshDiagramClassAction.ID ) );
 		add( getAction(ShowPropertiesAction.ID ) );
 		add(new Separator());
 		add( getAction( ExportDiagramAction.ID) );

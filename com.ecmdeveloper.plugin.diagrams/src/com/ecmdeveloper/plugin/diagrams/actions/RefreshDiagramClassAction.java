@@ -20,23 +20,32 @@
 
 package com.ecmdeveloper.plugin.diagrams.actions;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.geometry.Rectangle;
+import java.util.HashMap;
+
+import org.eclipse.gef.Request;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.ui.actions.SelectionAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.ecmdeveloper.plugin.diagrams.Activator;
+import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.parts.ClassDiagramClassEditPart;
+import com.ecmdeveloper.plugin.diagrams.util.IconFiles;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class ExportDiagramClassAction extends ExportAction {
+public class RefreshDiagramClassAction  extends SelectionAction {
 
-	public static final String ID = "com.ecmdeveloper.plugin.diagrams.actions.exportDiagramClassAction";
+	public static final String CLASS_DIAGRAM_CLASS_KEY = "classDiagramClass";
+	public static final String ID = "com.ecmdeveloper.plugin.diagrams.actions.refreshDiagramClassAction";
+	public static final String REQUEST_TYPE = "refreshClassDiagramClass";
+	
+	private static final String ACTION_NAME = "Refresh Class Diagram Class";
 
-	private static final String ACTION_NAME = "Export class to image";
-
-	public ExportDiagramClassAction(IWorkbenchPart part) {
+	public RefreshDiagramClassAction(IWorkbenchPart part) {
 		super(part);
 		setId( ID );
 		setText( ACTION_NAME );
@@ -58,18 +67,27 @@ public class ExportDiagramClassAction extends ExportAction {
 		return (getSelectedObjects().get(0) instanceof ClassDiagramClassEditPart);
 	}
 
-	protected IFigure getFigure() {
+	private Command createRefreshDiagramClassCommand() {
 		if ( ! isSingleItemSelected() || !isClassDiagramClassSelected() ) {
 			throw new UnsupportedOperationException();
 		}
 		
+		Request request = new Request( REQUEST_TYPE );
 		ClassDiagramClassEditPart part = (ClassDiagramClassEditPart) getSelectedObjects().get(0);
-		IFigure figure = part.getFigure();
-		return figure;
+		ClassDiagramClass classDiagramClass = part.getClassDiagramClass();
+		HashMap<String,Object> map = new HashMap<String, Object>();
+		map.put(CLASS_DIAGRAM_CLASS_KEY, classDiagramClass );
+		request.setExtendedData(map );
+		return part.getCommand(request);
 	}
 
 	@Override
-	protected Rectangle getFigureBounds(IFigure figure) {
-		return figure.getBounds();
+	public ImageDescriptor getImageDescriptor() {
+		return Activator.getImageDescriptor( IconFiles.CLASS_REFRESH_ICON );
+	}
+
+	@Override
+	public void run() {
+		execute( createRefreshDiagramClassCommand() );
 	}
 }

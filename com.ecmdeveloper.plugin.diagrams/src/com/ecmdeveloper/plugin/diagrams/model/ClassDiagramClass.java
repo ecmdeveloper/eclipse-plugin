@@ -32,6 +32,8 @@ import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.diagrams.properties.ClassDiagramClassProperties;
 import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.meta.PropertyDescriptionObject;
 
 
@@ -48,6 +50,10 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 	private boolean abstractClass;
 	private String id;
 	private String parentClassId;
+	private String connectionName;
+	private String connectionDisplayName;
+	private String objectStoreName;
+	private String objectStoreDisplayName;
 	private boolean parentVisible;
 	private List<InheritRelationship> childRelations = new ArrayList<InheritRelationship>();
 	private InheritRelationship parentRelation;
@@ -55,14 +61,19 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 	private List<AttributeRelationship> targetRelations = new ArrayList<AttributeRelationship>();
 	private ArrayList<ClassDiagramAttribute> attributes = new ArrayList<ClassDiagramAttribute>();
 
-	public ClassDiagramClass(String name, String displayName,
-			boolean abstractClass, String id, String parentClassId) {
+	public ClassDiagramClass(String name, String displayName, boolean abstractClass, String id,
+			String parentClassId, String connectionName, String connectionDisplayName,
+			String objectStoreName, String objectStoreDisplayName) {
 		super();
 		this.name = name;
 		this.displayName = displayName;
 		this.abstractClass = abstractClass;
 		this.parentClassId = parentClassId;
 		this.id = id;
+		this.connectionName = connectionName;
+		this.connectionDisplayName = connectionDisplayName;
+		this.objectStoreName = objectStoreName;
+		this.objectStoreDisplayName = objectStoreDisplayName;
 		parentVisible = true;
 	}
 
@@ -75,7 +86,6 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		id = internalClassDescription.get_Id().toString();
 		displayName = internalClassDescription.get_DisplayName();
 		name = internalClassDescription.get_SymbolicName();
-		
 		ClassDescription classDescription = (ClassDescription) adaptableObject.getAdapter(ClassDescription.class);
 		createClassDiagramAttributes(classDescription);
 		createClassDiagramAttributeRelations(classDescription);
@@ -84,6 +94,19 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 			parentClassId = ((ClassDescription)classDescription.getParent()).getId();
 		}
 		parentVisible = true;
+
+		initializeObjectStoreConfiguration(classDescription);
+	}
+
+	private void initializeObjectStoreConfiguration(ClassDescription classDescription) {
+		
+		ObjectStore objectStore = classDescription.getObjectStore();
+		objectStoreName = objectStore.getName();
+		objectStoreDisplayName = objectStore.getDisplayName();
+
+		ContentEngineConnection connection = objectStore.getConnection();
+		connectionName = connection.getName();
+		connectionDisplayName = connection.getDisplayName();
 	}
 
 	private void createClassDiagramAttributeRelations(ClassDescription classDescription) {
@@ -132,15 +155,34 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		return id;
 	}
 
-	
 	public String getParentClassId() {
 		return parentClassId;
+	}
+
+	public void setParentClassId(String parentClassId) {
+		this.parentClassId = parentClassId;
 	}
 
 	public boolean isAbstractClass() {
 		return abstractClass;
 	}
 	
+	public String getConnectionName() {
+		return connectionName;
+	}
+
+	public String getConnectionDisplayName() {
+		return connectionDisplayName;
+	}
+
+	public String getObjectStoreName() {
+		return objectStoreName;
+	}
+
+	public String getObjectStoreDisplayName() {
+		return objectStoreDisplayName;
+	}
+
 	public void addAttribute(ClassDiagramAttribute attribute ) {
 		attributes.add(attribute);
 	}

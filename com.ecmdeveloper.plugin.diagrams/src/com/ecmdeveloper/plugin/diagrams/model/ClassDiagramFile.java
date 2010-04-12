@@ -45,7 +45,7 @@ import com.ecmdeveloper.plugin.diagrams.util.PluginTagNames;
  */
 public class ClassDiagramFile {
 
-	private static final int CURRENT_FILE_VERSION = 1;
+	public static final int CURRENT_FILE_VERSION = 1;
 
 	private IFile classDiagramFile;
 
@@ -115,10 +115,15 @@ public class ClassDiagramFile {
 
 	private ClassDiagramNote getClassDiagramNote(IMemento noteChild) {
 		ClassDiagramNote classDiagramNote = new ClassDiagramNote();
+		
 		getLocation(noteChild, classDiagramNote);
 		getSize(noteChild, classDiagramNote);
+		
 		String text = noteChild.getString( PluginTagNames.TEXT );
 		classDiagramNote.setNoteText(text);
+		
+		String id = noteChild.getString( PluginTagNames.ID );
+		classDiagramNote.setId(id);
 		
 		return classDiagramNote;
 	}
@@ -138,7 +143,14 @@ public class ClassDiagramFile {
 		boolean abstractClass = classChild.getBoolean( PluginTagNames.ABSTRACT_CLASS );
 		String id = classChild.getString( PluginTagNames.ID );
 		String parentClassId = classChild.getString( PluginTagNames.PARENT_CLASS_ID );
-		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName, abstractClass, id, parentClassId );
+		String connectionName = classChild.getString( PluginTagNames.CONNECTION_NAME );
+		String connectionDisplayName = classChild.getString( PluginTagNames.CONNECTION_DISPLAY_NAME );
+		String objectStoreName = classChild.getString( PluginTagNames.OBJECT_STORE_NAME );
+		String objectStoreDisplayName = classChild.getString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME );
+
+		ClassDiagramClass classDiagramClass = new ClassDiagramClass(name, displayName,
+				abstractClass, id, parentClassId, connectionName, connectionDisplayName,
+				objectStoreName, objectStoreDisplayName);
 		
 		getLocation(classChild, classDiagramClass);
 		
@@ -262,6 +274,7 @@ public class ClassDiagramFile {
 
 	private void initializeNoteChild(ClassDiagramNote classDiagramNote, IMemento noteChild) {
 		noteChild.putString( PluginTagNames.TEXT, classDiagramNote.getNoteText() );
+		noteChild.putString( PluginTagNames.ID, classDiagramNote.getId() );
 		addLocation(classDiagramNote, noteChild);
 		addSize(classDiagramNote, noteChild);
 	}
@@ -271,6 +284,10 @@ public class ClassDiagramFile {
 		classChild.putString( PluginTagNames.NAME, classDiagramClass.getName() );
 		classChild.putString( PluginTagNames.DISPLAY_NAME, classDiagramClass.getDisplayName() );
 		classChild.putBoolean( PluginTagNames.ABSTRACT_CLASS, classDiagramClass.isAbstractClass() );
+		classChild.putString( PluginTagNames.CONNECTION_NAME, classDiagramClass.getConnectionName() );
+		classChild.putString( PluginTagNames.CONNECTION_DISPLAY_NAME, classDiagramClass.getConnectionDisplayName() );
+		classChild.putString( PluginTagNames.OBJECT_STORE_NAME, classDiagramClass.getObjectStoreName() );
+		classChild.putString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME, classDiagramClass.getObjectStoreDisplayName() );
 		
 		addLocation(classDiagramClass, classChild);
 
