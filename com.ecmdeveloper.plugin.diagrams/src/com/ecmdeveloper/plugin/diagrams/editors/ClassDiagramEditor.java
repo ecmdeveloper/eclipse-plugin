@@ -56,6 +56,7 @@ import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.diagrams.actions.AddClassDiagramClassAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramClassAction;
+import com.ecmdeveloper.plugin.diagrams.actions.RefreshDiagramClassAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ShowPropertiesAction;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttribute;
@@ -224,6 +225,7 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		registerExportDiagramClassAction();
 		registerPrintAction();
 		registerAddClassDiagramClassAction();
+		registerRefreshDiagramClassAction();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -259,5 +261,12 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
 		IAction addAction = new AddClassDiagramClassAction(this);
 		getActionRegistry().registerAction(addAction);
 		getSelectionActions().add( addAction.getId() );
+	}
+
+	@SuppressWarnings("unchecked")
+	private void registerRefreshDiagramClassAction() {
+		IAction refreshAction = new RefreshDiagramClassAction(this);
+		getActionRegistry().registerAction(refreshAction);
+		getSelectionActions().add( refreshAction.getId() );
 	}
 }

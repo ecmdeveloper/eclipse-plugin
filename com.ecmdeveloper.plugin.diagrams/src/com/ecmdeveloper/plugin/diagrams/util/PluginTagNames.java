@@ -60,4 +60,8 @@ public class PluginTagNames {
 	public static final String VERSION_TAG = "version";
 	public static final String SHOW_DISPLAY_NAMES = "showDisplayNames";
 	public static final String SHOW_ICONS = "showIcons";
+	public static final String CONNECTION_NAME = "connectionName";
+	public static final String CONNECTION_DISPLAY_NAME = "connectionDisplayName";
+	public static final String OBJECT_STORE_NAME = "objectStoreName";
+	public static final String OBJECT_STORE_DISPLAY_NAME = "objectStoreDisplayName";
 }

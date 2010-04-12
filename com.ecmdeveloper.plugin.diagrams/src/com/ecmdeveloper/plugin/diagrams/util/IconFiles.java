@@ -29,6 +29,5 @@ public class IconFiles {
 	public static final String NOTE_LARGE = "icons/note_large.png";
 	public static final String PUBLIC_ATTRIBUTE_ICON = "icons/public_attribute.png";
 	public static final String CLASS_ICON = "icons/class.png";
-	
-	
+	public static final String CLASS_REFRESH_ICON = "icons/table_refresh.png";
 }

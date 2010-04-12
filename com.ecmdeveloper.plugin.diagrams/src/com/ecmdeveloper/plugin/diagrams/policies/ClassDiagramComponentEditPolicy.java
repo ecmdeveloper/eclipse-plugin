@@ -21,13 +21,20 @@
 package com.ecmdeveloper.plugin.diagrams.policies;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CompoundCommand;
+import org.eclipse.gef.commands.UnexecutableCommand;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
+import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gef.requests.GroupRequest;
 
+import com.ecmdeveloper.plugin.diagrams.actions.AddClassDiagramClassAction;
+import com.ecmdeveloper.plugin.diagrams.actions.RefreshDiagramClassAction;
+import com.ecmdeveloper.plugin.diagrams.commands.ClassDiagramClassRefreshCommand;
 import com.ecmdeveloper.plugin.diagrams.commands.ClassDiagramElementDeleteCommand;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
@@ -38,6 +45,27 @@ import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
  *
  */
 public class ClassDiagramComponentEditPolicy extends ComponentEditPolicy {
+
+	@Override
+	public Command getCommand(Request request) {
+		if ( RefreshDiagramClassAction.REQUEST_TYPE.equals(request.getType())) {
+			return createClassDiagramClassRefreshCommand(request);
+		}
+		return super.getCommand(request);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Command createClassDiagramClassRefreshCommand(Request request) {
+		ClassDiagramClass classDiagramClass = getClassDiagramClass(request);
+		return new ClassDiagramClassRefreshCommand(classDiagramClass);
+	}
+
+	@SuppressWarnings("unchecked")
+	private ClassDiagramClass getClassDiagramClass(Request request) {
+		Map<String, Object> extendedData = request.getExtendedData();
+		return (ClassDiagramClass) extendedData
+				.get(RefreshDiagramClassAction.CLASS_DIAGRAM_CLASS_KEY);
+	}
 
 	@Override
 	protected Command createDeleteCommand(GroupRequest deleteRequest) {

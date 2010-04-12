@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.diagrams.editors;
 
 import org.eclipse.gef.EditPartViewer;
-import org.eclipse.gef.Request;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
 import org.eclipse.gef.requests.CreationFactory;
 
@@ -40,23 +39,10 @@ public class ClassDiagramDropTargetListener extends TemplateTransferDropTargetLi
 	@Override
 	protected CreationFactory getFactory(Object template) {
 		if ( template != null ) {
-			System.out.println( "We got a template: " + template.toString() );
 			if ( template instanceof ClassDescription ) {
 				return new ClassDiagramClassFactory( (ClassDescription) template ); 
 			}
 		}
 		return super.getFactory(template);
-	}
-
-	@Override
-	protected void handleDragOver() {
-		// TODO Auto-generated method stub
-		super.handleDragOver();
-	}
-
-	@Override
-	protected Request getTargetRequest() {
-		// TODO Auto-generated method stub
-		return super.getTargetRequest();
 	}
 }

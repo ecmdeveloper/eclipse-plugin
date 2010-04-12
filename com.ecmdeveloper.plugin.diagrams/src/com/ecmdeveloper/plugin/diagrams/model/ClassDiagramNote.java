@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.diagrams.model;
 
+import java.util.UUID;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -37,6 +39,11 @@ public class ClassDiagramNote extends ClassDiagramElementWithResize implements I
 	public static final String TEXT_PROP = "ClassDiagramNote.Text";
 
 	private String noteText;
+	private String id;
+	
+	public ClassDiagramNote() {
+		id = UUID.randomUUID().toString();
+	}
 	
 	public String getNoteText() {
 		return noteText;
@@ -45,6 +52,14 @@ public class ClassDiagramNote extends ClassDiagramElementWithResize implements I
 	public void setNoteText(String noteText) {
 		this.noteText = noteText;
 		firePropertyChange(TEXT_PROP, null, this.noteText);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@SuppressWarnings("unchecked")

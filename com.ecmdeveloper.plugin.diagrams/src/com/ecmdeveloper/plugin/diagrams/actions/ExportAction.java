@@ -106,7 +106,6 @@ public abstract class ExportAction extends SelectionAction {
 
 		IFigure figure = getFigure();
 		
-//		Rectangle figureBounds = figure.getBounds();
 		Rectangle figureBounds = getFigureBounds(figure);
 		
 		Image image = null;
