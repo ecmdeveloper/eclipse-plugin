@@ -50,7 +50,7 @@
 	After the plug-in is installed do not restart Eclipse inmediately. For the plug-in to work
 	properly first the Content Engine Client files must be made available within the Eclipse 
 	environment. First navigate to the <strong>plugins</strong> folder of your eclipse installation. The
-	installation of the ECM Developer plug-in created a folder called <strong>com.ecmdeveloper.plugin.lib_1.0.0</strong>.
+	installation of the ECM Developer plug-in created a folder called <strong>com.ecmdeveloper.plugin.lib_1.1.0</strong>.
 	This folder already contains some files. Now the <i>content</i> of the <strong>CE_API</strong> folder must
 	copied to this folder. After this the installation is completed and Eclipse must be restarted.
 	  

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>ECM Developer - Editing Class Diagrams</title>
+<meta name="keywords" content="filenet,p8,eclipse,content engine,uml,class diagram" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!--#include virtual="/header.shtml" -->
+<div id="content">
+	<div id="left">
+	<h2>Editing Class Diagrams</h2>
+	<p>
+	The ECM Developer plug contains an editor that can be used to create a UML class diagram of the document, folder
+	and custom object classes defined in the Object Store. The diagrams can be printed or exported to
+	an image file.
+	
+	<h3>Content Engine Class Diagram Perspective</h3>
+	
+	<p>For convenient editing of the Class Diagrams the Content Engine Class Diagram perspective must be opened first. 
+	With the <strong>Window &gt; Open Perspective &gt; Other</strong> command the perspective selection window is opened. 
+	In this window the <strong>Content Engine Class Diagram</strong> perspective can be selected. This perspective contains on the left 
+	side the Object Store Classes View. In this view for each defined connection and Object Store the classes can be 
+	browsed. Browsing can only be done is the Object Store is already connected. If the Object Store is not connected 
+	using one of the other views of the plug in then in the content menu of the Object Store a connection can be made 
+	to the Content Engine.
+	</p>
+	<h3>Creating Class Diagrams</h3>
+	<p>
+	The following actions have to be performed to accomplish this task:
+	</p>
+	<ul>
+	<li>Start the standard Eclipse New wizard by using the <strong>File &gt; New &gt; Other</strong> command:
+	<p><img src='images/editing_class_diagram/new_class_diagram.png' alt='New Class Diagram'/></p>
+	Select the Content Engine Class Diagram in the Content Engine category.
+	</li>
+	
+	<li>In the next page of the wizard the necessary information can be supplied to start editing the new Class Diagram.		
+	</li>
+	
+	<li>If the wizard is finished a new file with the extension classdiagram is created and the the Class Diagram editor is 
+	opened for this file.</li>
+	
+	<h3>Editing the Class Diagram</h3>
+	<p>
+	To edit the Class Diagram the Object Store Classes view must be opened and connected  to the Object Store. 
+	Use either drag-and-drop or the context menu of the class to add the class to the Class Diagram. A UML figure 
+	will be drawn of the class and all the attributes it contains:
+	</p>
+	<img src='images/editing_class_diagram/single_class.jpeg' alt='Single Class' border='1'>
+	<p>
+	If a parent class or a child class is added to the diagram then they are connected to each other 
+	using an inherit relationship. The attributes of the child class defined in the parent class are now 
+	moved to the parent class:
+	</p>
+	<img src='images/editing_class_diagram/class_with_parent.jpeg' alt='Class with parent' border='1'>
+	<p>
+	If a class is added to the diagram describing an object value property of another class then the classes 
+	are also connected using a association relationships. If there is also a reflective property defined 
+	then the arrows are shown on both editpoints, otherwise only one arrow is shown:
+	</p>
+	<img src='images/editing_class_diagram/class_with_association.jpeg' alt='Class with association' border='1'>
+	<p>
+	If the relation between the two classes is marked as “cascade on delete” then a much stronger relation 
+	is assumed. In this case the classes are connected using an aggregation relation:
+	</p>
+	<img src='images/editing_class_diagram/class_with_aggregation.jpeg' alt='Class with aggregation' border='1'>
+	 
+	</div>
+	<div id="right">
+		<!--#include virtual="/navigation.shtml" -->
+	</div>
+</div>
+<div id="footer">
+	<p>Copyright &copy; 2009,2010 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
+</div
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-723834-3");
+pageTracker._trackPageview();
+} catch(err) {}</script></body>
+</html>
