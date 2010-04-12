@@ -123,11 +123,13 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 		}
 	}
 	
-	public void connectConnection( final String connectionName, IProgressMonitor monitor ) throws ExecutionException {
+	public void connectConnection( ContentEngineConnection connection,IProgressMonitor monitor ) throws ExecutionException {
 
 		try {
+			
+			String connectionName = connection.getName();
 			if ( monitor != null ) {
-				monitor.beginTask( MessageFormat.format( CONNECT_MESSAGE, connectionName ), IProgressMonitor.UNKNOWN);
+				monitor.beginTask( MessageFormat.format( CONNECT_MESSAGE, connection.getDisplayName() ), IProgressMonitor.UNKNOWN);
 			}
 	
 			if ( connections.containsKey( connectionName ) ) {
@@ -211,7 +213,7 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 			return;
 		}
 		
-		connectConnection(objectStore.getConnection().getName(), monitor );
+		connectConnection(objectStore.getConnection(), monitor );
 	}
 
 	public ObjectStores getObjectStores()
