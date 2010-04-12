@@ -37,7 +37,7 @@
 			<li>Performing some basic actions on Object Store objects such as renaming, moving and deleting.</li>
 			<li>Editing of folder, document and custom object properties.
 			<li>Java code wizards for event action handlers, document lifecycle handlers and document classifiers.</li>
-			<li>An editor for updating code modules.</li>
+			<li>An editor for updating code modules and event actions.<br><strong><a href="editing_code_modules_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong></li>
 	</ul>
 	</p>
 	<p>
@@ -58,7 +58,7 @@
 	</div>
 </div>
 <div id="footer">
-	<p>Copyright &copy; 2009 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
+	<p>Copyright &copy; 2009,2010 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
 </div>	
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
