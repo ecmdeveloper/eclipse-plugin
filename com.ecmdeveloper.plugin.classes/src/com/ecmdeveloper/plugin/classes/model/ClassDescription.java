@@ -52,13 +52,25 @@ public class ClassDescription implements IAdaptable {
 		if ( classDescription != null ) {
 			this.classDescription = (com.filenet.api.meta.ClassDescription) classDescription;
 			this.objectStore = objectStore;
-			this.name = this.classDescription.get_Name();
 			this.parent = parent;
 			this.id = this.classDescription.get_Id().toString();
-			this.hasChildren = ! this.classDescription.get_ImmediateSubclassDescriptions().isEmpty();
-
-			getPropertyDescriptions();
+			refreshInternal();
 		}
+	}
+
+	public void refresh() {
+		if ( classDescription != null) {
+			classDescription.refresh();
+			propertyDescriptions = null;
+			refreshInternal();
+		}
+	}
+
+	private void refreshInternal() {
+		name = this.classDescription.get_Name();
+		hasChildren = ! classDescription.get_ImmediateSubclassDescriptions().isEmpty();
+		children = null;
+		getPropertyDescriptions();
 	}
 
 	public Object getObjectStoreObject() {
@@ -81,11 +93,6 @@ public class ClassDescription implements IAdaptable {
 		}
 		
 		return children;
-	}
-
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public String getName() {

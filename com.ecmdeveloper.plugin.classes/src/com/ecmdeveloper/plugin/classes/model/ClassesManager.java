@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -20,26 +20,31 @@
 package com.ecmdeveloper.plugin.classes.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
-import com.ecmdeveloper.plugin.classes.model.task.BaseTask;
+import com.ecmdeveloper.plugin.classes.model.task.GetChildClassDescriptionsTask;
+import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
+import com.ecmdeveloper.plugin.classes.model.task.RefreshClassDescriptionTask;
+import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
+import com.ecmdeveloper.plugin.model.tasks.TaskListener;
 
 /**
  * 
  * @author Ricardo Belfor
  *
  */
-public class ClassesManager implements ObjectStoresManagerListener {
+public class ClassesManager implements ObjectStoresManagerListener, TaskListener {
 
 	private static ClassesManager classesManager;
 	protected ObjectStoresManager objectStoresManager;
@@ -105,17 +110,66 @@ public class ClassesManager implements ObjectStoresManagerListener {
 		}
 	}
 
-	public void executeTaskASync(Callable<Object> task) {
-		if ( task instanceof BaseTask) {
-			((BaseTask)task).setListeners(listeners);
-		}
+	public void executeTaskASync(BaseTask task) {
+		task.addTaskListener(this);
 		objectStoresManager.executeTaskASync(task);
 	}
 
-	public Object executeTaskSync(Callable<Object> task) throws Exception {
-		if ( task instanceof BaseTask) {
-			((BaseTask)task).setListeners(listeners);
-		}
+	public Object executeTaskSync(BaseTask task) throws Exception {
+		task.addTaskListener(this);
 		return objectStoresManager.executeTaskSync(task);
+	}
+
+	@Override
+	public void onTaskComplete(TaskCompleteEvent taskCompleteEvent) {
+		if ( isTaskSourceInstanceOf(taskCompleteEvent, GetChildClassDescriptionsTask.class) ) {
+			handleGetChildClassDescriptionsCompleted(taskCompleteEvent);
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, GetClassDescriptionTask.class) ) {
+			handleGetClassDescriptionCompleted(taskCompleteEvent);
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, RefreshClassDescriptionTask.class ) ) {
+			handleRefreshClassDescriptionCompleted(taskCompleteEvent);
+		}
+	}
+
+	private void handleRefreshClassDescriptionCompleted(TaskCompleteEvent taskCompleteEvent) {
+		RefreshClassDescriptionTask task = (RefreshClassDescriptionTask) taskCompleteEvent.getSource();
+		ClassDescription[] classDescriptions = task.getClassDescriptions();
+		fireClassDescriptionChanged(null, null, classDescriptions );
+	}
+
+	private void handleGetClassDescriptionCompleted(TaskCompleteEvent taskCompleteEvent) {
+		GetClassDescriptionTask task = (GetClassDescriptionTask) taskCompleteEvent.getSource();
+		ArrayList<ClassDescription> children = task.getChildren();
+		Collection<Object> oldChildren = task.getOldChildren();
+		fireClassDescriptionChanged( children.toArray(new ClassDescription[1]),
+				oldChildren != null ? oldChildren.toArray( new ClassDescription[1] ) : null, null);
+	}
+
+	private void handleGetChildClassDescriptionsCompleted(TaskCompleteEvent taskCompleteEvent) {
+		GetChildClassDescriptionsTask task = (GetChildClassDescriptionsTask) taskCompleteEvent.getSource();
+		ClassDescription parent = task.getParent();
+		Collection<Object> oldChildren = task.getOldChildren();
+//		fireClassDescriptionChanged( parent.getChildren().toArray( new ClassDescription[0] ), 
+//				oldChildren != null ? oldChildren.toArray( new ClassDescription[0] ) : null, new ClassDescription[] { parent } );
+		fireClassDescriptionChanged( parent.getChildren().toArray( new ClassDescription[0] ), 
+		null, new ClassDescription[] { parent } );
+	}
+
+	private boolean isTaskSourceInstanceOf(TaskCompleteEvent taskCompleteEvent, Class<?> taskClass) {
+		return taskCompleteEvent.getSource().getClass().equals(taskClass);
+	}
+
+	public void fireClassDescriptionChanged(ClassDescription[] itemsAdded,
+			ClassDescription[] itemsRemoved, ClassDescription[] itemsUpdated) {
+		
+		if ( listeners == null || listeners.isEmpty() ) {
+			return;
+		}
+		
+		ClassesManagerEvent event = new ClassesManagerEvent(this,
+				itemsAdded, itemsUpdated, itemsRemoved );
+		for (ClassesManagerListener listener : listeners) {
+			listener.classDescriptionsChanged(event);
+		}
 	}
 }

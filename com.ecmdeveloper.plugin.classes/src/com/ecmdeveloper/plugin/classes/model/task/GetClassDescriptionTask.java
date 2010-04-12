@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -25,6 +25,8 @@ import java.util.Collection;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.VirtualFolder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 
 /**
  * 
@@ -36,6 +38,9 @@ public class GetClassDescriptionTask extends BaseTask {
 	private String name;
 	private ObjectStore objectStore;
 	private Object parent;
+	private ClassDescription classDescription;
+	private Collection<Object> oldChildren;
+	private ArrayList<ClassDescription> children;
 
 	public GetClassDescriptionTask(String name, ObjectStore objectStore) {
 		this(name, null, objectStore);
@@ -48,6 +53,18 @@ public class GetClassDescriptionTask extends BaseTask {
 		this.parent = parent;
 	}
 
+	public ClassDescription getClassDescription() {
+		return classDescription;
+	}
+
+	public Collection<Object> getOldChildren() {
+		return oldChildren;
+	}
+
+	public ArrayList<ClassDescription> getChildren() {
+		return children;
+	}
+
 	@Override
 	public Object call() throws Exception {
 
@@ -57,10 +74,10 @@ public class GetClassDescriptionTask extends BaseTask {
 		com.filenet.api.meta.ClassDescription classDescriptionObject = 
 			(com.filenet.api.meta.ClassDescription) objectStoreObject.fetchObject("ClassDescription", name, null);
 
-		ClassDescription classDescription = new ClassDescription(classDescriptionObject, parent, objectStore );
+		classDescription = new ClassDescription(classDescriptionObject, parent, objectStore );
 		
 		addToParent(classDescription);
-		
+		fireTaskCompleteEvent(TaskResult.COMPLETED);
 		return classDescription;
 	}
 
@@ -70,16 +87,13 @@ public class GetClassDescriptionTask extends BaseTask {
 			return;
 		}
 		
-		ArrayList<ClassDescription> children = new ArrayList<ClassDescription>();
+		children = new ArrayList<ClassDescription>();
 		children.add(classDescription);
 
-		Collection<Object> oldChildren = null;
+		oldChildren = null;
 		if ( parent instanceof VirtualFolder) {
 			oldChildren = addToVirtualFolder(children);
 		}
-
-		fireClassDescriptionChanged(children.toArray(new ClassDescription[1]),
-				oldChildren != null ? oldChildren.toArray( new ClassDescription[1] ) : null, null);
 	}
 
 	private Collection<Object> addToVirtualFolder(ArrayList<ClassDescription> children) {

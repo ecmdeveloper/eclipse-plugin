@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -19,13 +19,14 @@
  */
 package com.ecmdeveloper.plugin.classes.model.task;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.Placeholder;
+import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 import com.filenet.api.collection.ClassDescriptionSet;
 
 /**
@@ -36,6 +37,7 @@ public class GetChildClassDescriptionsTask extends BaseTask {
 
 	private ClassDescription parent;
 	private Placeholder placeholder;
+	private Collection<Object> oldChildren;
 	
 	public GetChildClassDescriptionsTask(ClassDescription parent) {
 		this(parent,null);
@@ -46,17 +48,22 @@ public class GetChildClassDescriptionsTask extends BaseTask {
 		this.placeholder = placeholder;
 	}
 
-	@SuppressWarnings("unchecked")
+	public ClassDescription getParent() {
+		return parent;
+	}
+
+	public Collection<Object> getOldChildren() {
+		return oldChildren;
+	}
+
 	@Override
 	public Object call() throws Exception {
-
-//		if ( placeholder != null) {
-			getImmediateSubclassDescriptions();
-//		}
-
+		getImmediateSubclassDescriptions();
+		fireTaskCompleteEvent(TaskResult.COMPLETED);
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void getImmediateSubclassDescriptions() {
 		com.filenet.api.meta.ClassDescription classDescriptionObject = 
 			(com.filenet.api.meta.ClassDescription) parent.getObjectStoreObject();
@@ -73,17 +80,14 @@ public class GetChildClassDescriptionsTask extends BaseTask {
 					childClassDescriptionObject, parent, parent.getObjectStore());
 			children.add(classDescription);
 			
-			if ( placeholder != null) {
-				placeholder.setMessage( MessageFormat.format("Loading \"{0}\"...", childClassDescriptionObject.get_DisplayName() ) );
-				fireClassDescriptionChanged( null, null, new ClassDescription[] { parent } );
-			}
+//			if ( placeholder != null) {
+//				placeholder.setMessage( MessageFormat.format("Loading \"{0}\"...", childClassDescriptionObject.get_DisplayName() ) );
+//				fireClassDescriptionChanged( null, null, new ClassDescription[] { parent } );
+//			}
 		}	
 
-		Collection<Object> oldChildren = parent.getChildren();
-		
+		oldChildren = parent.getChildren();
 		parent.setChildren( children );
 
-		fireClassDescriptionChanged( children.toArray( new ClassDescription[0] ), 
-				oldChildren != null ? oldChildren.toArray( new ClassDescription[0] ) : null, new ClassDescription[] { parent } );
 	}
 }

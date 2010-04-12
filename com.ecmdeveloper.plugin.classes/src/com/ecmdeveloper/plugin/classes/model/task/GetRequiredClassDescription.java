@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.classes.model.task;
 
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.filenet.api.meta.ClassDescription;
 import com.filenet.api.meta.PropertyDescription;
 import com.filenet.api.meta.PropertyDescriptionObject;
