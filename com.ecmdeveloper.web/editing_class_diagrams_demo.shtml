@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>ECM Developer - Editing Class Diagrams Demo</title>
+<meta name="keywords" content="ibm,filenet,p8,eclipse,class diagram,uml" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!--#include virtual="/header.shtml" -->
+<div id="content">
+	<div id="left">
+	
+	<h2>Editing Class Diagrams Demo</h2>
+	<p>
+	This demo shows the creation and editing of class diagrams.</p>
+	<object id="scPlayer" width="822" height="581"> 
+		<param name="movie" value="http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/jingswfplayer.swf"></param> <param name="quality" value="high"></param> <param name="bgcolor" value="#FFFFFF"></param> <param name="flashVars" value="thumb=http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/FirstFrame.jpg&containerwidth=822&containerheight=581&content=http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/CodeModuleEditor.swf"></param> <param name="allowFullScreen" value="true"></param> <param name="scale" value="showall"></param> <param name="allowScriptAccess" value="always"></param> <param name="base" value="http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/"></param>  
+		<embed src="http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/jingswfplayer.swf" quality="high" bgcolor="#FFFFFF" width="822" height="581" type="application/x-shockwave-flash" allowScriptAccess="always" flashVars="thumb=http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/FirstFrame.jpg&containerwidth=822&containerheight=581&content=http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/CodeModuleEditor.swf" allowFullScreen="true" base="http://content.screencast.com/users/rickxx/folders/Jing/media/04042834-d6f2-4403-baa5-26d7e957f67d/" scale="showall"></embed> 
+	</object>
+		
+	</div>
+	<div id="right">
+		<!--#include virtual="/navigation.shtml" -->
+	</div>
+</div>
+<div id="footer">
+	<p>Copyright &copy; 2009,2010 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-723834-3");
+pageTracker._trackPageview();
+} catch(err) {}</script></body>
+</html>

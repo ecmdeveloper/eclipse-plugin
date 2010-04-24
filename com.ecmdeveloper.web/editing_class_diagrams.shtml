@@ -16,7 +16,9 @@
 	<p>
 	The ECM Developer plug contains an editor that can be used to create a UML class diagram of the document, folder
 	and custom object classes defined in the Object Store. The diagrams can be printed or exported to
-	an image file.
+	an image file. Once a class is placed on the diagram an active connection to the Content Engine is no longer necessary
+	to edit the diagram. Only if the class must be refreshed, after a changed definition, a connection must be made.
+	</p>
 	
 	<h3>Content Engine Class Diagram Perspective</h3>
 	
@@ -41,12 +43,13 @@
 	<li>In the next page of the wizard the necessary information can be supplied to start editing the new Class Diagram.		
 	</li>
 	
-	<li>If the wizard is finished a new file with the extension classdiagram is created and the the Class Diagram editor is 
+	<li>If the wizard is finished a new file with the extension classdiagram is created and the Class Diagram editor is 
 	opened for this file.</li>
+	</ul>
 	
 	<h3>Editing the Class Diagram</h3>
 	<p>
-	To edit the Class Diagram the Object Store Classes view must be opened and connected  to the Object Store. 
+	To edit the Class Diagram the <strong>Object Store Classes</strong> view must be opened and connected  to the Object Store. 
 	Use either drag-and-drop or the context menu of the class to add the class to the Class Diagram. A UML figure 
 	will be drawn of the class and all the attributes it contains:
 	</p>
@@ -68,8 +71,36 @@
 	is assumed. In this case the classes are connected using an aggregation relation:
 	</p>
 	<img src='images/editing_class_diagram/class_with_aggregation.jpeg' alt='Class with aggregation' border='1'>
-	 
+	<p>
+	With the palette on the right side of the editor a note can be added to the diagram. When the note icon is 
+	dropped on the diagram the user is prompted for a text and next the note will be placed on the diagram.
+	</p>
+	<img src='images/editing_class_diagram/class_diagram_note.png' alt='Class with note' border='0'>
+	<p>
+	<h3>Editor Actions</h3>
+	<p>
+	The <strong>delete</strong>, <strong>undo</strong> and <strong>redo</strong> commands can be performed using 
+	the standard edit menu of Eclipse. The diagram can also be printed using the standard <strong>File &gt; Print</strong> command.
+	</p> 
+	<img src='images/editing_class_diagram/class_diagram_context_menu.png' alt='Context Menu' border='0'>
+	<p>Beside these actions the context menus supports some additional functionality:
+	<ul>
+	<li><strong>Refresh Class Diagram Class</strong> refreshes the class definition from the Content Engine and 
+	redraws the class.</li>
+	<li><strong>Show Properties</strong> shows the properties of the selected element. The editor uses the standard Eclipse
+	properties view for editing properties. The content of the properties view depends on the selected element:
+	<table border=1 width='50%' cellspacing='0' cellpadding='0'>
+		<tr><th>Selection</th><th>Properties</th></tr>
+		<tr><td>Diagram</td><td>Show Display Names<br>Show Icons</td></tr>
+		<tr><td>Class</td><td>Visible Attributes<br>Visible Relations<br>Position</td></tr>
+		<tr><td>Note</td><td>Text<br>Size<br>Position</td></tr>
+	</table>
+	<li><strong>Export diagram to image</strong> exports the entire diagram to an image file.</li>
+	<li><strong>Export class to image</strong> exports the selected class to an image file.</li>
+	</ul>
+	</p>
 	</div>
+	
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
 	</div>

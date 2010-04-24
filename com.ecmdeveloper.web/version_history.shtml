@@ -12,7 +12,13 @@
 <!--#include virtual="/header.shtml" -->
 <div id="content">
 	<div id="left">
-	<h3>Version 1.1.0.0 3/xx/2010</h3>
+	<h3>Version 1.2.0.0 4/xx/2010</h3>
+	<ul>
+	<li>Added Content Engine 4.5.1 support.</li>
+	<li>Added Class Diagram editor.</li>
+	</ul>
+	</div>
+	<h3>Version 1.1.0.0 3/5/2010</h3>
 	<ul>
 	<li>Added support for folder, document and custom object editing.</li>
 	<li>Fixed bug in code module editor, code modules with multiple content elements 
