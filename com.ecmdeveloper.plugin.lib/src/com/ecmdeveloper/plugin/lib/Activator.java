@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -19,7 +19,9 @@
  */
 package com.ecmdeveloper.plugin.lib;
 
+import java.io.File;
 import java.net.URL;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -27,36 +29,27 @@ import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-/**
- * The activator class controls the plug-in life cycle
- */
 public class Activator extends Plugin {
 
-	// The plug-in ID
+	private static final String MISSING_JAAS_FILE_MESSAGE = "The file jaas.conf.WSI is not found in the folder {0}/config or the folder {0}/config/samples. Make sure it is located at one of these locations.";
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin.lib";
-
-	// The shared instance
 	private static Activator plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 		
 		String installLocation = getInstallLocation();
 		String jaasConfigFile = installLocation + "/config/jaas.conf.WSI";
-		String waspLocation = installLocation + "/wsi";
+		File file = new File( jaasConfigFile );
+		if ( ! file.exists() )
+		{
+			jaasConfigFile = installLocation + "/config/samples/jaas.conf.WSI";
+			if ( ! new File( jaasConfigFile ).exists() ) {
+				throw new RuntimeException( MessageFormat.format( MISSING_JAAS_FILE_MESSAGE, installLocation ) );
+			}
+		}
 		System.setProperty("java.security.auth.login.config", jaasConfigFile );
-		System.setProperty("wasp.location", waspLocation );
 	}
 
 	public String getInstallLocation() throws Exception {
@@ -66,22 +59,12 @@ public class Activator extends Plugin {
 		return fileUrl.getFile();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
 	}
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
-
 }
