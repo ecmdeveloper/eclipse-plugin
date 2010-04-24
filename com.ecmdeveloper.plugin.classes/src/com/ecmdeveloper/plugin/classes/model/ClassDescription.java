@@ -38,12 +38,13 @@ import com.filenet.api.collection.PropertyDescriptionList;
  */
 public class ClassDescription implements IAdaptable {
 
-	protected com.filenet.api.meta.ClassDescription classDescription;
-	protected ObjectStore objectStore;
-	protected String name;
-	protected Object parent;
-	protected ArrayList<Object> children;
-	protected Boolean hasChildren;
+	private com.filenet.api.meta.ClassDescription classDescription;
+	private ObjectStore objectStore;
+	private String name;
+	private String displayName; 
+	private Object parent;
+	private ArrayList<Object> children;
+	private Boolean hasChildren;
 	private String id;
 	List<PropertyDescription> propertyDescriptions;
 	
@@ -67,7 +68,8 @@ public class ClassDescription implements IAdaptable {
 	}
 
 	private void refreshInternal() {
-		name = this.classDescription.get_Name();
+		name = classDescription.get_SymbolicName();
+		displayName = classDescription.get_DisplayName(); 
 		hasChildren = ! classDescription.get_ImmediateSubclassDescriptions().isEmpty();
 		children = null;
 		getPropertyDescriptions();
@@ -93,6 +95,10 @@ public class ClassDescription implements IAdaptable {
 		}
 		
 		return children;
+	}
+
+	public String getDisplayName() {
+		return displayName;
 	}
 
 	public String getName() {
