@@ -27,7 +27,6 @@ import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
 import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
 import com.filenet.api.constants.Cardinality;
-import com.filenet.api.meta.ClassDescription;
 import com.filenet.api.meta.PropertyDescriptionObject;
 
 /**
@@ -80,7 +79,7 @@ public class ClassDiagramAttribute {
 				GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
 				ClassesManager.getManager().executeTaskSync( task );
 				com.filenet.api.meta.ClassDescription requiredClass = task.getRequiredClass();
-				this.type = requiredClass.get_DisplayName();
+				this.type = requiredClass.get_SymbolicName();
 			} catch (Exception e) {
 				PluginLog.error(e);
 			}
