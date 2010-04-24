@@ -47,13 +47,13 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 	public static final String DEFAULT_LINE_COLOR_PROP = "ClassDiagram.DefaultLineColor";
 	public static final String SHOW_ICONS_PROP = "ClassDiagram.showIcons";
 	public static final String SHOW_DISPLAY_NAMES_PROP = "ClassDiagram.showDisplayNames";
-
+	
 	@SuppressWarnings("unused")
 	private RGB defaultFillColor;
 	@SuppressWarnings("unused")
 	private RGB defaultLineColor;
 	private boolean showIcons = true;
-	private boolean showDisplayNames = true;
+	private boolean showDisplayNames = false;
 	
 	public void addClassDiagramElement(ClassDiagramElement object) {
 		if ( object instanceof ClassDiagramClass ) {
@@ -107,11 +107,14 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 
 	private void connectClassToAttributeClass(ClassDiagramClass classDiagramClass) {
 		for ( AttributeRelationship attributeRelationship : classDiagramClass.getSourceRelations() ) {
-			ClassDiagramClass attributeClass = getAttributeRelationshipClass(attributeRelationship);
-			if ( attributeClass != null ) {
-				classDiagramClass.connectSource( attributeRelationship );
-				attributeClass.addTarget( attributeRelationship );
-			}
+			
+//			if ( isSourceAttributeActive(classDiagramClass, attributeRelationship) ) {
+				ClassDiagramClass attributeClass = getAttributeRelationshipClass(attributeRelationship);
+				if ( attributeClass != null) {
+					classDiagramClass.connectSource( attributeRelationship );
+					attributeClass.addTarget( attributeRelationship );
+				}
+//			}
 		}
 	}
 
@@ -120,7 +123,7 @@ public class ClassDiagram extends ClassDiagramBase implements IAdaptable {
 			for (AttributeRelationship attributeRelationship : classDiagramClass
 					.getSourceRelations()) {
 				if (isAttributeRelationshipClass(attributeRelationship, attributeClass)) {
-					if ( ! attributeRelationship.isLoop() ) {
+					if (!attributeRelationship.isLoop() ) {
 						classDiagramClass.connectSource(attributeRelationship);
 						attributeClass.addTarget(attributeRelationship);
 					}

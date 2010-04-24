@@ -67,7 +67,7 @@ public class ClassDiagramFile {
 		writer.close(); 
 
 		dataOut.write( writer.toString().getBytes() );
-		System.out.println( writer.toString() );
+		//System.out.println( writer.toString() );
 		classDiagramFile.setContents(new ByteArrayInputStream(out.toByteArray()), true, false, monitor);
 	}
 

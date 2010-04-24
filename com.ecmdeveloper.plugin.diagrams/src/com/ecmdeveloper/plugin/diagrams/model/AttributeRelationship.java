@@ -20,8 +20,6 @@
 
 package com.ecmdeveloper.plugin.diagrams.model;
 
-import org.eclipse.gef.ui.actions.DeleteAction;
-
 import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
 import com.filenet.api.constants.DeletionAction;
@@ -41,6 +39,7 @@ public class AttributeRelationship extends ClassDiagramBase {
 	private boolean connected = false;
 	private ClassConnector sourceConnector;
 	private ClassConnector targetConnector;
+	private boolean active;
 	
 	public AttributeRelationship(PropertyDescriptionObject targetPropertyDescription, ClassDiagramClass parent ) throws Exception {
 
@@ -52,12 +51,14 @@ public class AttributeRelationship extends ClassDiagramBase {
 		initializeTargetConnector(targetPropertyDescription, sourcePropertyDescription, requiredClass);
 		initalizeSourceConnector(targetPropertyDescription, sourcePropertyDescription, parent);
 		visible = true;
+		active = true;
 	}
 
 	public AttributeRelationship(String name, ClassConnector sourceConnector, ClassConnector targetConnector) {
 		this.name = name;
 		this.sourceConnector = sourceConnector;
 		this.targetConnector = targetConnector;
+		active = true;
 	}
 
 	private void initializeTargetConnector(PropertyDescriptionObject targetPropertyDescription,
@@ -66,12 +67,12 @@ public class AttributeRelationship extends ClassDiagramBase {
 		
 		targetConnector = new ClassConnector();
 		targetConnector.setClassId( requiredClass.get_Id().toString() );
-		targetConnector.setClassName( requiredClass.get_Name() );
+		targetConnector.setClassName( requiredClass.get_SymbolicName() );
 		targetConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( targetPropertyDescription ) );
 
 		if ( sourcePropertyDescription != null ) {
 			targetConnector.setPropertyId( sourcePropertyDescription.get_Id().toString() );
-			targetConnector.setPropertyName( sourcePropertyDescription.get_Name() );
+			targetConnector.setPropertyName( sourcePropertyDescription.get_SymbolicName() );
 		}
 	}
 
@@ -91,7 +92,7 @@ public class AttributeRelationship extends ClassDiagramBase {
 		sourceConnector.setClassId( parent.getId() );
 		sourceConnector.setClassName( parent.getName() );
 		sourceConnector.setPropertyId( targetPropertyDescription.get_Id().toString() );
-		sourceConnector.setPropertyName( targetPropertyDescription.get_Name() );
+		sourceConnector.setPropertyName( targetPropertyDescription.get_SymbolicName() );
 		if ( sourcePropertyDescription != null ) {
 			sourceConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( sourcePropertyDescription ) );
 		}
@@ -112,6 +113,14 @@ public class AttributeRelationship extends ClassDiagramBase {
 		return visible;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 		firePropertyChange(VISIBLE_PROPERTY, null, new Boolean( visible ) );

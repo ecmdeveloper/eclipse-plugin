@@ -43,6 +43,8 @@ import com.filenet.api.meta.PropertyDescriptionObject;
  */
 public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable {
 
+	private static final String FOLDER_NAME_PROPERTY = "FolderName";
+
 	public static final String VISIBLE_ATTRIBUTE_PROP = "ClassDiagramClass.VisibleAttribute";
 
 	private String name;
@@ -131,7 +133,8 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 	}
 
 	private boolean isAllowedAttribute(PropertyDescription propertyDescription) {
-		return !Boolean.TRUE.equals(propertyDescription.getSystemOwned());
+		System.out.println( propertyDescription.getName() );
+		return !Boolean.TRUE.equals(propertyDescription.getSystemOwned()) || FOLDER_NAME_PROPERTY.equals(propertyDescription.getName() );
 	}
 
 	private void createClassDiagramAttributes(ClassDescription classDescription) {
@@ -209,45 +212,38 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		}
 	}
 
-	public void setAttributeActive(String attributeName, boolean visible) {
-		ClassDiagramAttribute classDiagramAttribute = getClassDiagramAttribute(attributeName);
-		if ( classDiagramAttribute != null ) {
-			classDiagramAttribute.setVisible( visible );
-			firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attributeName );
-		}
-	}
-	
 	public void connectParent(InheritRelationship inheritRelationship ) {
 		parentRelation = inheritRelationship;
-		setParentAttributesVisibility(false);
+		setParentAttributesActiveness(false);
 		firePropertyChange(TARGET_CONNECTIONS_PROP, null, parentRelation );
 	}
 
-	private void setParentAttributesVisibility(boolean visible ) {
+	private void setParentAttributesActiveness(boolean visible ) {
 		
 		for ( ClassDiagramAttribute attribute : parentRelation.getParent().getAttributes() ) {
 			String attributeName = attribute.getName();
 			ClassDiagramAttribute classDiagramAttribute = getClassDiagramAttribute(attributeName );
 			if ( classDiagramAttribute != null ) {
-				setParentAttributeVisibility(classDiagramAttribute, visible);
+				setParentAttributeActiveness(classDiagramAttribute, visible);
 			}
 		}
 	}
 
-	private void setParentAttributeVisibility( ClassDiagramAttribute classDiagramAttribute, boolean visibile ) {
-		String attributeName = classDiagramAttribute.getName();
-		classDiagramAttribute.setActive( visibile );
-		firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attributeName );
+	private void setParentAttributeActiveness( ClassDiagramAttribute classDiagramAttribute, boolean active ) {
 		
+		String attributeName = classDiagramAttribute.getName();
+		classDiagramAttribute.setActive( active );
+		firePropertyChange(VISIBLE_ATTRIBUTE_PROP, null, attributeName );
+
 		for ( AttributeRelationship sourceRelation : sourceRelations ) {
 			if ( attributeName.equals( sourceRelation.getSourceConnector().getPropertyName() ) ) {
-				sourceRelation.setVisible(visibile);
+				sourceRelation.setActive(active);
 			}
 		}
 	}
 	
 	public void disconnectParent() {
-		setParentAttributesVisibility(true);
+		setParentAttributesActiveness(true);
 		InheritRelationship oldParentRelation = parentRelation;
 		parentRelation = null;
 		firePropertyChange(TARGET_CONNECTIONS_PROP, oldParentRelation, null );
@@ -313,7 +309,13 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 	}
 	
 	public List<AttributeRelationship> getSourceRelations() {
-		return sourceRelations;
+		ArrayList<AttributeRelationship> activeRelations = new ArrayList<AttributeRelationship>();
+		for ( AttributeRelationship attributeRelationship : sourceRelations ) {
+			if ( attributeRelationship.isActive() ) {
+				activeRelations.add(attributeRelationship);
+			}
+		}
+		return activeRelations;
 	}
 
 	public List<AttributeRelationship> getTargetRelations() {
