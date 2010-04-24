@@ -45,7 +45,7 @@ public class NewClassDiagramWizardPage extends WizardNewFileCreationPage {
 	@Override
 	protected InputStream getInitialContents() {
 		String contents = XML_HEADER + "<" + PluginTagNames.CLASSDIAGRAM + " "
-				+ PluginTagNames.SHOW_DISPLAY_NAMES + "='true' " + PluginTagNames.SHOW_ICONS
+				+ PluginTagNames.SHOW_DISPLAY_NAMES + "='false' " + PluginTagNames.SHOW_ICONS
 				+ "='true' " + PluginTagNames.VERSION_TAG + "='"
 				+ ClassDiagramFile.CURRENT_FILE_VERSION + "'>" + "</" + PluginTagNames.CLASSDIAGRAM
 				+ ">";
