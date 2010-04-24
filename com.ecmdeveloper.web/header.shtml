@@ -1,7 +1,9 @@
 <div id="header">
+	<img width='842' height='91' alt='Banner' src='images/index/banner.gif' border='0'>
+	<!--
 	<h1>ECM{developer}</h1>
 	<h2>An eclipse plug-in for the FileNet P8 content engine</h2>
-<!--img src='images/ecm-developer.jpg'-->		
+	-->
 </div>
 <div id="menu">
 	<ul>

@@ -4,18 +4,28 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>ECM Developer - introduction</title>
-<meta name="keywords" content="filenet,p8,eclipse" />
+<meta name="keywords" content="filenet,p8,eclipse,ricardo belfor" />
 <meta name="description" content="" />
 <link href="default.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<!--#include virtual="/header.shtml" -->
+<div id="header">
+	<img width='842' height='159' alt='Banner' src='images/index/banner.gif' border='0'>
+</div>
+<div id="menu">
+	<ul>
+		<li><a href="http://ecmdeveloper.sourceforge.net/">Home</a></li>
+		<li><a href="http://sourceforge.net/projects/ecmdeveloper">Project Homepage</a></li>
+		<li><a href="http://sourceforge.net/projects/ecmdeveloper/files/">Download</a></li>
+		<li><a href="http://sourceforge.net/projects/ecmdeveloper/forums">Forum</a></li>
+	</ul>
+</div>
 <div id="content">
 	<div id="left">
-
 	<h2>Introduction</h2>
  	<p>
-	ECM Developer is an Eclipse plug in aimed at supporting the development of applications using FileNet P8 system. 
+	ECM Developer is an Eclipse plug in aimed at supporting the development of applications using the 
+	IBM FileNet P8 system. 
 	It approaches the system from a developers point of view and tries to find solutions for day to day tasks. 
 	An example is the development of event actions with related code modules. Part of developing event actions 
 	involve updating an existing code module and reconnecting the new version of the code module 
@@ -35,18 +45,23 @@
 	<ul>
 			<li>Browsing Object Stores</li>
 			<li>Performing some basic actions on Object Store objects such as renaming, moving and deleting.</li>
-			<li>Editing of folder, document and custom object properties.
-			<li>Java code wizards for event action handlers, document lifecycle handlers and document classifiers.</li>
-			<li>An editor for updating code modules and event actions.<br><strong><a href="editing_code_modules_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong></li>
+			<li>Editing of folder, document and custom object properties.</li>
+			<li>Class Diagram Editor, creating UML diagrams of the classes defined in the Object Store.<br>
+			<strong><a href="editing_class_diagram_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
+			<li>Java code wizards for event action handlers, document life cycle handlers and document classifiers.</li>
+			<li>An editor for updating code modules and event actions.<br>
+			<strong><a href="editing_code_modules_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
+			</li>
 	</ul>
 	</p>
 	<p>
 	The plug in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
 	This is the most generic way of accessing the system and does not depend on the underlying 
 	system architecture. Because the Java API is not distributed with this plug in, using this plug in 
-	requires access to the Java API. Information about installing the plug in can be found here. 
-	After the plug in is installed the Object Stores managed with this plug in must be imported. 
-	Information about importing an Object Store can be found here.
+	requires access to the Java API. Information about installing the plug in can be found <a href="installing.shtml">here</a>. 
+	After the plug in is installed the configuration of the Object Stores managed with this plug in must 
+	be imported into the plug in environment. 
+	Information about importing an Object Store can be found <a href="getting_started.shtml">here</a>.
 	</p>
 	<p>
 	This plug in is tested with the 4.5 version of the FileNet Content Engine. The JAR-file structure of

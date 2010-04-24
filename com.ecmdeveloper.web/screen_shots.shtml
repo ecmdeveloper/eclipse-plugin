@@ -13,12 +13,14 @@
 <div id="content">
 	<div id="left">
 	<h2>Screen Shots</h2>
+	<h3>Browsing Object Stores</h3>
 	<p><img width='446' height='433' alt='Code Module Editor' src='images/screen_shots/object_stores_view.jpg'></p>
-	Browsing Object Stores
+	<h3>Class Diagram Editor</h3>
+	<p><img width='620' height='505' alt='Class Diagram Editor' src='images/screen_shots/class_diagram_editor.png'></p>
+	<h3>Properties Editor</h3>
 	<p><img width='584' height='337' alt='Properties Editor' src='images/screen_shots/document_editor.jpg'></p>
-	Properties Editor
+	<h3>Code Module editor<h3>
 	<p><img width='820' height='594' alt='Code Module Editor' src='images/screen_shots/code_module_editor.jpg'></p>
-	Code Module editor
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
