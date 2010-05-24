@@ -22,6 +22,10 @@ package com.ecmdeveloper.plugin.jobs;
 import java.io.File;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -31,9 +35,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.Activator;
@@ -41,6 +49,7 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.GetContentAsFileTask;
+import com.ecmdeveloper.plugin.model.tasks.GetContentInfoTask;
 import com.ecmdeveloper.plugin.util.ContentCache;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
@@ -51,6 +60,8 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
  */
 public class ViewDocumentJob extends Job {
 
+	private static final String SELECT_CONTENT_ELEMENT_TITLE = "Select Content Element";
+	private static final String SELECT_CONTENT_ELEMENT_MESSAGE = "Select the content elements of the document \"{0}\"\nto view:";
 	private static final String NO_CONTENT_MESSAGE = "Document \"{0}\" contains no content";
 	private static final String FAILED_MESSAGE = "Viewing \"{0}\" failed";
 	private static final String HANDLER_NAME = "View Document";
@@ -68,16 +79,72 @@ public class ViewDocumentJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 
 		try {
-			IFileStore documentFile = getDocumentFile();
-			if ( documentFile == null ) {
+			final Map<String, Integer> contentElementsMap = getContentElementsMap();
+			
+			if ( contentElementsMap.size() == 0 ) {
 				showMessage( MessageFormat.format( NO_CONTENT_MESSAGE, document.getName() ) );
 				return Status.OK_STATUS;
 			}
-			openFileInEditor(documentFile);
+
+			if ( contentElementsMap.size() > 1 ) {
+				viewMultipleContentElements(contentElementsMap);
+			} else {
+				viewSingleContentElement();
+			}
 		} catch ( final Exception e ) {
 			showError(e);
 		}
 		return Status.OK_STATUS;
+	}
+
+	private void viewSingleContentElement() throws ExecutionException {
+		IFileStore documentFile = getDocumentFile(0);
+		openFileInEditor(documentFile);
+	}
+
+	private void viewMultipleContentElements(final Map<String, Integer> contentElementsMap) {
+		final ListSelectionDialog dialog = getContentSelectionDialog(contentElementsMap);
+
+		window.getShell().getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if ( dialog.open() == Dialog.OK ) {
+					for ( Object result : dialog.getResult() ) {
+						viewContentElement(contentElementsMap.get( result ) );
+					}
+				}
+			}
+
+			private void viewContentElement(int index) {
+				try {
+					IFileStore documentFile = getDocumentFile( index );
+					openFileInEditor(documentFile);
+				} catch (ExecutionException e) {
+					showError(e);
+				}
+			} }
+		);
+	}
+
+	private ListSelectionDialog getContentSelectionDialog( Map<String, Integer> contentElementsMap) {
+		String message = MessageFormat.format( SELECT_CONTENT_ELEMENT_MESSAGE, document.getName() );
+		LabelProvider labelProvider = new LabelProvider();
+		
+		ArrayList<String> input = new ArrayList<String>();
+		input.addAll( contentElementsMap.keySet() );
+		Collections.sort(input);
+		
+		ListSelectionDialog dialog = new ListSelectionDialog(window.getShell(),
+				input, new ArrayContentProvider(), labelProvider, message);
+		dialog.setTitle( SELECT_CONTENT_ELEMENT_TITLE );
+		return dialog;
+	}
+
+	private Map<String,Integer> getContentElementsMap() throws ExecutionException {
+		GetContentInfoTask task = new GetContentInfoTask(document);
+		ObjectStoresManager.getManager().executeTaskSync(task);
+		Map<String,Integer> contentElementsMap = task.getContentElementsMap();
+		return contentElementsMap;
 	}
 
 	private void openFileInEditor(final IFileStore documentFile) {
@@ -94,11 +161,12 @@ public class ViewDocumentJob extends Job {
 		} );
 	}
 
-	private IFileStore getDocumentFile() throws java.util.concurrent.ExecutionException {
+	private IFileStore getDocumentFile(int index) throws java.util.concurrent.ExecutionException {
 
 		IPath tempFolderPath = getTempFolderPath(document);
 
-		GetContentAsFileTask task = new GetContentAsFileTask( (Document) document, tempFolderPath.toOSString() );
+		GetContentAsFileTask task = new GetContentAsFileTask((Document) document, tempFolderPath
+				.toOSString(), index);
 		String outputFile = (String) ObjectStoresManager.getManager().executeTaskSync(task);
 		if ( outputFile == null ) {
 			return null;
@@ -121,14 +189,6 @@ public class ViewDocumentJob extends Job {
 	
 		ContentCache contentCache = Activator.getDefault().getContentCache();
 		return contentCache.getTempFolderPath(objectStoreItem);
-//		IPath cacheLocation = Activator.getDefault().getTempContentPath()
-//				.append(getTempFolderName(objectStoreItem));
-//
-//		if ( ! cacheLocation.toFile().exists() ) {
-//			cacheLocation.toFile().mkdir();
-//		}
-//		
-//		return cacheLocation;
 	}
 
 	private void showError(final Exception e) {
