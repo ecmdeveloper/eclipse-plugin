@@ -53,9 +53,6 @@ public class GetContentAsFileTask extends BaseTask {
 		this(document, outputPath, 0 );
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.Callable#call()
-	 */
 	@Override
 	public String call() throws Exception {
 		

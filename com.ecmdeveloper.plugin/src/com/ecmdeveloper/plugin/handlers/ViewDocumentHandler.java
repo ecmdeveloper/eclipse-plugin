@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -44,6 +44,8 @@ import com.ecmdeveloper.plugin.model.IObjectStoreItem;
  */
 public class ViewDocumentHandler extends AbstractHandler implements IHandler {
 
+	public static final String ID = "com.ecmdeveloper.plugin.viewDocument";
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
