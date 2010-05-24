@@ -26,11 +26,16 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
+import com.ecmdeveloper.plugin.util.PluginLog;
+import com.ecmdeveloper.plugin.handlers.ViewDocumentHandler;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 /**
@@ -63,6 +68,7 @@ public class ObjectStoresView extends ViewPart {
 		viewer.setInput( ObjectStoresManager.getManager() );
 
 		hookContextMenu();
+		hookMouse();
 		
 		getSite().setSelectionProvider(viewer);
 	}
@@ -81,6 +87,19 @@ public class ObjectStoresView extends ViewPart {
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
+   private void hookMouse() {
+		viewer.getTree().addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				try {
+					IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+					handlerService.executeCommand(ViewDocumentHandler.ID, null );
+				} catch (Exception exception) {
+					PluginLog.error( exception );
+				}
+			}
+		});
+	}
+	
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(new Separator("edit") );
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
