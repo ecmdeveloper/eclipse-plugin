@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -80,8 +80,6 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**
@@ -178,7 +176,6 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 				if ( event.getItemsAdded() != null ) {
 					for ( ClassDescription classDescription : event.getItemsAdded() ) {
 						viewer.add( classDescription.getParent(), classDescription );
-//						viewer.refresh( classDescription.getParent() );
 					}
 				}
 				
@@ -191,6 +188,25 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 				if ( event.getItemsRemoved() != null ) {
 					viewer.remove( event.getItemsRemoved() );
 				}
+			}
+		});
+	}
+
+	@Override
+	public void objectStoresAdded(final ClassesManagerEvent event) {
+		refreshTreeRootASync();
+	}
+
+	@Override
+	public void objectStoresRemoved(ClassesManagerEvent event) {
+		refreshTreeRootASync();
+	}
+
+	private void refreshTreeRootASync() {
+		viewer.getTree().getDisplay().asyncExec( new Runnable() {
+			@Override
+			public void run() {
+				viewer.refresh(null, false );
 			}
 		});
 	}

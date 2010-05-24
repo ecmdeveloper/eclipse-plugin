@@ -26,7 +26,9 @@ package com.ecmdeveloper.plugin.classes.model;
  */
 public interface ClassesManagerListener {
 
+	public void objectStoresAdded(ClassesManagerEvent event);
 	public void objectStoresConnected(ClassesManagerEvent event);
+	public void objectStoresRemoved(ClassesManagerEvent event);
 
 	public void classDescriptionsChanged(ClassesManagerEvent event);
 	
