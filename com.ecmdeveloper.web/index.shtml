@@ -47,7 +47,7 @@
 			<li>Performing some basic actions on Object Store objects such as renaming, moving and deleting.</li>
 			<li>Editing of folder, document and custom object properties.</li>
 			<li>Class Diagram Editor, creating UML diagrams of the classes defined in the Object Store.<br>
-			<strong><a href="editing_class_diagram_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
+			<strong><a href="editing_class_diagrams_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
 			<li>Java code wizards for event action handlers, document life cycle handlers and document classifiers.</li>
 			<li>An editor for updating code modules and event actions.<br>
 			<strong><a href="editing_code_modules_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
@@ -64,8 +64,8 @@
 	Information about importing an Object Store can be found <a href="getting_started.shtml">here</a>.
 	</p>
 	<p>
-	This plug in is tested with the 4.5 version of the FileNet Content Engine. The JAR-file structure of
-	the API	is changed in version 4.5.1, therefore this plug in will not yet work with version 4.5.1.		
+	This plug in is tested with the 4.5 version and the 4.5.1 version of the FileNet Content Engine. In one installation only
+	one of the versions is supported. 		
 	</p>
 	</div>
 	<div id="right">

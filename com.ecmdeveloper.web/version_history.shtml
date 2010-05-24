@@ -12,7 +12,13 @@
 <!--#include virtual="/header.shtml" -->
 <div id="content">
 	<div id="left">
-	<h3>Version 1.2.0.0 4/xx/2010</h3>
+	<h3>Version 1.3.0.0 6/xx/2010</h3>
+	<ul>
+	<li>Double click opens a document in the viewer.</li>
+	<li>Viewing document with multiple content elements.</li>
+	<li>Adding and removing an object store was not reflected in the Object Store Classes view.</li>
+	</ul>
+	<h3>Version 1.2.0.0 4/25/2010</h3>
 	<ul>
 	<li>Added Content Engine 4.5.1 support.</li>
 	<li>Added Class Diagram editor.</li>
