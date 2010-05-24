@@ -107,7 +107,7 @@
 </div>
 <div id="footer">
 	<p>Copyright &copy; 2009,2010 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
-</div
+</div>
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
