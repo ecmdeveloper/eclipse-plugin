@@ -24,18 +24,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import com.ecmdeveloper.plugin.classes.model.task.GetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.model.task.RefreshClassDescriptionTask;
-import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.model.tasks.TaskListener;
 
@@ -89,25 +88,69 @@ public class ClassesManager implements ObjectStoresManagerListener, TaskListener
 	@Override
 	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
 		
-		Set<ObjectStore> objectStores = new HashSet<ObjectStore>();
-		
 		if ( event.getItemsUpdated() != null ) {
-			for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
-				if ( objectStoreItem instanceof ObjectStore ) {
-					objectStores.add( (ObjectStore) objectStoreItem );
-				}
+			updateConnectedObjectStores(event);
+		}
+		
+		if ( event.getItemsAdded() != null ) {
+			updateAddedObjectStores(event);
+		}
+		
+		if ( event.getItemsRemoved() != null) {
+			updateRemovedObjectStores(event);			
+		}
+	}
+
+	private void updateAddedObjectStores(ObjectStoresManagerEvent event) {
+		ClassesManagerEvent classesEvent = getObjectStoresEvent(event.getItemsAdded());
+		if ( classesEvent != null ) {
+			for (ClassesManagerListener listener : listeners) {
+				listener.objectStoresAdded(classesEvent);
+			}
+		}
+	}
+
+	private void updateConnectedObjectStores(ObjectStoresManagerEvent event) {
+		ClassesManagerEvent classesEvent = getObjectStoresEvent(event.getItemsUpdated() );
+
+		if ( classesEvent != null ) {
+			for (ClassesManagerListener listener : listeners) {
+				listener.objectStoresConnected(classesEvent);
+			}
+		}
+	}
+
+	private void updateRemovedObjectStores(ObjectStoresManagerEvent event) {
+		ClassesManagerEvent classesEvent = getObjectStoresEvent(event.getItemsRemoved() );
+		if ( classesEvent != null ) {
+			for (ClassesManagerListener listener : listeners) {
+				listener.objectStoresRemoved(classesEvent);
+			}
+		}
+	}
+
+	private ClassesManagerEvent getObjectStoresEvent(IObjectStoreItem[] itemsAdded) {
+		Set<ObjectStore> objectStores = getObjectStoreItems(itemsAdded);
+	
+		if (objectStores.isEmpty()) {
+			return null;
+		}
+		
+		ClassesManagerEvent classesEvent = new ClassesManagerEvent(this, objectStores
+				.toArray(new ObjectStore[0]));
+		return classesEvent;
+	}
+
+	private Set<ObjectStore> getObjectStoreItems(IObjectStoreItem[] objectStoreItems ) {
+		Set<ObjectStore> objectStores = new HashSet<ObjectStore>();
+
+		for (IObjectStoreItem objectStoreItem : objectStoreItems ) {
+			if (objectStoreItem instanceof ObjectStore) {
+				objectStores.add((ObjectStore) objectStoreItem);
 			}
 		}
 
-		if ( objectStores.isEmpty() ) {
-			return;
-		}
-		
-		ClassesManagerEvent classesEvent = new ClassesManagerEvent(this, objectStores.toArray( new ObjectStore[0]) );
-		
-		for (ClassesManagerListener listener : listeners) {
-			listener.objectStoresConnected( classesEvent );
-		}
+		return objectStores;
 	}
 
 	public void executeTaskASync(BaseTask task) {
