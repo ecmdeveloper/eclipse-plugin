@@ -20,36 +20,41 @@
 
 package com.ecmdeveloper.plugin.handlers;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.jobs.ViewDocumentJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.filenet.api.constants.PropertyNames;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class ViewDocumentHandler extends AbstractHandler implements IHandler {
+public class ViewDocumentVersionHandler extends AbstractHandler implements IHandler {
 
-	public static final String ID = "com.ecmdeveloper.plugin.viewDocument";
+	public static final String ID = "com.ecmdeveloper.plugin.viewDocumentVersion";
+	private IWorkbenchWindow window;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if (window == null)	return null;
 
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
@@ -61,13 +66,43 @@ public class ViewDocumentHandler extends AbstractHandler implements IHandler {
 		while ( iterator.hasNext() ) {
 			
 			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			ViewDocumentJob job = new ViewDocumentJob((Document) objectStoreItem, null, window );
+			GetDocumentVersionJob job = new GetDocumentVersionJob((Document) objectStoreItem, window.getShell() );
+			job.addJobChangeListener( new GetDocumentVersionJobListener() );
 			job.setUser(true);
 			job.schedule();
 		}
 
-		Activator.getDefault().getContentCache().registerAsListener(window);
-
 		return null;
+	}
+	
+	class GetDocumentVersionJobListener extends JobChangeAdapter {
+
+		private static final String VERSION_FORMAT = "Version {0}.{1} ";
+		
+		@Override
+		public void done(IJobChangeEvent event) {
+
+			if ( event.getResult().equals( Status.CANCEL_STATUS ) ) {
+				return;
+			}
+
+			GetDocumentVersionJob job = (GetDocumentVersionJob) event.getJob();
+			for ( Document document : job.getSelectedVersions() ) {
+				viewDocument(document);
+			}
+			
+			Activator.getDefault().getContentCache().registerAsListener(window);
+		}
+
+		private void viewDocument(Document document) {
+			 				
+			Object majorVersionNumber = document.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
+			Object minorVersionNumber = document.getValue( PropertyNames.MINOR_VERSION_NUMBER );
+			String filePrefix = MessageFormat.format( VERSION_FORMAT, majorVersionNumber, minorVersionNumber );
+;
+			ViewDocumentJob job = new ViewDocumentJob( document, filePrefix, window );
+			job.setUser(true);
+			job.schedule();
+		}
 	}
 }
