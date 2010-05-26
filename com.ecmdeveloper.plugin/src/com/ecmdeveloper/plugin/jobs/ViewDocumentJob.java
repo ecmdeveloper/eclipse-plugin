@@ -68,11 +68,17 @@ public class ViewDocumentJob extends Job {
 
 	private Document document;
 	private IWorkbenchWindow window;
-
+	private String filePrefix;
+	
 	public ViewDocumentJob(Document document, IWorkbenchWindow window ) {
+		this(document, null, window);
+	}
+
+	public ViewDocumentJob(Document document, String filePrefix, IWorkbenchWindow window ) {
 		super( HANDLER_NAME );
 		this.document = document;
 		this.window = window;
+		this.filePrefix = filePrefix;
 	}
 
 	@Override
@@ -167,6 +173,7 @@ public class ViewDocumentJob extends Job {
 
 		GetContentAsFileTask task = new GetContentAsFileTask((Document) document, tempFolderPath
 				.toOSString(), index);
+		task.setFilePrefix(filePrefix);
 		String outputFile = (String) ObjectStoresManager.getManager().executeTaskSync(task);
 		if ( outputFile == null ) {
 			return null;

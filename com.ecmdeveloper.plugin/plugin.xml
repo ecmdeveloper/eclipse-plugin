@@ -91,6 +91,11 @@
             id="com.ecmdeveloper.plugin.viewDocument"
             name="View">
       </command>
+      <command
+            description="View Document Version"
+            id="com.ecmdeveloper.plugin.viewDocumentVersion"
+            name="View Version">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -240,6 +245,24 @@
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.viewDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.viewDocumentVersion"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -441,6 +464,21 @@
       <handler
             class="com.ecmdeveloper.plugin.handlers.ViewDocumentHandler"
             commandId="com.ecmdeveloper.plugin.viewDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.ViewDocumentVersionHandler"
+            commandId="com.ecmdeveloper.plugin.viewDocumentVersion">
          <enabledWhen>
             <with
                   variable="selection">

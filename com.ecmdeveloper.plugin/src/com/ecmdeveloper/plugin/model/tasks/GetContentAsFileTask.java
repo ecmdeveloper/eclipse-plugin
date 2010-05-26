@@ -41,6 +41,7 @@ public class GetContentAsFileTask extends BaseTask {
 	private Document document;
 	private int index;
 	private String outputPath;
+	private String filePrefix;
 	
 	public GetContentAsFileTask(Document document, String outputPath, int index ) {
 		super();
@@ -53,6 +54,14 @@ public class GetContentAsFileTask extends BaseTask {
 		this(document, outputPath, 0 );
 	}
 	
+	public String getFilePrefix() {
+		return filePrefix;
+	}
+
+	public void setFilePrefix(String filePrefix) {
+		this.filePrefix = filePrefix;
+	}
+
 	@Override
 	public String call() throws Exception {
 		
@@ -80,10 +89,22 @@ public class GetContentAsFileTask extends BaseTask {
 		
 		ContentTransfer contentTransfer = (ContentTransfer) contentElement;
 		InputStream inputStream = contentTransfer.accessContentStream();
-		String outputFilename = outputPath + File.separator + contentTransfer.get_RetrievalName();
+		
+		String outputFilename = getOutputFilename(contentTransfer);
 		copyInputStreamToOutputFile(inputStream, outputFilename);
 		
 		return outputFilename;
+	}
+
+	private String getOutputFilename(ContentTransfer contentTransfer) {
+		StringBuffer outputFilename = new StringBuffer();
+		outputFilename.append( outputPath );
+		outputFilename.append( File.separator );
+		if ( filePrefix != null ) {
+			outputFilename.append( filePrefix );
+		}
+		outputFilename.append( contentTransfer.get_RetrievalName() );
+		return outputFilename.toString();
 	}
 
 	private void copyInputStreamToOutputFile(InputStream contentStream,
