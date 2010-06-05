@@ -16,6 +16,10 @@
 	<ul>
 	<li>Double click opens a document in the viewer.</li>
 	<li>Viewing document with multiple content elements.</li>
+	<li>Viewing specific versions of a document.<li>
+	<li>Deleting specific versions of a document.<li>
+	<li>Comparing two specific versions of a document as text files.<li>
+	<li>Comparing versions of a document with local file.<li>
 	<li>Adding and removing an object store was not reflected in the Object Store Classes view.</li>
 	</ul>
 	<h3>Version 1.2.0.0 4/25/2010</h3>
