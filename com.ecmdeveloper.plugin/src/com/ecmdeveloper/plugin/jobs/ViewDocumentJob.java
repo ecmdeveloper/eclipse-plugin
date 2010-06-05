@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -22,9 +22,7 @@ package com.ecmdeveloper.plugin.jobs;
 import java.io.File;
 import java.net.URI;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.filesystem.EFS;
@@ -34,14 +32,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.Activator;
@@ -49,25 +41,20 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.GetContentAsFileTask;
-import com.ecmdeveloper.plugin.model.tasks.GetContentInfoTask;
 import com.ecmdeveloper.plugin.util.ContentCache;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * 
  * @author Ricardo Belfor
  *
  */
-public class ViewDocumentJob extends Job {
+public class ViewDocumentJob extends AbstractDocumentContentJob {
 
-	private static final String SELECT_CONTENT_ELEMENT_TITLE = "Select Content Element";
-	private static final String SELECT_CONTENT_ELEMENT_MESSAGE = "Select the content elements of the document \"{0}\"\nto view:";
-	private static final String NO_CONTENT_MESSAGE = "Document \"{0}\" contains no content";
+	private static final String TASK_MESSAGE = "Viewing document \"{0}\"";
 	private static final String FAILED_MESSAGE = "Viewing \"{0}\" failed";
 	private static final String HANDLER_NAME = "View Document";
+	private static final String VIEW_CONTENT_ELEMENT_MESSAGE = "Opening viewer for document \"{0}\" content element {1}";
 
-	private Document document;
-	private IWorkbenchWindow window;
 	private String filePrefix;
 	
 	public ViewDocumentJob(Document document, IWorkbenchWindow window ) {
@@ -75,82 +62,41 @@ public class ViewDocumentJob extends Job {
 	}
 
 	public ViewDocumentJob(Document document, String filePrefix, IWorkbenchWindow window ) {
-		super( HANDLER_NAME );
-		this.document = document;
-		this.window = window;
+		super( HANDLER_NAME, document, window );
 		this.filePrefix = filePrefix;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 
-		try {
-			final Map<String, Integer> contentElementsMap = getContentElementsMap();
-			
-			if ( contentElementsMap.size() == 0 ) {
-				showMessage( MessageFormat.format( NO_CONTENT_MESSAGE, document.getName() ) );
-				return Status.OK_STATUS;
-			}
+		String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
+		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
 
-			if ( contentElementsMap.size() > 1 ) {
-				viewMultipleContentElements(contentElementsMap);
-			} else {
-				viewSingleContentElement();
-			}
-		} catch ( final Exception e ) {
-			showError(e);
+		Collection<Integer> contentElements = getContentElements(monitor);
+		if ( contentElements.size() == 0 ) {
+			monitor.done();
+			return Status.CANCEL_STATUS;
 		}
+
+		for ( Integer contentElement : contentElements ) {
+			try {
+				viewContentElement(contentElement,monitor);
+			} catch (ExecutionException e) {
+				showError( MessageFormat.format(FAILED_MESSAGE, document.getName() ), e);
+			}
+		}
+		
+		monitor.done();
 		return Status.OK_STATUS;
 	}
 
-	private void viewSingleContentElement() throws ExecutionException {
-		IFileStore documentFile = getDocumentFile(0);
+	private void viewContentElement(int index, IProgressMonitor monitor) throws ExecutionException {
+
+		String subTask = MessageFormat.format( VIEW_CONTENT_ELEMENT_MESSAGE, document.getName(), index );
+		monitor.subTask( subTask );
+		
+		IFileStore documentFile = getDocumentFile(index);
 		openFileInEditor(documentFile);
-	}
-
-	private void viewMultipleContentElements(final Map<String, Integer> contentElementsMap) {
-		final ListSelectionDialog dialog = getContentSelectionDialog(contentElementsMap);
-
-		window.getShell().getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if ( dialog.open() == Dialog.OK ) {
-					for ( Object result : dialog.getResult() ) {
-						viewContentElement(contentElementsMap.get( result ) );
-					}
-				}
-			}
-
-			private void viewContentElement(int index) {
-				try {
-					IFileStore documentFile = getDocumentFile( index );
-					openFileInEditor(documentFile);
-				} catch (ExecutionException e) {
-					showError(e);
-				}
-			} }
-		);
-	}
-
-	private ListSelectionDialog getContentSelectionDialog( Map<String, Integer> contentElementsMap) {
-		String message = MessageFormat.format( SELECT_CONTENT_ELEMENT_MESSAGE, document.getName() );
-		LabelProvider labelProvider = new LabelProvider();
-		
-		ArrayList<String> input = new ArrayList<String>();
-		input.addAll( contentElementsMap.keySet() );
-		Collections.sort(input);
-		
-		ListSelectionDialog dialog = new ListSelectionDialog(window.getShell(),
-				input, new ArrayContentProvider(), labelProvider, message);
-		dialog.setTitle( SELECT_CONTENT_ELEMENT_TITLE );
-		return dialog;
-	}
-
-	private Map<String,Integer> getContentElementsMap() throws ExecutionException {
-		GetContentInfoTask task = new GetContentInfoTask(document);
-		ObjectStoresManager.getManager().executeTaskSync(task);
-		Map<String,Integer> contentElementsMap = task.getContentElementsMap();
-		return contentElementsMap;
 	}
 
 	private void openFileInEditor(final IFileStore documentFile) {
@@ -161,7 +107,7 @@ public class ViewDocumentJob extends Job {
 				try {
 					IDE.openEditorOnFileStore( window.getActivePage(), documentFile );
 				} catch (PartInitException e) {
-					showError(e);
+					showError( MessageFormat.format(FAILED_MESSAGE, document.getName() ), e);
 				}
 			}
 		} );
@@ -196,26 +142,5 @@ public class ViewDocumentJob extends Job {
 	
 		ContentCache contentCache = Activator.getDefault().getContentCache();
 		return contentCache.getTempFolderPath(objectStoreItem);
-	}
-
-	private void showError(final Exception e) {
-	
-		window.getWorkbench().getDisplay().syncExec( new Runnable() {
-			@Override
-			public void run() {
-				PluginMessage.openError(window.getShell(), HANDLER_NAME, 
-						MessageFormat.format(FAILED_MESSAGE, document.getName() ) , e );
-			}
-		} );
-	}
-
-	private void showMessage( final String message ) {
-		
-		window.getWorkbench().getDisplay().syncExec( new Runnable() {
-			@Override
-			public void run() {
-				MessageDialog.openInformation(window.getShell(), HANDLER_NAME, message);
-			}
-		} );
 	}
 }

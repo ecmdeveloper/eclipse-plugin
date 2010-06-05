@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -35,7 +35,8 @@ public class GetContentTask extends BaseTask {
 
 	private Document document;
 	private int index;
-
+	private InputStream contentStream;
+	
 	public GetContentTask(Document document, int index ) {
 		super();
 		this.document = document;
@@ -46,11 +47,12 @@ public class GetContentTask extends BaseTask {
 		this(document, 0 );
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.Callable#call()
-	 */
+	public InputStream getContentStream() {
+		return contentStream;
+	}
+
 	@Override
-	public InputStream call() throws Exception {
+	public Object call() throws Exception {
 		
 		com.filenet.api.core.Document internalDocument = (com.filenet.api.core.Document) document.getObjectStoreObject();
 	
@@ -62,7 +64,7 @@ public class GetContentTask extends BaseTask {
 		if ( contentElement instanceof ContentTransfer ) {
 
 			ContentTransfer contentTransfer = (ContentTransfer) contentElement;
-			InputStream contentStream = contentTransfer.accessContentStream();
+			contentStream = contentTransfer.accessContentStream();
 			return contentStream;
 			
 //			byte buffer[] = new byte[1000];
@@ -75,7 +77,7 @@ public class GetContentTask extends BaseTask {
 //	        out.close();
 		}
 
-		return null;
+		return contentStream;
 	}
 
 }

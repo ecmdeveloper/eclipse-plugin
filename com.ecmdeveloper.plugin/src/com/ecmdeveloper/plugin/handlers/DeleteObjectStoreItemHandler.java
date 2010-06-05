@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -27,23 +27,16 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.jobs.DeleteJob;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.util.Messages;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * 
@@ -52,9 +45,6 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
  */
 public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHandler {
 
-	private static final String MONITOR_MESSAGE = Messages.DeleteObjectStoreItemHandler_MonitorMessage;
-	private static final String PROGRESS_MESSAGE = Messages.DeleteObjectStoreItemHandler_ProgressMessage;
-	private static final String FAILED_MESSAGE = Messages.DeleteObjectStoreItemHandler_FailedMessage;
 	private static final String HANDLER_NAME = Messages.DeleteObjectStoreItemHandler_HandlerName;
 	private static final String DELETE_MESSAGE = Messages.DeleteObjectStoreItemHandler_DeleteMessage;
 
@@ -69,7 +59,7 @@ public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHa
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 
-		final ArrayList<IObjectStoreItem> itemsDeleted = new ArrayList<IObjectStoreItem>();
+		ArrayList<IObjectStoreItem> itemsDeleted = new ArrayList<IObjectStoreItem>();
 		
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
@@ -102,54 +92,5 @@ public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHa
 		deleteJob.schedule();
 		
 		return null;
-	}
-	
-	class DeleteJob extends Job
-	{
-		private ArrayList<IObjectStoreItem> itemsDeleted;
-		private Shell shell;
-		public DeleteJob(ArrayList<IObjectStoreItem> itemsDeleted, Shell shell) {
-			super(HANDLER_NAME);
-			this.itemsDeleted = itemsDeleted;
-			this.shell = shell;
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			
-			try {
-
-				monitor.beginTask( MONITOR_MESSAGE, itemsDeleted.size() );
-				for ( IObjectStoreItem objectStoreItem : itemsDeleted ) {
-					monitor.subTask( MessageFormat.format(PROGRESS_MESSAGE, objectStoreItem.getName() ) );
-					deleteItem( objectStoreItem );
-					monitor.worked(1);
-
-					if ( monitor.isCanceled() ) {
-						break;
-					}
-				}
-				
-				return Status.OK_STATUS;
-			} finally {
-				monitor.done();
-			}
-		}
-
-		private void deleteItem(final IObjectStoreItem objectStoreItem ) {
-
-			try {
-				DeleteTask deleteTask = new DeleteTask( new IObjectStoreItem[] { objectStoreItem }, true);
-				ObjectStoresManager.getManager().executeTaskSync( deleteTask);
-			} catch(final Exception e ) {
-				Display.getDefault().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						PluginMessage.openError(shell, HANDLER_NAME, 
-								MessageFormat.format(FAILED_MESSAGE, objectStoreItem.getName() ), e );
-					}
-				} );
-			}
-		}
 	}
 }
