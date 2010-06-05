@@ -89,12 +89,37 @@
       <command
             description="View Document"
             id="com.ecmdeveloper.plugin.viewDocument"
-            name="View">
+            name="Current Version">
       </command>
       <command
             description="View Document Version"
             id="com.ecmdeveloper.plugin.viewDocumentVersion"
-            name="View Version">
+            name="Other Versions...">
+      </command>
+      <command
+            description="Compare Document"
+            id="com.ecmdeveloper.plugin.compareDocument"
+            name="With Local File">
+      </command>
+      <command
+            description="Compare Document Versions"
+            id="com.ecmdeveloper.plugin.compareDocumentVersions"
+            name="Versions...">
+      </command>
+      <command
+            description="Delete Versions of the Document"
+            id="com.ecmdeveloper.plugin.deleteDocumentVersion"
+            name="Delete Versions...">
+      </command>
+      <command
+            description="Download Document Content"
+            id="com.ecmdeveloper.plugin.downloadDocument"
+            name="Current Version">
+      </command>
+      <command
+            description="Download Document Versions Content"
+            id="com.ecmdeveloper.plugin.downloadDocumentVersions"
+            name="Other Versions...">
       </command>
    </extension>
    <extension
@@ -193,6 +218,24 @@
             </visibleWhen>
          </command>
          <command
+               commandId="com.ecmdeveloper.plugin.deleteDocumentVersion"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
                commandId="com.ecmdeveloper.plugin.move"
                style="push">
             <visibleWhen
@@ -243,42 +286,123 @@
                icon="icons/refresh.gif"
                style="push">
          </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.viewDocument"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.viewDocumentVersion"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
+         <menu
+               label="View">
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewDocumentVersion"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               label="Download">
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadDocumentVersions"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               label="Compare">
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=other">
@@ -479,6 +603,81 @@
       <handler
             class="com.ecmdeveloper.plugin.handlers.ViewDocumentVersionHandler"
             commandId="com.ecmdeveloper.plugin.viewDocumentVersion">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.DownloadDocumentVersionHandler"
+            commandId="com.ecmdeveloper.plugin.downloadDocumentVersions">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.CompareDocumentVersionsHandler"
+            commandId="com.ecmdeveloper.plugin.compareDocumentVersions">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.DeleteDocumentVersionHandler"
+            commandId="com.ecmdeveloper.plugin.deleteDocumentVersion">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.DownloadDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.downloadDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.CompareDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.compareDocument">
          <enabledWhen>
             <with
                   variable="selection">

@@ -34,10 +34,11 @@ public class Messages extends NLS {
 
 	public static String ConnectObjectStoreHandler_HandlerName;
 	public static String DeleteObjectStoreItemHandler_DeleteMessage;
-	public static String DeleteObjectStoreItemHandler_FailedMessage;
 	public static String DeleteObjectStoreItemHandler_HandlerName;
-	public static String DeleteObjectStoreItemHandler_MonitorMessage;
-	public static String DeleteObjectStoreItemHandler_ProgressMessage;
+	public static String DeleteJob_FailedMessage;
+	public static String DeleteJob_HandlerName;
+	public static String DeleteJob_MonitorMessage;
+	public static String DeleteJob_ProgressMessage;
 	public static String HandlerName;
 	public static String MoveObjectStoreItemHandler_ChooseDestinationMessage;
 	public static String MoveObjectStoreItemHandler_HandlerName;
