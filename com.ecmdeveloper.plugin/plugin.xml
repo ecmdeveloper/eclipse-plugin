@@ -89,7 +89,7 @@
       <command
             description="View Document"
             id="com.ecmdeveloper.plugin.viewDocument"
-            name="Current Version">
+            name="Latest Version">
       </command>
       <command
             description="View Document Version"
@@ -99,12 +99,17 @@
       <command
             description="Compare Document"
             id="com.ecmdeveloper.plugin.compareDocument"
-            name="With Local File">
+            name="Latest Version With Local File">
       </command>
       <command
             description="Compare Document Versions"
             id="com.ecmdeveloper.plugin.compareDocumentVersions"
-            name="Versions...">
+            name="With Each Other...">
+      </command>
+      <command
+            description="Compare Document Version With Local File"
+            id="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
+            name="With Local File...">
       </command>
       <command
             description="Delete Versions of the Document"
@@ -114,7 +119,7 @@
       <command
             description="Download Document Content"
             id="com.ecmdeveloper.plugin.downloadDocument"
-            name="Current Version">
+            name="Latest Version">
       </command>
       <command
             description="Download Document Versions Content"
@@ -384,24 +389,45 @@
                   </with>
                </visibleWhen>
             </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Document">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
+            <menu
+                  label="Versions">
+               <command
+                     commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="selection">
+                        <iterate
+                              ifEmpty="false">
+                           <or>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.model.Document">
+                              </instanceof>
+                           </or>
+                        </iterate>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <with
+                           variable="selection">
+                        <iterate
+                              ifEmpty="false">
+                           <or>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.model.Document">
+                              </instanceof>
+                           </or>
+                        </iterate>
+                     </with>
+                  </visibleWhen>
+               </command>
+            </menu>
          </menu>
       </menuContribution>
       <menuContribution
@@ -676,8 +702,23 @@
          </enabledWhen>
       </handler>
       <handler
-            class="com.ecmdeveloper.plugin.handlers.CompareDocumentHandler"
+            class="com.ecmdeveloper.plugin.handlers.CompareDocumentWithLocalFileHandler"
             commandId="com.ecmdeveloper.plugin.compareDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.CompareDocumentVersionWithLocalFileHandler"
+            commandId="com.ecmdeveloper.plugin.compareDocumentVersionsLocal">
          <enabledWhen>
             <with
                   variable="selection">

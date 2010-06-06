@@ -39,7 +39,7 @@ import com.ecmdeveloper.plugin.model.IObjectStoreItem;
  * @author Ricardo.Belfor
  *
  */
-public class CompareDocumentHandler extends AbstractHandler implements IHandler {
+public class CompareDocumentWithLocalFileHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
