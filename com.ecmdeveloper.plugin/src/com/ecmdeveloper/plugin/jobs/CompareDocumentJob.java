@@ -26,14 +26,10 @@ import java.util.Collection;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 import com.ecmdeveloper.plugin.compare.DocumentCompareEditorInput;
 import com.ecmdeveloper.plugin.model.Document;
@@ -44,15 +40,17 @@ import com.ecmdeveloper.plugin.model.Document;
  */
 public class CompareDocumentJob extends AbstractDocumentContentJob {
 
-	private static final String SELECT_FILE_MESSAGE = "Select file to compare document \"{0}\" to:";
+//	private static final String SELECT_FILE_MESSAGE = "Select file to compare document \"{0}\" to:";
 	private static final String MULTIPLE_CONTENT_ELEMENTS_MESSAGE = "For comparing only one content element must be selected";
 	private static final String COMPARE_TITLE_FORMAT = "Compare(''{0}'' - ''{1}'')";
 	private static final String HANDLER_NAME = "Compare Document";
 	private static final String TASK_MESSAGE = "Comparing document \"{0}\"";
 	private static final String FAILED_MESSAGE = "Comparing \"{0}\" failed";
+	private IFile compareFile;
 	
-	public CompareDocumentJob(Document document, IWorkbenchWindow window) {
+	public CompareDocumentJob(Document document, IWorkbenchWindow window, IFile compareFile) {
 		super(HANDLER_NAME, document, window);
+		this.compareFile = compareFile;
 	}
 
 	@Override
@@ -85,10 +83,10 @@ public class CompareDocumentJob extends AbstractDocumentContentJob {
 
 	private void compareContentElement(Integer contentElement, IProgressMonitor monitor) throws Exception {
 
-		IFile compareFile = getCompareFile();
-		if ( compareFile == null ) {
-			return;
-		}
+//		IFile compareFile = getCompareFile();
+//		if ( compareFile == null ) {
+//			return;
+//		}
 		
 		DocumentCompareEditorInput editorInput = createCompareEditorInput(contentElement,
 				compareFile);
@@ -113,31 +111,32 @@ public class CompareDocumentJob extends AbstractDocumentContentJob {
 		return editorInput;
 	}
 
-	private IFile getCompareFile() {
-
-		IAdaptable root = ResourcesPlugin.getWorkspace().getRoot();
-		String message = MessageFormat.format( SELECT_FILE_MESSAGE, document.getName() );
-		final ResourceSelectionDialog dialog =  new ResourceSelectionDialog( window.getShell(), root, message );
-
-		window.getWorkbench().getDisplay().syncExec( new Runnable() {
-			@Override
-			public void run() {
-				dialog.open();
-			}
-		} );
-		
-		if ( dialog.getReturnCode() != Dialog.OK || dialog.getResult() == null ) {
-			return null;
-		}
-
-		Object[] result2 = dialog.getResult();
-		if ( result2.length != 1) {
-			// TODO: message
-		}
-		
-		IFile compareFile = (IFile) result2[0];
-		return compareFile;
-	}
+//	private IFile getCompareFile() {
+//
+////		IAdaptable root = ResourcesPlugin.getWorkspace().getRoot();
+////		String message = MessageFormat.format( SELECT_FILE_MESSAGE, document.getName() );
+////		final ResourceSelectionDialog dialog =  new ResourceSelectionDialog( window.getShell(), root, message );
+//
+//		final SelectionDialog dialog = getFileSelectionDialog();
+//		window.getWorkbench().getDisplay().syncExec( new Runnable() {
+//			@Override
+//			public void run() {
+//				dialog.open();
+//			}
+//		} );
+//		
+//		if ( dialog.getReturnCode() != Dialog.OK || dialog.getResult() == null ) {
+//			return null;
+//		}
+//
+//		Object[] result2 = dialog.getResult();
+//		if ( result2.length != 1) {
+//			// TODO: message
+//		}
+//		
+//		IFile compareFile = (IFile) result2[0];
+//		return compareFile;
+//	}
 
 	private void openCompareEditor(final DocumentCompareEditorInput editorInput) {
 		window.getShell().getDisplay().asyncExec(new Runnable() {
@@ -147,4 +146,14 @@ public class CompareDocumentJob extends AbstractDocumentContentJob {
 			}
 		} );
 	}
+	
+//	private SelectionDialog getFileSelectionDialog() {
+//		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(),
+//				new LabelProvider(), new BaseWorkbenchContentProvider());
+//		String message = MessageFormat.format( SELECT_FILE_MESSAGE, document.getName() );
+//		dialog.setTitle("File Selection");
+//		dialog.setMessage( message );
+//		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+//		return dialog;
+//	}
 }

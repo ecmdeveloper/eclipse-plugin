@@ -1,5 +1,5 @@
 /**
- * Copyright 2009,2010, Ricardo Belfor
+ * Copyright 2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -17,18 +17,31 @@
  * <http://www.gnu.org/licenses/>.
  * 
  */
-package com.ecmdeveloper.plugin.util;
+package com.ecmdeveloper.plugin.tester;
+
+import com.ecmdeveloper.plugin.model.Document;
 
 /**
  * 
  * @author Ricardo.Belfor
  *
  */
-public class IconFiles {
+public class DocumentPropertyTester extends org.eclipse.core.expressions.PropertyTester {
 
-	public static final String ICON_OBJECTSTORE = "icons/database.png";
-	public static final String ICON_ACTION = "icons/script_lightning.png";
-	public static final String ICON_CODEMODULE = "icons/script.png";
-	public static final String HOURGLASS = "icons/hourglass.png";
-	public static final String FOLDER_EDIT = "icons/folder_edit.png";
+	@Override
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		
+		if ( ! ( receiver instanceof Document ) )
+		{
+			return false;
+		}
+		
+		if ( "isCheckedOut".equals(property) ) {
+			return ((Document)receiver).isCheckedOut();
+		}
+
+		return false;
+	}
+
+	
 }

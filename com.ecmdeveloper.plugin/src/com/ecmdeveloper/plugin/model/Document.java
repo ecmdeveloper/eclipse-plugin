@@ -34,6 +34,7 @@ public class Document extends ObjectStoreItem {
 	protected String versionSeriesId;
 	protected String parentPath;
 	protected String containmentName;
+	private boolean reserved;
 	
 	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore ) {
 		super(parent, objectStore);
@@ -49,12 +50,19 @@ public class Document extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
-		document.refresh( new String[] { PropertyNames.NAME, PropertyNames.ID, PropertyNames.VERSION_SERIES } );
+		document.refresh(new String[] { PropertyNames.NAME, PropertyNames.ID,
+				PropertyNames.VERSION_SERIES, PropertyNames.IS_RESERVED });
 		name = document.get_Name();
 		id = document.get_Id().toString();
-		versionSeriesId = document.get_VersionSeries().get_Id().toString(); 
+		versionSeriesId = document.get_VersionSeries().get_Id().toString();
+		reserved = document.get_IsReserved();
 	}
 
+	public void refresh( com.filenet.api.core.Document newDocument ) {
+		document = newDocument;
+		refresh();
+	}
+	
 	@Override
 	public void save() {
 		super.save();
@@ -113,5 +121,9 @@ public class Document extends ObjectStoreItem {
 			return document.getClassName();
 		}
 		return null;
+	}
+
+	public boolean isCheckedOut() {
+		return reserved;
 	}
 }

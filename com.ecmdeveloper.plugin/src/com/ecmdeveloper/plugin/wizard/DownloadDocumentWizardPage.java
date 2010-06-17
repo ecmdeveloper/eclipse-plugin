@@ -41,6 +41,7 @@ public class DownloadDocumentWizardPage extends WizardNewFileCreationPage {
 		setTitle(WIZARD_TITLE);
 		setDescription(WIZARD_DESCRIPTION);
 		setContainerFullPath( new Path("/") );
+		setAllowExistingResources(true);
 	}
 
 	public void setInitialContents(InputStream inputStream) {

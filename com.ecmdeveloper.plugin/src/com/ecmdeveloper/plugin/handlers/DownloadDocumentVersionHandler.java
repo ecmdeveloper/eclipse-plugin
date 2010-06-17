@@ -41,7 +41,7 @@ import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 public class DownloadDocumentVersionHandler extends AbstractDocumentVersionHandler {
 
 	@Override
-	protected IJobChangeListener getJobChangeListener() {
+	protected IJobChangeListener getJobChangeListener(Document document) {
 		return new DownloadDocumentVersionsJobListener();
 	}
 

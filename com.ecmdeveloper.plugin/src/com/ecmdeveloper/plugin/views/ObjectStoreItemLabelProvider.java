@@ -77,28 +77,36 @@ public class ObjectStoreItemLabelProvider extends LabelProvider {
 	
 	public Image getImage(Object obj) {
 
-		String imageKey = ISharedImages.IMG_OBJS_INFO_TSK;
-		
 		if ( obj instanceof Placeholder ){
 	         return Activator.getImage( IconFiles.HOURGLASS );
 		} else if (obj instanceof ObjectStore) {
-			
-	         Image image = Activator.getImage( IconFiles.ICON_OBJECTSTORE );
-	         Image decorated = decorator.decorateImage(image, obj);
-	         if (decorated != null)
-	            return decorated;
-	         return image;
-
+	         return getDecoratedImage(obj, IconFiles.ICON_OBJECTSTORE );
 		} else if ( obj instanceof Action ) {
 			return Activator.getImage( IconFiles.ICON_ACTION );
 		} else if (obj instanceof Folder) {
-		   imageKey = ISharedImages.IMG_OBJ_FOLDER;
+		   return getStandardImage( ISharedImages.IMG_OBJ_FOLDER );
 		} else if (obj instanceof Document) {
-		   imageKey = ISharedImages.IMG_OBJ_FILE;
+	        return getDecoratedImage(obj, getStandardImage(ISharedImages.IMG_OBJ_FILE ) );
 		} else if (obj instanceof CustomObject) {
-		   imageKey = ISharedImages.IMG_OBJ_ELEMENT;
+		   return getStandardImage( ISharedImages.IMG_OBJ_ELEMENT );
 		}
 		
+		return getStandardImage(ISharedImages.IMG_OBJS_INFO_TSK);
+	}
+
+	private Image getStandardImage(String imageKey) {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
+	}
+
+	private Image getDecoratedImage(Object obj, String iconFile) {
+		Image image = Activator.getImage(iconFile);
+		return getDecoratedImage(obj, image);
+	}
+
+	private Image getDecoratedImage(Object obj, Image image) {
+		Image decorated = decorator.decorateImage(image, obj);
+		if (decorated != null)
+			return decorated;
+		return image;
 	}
 }
