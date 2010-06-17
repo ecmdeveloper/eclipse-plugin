@@ -40,7 +40,7 @@ import com.filenet.api.constants.PropertyNames;
 public class ViewDocumentVersionHandler extends AbstractDocumentVersionHandler {
 
 	@Override
-	protected IJobChangeListener getJobChangeListener() {
+	protected IJobChangeListener getJobChangeListener(Document document) {
 		return new GetDocumentVersionJobListener();
 	}
 	

@@ -43,7 +43,10 @@ import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
+import com.ecmdeveloper.plugin.model.tasks.CheckoutTask;
 import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
+import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.model.tasks.MoveTask;
 import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
@@ -552,6 +555,9 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 			handleMoveTaskCompleted( taskCompleteEvent );
 		} if ( isTaskSourceInstanceOf(taskCompleteEvent, UpdateTask.class) ) {
 			handleUpdateTaskCompleted(taskCompleteEvent);
+		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CheckoutTask.class) ||
+				isTaskSourceInstanceOf(taskCompleteEvent, CancelCheckoutTask.class) ) {
+			handleDocumentTaskCompleted(taskCompleteEvent);
 		}
 	}
 
@@ -586,5 +592,11 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 	private void handleMoveTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
 		MoveTask moveTask = (MoveTask) taskCompleteEvent.getSource();
 		fireObjectStoreItemsChanged(null, moveTask.getObjectStoreItems(), moveTask.getUpdatedObjectStoreItems() );
+	}
+
+	private void handleDocumentTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
+		DocumentTask documentTask = (DocumentTask) taskCompleteEvent.getSource();
+		ObjectStoreItem objectStoreItem = documentTask.getDocument();
+		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
 	}
 }

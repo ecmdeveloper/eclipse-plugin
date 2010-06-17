@@ -26,13 +26,14 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
+import com.ecmdeveloper.plugin.handlers.CheckoutDocumentHandler.CheckoutDocumentHandlerJobListener;
+import com.ecmdeveloper.plugin.jobs.CancelCheckoutJob;
+import com.ecmdeveloper.plugin.jobs.CheckoutJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
@@ -40,10 +41,10 @@ import com.ecmdeveloper.plugin.model.IObjectStoreItem;
  * @author Ricardo.Belfor
  *
  */
-public abstract class AbstractDocumentVersionHandler extends AbstractHandler implements IHandler {
+public class CancelCheckoutDocumentHandler extends AbstractHandler implements IHandler {
 
-	protected IWorkbenchWindow window;
-	
+	private IWorkbenchWindow window;
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
@@ -57,22 +58,12 @@ public abstract class AbstractDocumentVersionHandler extends AbstractHandler imp
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
-			
 			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			if ( objectStoreItem instanceof Document ) {
-				Document document = (Document) objectStoreItem;
-				IJobChangeListener jobChangeListener = getJobChangeListener(document);
-				if ( jobChangeListener != null ) {
-					GetDocumentVersionJob job = new GetDocumentVersionJob(document, window.getShell() );
-					job.addJobChangeListener( jobChangeListener );
-					job.setUser(true);
-					job.schedule();
-				}
-			}
+			CancelCheckoutJob job = new CancelCheckoutJob((Document) objectStoreItem, window.getShell() );
+			job.setUser(true);
+			job.schedule();
 		}
 
 		return null;
 	}
-
-	protected abstract IJobChangeListener getJobChangeListener(Document document);
 }

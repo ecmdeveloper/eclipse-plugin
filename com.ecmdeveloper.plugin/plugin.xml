@@ -104,12 +104,12 @@
       <command
             description="Compare Document Versions"
             id="com.ecmdeveloper.plugin.compareDocumentVersions"
-            name="With Each Other...">
+            name="Versions With Each Other...">
       </command>
       <command
             description="Compare Document Version With Local File"
             id="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
-            name="With Local File...">
+            name="Other Versions With Local File...">
       </command>
       <command
             description="Delete Versions of the Document"
@@ -125,6 +125,21 @@
             description="Download Document Versions Content"
             id="com.ecmdeveloper.plugin.downloadDocumentVersions"
             name="Other Versions...">
+      </command>
+      <command
+            description="Checkout Document"
+            id="com.ecmdeveloper.plugin.checkoutDocument"
+            name="Checkout">
+      </command>
+      <command
+            description="Cancel Checkout Document"
+            id="com.ecmdeveloper.plugin.cancelCheckoutDocument"
+            name="Cancel Checkout">
+      </command>
+      <command
+            description="Save Document"
+            id="com.ecmdeveloper.plugin.saveDocument"
+            name="Save">
       </command>
    </extension>
    <extension
@@ -389,46 +404,83 @@
                   </with>
                </visibleWhen>
             </command>
-            <menu
-                  label="Versions">
-               <command
-                     commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
-                     style="push">
-                  <visibleWhen
-                        checkEnabled="false">
-                     <with
-                           variable="selection">
-                        <iterate
-                              ifEmpty="false">
-                           <or>
-                              <instanceof
-                                    value="com.ecmdeveloper.plugin.model.Document">
-                              </instanceof>
-                           </or>
-                        </iterate>
-                     </with>
-                  </visibleWhen>
-               </command>
-               <command
-                     commandId="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
-                     style="push">
-                  <visibleWhen
-                        checkEnabled="false">
-                     <with
-                           variable="selection">
-                        <iterate
-                              ifEmpty="false">
-                           <or>
-                              <instanceof
-                                    value="com.ecmdeveloper.plugin.model.Document">
-                              </instanceof>
-                           </or>
-                        </iterate>
-                     </with>
-                  </visibleWhen>
-               </command>
-            </menu>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
          </menu>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkoutDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.cancelCheckoutDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveDocument"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=other">
@@ -731,6 +783,40 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.CheckoutDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.checkoutDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.CancelCheckoutDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.cancelCheckoutDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.SaveDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.saveDocument">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -767,6 +853,19 @@
          <enablement>
             <objectClass
                   name="com.ecmdeveloper.plugin.model.ObjectStore">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
+            adaptable="true"
+            class="com.ecmdeveloper.plugin.decorators.DocumentDecorator"
+            id="com.ecmdeveloper.plugin.decorators.documentDecorator"
+            label="Document Decorator"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="com.ecmdeveloper.plugin.model.Document">
             </objectClass>
          </enablement>
       </decorator>

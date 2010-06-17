@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import com.ecmdeveloper.plugin.jobs.DeleteJob;
 import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
+import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginMessage;
@@ -43,7 +44,7 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
 public class DeleteDocumentVersionHandler extends AbstractDocumentVersionHandler {
 
 	@Override
-	protected IJobChangeListener getJobChangeListener() {
+	protected IJobChangeListener getJobChangeListener(Document document) {
 		return new DeleteDocumentVersionsJobListener();
 	}
 
