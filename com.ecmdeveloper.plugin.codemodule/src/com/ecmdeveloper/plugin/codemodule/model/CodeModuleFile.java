@@ -33,7 +33,6 @@ public class CodeModuleFile {
 
 	protected String id;
 	protected String name;
-	protected String objectStore;
 	protected String filename;
 	
 	protected ArrayList<File> files;
