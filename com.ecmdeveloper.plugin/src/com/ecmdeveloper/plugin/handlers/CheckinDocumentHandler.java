@@ -1,14 +1,14 @@
 /**
  * Copyright 2010, Ricardo Belfor
  * 
- * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
- * free software: you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
+ * is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  * 
- * The ECM Developer plug-in is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * The ECM Developer plug-in is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
  * General Public License for more details.
  * 
@@ -17,6 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  * 
  */
+
 package com.ecmdeveloper.plugin.handlers;
 
 import java.util.Iterator;
@@ -33,14 +34,14 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.wizard.CheckinWizard;
 import com.ecmdeveloper.plugin.wizard.SaveWizard;
 
 /**
- * 
  * @author Ricardo.Belfor
  *
  */
-public class SaveDocumentHandler extends AbstractHandler implements IHandler {
+public class CheckinDocumentHandler extends AbstractHandler implements IHandler {
 
 	private IWorkbenchWindow window;
 	
@@ -60,15 +61,15 @@ public class SaveDocumentHandler extends AbstractHandler implements IHandler {
 		while ( iterator.hasNext() ) {
 			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
 			if (objectStoreItem instanceof Document) {
-				openSaveWizard((Document) objectStoreItem);
+				openCheckinWizard((Document) objectStoreItem);
 			}
 		}
 
 		return null;
 	}
 
-	private void openSaveWizard(Document document) {
-		SaveWizard wizard = new SaveWizard( document );
+	private void openCheckinWizard(Document document) {
+		CheckinWizard wizard = new CheckinWizard( document );
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();
 		dialog.open();

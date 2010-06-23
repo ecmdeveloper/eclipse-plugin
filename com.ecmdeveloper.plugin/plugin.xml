@@ -141,6 +141,11 @@
             id="com.ecmdeveloper.plugin.saveDocument"
             name="Save">
       </command>
+      <command
+            description="Checkin Document"
+            id="com.ecmdeveloper.plugin.checkinDocument"
+            name="Checkin">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -441,6 +446,9 @@
                </visibleWhen>
             </command>
          </menu>
+         <separator
+               name="editContentSeparator">
+         </separator>
          <command
                commandId="com.ecmdeveloper.plugin.checkoutDocument"
                style="push">
@@ -480,6 +488,38 @@
          <command
                commandId="com.ecmdeveloper.plugin.saveDocument"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkinDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
@@ -789,11 +829,12 @@
          <enabledWhen>
             <with
                   variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="com.ecmdeveloper.plugin.model.Document">
-                  </instanceof>
+               <iterate>
+                  <not>
+                     <test
+                           property="com.ecmdeveloper.plugin.isCheckedOut">
+                     </test>
+                  </not>
                </iterate>
             </with>
          </enabledWhen>
@@ -804,11 +845,10 @@
          <enabledWhen>
             <with
                   variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="com.ecmdeveloper.plugin.model.Document">
-                  </instanceof>
+               <iterate>
+                  <test
+                        property="com.ecmdeveloper.plugin.isCheckedOut">
+                  </test>
                </iterate>
             </with>
          </enabledWhen>
@@ -816,6 +856,30 @@
       <handler
             class="com.ecmdeveloper.plugin.handlers.SaveDocumentHandler"
             commandId="com.ecmdeveloper.plugin.saveDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <test
+                        property="com.ecmdeveloper.plugin.isCheckedOut">
+                  </test>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.CheckinDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.checkinDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <test
+                        property="com.ecmdeveloper.plugin.isCheckedOut">
+                  </test>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
@@ -825,6 +889,13 @@
             id="com.ecmdeveloper.plugin.propertyTester"
             namespace="com.ecmdeveloper.plugin"
             properties="isConnected,notConnected"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="com.ecmdeveloper.plugin.tester.DocumentPropertyTester"
+            id="com.ecmdeveloper.plugin.documentPropertyTester"
+            namespace="com.ecmdeveloper.plugin"
+            properties="isCheckedOut"
             type="java.lang.Object">
       </propertyTester>
    </extension>

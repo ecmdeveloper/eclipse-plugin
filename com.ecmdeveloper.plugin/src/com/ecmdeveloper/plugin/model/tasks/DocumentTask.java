@@ -21,6 +21,8 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.model.Document;
+import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.core.VersionSeries;
 
 /**
  * @author Ricardo.Belfor
@@ -40,5 +42,29 @@ public abstract class DocumentTask extends BaseTask {
 
 	protected com.filenet.api.core.Document getInternalDocument() {
 		return (com.filenet.api.core.Document) getDocument().getObjectStoreObject();
+	}
+
+	protected com.filenet.api.core.Document getReservation() {
+		
+		com.filenet.api.core.Document internalDocument = getInternalDocument();
+		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
+		VersionSeries versionSeries = internalDocument.get_VersionSeries();
+		versionSeries.fetchProperties( new String[] { PropertyNames.RESERVATION} );
+		com.filenet.api.core.Document currentVersion = (com.filenet.api.core.Document) versionSeries
+				.get_Reservation();
+	
+		return currentVersion;
+	}
+
+	protected com.filenet.api.core.Document getCurrentVersion() {
+		
+		com.filenet.api.core.Document internalDocument = getInternalDocument();
+		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
+		VersionSeries versionSeries = internalDocument.get_VersionSeries();
+		versionSeries.fetchProperties( new String[] { PropertyNames.CURRENT_VERSION } );
+		com.filenet.api.core.Document currentVersion = (com.filenet.api.core.Document) versionSeries
+				.get_CurrentVersion();
+	
+		return currentVersion;
 	}
 }

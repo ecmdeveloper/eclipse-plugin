@@ -20,43 +20,50 @@
 
 package com.ecmdeveloper.plugin.wizard;
 
-import java.util.ArrayList;
-
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.jobs.SaveJob;
+import com.ecmdeveloper.plugin.jobs.ChainedJobsSchedulingRule;
+import com.ecmdeveloper.plugin.jobs.CheckoutJob;
 import com.ecmdeveloper.plugin.model.Document;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class SaveWizard extends Wizard {
-
-	private ContentSelectionWizardPage page;
+public class CheckoutWizard extends Wizard {
+	
+	private ConfigureCheckoutWizardPage page;
 	private Document document;
+	private IWorkbenchWindow window;
 
-	public SaveWizard(Document document) {
+	public CheckoutWizard(Document document) {
 		super();
 		this.document = document;
 	}
 	
+	public void init(IWorkbenchWindow window) {
+		this.window = window;
+	}
+
 	public void addPages() {
-		page = new ContentSelectionWizardPage( document.getName() );
+		page = new ConfigureCheckoutWizardPage();
 		addPage(page);
 	}
 
 	@Override
 	public boolean performFinish() {
-		
-		ArrayList<Object> content = page.getContent();
-		String mimeType = page.getMimeType();
-		
-		Job saveJob = new SaveJob( document, getShell(), content, mimeType );
-		saveJob.setUser(true);
-		saveJob.schedule();
-		
+		scheduleCheckoutJob();
 		return true;
+	}
+
+	private void scheduleCheckoutJob() {
+		boolean download = page.isDowload();
+		boolean openEditor = page.isEdit();
+
+		CheckoutJob job = new CheckoutJob(document, window, download, openEditor );
+		job.setRule( new ChainedJobsSchedulingRule(1) );
+		job.setUser(true);
+		job.schedule();
 	}
 }

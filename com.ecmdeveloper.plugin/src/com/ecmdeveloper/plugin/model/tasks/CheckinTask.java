@@ -21,34 +21,40 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.model.Document;
+import com.filenet.api.constants.AutoClassify;
+import com.filenet.api.constants.CheckinType;
 import com.filenet.api.constants.RefreshMode;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class CancelCheckoutTask extends DocumentTask {
+public class CheckinTask extends DocumentTask {
 
-	public CancelCheckoutTask(Document document) {
+	private boolean majorVersion;
+	private boolean autoClassify;
+
+	public CheckinTask(Document document, boolean majorVersion, boolean autoClassify ) {
 		super(document);
+		this.majorVersion = majorVersion;
+		this.autoClassify = autoClassify;
 	}
 
 	@Override
 	public Object call() throws Exception {
-
-		com.filenet.api.core.Document currentVersion = cancelCheckout();
-		getDocument().refresh( currentVersion );
-		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
+		com.filenet.api.core.Document reservation = getReservation();
+		CheckinType checkinType = majorVersion ? CheckinType.MAJOR_VERSION
+				: CheckinType.MINOR_VERSION;
+		AutoClassify autoClassifyFlag = autoClassify ? AutoClassify.AUTO_CLASSIFY
+				: AutoClassify.DO_NOT_AUTO_CLASSIFY; 
+		reservation.checkin( autoClassifyFlag, checkinType );
+		reservation.save( RefreshMode.REFRESH );
+		getDocument().refresh( reservation );
+		
+		fireTaskCompleteEvent( TaskResult.COMPLETED );
+
 		return null;
 	}
 
-	private com.filenet.api.core.Document cancelCheckout() {
-
-		com.filenet.api.core.Document currentVersion = getCurrentVersion();
-		com.filenet.api.core.Document reservation = (com.filenet.api.core.Document) currentVersion
-				.cancelCheckout();
-		reservation.save( RefreshMode.REFRESH );
-		return currentVersion;
-	}
 }

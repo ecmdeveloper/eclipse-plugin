@@ -22,9 +22,15 @@ package com.ecmdeveloper.plugin.wizard;
 
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
+
+import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -35,16 +41,17 @@ public class DownloadDocumentWizard extends Wizard {
 	private static final String WIZARD_TITLE = "Download document content";
 	private DownloadDocumentWizardPage page;
 	private IStructuredSelection selection;
-	@SuppressWarnings("unused")
 	private IWorkbench workbench;
 	private String filename;
 	private InputStream inputStream;
+	private boolean openEditor;
 	
-	public DownloadDocumentWizard(String filename, InputStream inputStream) {
+	public DownloadDocumentWizard(String filename, InputStream inputStream, boolean openEditor) {
 		super();
 		setWindowTitle(WIZARD_TITLE);
 		this.filename = filename;
 		this.inputStream = inputStream;
+		this.openEditor = openEditor;
 	}
 	
 	public void addPages() {
@@ -61,7 +68,16 @@ public class DownloadDocumentWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		page.createNewFile();
+		IFile newFile = page.createNewFile();
+		if ( newFile != null && openEditor ) {
+			try {
+				IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
+				IDE.openEditor(activePage, newFile, true);
+				return true;
+			} catch (PartInitException e) {
+				PluginMessage.openError(getShell(), WIZARD_TITLE, e.getLocalizedMessage(), e);
+			}
+		}
 		return true;
 	}
 }

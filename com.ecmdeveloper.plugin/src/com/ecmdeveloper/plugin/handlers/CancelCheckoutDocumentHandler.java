@@ -31,9 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.handlers.CheckoutDocumentHandler.CheckoutDocumentHandlerJobListener;
 import com.ecmdeveloper.plugin.jobs.CancelCheckoutJob;
-import com.ecmdeveloper.plugin.jobs.CheckoutJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
