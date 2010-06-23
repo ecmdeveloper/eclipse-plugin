@@ -18,37 +18,40 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.model.tasks;
+package com.ecmdeveloper.plugin.jobs;
 
-import com.ecmdeveloper.plugin.model.Document;
-import com.filenet.api.constants.RefreshMode;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class CancelCheckoutTask extends DocumentTask {
+public class ChainedJobsSchedulingRule implements ISchedulingRule {
 
-	public CancelCheckoutTask(Document document) {
-		super(document);
+	private int order;
+	
+	public ChainedJobsSchedulingRule(int order) {
+		this.order = order;
 	}
 
 	@Override
-	public Object call() throws Exception {
-
-		com.filenet.api.core.Document currentVersion = cancelCheckout();
-		getDocument().refresh( currentVersion );
-		fireTaskCompleteEvent( TaskResult.COMPLETED );
-		
-		return null;
+	public boolean contains(ISchedulingRule rule) {
+		if ( rule instanceof ChainedJobsSchedulingRule ) {
+			return true;
+		}
+		return false;
 	}
 
-	private com.filenet.api.core.Document cancelCheckout() {
+	@Override
+	public boolean isConflicting(ISchedulingRule rule) {
 
-		com.filenet.api.core.Document currentVersion = getCurrentVersion();
-		com.filenet.api.core.Document reservation = (com.filenet.api.core.Document) currentVersion
-				.cancelCheckout();
-		reservation.save( RefreshMode.REFRESH );
-		return currentVersion;
+		if ( rule instanceof ChainedJobsSchedulingRule ) {
+			return ((ChainedJobsSchedulingRule)rule).getOrder() >= order;
+		}
+		return false;
+	}
+
+	public int getOrder() {
+		return order;
 	}
 }

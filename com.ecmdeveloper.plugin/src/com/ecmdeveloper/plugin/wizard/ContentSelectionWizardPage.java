@@ -23,23 +23,23 @@ package com.ecmdeveloper.plugin.wizard;
 import java.io.File;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,7 +49,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.util.IconFiles;
 
 /**
  * @author Ricardo.Belfor
@@ -57,8 +61,14 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class ContentSelectionWizardPage extends WizardPage {
 
+	private static final String SELECT_WORKSPACE_FILE_MESSAGE = "Select a file:";
+	private static final String REMOVE_LABEL = "Remove";
+	private static final String MIME_TYPE_LABEL_TEXT = "Document Mime Type:";
+	private static final String PAGE_DESCRIPTION_MESSAGE = "Select the files for the content of document \"{0}\"";
+	private static final String PAGE_TITLE = "Select Document Content";
 	private static final String ADD_WORKSPACE_FILE_LABEL = "Add Workspace File...";
 	private static final String ADD_EXTERNAL_FILE_LABEL = "Add External File...";
+
 	private TableViewer contentTable;
 	private Button addWorkspaceFileButton;
 	private Button addExternalFileButton;
@@ -67,11 +77,11 @@ public class ContentSelectionWizardPage extends WizardPage {
 	
 	private ArrayList<Object> content;
 	
-	protected ContentSelectionWizardPage() {
+	protected ContentSelectionWizardPage(String documentName ) {
 		super("contentSelectionWizardPage");
 		
-		setTitle( "Select Document Content" );
-		setDescription( "Select the files that make up the content of the document" );
+		setTitle( PAGE_TITLE );
+		setDescription( MessageFormat.format( PAGE_DESCRIPTION_MESSAGE, documentName ) );
 		
 		content = new ArrayList<Object>();
 	}
@@ -110,7 +120,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 		composite.setLayout(gridLayout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL) );
 		
-		addLabel(composite, "Mime Type:" ); 
+		addLabel(composite, MIME_TYPE_LABEL_TEXT ); 
 		mimeTypeText = new Text(composite, SWT.BORDER);
 		mimeTypeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
@@ -152,7 +162,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 		fileDialog.setText( "Select a file" );
 		String filename = fileDialog.open();
 		if ( filename != null ) {
-			content.add( new File( filename) );
+			content.add(  new File( filename) );
 			updateMimeType();
 			contentTable.refresh();
 		}
@@ -174,7 +184,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 	private void createRemoveButton(Composite container) {
 
 		removeButton = new Button(container, SWT.PUSH);
-		removeButton.setText("Remove");
+		removeButton.setText(REMOVE_LABEL);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -187,9 +197,8 @@ public class ContentSelectionWizardPage extends WizardPage {
 	private void createContentTable(Composite container) {
 		contentTable = new TableViewer(container, SWT.BORDER);
 		contentTable.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		// WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
-		contentTable.setLabelProvider( new ContentLabelProvider() );
-		contentTable.setContentProvider( new ArrayContentProvider() );
+		contentTable.setLabelProvider( new TableLabelProvider() );
+		contentTable.setContentProvider( new TableContentProvider() );
 		contentTable.setInput( content );
 	}
 	
@@ -197,8 +206,8 @@ public class ContentSelectionWizardPage extends WizardPage {
 		
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog( getShell(),
 				new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
-		dialog.setTitle("Content Selection");
-		dialog.setMessage("Select a file:");
+		dialog.setTitle( PAGE_TITLE );
+		dialog.setMessage(SELECT_WORKSPACE_FILE_MESSAGE);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		if ( dialog.open() == Window.OK ) {
 			Object result = dialog.getFirstResult();
@@ -246,38 +255,74 @@ public class ContentSelectionWizardPage extends WizardPage {
 		IStructuredSelection selection = (IStructuredSelection) contentTable.getSelection();
 		Iterator<?> iterator = selection.iterator();
 		while (iterator.hasNext() ) {
-			content.remove( iterator.next() );
+			Object element = iterator.next();
+			if ( element instanceof ExternalFileAdapter ) {
+				content.remove( ((ExternalFileAdapter)element).file );
+			} else {
+				content.remove( element );
+			}
 		}
 		updateMimeType();
 		contentTable.refresh();
 	}
 	
-//	class TableLabelProvider extends WorkbenchLabelProvider {
-//
-//		@Override
-//		protected String decorateText(String input, Object element) {
-//			if ( element instanceof IFile ) {
-//				return ((IFile)element).getFullPath().toString();
-//			} else if ( element instanceof File ) {
-//				return ((File)element).toString();
-//			}
-//			return super.decorateText(input, element);
-//		}
-//
-//		
-//	}
-	
-	class ContentLabelProvider extends LabelProvider {
+	class TableLabelProvider extends WorkbenchLabelProvider {
 
 		@Override
-		public String getText(Object element) {
-			if (element instanceof IFile) {
-				return ((IFile) element).getFullPath().toOSString();
-			} else if (element instanceof File) {
-				return ((File) element).toString();
+		protected String decorateText(String input, Object element) {
+			if ( element instanceof IFileStore ) {
+				return ((IFileStore)element).toString();
+			} else if ( element instanceof IFile ) {
+				return ((IFile)element).getFullPath().toString();
 			}
-			return super.getText(element);
+			return super.decorateText(input, element);
 		}
+	}
+
+	class TableContentProvider extends ArrayContentProvider 
+	{
+		@SuppressWarnings("unchecked")
+		@Override
+		public Object[] getElements(Object inputElement) {
+			
+			ArrayList<Object> wrappedContent = new ArrayList<Object>();
+			for ( Object element : (Collection) inputElement ) {
+				if ( element instanceof File ) {
+					wrappedContent.add( new ExternalFileAdapter( (File) element ) );
+				} else {
+					wrappedContent.add( element );
+				}
+			}
+			return wrappedContent.toArray();
+		}
+	}
+	
+	class ExternalFileAdapter implements IWorkbenchAdapter {
+
+		private File file;
 		
+		public ExternalFileAdapter(File file) {
+			this.file = file;
+		}
+
+		@Override
+		public Object[] getChildren(Object o) {
+			return null;
+		}
+
+		@Override
+		public ImageDescriptor getImageDescriptor(Object object) {
+			return Activator.getImageDescriptor( IconFiles.ICON_EXTERNAL_FILE );
+		}
+
+		@Override
+		public String getLabel(Object o) {
+			return file.getAbsolutePath();
+		}
+
+		@Override
+		public Object getParent(Object o) {
+			return null;
+		}
 	}
 }

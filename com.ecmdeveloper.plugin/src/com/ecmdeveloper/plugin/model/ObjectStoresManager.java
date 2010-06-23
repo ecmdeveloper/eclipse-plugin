@@ -44,6 +44,7 @@ import org.eclipse.ui.XMLMemento;
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
+import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
 import com.ecmdeveloper.plugin.model.tasks.CheckoutTask;
 import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
@@ -547,22 +548,36 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 	private void handleTaskCompleteEvent(TaskCompleteEvent taskCompleteEvent) {
 		if ( isTaskSourceInstanceOf(taskCompleteEvent, DeleteTask.class) ) {
 			handleDeleteTaskCompleted( taskCompleteEvent );
-		} if ( isTaskSourceInstanceOf(taskCompleteEvent, LoadChildrenTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, LoadChildrenTask.class) ) {
 			handleLoadChildrenTaskCompleted( taskCompleteEvent );
-		} if ( isTaskSourceInstanceOf(taskCompleteEvent, RefreshTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, RefreshTask.class) ) {
 			handleRefreshTaskCompleted( taskCompleteEvent );
-		} if ( isTaskSourceInstanceOf(taskCompleteEvent, MoveTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, MoveTask.class) ) {
 			handleMoveTaskCompleted( taskCompleteEvent );
-		} if ( isTaskSourceInstanceOf(taskCompleteEvent, UpdateTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, UpdateTask.class) ) {
 			handleUpdateTaskCompleted(taskCompleteEvent);
-		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CheckoutTask.class) ||
-				isTaskSourceInstanceOf(taskCompleteEvent, CancelCheckoutTask.class) ) {
+//		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CheckoutTask.class) ||
+//				isTaskSourceInstanceOf(taskCompleteEvent, CancelCheckoutTask.class) ||
+//				isTaskSourceInstanceOf(taskCompleteEvent, CheckinTask.class) ) {
+//			handleDocumentTaskCompleted(taskCompleteEvent);
+//		}
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, DocumentTask.class) ) {
 			handleDocumentTaskCompleted(taskCompleteEvent);
 		}
 	}
 
 	private boolean isTaskSourceInstanceOf(TaskCompleteEvent taskCompleteEvent, Class<?> taskClass) {
-		return taskCompleteEvent.getSource().getClass().equals(taskClass);
+
+		Class<? extends Object> eventClass = taskCompleteEvent.getSource().getClass();
+		
+		do {
+			if ( eventClass.equals( taskClass ) ) {
+				return true;
+			}
+			eventClass = eventClass.getSuperclass();
+		} while ( ! eventClass.equals( Object.class ) );
+		
+		return false;
 	}
 
 	private void handleUpdateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {

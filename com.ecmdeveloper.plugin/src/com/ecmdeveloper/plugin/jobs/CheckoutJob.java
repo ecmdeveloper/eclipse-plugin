@@ -21,19 +21,18 @@
 package com.ecmdeveloper.plugin.jobs;
 
 import java.text.MessageFormat;
-import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CheckoutTask;
-import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -44,14 +43,19 @@ public class CheckoutJob extends Job {
 
 	private static final String HANDLER_NAME = "Checkout";
 	private static final String FAILED_MESSAGE = "Checkin out \"{0}\" failed";
+	private static final String TASK_MESSAGE = "Checking out document \"{0}\"";
 
 	private Document document;
-	private Shell shell;
+	private boolean download;
+	private boolean openEditor;
+	private IWorkbenchWindow window;
 	
-	public CheckoutJob(Document document, Shell shell) {
+	public CheckoutJob(Document document, IWorkbenchWindow window, boolean download, boolean openEditor) {
 		super(HANDLER_NAME);
 		this.document = document;
-		this.shell = shell;
+		this.window = window;
+		this.download = download;
+		this.openEditor = openEditor;
 	}
 
 	public Document getDocument() {
@@ -62,18 +66,34 @@ public class CheckoutJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		
 		try {
-			CheckoutTask task = new CheckoutTask(document);
-			ObjectStoresManager.getManager().executeTaskSync(task);
+			String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
+			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
+			checkoutDocument();
+			if ( download ) {
+				scheduleDownloadDocumentJob();
+			}
+			monitor.done();
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					String message = MessageFormat.format(FAILED_MESSAGE, document.getName());
-					PluginMessage.openError(shell, HANDLER_NAME, message, e);
-				}
-			});
+			showError(e);
 		}
 		return Status.CANCEL_STATUS;
+	}
+
+	private void showError(final Exception e) {
+		String message = MessageFormat.format(FAILED_MESSAGE, document.getName());
+		PluginMessage.openErrorFromThread( window.getShell(), HANDLER_NAME, message, e);
+	}
+
+	private void checkoutDocument() throws ExecutionException {
+		CheckoutTask task = new CheckoutTask(document);
+		ObjectStoresManager.getManager().executeTaskSync(task);
+	}
+
+	private void scheduleDownloadDocumentJob() {
+		DownloadDocumentJob downloadJob = new DownloadDocumentJob( document, window, openEditor );
+		downloadJob.setRule( new ChainedJobsSchedulingRule(2) );
+		downloadJob.setUser(true);
+		downloadJob.schedule();
 	}
 }

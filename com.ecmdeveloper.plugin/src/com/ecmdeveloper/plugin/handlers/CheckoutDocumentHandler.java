@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -43,6 +44,8 @@ import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.util.PluginMessage;
+import com.ecmdeveloper.plugin.wizard.CheckinWizard;
+import com.ecmdeveloper.plugin.wizard.CheckoutWizard;
 
 /**
  * @author Ricardo.Belfor
@@ -50,7 +53,7 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
  */
 public class CheckoutDocumentHandler extends AbstractHandler implements IHandler {
 
-	private static final String HANDLER_NAME = "Checkout";
+//	private static final String HANDLER_NAME = "Checkout";
 
 	private IWorkbenchWindow window;
 
@@ -67,47 +70,51 @@ public class CheckoutDocumentHandler extends AbstractHandler implements IHandler
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
-			
 			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			CheckoutJob job = new CheckoutJob((Document) objectStoreItem, window.getShell() );
-			job.addJobChangeListener( new CheckoutDocumentHandlerJobListener() );
-			job.setUser(true);
-			job.schedule();
+			openCheckoutWizard((Document) objectStoreItem);
 		}
 
 		return null;
 	}
 
-	class CheckoutDocumentHandlerJobListener extends JobChangeAdapter {
+//	class CheckoutDocumentHandlerJobListener extends JobChangeAdapter {
+//
+//		private static final String DOWNLOAD_QUESTION = "Download content of document \"{0}\"?";
+//
+//		@Override
+//		public void done(IJobChangeEvent event) {
+//
+//			if ( event.getResult().equals( Status.CANCEL_STATUS ) ) {
+//				return;
+//			}
+//			
+//			final CheckoutJob job = (CheckoutJob) event.getJob();
+//			
+//			Display.getDefault().syncExec(new Runnable() {
+//				@Override
+//				public void run() {
+//					String message = MessageFormat.format(DOWNLOAD_QUESTION, job.getDocument().getName());
+//					boolean answerTrue = MessageDialog.openQuestion(window.getShell(), HANDLER_NAME,
+//							message);
+//					if ( answerTrue ) {
+//						scheduleDownloadJob(job);
+//					}
+//				}
+//
+//				private void scheduleDownloadJob(final CheckoutJob job) {
+//					DownloadDocumentJob downloadJob = new DownloadDocumentJob( job.getDocument(), window );
+//					downloadJob.setUser(true);
+//					downloadJob.schedule();
+//				}
+//			});
+//		}		
+//	}
 
-		private static final String DOWNLOAD_QUESTION = "Download content of document \"{0}\"?";
-
-		@Override
-		public void done(IJobChangeEvent event) {
-
-			if ( event.getResult().equals( Status.CANCEL_STATUS ) ) {
-				return;
-			}
-			
-			final CheckoutJob job = (CheckoutJob) event.getJob();
-			
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					String message = MessageFormat.format(DOWNLOAD_QUESTION, job.getDocument().getName());
-					boolean answerTrue = MessageDialog.openQuestion(window.getShell(), HANDLER_NAME,
-							message);
-					if ( answerTrue ) {
-						scheduleDownloadJob(job);
-					}
-				}
-
-				private void scheduleDownloadJob(final CheckoutJob job) {
-					DownloadDocumentJob downloadJob = new DownloadDocumentJob( job.getDocument(), window );
-					downloadJob.setUser(true);
-					downloadJob.schedule();
-				}
-			});
-		}		
+	private void openCheckoutWizard(Document document) {
+		CheckoutWizard wizard = new CheckoutWizard( document );
+		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		wizard.init(window);
+		dialog.create();
+		dialog.open();
 	}
 }

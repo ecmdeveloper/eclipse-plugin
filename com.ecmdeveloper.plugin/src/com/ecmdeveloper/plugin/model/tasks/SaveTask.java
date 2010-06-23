@@ -29,15 +29,12 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.content.IContentType;
 
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
-import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.ContentTransfer;
 import com.filenet.api.core.Factory;
-import com.filenet.api.core.VersionSeries;
 
 /**
  * @author Ricardo.Belfor
@@ -65,18 +62,6 @@ public class SaveTask extends DocumentTask {
 		return null;
 	}
 
-	private com.filenet.api.core.Document getReservation() {
-		
-		com.filenet.api.core.Document internalDocument = getInternalDocument();
-		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
-		VersionSeries versionSeries = internalDocument.get_VersionSeries();
-		versionSeries.fetchProperties( new String[] { PropertyNames.RESERVATION} );
-		com.filenet.api.core.Document currentVersion = (com.filenet.api.core.Document) versionSeries
-				.get_Reservation();
-
-		return currentVersion;
-	}
-	
 	@SuppressWarnings("unchecked")
 	private ContentElementList createContent() throws Exception {
 		

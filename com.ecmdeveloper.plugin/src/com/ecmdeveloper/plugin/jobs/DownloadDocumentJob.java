@@ -43,8 +43,15 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 	private static final String HANDLER_NAME = "Download Document";
 	private static final String FAILED_MESSAGE = "Downloading \"{0}\" failed";
 	
-	public DownloadDocumentJob(Document document, IWorkbenchWindow window) {
+	private boolean openEditor;
+
+	public DownloadDocumentJob(Document document, IWorkbenchWindow window ) {
+		this(document, window, false);
+	}
+	
+	public DownloadDocumentJob(Document document, IWorkbenchWindow window, boolean openEditor ) {
 		super(HANDLER_NAME, document, window);
+		this.openEditor = openEditor;
 	}
 
 	@Override
@@ -76,7 +83,7 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 		InputStream contentStream = getContentStream(contentElement, monitor );
 		String filename = getContentElementFilename(contentElement);
 		
-		DownloadDocumentWizard wizard = new DownloadDocumentWizard(filename, contentStream );
+		DownloadDocumentWizard wizard = new DownloadDocumentWizard(filename, contentStream, openEditor );
 		wizard.init( window.getWorkbench(), null );
 		final WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		

@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
+import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -60,7 +61,7 @@ public class CancelCheckoutJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		
 		try {
-			CancelCheckoutTask task = new CancelCheckoutTask(document);
+			DocumentTask task = new CancelCheckoutTask(document);
 			ObjectStoresManager.getManager().executeTaskSync(task);
 			return Status.OK_STATUS;
 		} catch (Exception e) {
