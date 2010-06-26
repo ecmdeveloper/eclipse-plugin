@@ -45,6 +45,7 @@ public class DownloadDocumentWizard extends Wizard {
 	private String filename;
 	private InputStream inputStream;
 	private boolean openEditor;
+	private IFile newFile;
 	
 	public DownloadDocumentWizard(String filename, InputStream inputStream, boolean openEditor) {
 		super();
@@ -68,7 +69,7 @@ public class DownloadDocumentWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		IFile newFile = page.createNewFile();
+		newFile = page.createNewFile();
 		if ( newFile != null && openEditor ) {
 			try {
 				IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
@@ -79,5 +80,9 @@ public class DownloadDocumentWizard extends Wizard {
 			}
 		}
 		return true;
+	}
+	
+	public IFile getNewFile() {
+		return newFile;
 	}
 }

@@ -22,7 +22,8 @@ package com.ecmdeveloper.plugin.wizard;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,7 +38,9 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 
 	private Button downloadButton;
 	private Button editButton;
+	@SuppressWarnings("unused")
 	private Button nothingButton;
+	private Button trackButton;
 
 	protected ConfigureCheckoutWizardPage() {
 		super("configureCheckout");
@@ -53,7 +56,11 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 	public boolean isEdit() {
 		return editButton.getSelection();
 	}
-	
+
+	public boolean isTracked() {
+		return trackButton.getSelection();
+	}
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
@@ -67,6 +74,7 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 		createNothingButton(container);
 		createDownloadButton(container);
 		createEditButton(container);
+		createTrackButton(container);
 	}
 
 	private void createLabel(Composite container, String text) {
@@ -77,27 +85,48 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 	}
 	
 	private void createNothingButton(Composite container) {
-		nothingButton = new Button(container, SWT.RADIO);
-		nothingButton.setText("Nothing");
-		nothingButton.setLayoutData(getFullRowGridData());
+		nothingButton = createButton(container, "Nothing", false );
 	}
-	
+
 	private void createDownloadButton(Composite container) {
-		downloadButton = new Button(container, SWT.RADIO);
-		downloadButton.setText("Download Content");
-		downloadButton.setLayoutData(getFullRowGridData());
+		downloadButton = createButton(container, "Download Content", false );
 	}
 
 	private void createEditButton(Composite container) {
-		editButton = new Button(container, SWT.RADIO);
-		editButton.setText("Download and Edit Content");
-		editButton.setLayoutData(getFullRowGridData());
-		editButton.setSelection(true);
+		editButton = createButton(container, "Download and Edit Content", false );
 	}
 	
+	private Button createButton(Composite container, String text, boolean selection ) {
+		
+		Button button = new Button(container, SWT.RADIO);
+		button.setText( text);
+		button.setLayoutData(getFullRowGridData());
+		button.setSelection(selection);
+		button.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateTrackButton();
+			}
+		});
+		
+		return button;
+	}
+
+	protected void updateTrackButton() {
+		trackButton.setEnabled( isDowload() );
+	}
+
 	private GridData getFullRowGridData() {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		return gd;
+	}
+
+	private void createTrackButton(Composite container) {
+		trackButton = new Button(container, SWT.CHECK );
+		trackButton.setText("Track Content");
+		trackButton.setLayoutData(getFullRowGridData());
+		trackButton.setSelection(true);
 	}
 }

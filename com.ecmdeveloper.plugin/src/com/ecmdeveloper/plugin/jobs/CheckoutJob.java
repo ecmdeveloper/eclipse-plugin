@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.model.Document;
@@ -48,14 +47,16 @@ public class CheckoutJob extends Job {
 	private Document document;
 	private boolean download;
 	private boolean openEditor;
+	private boolean trackFile;
 	private IWorkbenchWindow window;
 	
-	public CheckoutJob(Document document, IWorkbenchWindow window, boolean download, boolean openEditor) {
+	public CheckoutJob(Document document, IWorkbenchWindow window, boolean download, boolean openEditor, boolean trackFile ) {
 		super(HANDLER_NAME);
 		this.document = document;
 		this.window = window;
 		this.download = download;
 		this.openEditor = openEditor;
+		this.trackFile = trackFile;
 	}
 
 	public Document getDocument() {
@@ -91,7 +92,8 @@ public class CheckoutJob extends Job {
 	}
 
 	private void scheduleDownloadDocumentJob() {
-		DownloadDocumentJob downloadJob = new DownloadDocumentJob( document, window, openEditor );
+		DownloadDocumentJob downloadJob = new DownloadDocumentJob(document, window, openEditor,
+				trackFile);
 		downloadJob.setRule( new ChainedJobsSchedulingRule(2) );
 		downloadJob.setUser(true);
 		downloadJob.schedule();
