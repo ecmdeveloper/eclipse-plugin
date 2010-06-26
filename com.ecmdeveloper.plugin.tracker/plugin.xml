@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="contentEngine"
+               label="Content Engine">
+            <command
+                  commandId="org.eclipse.ui.file.properties"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.properties"
+                  style="push">
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <test
+                           forcePluginActivation="true"
+                           property="com.ecmdeveloper.plugin.tracker.isTracked">
+                     </test>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="com.ecmdeveloper.plugin.tracker.tester.TrackedFileTester"
+            id="com.ecmdeveloper.plugin.tracker.trackedFileTester"
+            namespace="com.ecmdeveloper.plugin.tracker"
+            properties="isTracked"
+            type="java.lang.Object">
+      </propertyTester>
+   </extension>
+
+</plugin>

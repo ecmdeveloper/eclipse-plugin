@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECM Developer Tracker Plug-in
+Bundle-SymbolicName: com.ecmdeveloper.plugin.tracker;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: com.ecmdeveloper.plugin.tracker.Activator
+Bundle-Vendor: ECMDEVELOPER
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions,
+ org.eclipse.core.resources
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: com.ecmdeveloper.plugin.tracker.model
