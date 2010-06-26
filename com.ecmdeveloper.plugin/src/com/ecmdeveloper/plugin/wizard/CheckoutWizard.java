@@ -60,8 +60,9 @@ public class CheckoutWizard extends Wizard {
 	private void scheduleCheckoutJob() {
 		boolean download = page.isDowload();
 		boolean openEditor = page.isEdit();
-
-		CheckoutJob job = new CheckoutJob(document, window, download, openEditor );
+		boolean trackFile = page.isTracked();
+		
+		CheckoutJob job = new CheckoutJob(document, window, download, openEditor, trackFile );
 		job.setRule( new ChainedJobsSchedulingRule(1) );
 		job.setUser(true);
 		job.schedule();

@@ -30,7 +30,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.wizard.DownloadDocumentWizard;
 
 /**
@@ -44,14 +47,16 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 	private static final String FAILED_MESSAGE = "Downloading \"{0}\" failed";
 	
 	private boolean openEditor;
+	private boolean trackFile;
 
 	public DownloadDocumentJob(Document document, IWorkbenchWindow window ) {
-		this(document, window, false);
+		this(document, window, false, false);
 	}
 	
-	public DownloadDocumentJob(Document document, IWorkbenchWindow window, boolean openEditor ) {
+	public DownloadDocumentJob(Document document, IWorkbenchWindow window, boolean openEditor, boolean trackFile ) {
 		super(HANDLER_NAME, document, window);
 		this.openEditor = openEditor;
+		this.trackFile = trackFile;
 	}
 
 	@Override
@@ -94,6 +99,27 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 				dialog.open();
 			}
 		} );
+		
+		if ( trackFile ) {
+			String newFilename = wizard.getNewFile().getFullPath().toString();
+			addFileToTracker(newFilename);
+		}
+	}
+
+	private void addFileToTracker(String newFilename) {
+		String id = document.getVersionSeriesId();
+		String name = document.getName();
+
+		ObjectStore objectStore = document.getObjectStore();
+		String objectStoreName = objectStore.getName();
+		String objectStoreDisplayName = objectStore.getDisplayName();
+
+		ContentEngineConnection connection = objectStore.getConnection();
+		String connectionName = connection.getName();
+		String connectionDisplayName = connection.getDisplayName();
+		
+		FilesTracker.getInstance().addTrackedFile(newFilename, id, name, connectionName,
+				connectionDisplayName, objectStoreName, objectStoreDisplayName);
 	}
 
 }
