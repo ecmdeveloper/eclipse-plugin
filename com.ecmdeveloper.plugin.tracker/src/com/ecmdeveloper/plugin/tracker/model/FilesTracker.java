@@ -57,8 +57,8 @@ public class FilesTracker {
 		return filesTracker;
 	}
 	
-	public void addTrackedFile(String filename, String id, String name, String connectionName,
-			String connectionDisplayName, String objectStoreName, String objectStoreDisplayName)
+	public void addTrackedFile(String filename, String id, String name, String className,
+			String versionSeriesId, String connectionName, String connectionDisplayName, String objectStoreName, String objectStoreDisplayName)
 	{
 		initializeTrackedFiles();
 		
@@ -67,11 +67,12 @@ public class FilesTracker {
 		trackedFile.setFilename(filename);
 		trackedFile.setId(id);
 		trackedFile.setName(name);
+		trackedFile.setVersionSeriesId(versionSeriesId);
 		trackedFile.setConnectionName(connectionName);
 		trackedFile.setConnectionDisplayName(connectionDisplayName);
 		trackedFile.setObjectStoreName(objectStoreName);
 		trackedFile.setObjectStoreDisplayName(objectStoreDisplayName);
-		
+		trackedFile.setClassName( className );
 		trackedFilesMap.put(filename, trackedFile);
 		
 		saveTrackedFiles();
@@ -82,6 +83,35 @@ public class FilesTracker {
 		return trackedFilesMap.containsKey(filename);
 	}
 	
+	public boolean isVersionSeriesTracked(String versionSeriesId) {
+		
+		if ( versionSeriesId == null){
+			return false;
+		}
+		
+		initializeTrackedFiles();
+		for ( TrackedFile trackedFile : trackedFilesMap.values() ) {
+			if ( versionSeriesId.equalsIgnoreCase( trackedFile.getVersionSeriesId() ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean removeTrackedVersionSeries(String versionSeriesId) {
+		if ( versionSeriesId != null) {
+			initializeTrackedFiles();
+			for ( TrackedFile trackedFile : trackedFilesMap.values() ) {
+				if ( versionSeriesId.equalsIgnoreCase( trackedFile.getVersionSeriesId() ) ) {
+					trackedFilesMap.remove(trackedFile.getFilename());
+					saveTrackedFiles();
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public TrackedFile getTrackedFile(String filename ) {
 		initializeTrackedFiles();
 		if ( trackedFilesMap.containsKey(filename) ) {
@@ -106,8 +136,8 @@ public class FilesTracker {
 		
 		try {
 			XMLMemento memento = XMLMemento.createReadRoot( reader );
-			IMemento trackedFilesChild = memento.getChild( FilesTrackerTagNames.TRACKED_FILES );
-			for ( IMemento trackedFileChild : trackedFilesChild.getChildren( FilesTrackerTagNames.TRACKED_FILE ) ) {
+			//IMemento trackedFilesChild = memento.getChild( FilesTrackerTagNames.TRACKED_FILES );
+			for ( IMemento trackedFileChild : memento.getChildren( FilesTrackerTagNames.TRACKED_FILE ) ) {
 				TrackedFile trackedFile = loadTrackedFile(trackedFileChild);
 				trackedFilesMap.put(trackedFile.getFilename(), trackedFile );
 			}
@@ -130,11 +160,12 @@ public class FilesTracker {
 		trackedFile.setFilename( trackedFileChild.getString( FilesTrackerTagNames.FILENAME) );
 		trackedFile.setId(trackedFileChild.getString( FilesTrackerTagNames.ID) );
 		trackedFile.setName(trackedFileChild.getString( FilesTrackerTagNames.NAME) );
+		trackedFile.setClassName(trackedFileChild.getString( FilesTrackerTagNames.CLASS_NAME) );
+		trackedFile.setVersionSeriesId( trackedFileChild.getString( FilesTrackerTagNames.VERSION_SERIES_ID) );
 		trackedFile.setConnectionName(trackedFileChild.getString( FilesTrackerTagNames.CONNECTION_NAME ) );
 		trackedFile.setConnectionDisplayName(trackedFileChild.getString( FilesTrackerTagNames.CONNECTION_DISPLAY_NAME ) );
 		trackedFile.setObjectStoreName(trackedFileChild.getString( FilesTrackerTagNames.OBJECT_STORE_NAME ) );
 		trackedFile.setObjectStoreDisplayName(trackedFileChild.getString( FilesTrackerTagNames.OBJECT_STORE_DISPLAY_NAME ) );
-		
 		return trackedFile;
 	}
 	
@@ -159,6 +190,8 @@ public class FilesTracker {
 		trackedFileChild.putString(FilesTrackerTagNames.FILENAME, trackedFile.getFilename() );
 		trackedFileChild.putString(FilesTrackerTagNames.ID, trackedFile.getId() );
 		trackedFileChild.putString(FilesTrackerTagNames.NAME, trackedFile.getName() );
+		trackedFileChild.putString(FilesTrackerTagNames.CLASS_NAME, trackedFile.getClassName() );
+		trackedFileChild.putString(FilesTrackerTagNames.VERSION_SERIES_ID, trackedFile.getVersionSeriesId() );
 		trackedFileChild.putString(FilesTrackerTagNames.CONNECTION_NAME, trackedFile.getConnectionName() );
 		trackedFileChild.putString(FilesTrackerTagNames.CONNECTION_DISPLAY_NAME, trackedFile.getConnectionDisplayName() );
 		trackedFileChild.putString(FilesTrackerTagNames.OBJECT_STORE_NAME, trackedFile.getObjectStoreName() );
