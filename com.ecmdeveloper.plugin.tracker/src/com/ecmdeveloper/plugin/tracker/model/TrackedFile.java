@@ -20,8 +20,6 @@
 
 package com.ecmdeveloper.plugin.tracker.model;
 
-import java.io.File;
-import java.util.ArrayList;
 
 /**
  * @author Ricardo.Belfor
@@ -31,8 +29,9 @@ public class TrackedFile {
 
 	private String id;
 	private String name;
-	private String objectStore;
+	private String className;
 	private String filename;
+	private String versionSeriesId;
 	private String connectionName;
 	private String connectionDisplayName;
 	private String objectStoreName;
@@ -44,23 +43,30 @@ public class TrackedFile {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getObjectStore() {
-		return objectStore;
+	public String getClassName() {
+		return className;
 	}
-	public void setObjectStore(String objectStore) {
-		this.objectStore = objectStore;
+	public void setClassName(String className) {
+		this.className = className;
 	}
 	public String getFilename() {
 		return filename;
 	}
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	public String getVersionSeriesId() {
+		return versionSeriesId;
+	}
+	public void setVersionSeriesId(String versionSeriesId) {
+		this.versionSeriesId = versionSeriesId;
 	}
 	public String getConnectionName() {
 		return connectionName;

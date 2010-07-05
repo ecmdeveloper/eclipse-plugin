@@ -9,7 +9,7 @@
                id="contentEngine"
                label="Content Engine">
             <command
-                  commandId="org.eclipse.ui.file.properties"
+                  commandId="com.ecmdeveloper.plugin.checkinTrackedFile"
                   style="push">
             </command>
             <command

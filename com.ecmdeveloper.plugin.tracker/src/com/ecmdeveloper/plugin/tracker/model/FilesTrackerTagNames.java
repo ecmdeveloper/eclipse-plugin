@@ -34,7 +34,8 @@ public class FilesTrackerTagNames {
 	public static final String FILENAME = "filename";
 	public static final String NAME = "name";
 	public static final String ID = "id";
+	public static final String VERSION_SERIES_ID = "versionSeriesId";
+	public static final String CLASS_NAME = "className";
 	public static final String OBJECT_STORE_NAME = "objectStoreName";
 	public static final String OBJECT_STORE_DISPLAY_NAME = "objectStoreDisplayName";
-	
 }
