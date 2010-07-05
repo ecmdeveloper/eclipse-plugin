@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
+import com.filenet.api.core.VersionSeries;
 
 /**
  * @author Ricardo Belfor
@@ -54,8 +55,9 @@ public class Document extends ObjectStoreItem {
 				PropertyNames.VERSION_SERIES, PropertyNames.IS_RESERVED });
 		name = document.get_Name();
 		id = document.get_Id().toString();
-		versionSeriesId = document.get_VersionSeries().get_Id().toString();
-		reserved = document.get_IsReserved();
+		VersionSeries versionSeries = document.get_VersionSeries();
+		versionSeriesId = versionSeries.get_Id().toString();
+		reserved = versionSeries.get_IsReserved();
 	}
 
 	public void refresh( com.filenet.api.core.Document newDocument ) {

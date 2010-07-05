@@ -20,7 +20,6 @@
 
 package com.ecmdeveloper.plugin.handlers;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Status;
@@ -28,14 +27,11 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 import com.ecmdeveloper.plugin.jobs.DeleteJob;
 import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.util.Messages;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor

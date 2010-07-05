@@ -40,7 +40,6 @@ import com.ecmdeveloper.plugin.model.Document;
  */
 public class CompareDocumentJob extends AbstractDocumentContentJob {
 
-//	private static final String SELECT_FILE_MESSAGE = "Select file to compare document \"{0}\" to:";
 	private static final String MULTIPLE_CONTENT_ELEMENTS_MESSAGE = "For comparing only one content element must be selected";
 	private static final String COMPARE_TITLE_FORMAT = "Compare(''{0}'' - ''{1}'')";
 	private static final String HANDLER_NAME = "Compare Document";
@@ -83,11 +82,6 @@ public class CompareDocumentJob extends AbstractDocumentContentJob {
 
 	private void compareContentElement(Integer contentElement, IProgressMonitor monitor) throws Exception {
 
-//		IFile compareFile = getCompareFile();
-//		if ( compareFile == null ) {
-//			return;
-//		}
-		
 		DocumentCompareEditorInput editorInput = createCompareEditorInput(contentElement,
 				compareFile);
 		
@@ -111,33 +105,6 @@ public class CompareDocumentJob extends AbstractDocumentContentJob {
 		return editorInput;
 	}
 
-//	private IFile getCompareFile() {
-//
-////		IAdaptable root = ResourcesPlugin.getWorkspace().getRoot();
-////		String message = MessageFormat.format( SELECT_FILE_MESSAGE, document.getName() );
-////		final ResourceSelectionDialog dialog =  new ResourceSelectionDialog( window.getShell(), root, message );
-//
-//		final SelectionDialog dialog = getFileSelectionDialog();
-//		window.getWorkbench().getDisplay().syncExec( new Runnable() {
-//			@Override
-//			public void run() {
-//				dialog.open();
-//			}
-//		} );
-//		
-//		if ( dialog.getReturnCode() != Dialog.OK || dialog.getResult() == null ) {
-//			return null;
-//		}
-//
-//		Object[] result2 = dialog.getResult();
-//		if ( result2.length != 1) {
-//			// TODO: message
-//		}
-//		
-//		IFile compareFile = (IFile) result2[0];
-//		return compareFile;
-//	}
-
 	private void openCompareEditor(final DocumentCompareEditorInput editorInput) {
 		window.getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -146,14 +113,4 @@ public class CompareDocumentJob extends AbstractDocumentContentJob {
 			}
 		} );
 	}
-	
-//	private SelectionDialog getFileSelectionDialog() {
-//		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(),
-//				new LabelProvider(), new BaseWorkbenchContentProvider());
-//		String message = MessageFormat.format( SELECT_FILE_MESSAGE, document.getName() );
-//		dialog.setTitle("File Selection");
-//		dialog.setMessage( message );
-//		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-//		return dialog;
-//	}
 }

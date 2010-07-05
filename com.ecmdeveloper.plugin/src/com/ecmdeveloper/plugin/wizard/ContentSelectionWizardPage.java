@@ -112,6 +112,13 @@ public class ContentSelectionWizardPage extends WizardPage {
 		createMimeTypeInput(container);
 	}
 
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		contentTable.setInput( content );
+		updateMimeType();
+	}
+	
 	private void createMimeTypeInput(Composite container) {
 		
 		Composite composite = new Composite(container, SWT.BEGINNING );
@@ -199,7 +206,6 @@ public class ContentSelectionWizardPage extends WizardPage {
 		contentTable.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		contentTable.setLabelProvider( new TableLabelProvider() );
 		contentTable.setContentProvider( new TableContentProvider() );
-		contentTable.setInput( content );
 	}
 	
 	private void selectWorkspaceFile() {

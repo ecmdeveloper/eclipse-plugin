@@ -69,9 +69,9 @@ public class CheckoutJob extends Job {
 		try {
 			String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
 			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
-			checkoutDocument();
+			Document checkoutDocument = checkoutDocument();
 			if ( download ) {
-				scheduleDownloadDocumentJob();
+				scheduleDownloadDocumentJob(checkoutDocument, monitor);
 			}
 			monitor.done();
 			return Status.OK_STATUS;
@@ -86,15 +86,17 @@ public class CheckoutJob extends Job {
 		PluginMessage.openErrorFromThread( window.getShell(), HANDLER_NAME, message, e);
 	}
 
-	private void checkoutDocument() throws ExecutionException {
+	private Document checkoutDocument() throws ExecutionException {
 		CheckoutTask task = new CheckoutTask(document);
 		ObjectStoresManager.getManager().executeTaskSync(task);
+		return task.getCheckoutDocument();
 	}
 
-	private void scheduleDownloadDocumentJob() {
-		DownloadDocumentJob downloadJob = new DownloadDocumentJob(document, window, openEditor,
+	private void scheduleDownloadDocumentJob(Document checkoutDocument, IProgressMonitor monitor) {
+		DownloadDocumentJob downloadJob = new DownloadDocumentJob(checkoutDocument, window, openEditor,
 				trackFile);
 		downloadJob.setRule( new ChainedJobsSchedulingRule(2) );
+		downloadJob.setProgressGroup(monitor, IProgressMonitor.UNKNOWN );
 		downloadJob.setUser(true);
 		downloadJob.schedule();
 	}

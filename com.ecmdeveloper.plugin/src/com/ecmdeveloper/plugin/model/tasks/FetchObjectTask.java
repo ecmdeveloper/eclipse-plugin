@@ -27,6 +27,7 @@ import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.core.Factory;
+import com.filenet.api.core.IndependentObject;
 
 /**
  * @author Ricardo Belfor
@@ -60,14 +61,25 @@ public class FetchObjectTask extends BaseTask {
 		com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore
 				.getObjectStoreObject();
 
-		if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
-			com.filenet.api.core.Folder internalFolder = Factory.Folder.getInstance(internalObjectStore, className, id );
-			return new Folder(internalFolder, null, objectStore );
-		} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
-			com.filenet.api.core.Document internalDocument = Factory.Document.getInstance(internalObjectStore, className, id );
-			return new Document(internalDocument, null, objectStore );
-		} else {
-			throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
-		}
+//		if ( id.startsWith("/") ) {
+//			if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
+//				com.filenet.api.core.Folder internalFolder = Factory.Folder.getInstance(internalObjectStore, className, id );
+//				return new Folder(internalFolder, null, objectStore );
+//			} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
+//				com.filenet.api.core.Document internalDocument = Factory.Document.getInstance(internalObjectStore, className, id );
+//				return new Document(internalDocument, null, objectStore );
+//			} else {
+//				throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
+//			}
+//		} else {
+			IndependentObject object = internalObjectStore.getObject(className, id);
+			if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
+				return new Folder(object, null, objectStore );
+			} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
+				return new Document(object, null, objectStore );
+			} else {
+				throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
+			}
+//		}
 	}
 }

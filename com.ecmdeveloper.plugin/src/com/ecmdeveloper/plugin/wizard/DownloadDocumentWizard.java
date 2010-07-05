@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.wizard;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
@@ -69,17 +70,33 @@ public class DownloadDocumentWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		newFile = page.createNewFile();
-		if ( newFile != null && openEditor ) {
-			try {
-				IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
-				IDE.openEditor(activePage, newFile, true);
-				return true;
-			} catch (PartInitException e) {
-				PluginMessage.openError(getShell(), WIZARD_TITLE, e.getLocalizedMessage(), e);
+		
+		try {
+			if ( ! page.deleteExistingFile( new NullProgressMonitor() ) ) {
+				return false;
 			}
+			newFile = page.createNewFile();
+		} catch (Exception e) {
+			PluginMessage.openError(getShell(), WIZARD_TITLE, e.getLocalizedMessage(), e );
+			return false;
 		}
+
+		if ( newFile != null && openEditor ) {
+			return openEditor();
+		}
+		
 		return true;
+	}
+
+	private boolean openEditor() {
+		try {
+			IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
+			IDE.openEditor(activePage, newFile, true);
+			return true;
+		} catch (PartInitException e) {
+			PluginMessage.openError(getShell(), WIZARD_TITLE, e.getLocalizedMessage(), e);
+			return false;
+		}
 	}
 	
 	public IFile getNewFile() {

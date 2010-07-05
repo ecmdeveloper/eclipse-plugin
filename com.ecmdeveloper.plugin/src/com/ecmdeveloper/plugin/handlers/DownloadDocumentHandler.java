@@ -20,47 +20,19 @@
 
 package com.ecmdeveloper.plugin.handlers;
 
-import java.util.Iterator;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
-
 import com.ecmdeveloper.plugin.jobs.DownloadDocumentJob;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class DownloadDocumentHandler extends AbstractHandler implements IHandler {
+public class DownloadDocumentHandler extends AbstractDocumentHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if (window == null)	return null;
-
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-
-		if (!(selection instanceof IStructuredSelection))
-			return null;
-
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		while ( iterator.hasNext() ) {
-			
-			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			DownloadDocumentJob job = new DownloadDocumentJob((Document) objectStoreItem, window );
-			job.setUser(true);
-			job.schedule();
-		}
-
-		return null;
+	protected void handleDocument(Document document) {
+		DownloadDocumentJob job = new DownloadDocumentJob(document, getWorkbenchWindow() );
+		job.setUser(true);
+		job.schedule();
 	}
 }

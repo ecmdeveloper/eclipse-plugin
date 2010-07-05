@@ -33,6 +33,7 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
+import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -41,6 +42,7 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
  */
 public class CancelCheckoutJob extends Job {
 
+	private static final String CANCELING_CHECKOUT_TASK = "Canceling Checkout \"{0}\"";
 	private static final String HANDLER_NAME = "Cancel Checkout";
 	private static final String FAILED_MESSAGE = "Canceling Checkout \"{0}\" failed";
 
@@ -61,13 +63,24 @@ public class CancelCheckoutJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		
 		try {
+			String message = MessageFormat.format( CANCELING_CHECKOUT_TASK, document.getName() );
+			monitor.beginTask( message, IProgressMonitor.UNKNOWN );
 			DocumentTask task = new CancelCheckoutTask(document);
 			ObjectStoresManager.getManager().executeTaskSync(task);
+			removeFromFilesTracker();
 			return Status.OK_STATUS;
 		} catch (Exception e) {
 			showError(e);
 		}
 		return Status.CANCEL_STATUS;
+	}
+
+	private void removeFromFilesTracker() {
+		String versionSeriesId = document.getVersionSeriesId();
+		FilesTracker tracker = FilesTracker.getInstance();
+		if ( tracker.isVersionSeriesTracked(versionSeriesId) ) {
+			tracker.removeTrackedVersionSeries(versionSeriesId);
+		}
 	}
 
 	private void showError(final Exception e) {

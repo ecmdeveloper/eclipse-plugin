@@ -20,8 +20,10 @@
 
 package com.ecmdeveloper.plugin.wizard;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -38,6 +40,7 @@ public class CheckinWizard extends Wizard {
 	private ConfigureCheckinWizardPage configureCheckinPage;
 	private ContentSelectionWizardPage contentSelectionPage;
 	private Document document;
+	private IFile initialContent;
 	
 	public CheckinWizard(Document document) {
 		this.document = document;
@@ -64,12 +67,20 @@ public class CheckinWizard extends Wizard {
 
 		if ( page instanceof ConfigureCheckinWizardPage ) {
 			if ( ((ConfigureCheckinWizardPage)page).isSelectContent() ) {
+				addInitialContent();
 				return contentSelectionPage;
 			}
 		}
 		return null;
 	}
 
+	private void addInitialContent() {
+		if ( initialContent != null ) {
+			ArrayList<Object> content = new ArrayList<Object>();
+			content.add(initialContent);
+			contentSelectionPage.setContent(content);
+		}
+	}
 
 	@Override
 	public boolean performFinish() {
@@ -94,5 +105,9 @@ public class CheckinWizard extends Wizard {
 		
 		Job checkinJob = new CheckinJob( document, getShell(), content, mimeType, majorVersion   );
 		return checkinJob;
+	}
+
+	public void setInitialContent(IFile initialContent) {
+		this.initialContent = initialContent;
 	}
 }

@@ -19,20 +19,9 @@
  */
 package com.ecmdeveloper.plugin.handlers;
 
-import java.util.Iterator;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.wizard.SaveWizard;
 
 /**
@@ -40,36 +29,16 @@ import com.ecmdeveloper.plugin.wizard.SaveWizard;
  * @author Ricardo.Belfor
  *
  */
-public class SaveDocumentHandler extends AbstractHandler implements IHandler {
+public class SaveDocumentHandler extends AbstractDocumentHandler  {
 
-	private IWorkbenchWindow window;
-	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if (window == null)	return null;
-
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-
-		if (!(selection instanceof IStructuredSelection))
-			return null;
-
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		
-		while ( iterator.hasNext() ) {
-			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			if (objectStoreItem instanceof Document) {
-				openSaveWizard((Document) objectStoreItem);
-			}
-		}
-
-		return null;
+	protected void handleDocument(Document document) {
+		openSaveWizard( document );
 	}
 
 	private void openSaveWizard(Document document) {
 		SaveWizard wizard = new SaveWizard( document );
-		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.open();
 	}
