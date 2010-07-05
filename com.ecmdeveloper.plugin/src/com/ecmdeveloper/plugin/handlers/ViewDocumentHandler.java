@@ -20,54 +20,27 @@
 
 package com.ecmdeveloper.plugin.handlers;
 
-import java.util.Iterator;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
-
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.jobs.ViewDocumentJob;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class ViewDocumentHandler extends AbstractHandler implements IHandler {
+public class ViewDocumentHandler extends AbstractDocumentHandler {
 
 	public static final String ID = "com.ecmdeveloper.plugin.viewDocument";
 	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if (window == null)	return null;
+	protected void handleDocument(Document document) {
+		ViewDocumentJob job = new ViewDocumentJob(document, null, getWorkbenchWindow() );
+		job.setUser(true);
+		job.schedule();
+	}
 
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-
-		if (!(selection instanceof IStructuredSelection))
-			return null;
-
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		while ( iterator.hasNext() ) {
-			
-			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			ViewDocumentJob job = new ViewDocumentJob((Document) objectStoreItem, null, window );
-			job.setUser(true);
-			job.schedule();
-		}
-
-		Activator.getDefault().getContentCache().registerAsListener(window);
-
-		return null;
+	@Override
+	protected void executeFinished() {
+		Activator.getDefault().getContentCache().registerAsListener( getWorkbenchWindow() );
 	}
 }

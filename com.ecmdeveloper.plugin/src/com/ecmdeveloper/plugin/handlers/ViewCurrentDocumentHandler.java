@@ -18,39 +18,21 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.model.tasks;
+package com.ecmdeveloper.plugin.handlers;
 
+import com.ecmdeveloper.plugin.jobs.ViewCurrentDocumentJob;
 import com.ecmdeveloper.plugin.model.Document;
-import com.filenet.api.constants.RefreshMode;
-import com.filenet.api.constants.ReservationType;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class CheckoutTask extends DocumentTask {
-	
-	private Document checkoutDocument;
-
-	public CheckoutTask(Document document) {
-		super(document);
-	}
-
-	public Document getCheckoutDocument() {
-		return checkoutDocument;
-	}
+public class ViewCurrentDocumentHandler extends AbstractDocumentHandler {
 
 	@Override
-	public Object call() throws Exception {
-		
-		com.filenet.api.core.Document currentVersion = getCurrentVersion();
-		currentVersion.checkout( ReservationType.EXCLUSIVE, null, null, null);
-		currentVersion.save( RefreshMode.REFRESH );
-		getDocument().refresh();
-		checkoutDocument = new Document( currentVersion, null, getDocument().getObjectStore() );
-		
-		fireTaskCompleteEvent( TaskResult.COMPLETED );
-		
-		return null;
+	protected void handleDocument(Document document) {
+		ViewCurrentDocumentJob job = new ViewCurrentDocumentJob(document, getWorkbenchWindow() );
+		job.setUser(true);
+		job.schedule();
 	}
 }

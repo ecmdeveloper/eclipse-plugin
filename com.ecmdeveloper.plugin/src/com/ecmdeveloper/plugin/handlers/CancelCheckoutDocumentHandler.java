@@ -20,48 +20,19 @@
 
 package com.ecmdeveloper.plugin.handlers;
 
-import java.util.Iterator;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
-
 import com.ecmdeveloper.plugin.jobs.CancelCheckoutJob;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class CancelCheckoutDocumentHandler extends AbstractHandler implements IHandler {
-
-	private IWorkbenchWindow window;
+public class CancelCheckoutDocumentHandler extends AbstractDocumentHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if (window == null)	return null;
-
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-
-		if (!(selection instanceof IStructuredSelection))
-			return null;
-
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		while ( iterator.hasNext() ) {
-			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			CancelCheckoutJob job = new CancelCheckoutJob((Document) objectStoreItem, window.getShell() );
-			job.setUser(true);
-			job.schedule();
-		}
-
-		return null;
+	protected void handleDocument(Document document) {
+		CancelCheckoutJob job = new CancelCheckoutJob(document, getShell() );
+		job.setUser(true);
+		job.schedule();
 	}
 }

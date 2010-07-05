@@ -21,8 +21,14 @@
 package com.ecmdeveloper.plugin.wizard;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
@@ -32,6 +38,7 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
  */
 public class DownloadDocumentWizardPage extends WizardNewFileCreationPage {
 
+	private static final String CONFIRM_MESSAGE_FORMAT = "Are you sure you want to overwrite the file \"{0}\"?";
 	private static final String WIZARD_DESCRIPTION = "This wizard downloads the content of the document to a file in the workspace.";
 	private static final String WIZARD_TITLE = "Download content";
 	private InputStream inputStream;
@@ -44,6 +51,27 @@ public class DownloadDocumentWizardPage extends WizardNewFileCreationPage {
 		setAllowExistingResources(true);
 	}
 
+	public boolean deleteExistingFile(IProgressMonitor monitor) throws Exception {
+	
+		IPath containerPath = getContainerFullPath();
+		IPath newFilePath = containerPath.append( getFileName() );
+		IFile fileHandle = createFileHandle(newFilePath );
+		if ( fileHandle.exists() ) {
+			if ( ! getConfirmOverwrite(newFilePath) ) {
+				return false;
+			} 
+			fileHandle.delete(true, monitor);
+		}
+		return true;
+	}
+
+	private boolean getConfirmOverwrite(IPath newFilePath) {
+		String confirmMessage = MessageFormat.format(CONFIRM_MESSAGE_FORMAT, newFilePath
+				.toString());
+		boolean confirm = MessageDialog.openConfirm(getShell(), WIZARD_TITLE, confirmMessage );
+		return confirm;
+	}
+	
 	public void setInitialContents(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}

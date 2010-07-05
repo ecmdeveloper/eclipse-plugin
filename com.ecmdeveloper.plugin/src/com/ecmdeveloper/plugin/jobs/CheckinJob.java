@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.model.Document;
@@ -36,6 +35,7 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -76,6 +76,7 @@ public class CheckinJob extends Job {
 			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
 			saveContent(monitor);
 			checkinDocument(monitor);
+			removeFromFilesTracker();
 			monitor.done();
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
@@ -83,6 +84,13 @@ public class CheckinJob extends Job {
 			showError(e);
 		}
 		return Status.CANCEL_STATUS;
+	}
+
+	private void removeFromFilesTracker() {
+		String versionSeriesId = document.getVersionSeriesId();
+		if ( FilesTracker.getInstance().isVersionSeriesTracked(versionSeriesId) ) {
+			FilesTracker.getInstance().removeTrackedVersionSeries(versionSeriesId);
+		}
 	}
 
 	private void saveContent(IProgressMonitor monitor) throws ExecutionException {

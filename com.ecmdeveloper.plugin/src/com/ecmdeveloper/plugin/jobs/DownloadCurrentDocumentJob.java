@@ -18,39 +18,37 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.model.tasks;
+package com.ecmdeveloper.plugin.jobs;
+
+import java.text.MessageFormat;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.model.Document;
-import com.filenet.api.constants.RefreshMode;
-import com.filenet.api.constants.ReservationType;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class CheckoutTask extends DocumentTask {
+public class DownloadCurrentDocumentJob extends AbstractCurrentDocumentJob {
+
+	private static final String JOB_NAME = "Download Current Document";
+	private static final String TASK_NAME = "Downloading Current Document \"{0}\"";
 	
-	private Document checkoutDocument;
-
-	public CheckoutTask(Document document) {
-		super(document);
-	}
-
-	public Document getCheckoutDocument() {
-		return checkoutDocument;
+	public DownloadCurrentDocumentJob(Document document, IWorkbenchWindow window) {
+		super(JOB_NAME, document, window);
 	}
 
 	@Override
-	public Object call() throws Exception {
-		
-		com.filenet.api.core.Document currentVersion = getCurrentVersion();
-		currentVersion.checkout( ReservationType.EXCLUSIVE, null, null, null);
-		currentVersion.save( RefreshMode.REFRESH );
-		getDocument().refresh();
-		checkoutDocument = new Document( currentVersion, null, getDocument().getObjectStore() );
-		
-		fireTaskCompleteEvent( TaskResult.COMPLETED );
-		
-		return null;
+	protected void scheduleNextJob(IProgressMonitor monitor) {
+		String taskName = MessageFormat.format(TASK_NAME, getDocumentName() );
+		monitor.beginTask( taskName, IProgressMonitor.UNKNOWN );
+		DownloadDocumentJob job = new DownloadDocumentJob(getCurrentVersionDocument(), getWindow());
+		job.setProgressGroup(monitor, IProgressMonitor.UNKNOWN );
+		job.setUser(true);
+		job.schedule();
 	}
+
+
 }

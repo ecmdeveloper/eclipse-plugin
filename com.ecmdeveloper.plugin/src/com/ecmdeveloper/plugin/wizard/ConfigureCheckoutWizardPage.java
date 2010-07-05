@@ -127,6 +127,6 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 		trackButton = new Button(container, SWT.CHECK );
 		trackButton.setText("Track Content");
 		trackButton.setLayoutData(getFullRowGridData());
-		trackButton.setSelection(true);
+		trackButton.setSelection(false);
 	}
 }

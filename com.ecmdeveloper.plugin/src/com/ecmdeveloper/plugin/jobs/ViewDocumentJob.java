@@ -41,6 +41,7 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.GetContentAsFileTask;
+import com.ecmdeveloper.plugin.model.tasks.GetCurrentVersionTask;
 import com.ecmdeveloper.plugin.util.ContentCache;
 
 /**
@@ -71,7 +72,7 @@ public class ViewDocumentJob extends AbstractDocumentContentJob {
 
 		String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
 		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
-
+		
 		Collection<Integer> contentElements = getContentElements(monitor);
 		if ( contentElements.size() == 0 ) {
 			monitor.done();

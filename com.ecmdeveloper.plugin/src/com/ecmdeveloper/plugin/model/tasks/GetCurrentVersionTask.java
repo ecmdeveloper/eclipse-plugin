@@ -21,36 +21,30 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.model.Document;
-import com.filenet.api.constants.RefreshMode;
-import com.filenet.api.constants.ReservationType;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class CheckoutTask extends DocumentTask {
-	
-	private Document checkoutDocument;
+public class GetCurrentVersionTask extends DocumentTask {
 
-	public CheckoutTask(Document document) {
-		super(document);
+	private Document currentVersionDocument;
+
+	public Document getCurrentVersionDocument() {
+		return currentVersionDocument;
 	}
 
-	public Document getCheckoutDocument() {
-		return checkoutDocument;
+	public GetCurrentVersionTask(Document document) {
+		super(document);
 	}
 
 	@Override
 	public Object call() throws Exception {
 		
 		com.filenet.api.core.Document currentVersion = getCurrentVersion();
-		currentVersion.checkout( ReservationType.EXCLUSIVE, null, null, null);
-		currentVersion.save( RefreshMode.REFRESH );
-		getDocument().refresh();
-		checkoutDocument = new Document( currentVersion, null, getDocument().getObjectStore() );
+		currentVersionDocument = new Document( currentVersion, null, getDocument().getObjectStore() );
 		
-		fireTaskCompleteEvent( TaskResult.COMPLETED );
-		
-		return null;
+		return currentVersionDocument;
 	}
+
 }
