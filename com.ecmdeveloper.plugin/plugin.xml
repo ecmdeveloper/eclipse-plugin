@@ -87,9 +87,14 @@
             name="Import`">
       </command>
       <command
-            description="View Document"
+            description="View Released Document"
             id="com.ecmdeveloper.plugin.viewDocument"
-            name="Latest Version">
+            name="Released Version">
+      </command>
+      <command
+            description="View Current Document"
+            id="com.ecmdeveloper.plugin.viewCurrentDocument"
+            name="Current Version">
       </command>
       <command
             description="View Document Version"
@@ -97,9 +102,9 @@
             name="Other Versions...">
       </command>
       <command
-            description="Compare Document"
+            description="Compare Released Document"
             id="com.ecmdeveloper.plugin.compareDocument"
-            name="Latest Version With Local File">
+            name="Released Version With Local File">
       </command>
       <command
             description="Compare Document Versions"
@@ -117,9 +122,9 @@
             name="Delete Versions...">
       </command>
       <command
-            description="Download Document Content"
+            description="Download Released Document Content"
             id="com.ecmdeveloper.plugin.downloadDocument"
-            name="Latest Version">
+            name="Released Version">
       </command>
       <command
             description="Download Document Versions Content"
@@ -145,6 +150,16 @@
             description="Checkin Document"
             id="com.ecmdeveloper.plugin.checkinDocument"
             name="Checkin">
+      </command>
+      <command
+            description="Checkin Tracked File"
+            id="com.ecmdeveloper.plugin.checkinTrackedFile"
+            name="Checkin">
+      </command>
+      <command
+            description="Download Current Document Content"
+            id="com.ecmdeveloper.plugin.downloadCurrentDocument"
+            name="Current Version">
       </command>
    </extension>
    <extension
@@ -332,6 +347,24 @@
                </visibleWhen>
             </command>
             <command
+                  commandId="com.ecmdeveloper.plugin.viewCurrentDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="com.ecmdeveloper.plugin.viewDocumentVersion"
                   style="push">
                <visibleWhen
@@ -354,6 +387,24 @@
                label="Download">
             <command
                   commandId="com.ecmdeveloper.plugin.downloadDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadCurrentDocument"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -877,6 +928,40 @@
                   <test
                         property="com.ecmdeveloper.plugin.isCheckedOut">
                   </test>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.CheckinTrackedFileHandler"
+            commandId="com.ecmdeveloper.plugin.checkinTrackedFile">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.ViewCurrentDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.viewCurrentDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.handlers.DownloadCurrentDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.downloadCurrentDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
                </iterate>
             </with>
          </enabledWhen>
