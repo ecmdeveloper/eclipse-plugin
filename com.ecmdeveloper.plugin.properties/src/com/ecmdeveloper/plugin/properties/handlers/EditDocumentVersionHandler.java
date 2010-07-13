@@ -20,34 +20,35 @@
 
 package com.ecmdeveloper.plugin.properties.handlers;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.model.CustomObject;
+import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
-import com.ecmdeveloper.plugin.properties.editors.DocumentEditor;
-import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class EditObjectStoreItemHandler extends AbstractEditHandler {
+public class EditDocumentVersionHandler extends AbstractEditHandler {
 
-	private IWorkbenchWindow window;
+	protected IWorkbenchWindow window;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-
+		
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if (window == null)	return null;
 
@@ -56,22 +57,36 @@ public class EditObjectStoreItemHandler extends AbstractEditHandler {
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 
-		openEditors(selection);
+		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+		while ( iterator.hasNext() ) {
+			
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
+			if ( objectStoreItem instanceof Document ) {
+				Document document = (Document) objectStoreItem;
+				IJobChangeListener jobChangeListener = new EditDocumentVersionJobChangeListener();
+				GetDocumentVersionJob job = new GetDocumentVersionJob(document, window.getShell() );
+				job.addJobChangeListener( jobChangeListener );
+				job.setUser(true);
+				job.schedule();
+			}
+		}
+
 		return null;
 	}
 
-	
-	private void openEditors(ISelection selection) {
+	class EditDocumentVersionJobChangeListener extends JobChangeAdapter {
 
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		while ( iterator.hasNext() ) {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) iterator.next();
-			if (objectStoreItem instanceof Folder ) {
-				showEditor( objectStoreItem, window, FolderEditor.EDITOR_ID );
-			} else if (objectStoreItem instanceof Document ) {
-				showEditor( objectStoreItem, window, DocumentEditor.EDITOR_ID );
-			} else if (objectStoreItem instanceof CustomObject ) {
-				showEditor( objectStoreItem, window, CustomObjectEditor.EDITOR_ID );
+		@Override
+		public void done(IJobChangeEvent event) {
+
+			if ( event.getResult().equals( Status.CANCEL_STATUS ) ) {
+				return;
+			}
+
+			GetDocumentVersionJob job = (GetDocumentVersionJob) event.getJob();
+			
+			for ( Document selectedVersion : job.getSelectedVersions() ) {
+				openObjectStoreItemEditor(selectedVersion, window);
 			}
 		}
 	}
