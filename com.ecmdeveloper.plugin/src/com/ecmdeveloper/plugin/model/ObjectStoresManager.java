@@ -43,9 +43,6 @@ import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
-import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
-import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
-import com.ecmdeveloper.plugin.model.tasks.CheckoutTask;
 import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;

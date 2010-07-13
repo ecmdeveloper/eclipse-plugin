@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -35,7 +35,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 import com.ecmdeveloper.plugin.util.PluginLog;
-import com.ecmdeveloper.plugin.handlers.ViewDocumentHandler;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 /**
@@ -45,6 +44,8 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
  */
 public class ObjectStoresView extends ViewPart {
 	
+	public static final String VIEW_DOCUMENT_HANDLER_ID = "com.ecmdeveloper.plugin.viewDocument";
+
 	private TreeViewer viewer;
 	
 	class NameSorter extends ViewerSorter {
@@ -66,7 +67,7 @@ public class ObjectStoresView extends ViewPart {
 		viewer.setContentProvider(new ObjectStoresViewContentProvider());
 		viewer.setLabelProvider(new ObjectStoreItemLabelProvider());
 		viewer.setInput( ObjectStoresManager.getManager() );
-
+		viewer.setSorter( new ObjectStoresViewSorter() );
 		hookContextMenu();
 		hookMouse();
 		
@@ -92,7 +93,7 @@ public class ObjectStoresView extends ViewPart {
 			public void mouseDoubleClick(MouseEvent e) {
 				try {
 					IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-					handlerService.executeCommand(ViewDocumentHandler.ID, null );
+					handlerService.executeCommand(VIEW_DOCUMENT_HANDLER_ID, null );
 				} catch (Exception exception) {
 					PluginLog.error( exception );
 				}

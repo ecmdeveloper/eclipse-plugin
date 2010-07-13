@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -25,7 +25,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.util.ContentCache;
 import com.ecmdeveloper.plugin.util.ImageCache;
 
 /**
@@ -36,7 +35,6 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin";
 	private static Activator plugin;
 	private static final ImageCache imageCache = new ImageCache();
-	private ContentCache contentCache;
 
 	public Activator() {
 	}
@@ -44,16 +42,12 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		contentCache = new ContentCache( getStateLocation() );
-		contentCache.clear();
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		ObjectStoresManager.getManager().saveObjectStores();
 		plugin = null;
 		imageCache.dispose();
-		contentCache.clear();
-		contentCache.stop();
 		
 		super.stop(context);
 	}
@@ -80,10 +74,5 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static Image getImage( String path ) {
 		return imageCache.getImage( getImageDescriptor( path ) );		
-	}
-	
-	public ContentCache getContentCache() {
-		return contentCache;
-		
 	}
 }
