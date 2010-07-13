@@ -30,7 +30,7 @@
 	An example is the development of event actions with related code modules. Part of developing event actions 
 	involve updating an existing code module and reconnecting the new version of the code module 
 	with the event action. Although this process can be streamlined using a custom java application 
-	doing all these actions, a generic solutions is preferable. This is what the ECM Developer plugin 
+	doing all these actions, a generic solutions is preferable. This is what the ECM Developer plug in 
 	offers.
  	</p>
  	<p>
@@ -45,6 +45,12 @@
 	<ul>
 			<li>Browsing Object Stores</li>
 			<li>Performing some basic actions on Object Store objects such as renaming, moving and deleting.</li>
+			<li>Performing actions on the content of the document such as 
+			<a href='browsing_object_stores.shtml#view'>viewing</a>, editing 
+			(<a href='browsing_object_stores.shtml#checkout'>checkout</a>, 
+			<a href='browsing_object_stores.shtml#checkin'>checkin</a>), 
+			<a href='browsing_object_stores.shtml#download'>dowloading</a> 
+			and <a href='browsing_object_stores.shtml#compare'>comparing</a>.</li>			   
 			<li>Editing of folder, document and custom object properties.</li>
 			<li>Class Diagram Editor, creating UML diagrams of the classes defined in the Object Store.<br>
 			<strong><a href="editing_class_diagrams_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
