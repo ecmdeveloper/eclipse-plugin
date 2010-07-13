@@ -46,9 +46,7 @@ public abstract class DocumentTask extends BaseTask {
 
 	protected com.filenet.api.core.Document getReservation() {
 		
-		com.filenet.api.core.Document internalDocument = getInternalDocument();
-		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
-		VersionSeries versionSeries = internalDocument.get_VersionSeries();
+		VersionSeries versionSeries = getVersionSeries();
 		versionSeries.fetchProperties( new String[] { PropertyNames.RESERVATION} );
 		com.filenet.api.core.Document currentVersion = (com.filenet.api.core.Document) versionSeries
 				.get_Reservation();
@@ -58,13 +56,18 @@ public abstract class DocumentTask extends BaseTask {
 
 	protected com.filenet.api.core.Document getCurrentVersion() {
 		
-		com.filenet.api.core.Document internalDocument = getInternalDocument();
-		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
-		VersionSeries versionSeries = internalDocument.get_VersionSeries();
+		VersionSeries versionSeries = getVersionSeries();
 		versionSeries.fetchProperties( new String[] { PropertyNames.CURRENT_VERSION } );
 		com.filenet.api.core.Document currentVersion = (com.filenet.api.core.Document) versionSeries
 				.get_CurrentVersion();
 	
 		return currentVersion;
+	}
+
+	private VersionSeries getVersionSeries() {
+		com.filenet.api.core.Document internalDocument = getInternalDocument();
+		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
+		VersionSeries versionSeries = internalDocument.get_VersionSeries();
+		return versionSeries;
 	}
 }

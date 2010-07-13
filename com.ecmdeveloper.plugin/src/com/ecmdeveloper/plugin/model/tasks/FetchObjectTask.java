@@ -26,7 +26,6 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.filenet.api.core.Factory;
 import com.filenet.api.core.IndependentObject;
 
 /**

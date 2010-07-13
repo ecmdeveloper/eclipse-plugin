@@ -36,8 +36,8 @@ public class CancelCheckoutTask extends DocumentTask {
 	@Override
 	public Object call() throws Exception {
 
-		com.filenet.api.core.Document currentVersion = cancelCheckout();
-		getDocument().refresh( currentVersion );
+		cancelCheckout();
+		getDocument().refresh();
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		return null;

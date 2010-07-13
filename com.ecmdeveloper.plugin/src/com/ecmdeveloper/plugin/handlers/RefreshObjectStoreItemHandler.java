@@ -33,15 +33,12 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
-import com.ecmdeveloper.plugin.util.Messages;
 
 /**
  * @author Ricardo.Belfor
  *
  */
 public class RefreshObjectStoreItemHandler extends AbstractHandler  {
-
-	private static final String HANDLER_NAME = Messages.RefreshObjectStoreItemHandler_HandlerName;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

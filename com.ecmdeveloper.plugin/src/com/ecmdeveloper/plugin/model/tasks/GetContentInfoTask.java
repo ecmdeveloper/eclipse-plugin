@@ -21,13 +21,11 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.constants.PropertyNames;
-import com.filenet.api.core.ContentReference;
 import com.filenet.api.core.ContentTransfer;
 
 /**
