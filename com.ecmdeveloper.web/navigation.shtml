@@ -12,6 +12,11 @@
 </ul>
 
 <h2>Recent Updates</h2>
+
+<p><strong>[7/xx/2010]</strong><p>Version 1.3.0 of the ECM Developer plug-in is available for download. This version
+adds a lot of actions on the document content, such as viewing, editing, downloading and comparing. 
+These actions along with some bug fixes are described <a href='version_history.shtml'>here</a>.<br/></p>
+
 <p><strong>[4/25/2010]</strong><p>Version 1.2.0 of the ECM Developer plug-in is available for download. This version
 has Content Engine 4.5.1. support. A new feature is the <a href="editing_class_diagrams.shtml">class diagram editor</a>. 
 The rest of the changes are described <a href='version_history.shtml'>here</a>.<br/></p>

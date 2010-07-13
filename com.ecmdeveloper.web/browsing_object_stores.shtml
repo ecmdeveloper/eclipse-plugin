@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>ECM Developer - browsing object stores</title>
-<meta name="keywords" content="filenet,p8,eclipse" />
+<meta name="keywords" content="filenet,p8,eclipse,content engine, object store, ibm" />
 <meta name="description" content="" />
 <link href="default.css" rel="stylesheet" type="text/css" />
 </head>
@@ -27,52 +27,141 @@
 	of the view. When the Object Store is connected the
 	Object Store can be browsed, showing folders, documents and custom objects. Also additional
 	Object Stores can be added to this view using the toolbar button 
-	(<img width='16' height='16' alt='Import' src='images/icons/database_add.png'/>). Next the operations
-	currently possible on Object Store items will be discussed.
+	(<img width='16' height='16' alt='Import' src='images/icons/database_add.png'/>). In this view you can
+	perform the operations possible on Object Store items.</p>
 	
 	<h3>Edit</h3>
+	<p>
 	The properties of an Object Store item can be edited using the <strong>Edit</strong> command of the 
 	context menu. This command will open the <a href='editing_objects.shtml'>properties editor</a> window.
-
+	<p>
+	
 	<h3>Refresh</h3>
+	<p>
 	An Object Store item can be refreshed using either the <strong>File &gt; Refresh</strong> command
 	or the <strong>Refresh</strong> command of the context menu. This command will get a fresh copy
 	of the item on the server.
+	</p>
 	
 	<h3>Rename</h3>
+	<p>
 	An Object Store item can be renamed using either the <strong>File &gt; Rename</strong> command
 	or the <strong>Rename</strong> command of the context menu. A dialog will appear where a new name
 	for the item can be entered:
 	<p><img alt='Rename' src='images/browsing_object_stores/rename.jpg'/></p>
 	A check is made if the entered name is correct.
-
+	</p>
+	
 	<h3>Move</h3>
-
-	An Object Store item can be renamed using either the <strong>File &gt; Move</strong> command
+	<p>
+	An Object Store item can be moved using either the <strong>File &gt; Move</strong> command
 	or the <strong>Move</strong> command of the context menu. A dialog will appear where a new 
 	folder location for the item can be selected:
 	<p><img alt='Move' src='images/browsing_object_stores/move.jpg'/></p>
 	In case of a multiple selection the new location will apply for all the items selected.
+	</p>
 	 	
-	<h3>Delete</h3>
+	<a name='delete'><h3>Delete</h3></a>
+	<p>
 	An Object Store item can be deleted using either the <strong>Edit &gt; Delete</strong> command
 	or the <strong>Delete</strong> command of the context menu. A confirmation is request for each
 	item to be deleted. 
+	</p>
+	
+	<a name='delete_versions'><h3>Delete Versions</h3></a>
+	<p>
+	An Document Version can be deleted using the <strong>Delete Versions</strong> command 
+	of the context menu. First a dialog is shown, displaying all the versions of the document. All the
+	versions selected in this dialog will be deleted.
+	</p>
 
-	<h3>View</h3>
-	Documents can be viewed using the <strong>View</strong> command of the context menu. First a read 
-	only local copy of the content of the document is made. Next the file is opened, either in the 
-	available Eclipse editor or in an external system editor. If the document has no content then a
-	message is shown. Currently only the first content element of the document is shown. If possible
-	the local copy will be deleted when the editor closes. If this is not possible for the specific 
-	editor then the file will be deleted when Eclipse terminates or restarts.   
+	<a name='view'><h3>View</h3></a>
+	<p>
+	Documents can be viewed using the <strong>View</strong> command of the context menu. This menu contains
+	three sub items:
+	</p>
+	<ul>
+	<li><strong>Released Version</strong>: this will show the released version of the document. If the latest
+	major version is zero the current version is shown. Otherwise the version with a zero minor version and the highest major
+	version is shown. If a document is double clicked then also the released version is shown.</li>
+	<li><strong>Current Version</strong>: this will show the version with the highest major and minor version.</li>   
+	<li><strong>View Document Version</strong>: this will show specific versions of a document. First a dialog is shown, 
+	displaying all the versions of the document. All the versions selected in this dialog will be shown.
+	</ul>
+	<p>
+	When viewing starts, first a read only local copy of the content of the document is made. Next the file 
+	is opened, either in the  available Eclipse editor or in an external system editor. If the document has no 
+	content then a message is shown. If the document contains multiple content elements then specific content elements 
+	of the document can be selected. If possible the local copy will be deleted when the editor closes. 
+	If this is not possible for the specific editor then the file will be deleted when Eclipse terminates 
+	or restarts.
+	</p>
+	   
+	<a name='download'><h3>Download</h3></a>
+	<p>
+	The content of documents can be downloaded using the <strong>Download</strong> command of the context menu. 
+	This menu contains the same	three sub items as the <strong>View</strong> command, but instead of opening a 
+	viewer the content can be downloaded into the current Eclipse workspace. The user is prompted for a filename
+	and a location in the workspace. If a existing document in the workspace
+	is about to be overwritten then a confirmation is asked.
+	</p>
+
+	<a name='compare'><h3>Compare</h3></a>
+	<p>
+	Documents can be compared using the <strong>Compare</strong> command of the context menu. This menu contains
+	four sub items:
+	</p>
+	<ul>
+	<li><strong>Released Version With Local File</strong>: this will compare the released version of the document 
+	with a local file in the Eclipse workspace.</li>
+	<li><strong>Other Versions With Local File</strong>: this will compare other versions of the document with a local
+	file in the Eclipse workspace. First a dialog is shown, 
+	displaying all the versions of the document. All the versions selected in this dialog will be 
+	compared with a local file.</li>
+	<li><strong>Versions With Each Other</strong>: this will compare two version of the same document with each other.
+	First a dialog is shown, displaying all the versions of the document. If there are not two versions selected then
+	an error message will be displayed.</li>
+	<li><strong>Released Versions With Each Other</strong>: this will compare the released versions of two documents
+	with each other. If there are not two documents selected then an error message will be displayed.</li>
+	</ul>
+	<p>The contents of the documents are compared using the standard text compare engine of Eclipse.</p>
+	
+	<a name='checkout'><h3>Checkout</h3></a>
+	<p>
+	Documents can be checked out using the <strong>Checkout</strong> command of the context menu. A wizard 
+	will be shown allowing different checkout options to be set:
+	</p> 
+	<p><img alt='Configure Checkout' src='images/browsing_object_stores/configure_checkout.png'/></p>
+	
+	<a name='cancel_checkout'><h3>Cancel Checkout</h3></a>
+	<p>
+	The checkout of document can be canceled using the <strong>Cancel Checkout</strong> command of the context menu.
+	</p>
+
+	<a name='save'><h3>Save</h3></a>
+	<p>
+	The contents of a document can be saved using the <strong>Save</strong> command of the context menu. A wizard
+	will be shown allowing the selection of the different content elements: 
+	</p> 
+	<p><img alt='Select document content' src='images/browsing_object_stores/select_document_content.png'/></p>
+	<p>Either files in the Eclipse workspace or external files may be added. The first file determines the
+	mime type of the document. If the mime type cannot be determined or the mime type is different, 
+	then the mime type can be entered manually.</p>
+	   	
+	<a name='checkin'><h3>Checkin</h3></a>
+	Documents can be checked in using the <strong>Checkin</strong> command of the context menu. A wizard 
+	will be shown allowing different checkin options to be set:
+	</p> 
+	<p><img alt='Configure Checkin' src='images/browsing_object_stores/configure_checkin.png'/></p>
+	<p>If new content is necessary then after the first wizard page the content selection page shown 
+	for the <strong>Save</strong> command is shown.</p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
 	</div>
 </div>
 <div id="footer">
-	<p>Copyright &copy; 2009 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
+	<p>Copyright &copy; 2009,2010 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
 </div>
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
