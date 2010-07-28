@@ -35,6 +35,12 @@
 	The properties of an Object Store item can be edited using the <strong>Edit</strong> command of the 
 	context menu. This command will open the <a href='editing_objects.shtml'>properties editor</a> window.
 	<p>
+
+	<h3>Edit document version</h3>
+	<p>
+	The properties of a specific version of a document can be edited using the <strong>Edit document version</strong> command of the 
+	context menu. This command will first prompt for a version and next opens the <a href='editing_objects.shtml'>properties editor</a> window.
+	<p>
 	
 	<h3>Refresh</h3>
 	<p>
@@ -43,7 +49,7 @@
 	of the item on the server.
 	</p>
 	
-	<h3>Rename</h3>
+	<a name='rename'><h3>Rename</h3></a>
 	<p>
 	An Object Store item can be renamed using either the <strong>File &gt; Rename</strong> command
 	or the <strong>Rename</strong> command of the context menu. A dialog will appear where a new name
@@ -52,7 +58,7 @@
 	A check is made if the entered name is correct.
 	</p>
 	
-	<h3>Move</h3>
+	<a name='move'><h3>Move</h3></a>
 	<p>
 	An Object Store item can be moved using either the <strong>File &gt; Move</strong> command
 	or the <strong>Move</strong> command of the context menu. A dialog will appear where a new 

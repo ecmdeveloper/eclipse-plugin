@@ -12,17 +12,19 @@
 <!--#include virtual="/header.shtml" -->
 <div id="content">
 	<div id="left">
-	<h3>Version 1.3.0.0 7/xx/2010</h3>
+	<h3>Version 1.3.0.0 7/26/2010</h3>
 	<ul>
+	<li>Sorted Object Stores view</li>
 	<li>Checkout, Checkin, Save and Cancel Checkout of a document.</li> 
 	<li>Double click opens a document in the viewer.</li>
-	<li>Viewing document with multiple content elements.</li>
+	<li>Viewing documents with multiple content elements.</li>
 	<li>Viewing specific versions of a document.</li>
 	<li>Downloading specific version content.</li>
 	<li>Deleting specific versions of a document.</li>
 	<li>Comparing documents with each other.</li>
-	<li>Comparing two specific versions of a document.<li>
-	<li>Comparing versions of a document with a local file.<li>
+	<li>Comparing two specific versions of a document.</li>
+	<li>Comparing versions of a document with a local file.</li>
+	<li>Editing specific versions of a document.</li>
 	<li>Adding and removing an object store was not reflected in the Object Store Classes view.</li>
 	</ul>
 	<h3>Version 1.2.0.0 4/25/2010</h3>
@@ -30,7 +32,6 @@
 	<li>Added Content Engine 4.5.1 support.</li>
 	<li>Added Class Diagram editor.</li>
 	</ul>
-	</div>
 	<h3>Version 1.1.0.0 3/5/2010</h3>
 	<ul>
 	<li>Added support for folder, document and custom object editing.</li>
