@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
@@ -42,7 +42,7 @@ public class PropertyContentProvider implements IStructuredContentProvider, Prop
 
 	private static final String PROPERTY_NOT_FOUND_MESSAGE = "Property {0} not found in properties collection";
 	private ClassDescription classDescription;
-	private ObjectStoreItem objectStoreItem;
+	private PropertiesObject propertiesObject;
 	private TableViewer viewer;
 	private ArrayList<Property> properties;
 	
@@ -57,7 +57,7 @@ public class PropertyContentProvider implements IStructuredContentProvider, Prop
 		properties = new ArrayList<Property>();
 		
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
-			properties.add( new Property( objectStoreItem, propertyDescription ) );
+			properties.add( new Property( propertiesObject, propertyDescription ) );
 		}
 		return properties;
 	}
@@ -71,16 +71,16 @@ public class PropertyContentProvider implements IStructuredContentProvider, Prop
 		
 		this.viewer = (TableViewer) viewer;
 		
-		if ( objectStoreItem != null ) {
-			objectStoreItem.removePropertyChangeListener(this);
+		if ( propertiesObject != null ) {
+			propertiesObject.removePropertyChangeListener(this);
 		}
 		
 		if ( newInput != null ) {
 			classDescription = ((ObjectStoreItemEditorInput) newInput).getClassDescription();
-			objectStoreItem = ((ObjectStoreItemEditorInput) newInput).getObjectStoreItem();
+			propertiesObject = ((ObjectStoreItemEditorInput) newInput).getPropertiesObject();
 			
-			if ( objectStoreItem != null ) {
-				objectStoreItem.addPropertyChangeListener(this);
+			if ( propertiesObject != null ) {
+				propertiesObject.addPropertyChangeListener(this);
 			}
 		}
 	}

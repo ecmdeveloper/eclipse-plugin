@@ -27,4 +27,7 @@ public class IconFiles {
 	public static final String CHOICES_FOLDER = "icons/folder.png";
 	public static final String CHOICES_PLACEHOLDER = "icons/hourglass.png";
 	public static final String REFRESH = "icons/refresh.gif";
+	public static final String OBJECT_STORE = "icons/database.png";
+	public static final String FOLDER = "icons/folder.png";
+	public static final String FOLDER_ERROR = "icons/folder_error.png";
 }

@@ -6,7 +6,6 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 public class PropertiesInputForm extends FormPage {
 
@@ -24,8 +23,7 @@ public class PropertiesInputForm extends FormPage {
 		propertiesInputBlock.createContent(managedForm);
 	}	
 
-	public void refreshFormContent(ObjectStoreItem objectStoreItem ) {
-		
+	public void refreshFormContent() {
 		IEditorInput editorInput = getEditor().getEditorInput();
 		propertiesInputBlock.setInput( editorInput );
 	}

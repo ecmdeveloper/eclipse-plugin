@@ -128,7 +128,7 @@ public class OpenObjectStoreItemEditorJob extends Job {
 				try {
 					IDE.openEditor( window.getActivePage(), input, editorId);
 				} catch (PartInitException e) {
-					PluginMessage.openError(window.getShell(), JOB_NAME, MessageFormat.format(
+					PluginMessage.openErrorFromThread(window.getShell(), JOB_NAME, MessageFormat.format(
 					FAILED_MESSAGE, objectStoreItem.getName()), e);
 				}
 			}

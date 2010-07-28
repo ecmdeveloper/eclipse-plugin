@@ -36,7 +36,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
@@ -49,7 +49,8 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	private static final String SAVE_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveProperties";
 	private PropertiesInputForm propertiesInputForm;
 	private ClassDescription classDescription;
-	private ObjectStoreItem objectStoreItem;
+//	private ObjectStoreItem objectStoreItem;
+	private PropertiesObject propertiesObject;
 	private boolean isPageModified;
 	
 	@Override
@@ -59,8 +60,8 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 
 			addPropertiesInputForm();
 			
-			objectStoreItem = (ObjectStoreItem) getEditorInput().getAdapter( ObjectStoreItem.class);
-			objectStoreItem.addPropertyChangeListener(this);
+			propertiesObject = (PropertiesObject) getEditorInput().getAdapter( PropertiesObject.class);
+			propertiesObject.addPropertyChangeListener(this);
 			isPageModified = false;
 		
 			updateTitle();
@@ -108,21 +109,21 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	@Override
 	protected void setActivePage(int pageIndex) {
 		super.setActivePage(pageIndex);
-		propertiesInputForm.refreshFormContent(objectStoreItem);
+		propertiesInputForm.refreshFormContent();
 	}
 
 	public void refreshProperties() {
 		getSite().getShell().getDisplay().syncExec( new Runnable() {
 			@Override
 			public void run() {
-				propertiesInputForm.refreshFormContent(objectStoreItem);
+				propertiesInputForm.refreshFormContent();
 			}} 
 		);
 	}
 	
 	private void updateTitle() {
-		setPartName( objectStoreItem.getName() );
-		setTitleToolTip( objectStoreItem.getName() );
+		setPartName( propertiesObject.getName() );
+		setTitleToolTip( propertiesObject.getName() );
 	}
 	
 	@Override
