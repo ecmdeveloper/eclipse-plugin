@@ -32,6 +32,7 @@ import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.ClassesManagerEvent;
 import com.ecmdeveloper.plugin.classes.model.ClassesManagerListener;
 import com.ecmdeveloper.plugin.classes.model.VirtualFolder;
+import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.model.constants.VirtualFolderType;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -48,6 +49,11 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	private ClassesManager manager;
 	private ObjectStores classesRoot;
 	private TreeViewer viewer;
+	private ClassType classesFilter;
+	
+	public ClassesViewContentProvider(ClassType classesFilter) {
+		this.classesFilter = classesFilter;
+	}
 	
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -96,12 +102,11 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	public Object[] getChildren(Object parent) {
 
 		if ( parent instanceof ObjectStore ) {
-			ArrayList<Object> virtualFolders = new ArrayList<Object>();
-			for (VirtualFolderType virtualFolderType : VirtualFolderType.values() ) {
-				virtualFolders.add( new VirtualFolder( virtualFolderType, (ObjectStore) parent )  );
+			if ( ClassType.ALL_CLASSES.equals( classesFilter ) ) {
+				return getVirtualFolders(parent);
+			} else {
+				throw new UnsupportedOperationException( "Not yet implemented" );
 			}
-			return virtualFolders.toArray();
-			
 		} else if ( parent instanceof VirtualFolder ) {
 			
 			VirtualFolder virtualFolder = (VirtualFolder) parent;
@@ -122,6 +127,14 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 			}
 		}
 		return new Object[0];
+	}
+
+	private Object[] getVirtualFolders(Object parent) {
+		ArrayList<Object> virtualFolders = new ArrayList<Object>();
+		for (VirtualFolderType virtualFolderType : VirtualFolderType.values() ) {
+			virtualFolders.add( new VirtualFolder( virtualFolderType, (ObjectStore) parent )  );
+		}
+		return virtualFolders.toArray();
 	}
 
 	@Override

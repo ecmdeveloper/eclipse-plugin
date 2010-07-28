@@ -254,7 +254,7 @@
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.refresh"
-               icon="icons/refresh.gif"
+               icon="icons/arrow_refresh.png"
                style="push">
          </command>
       </menuContribution>

@@ -51,7 +51,14 @@ public class ObjectStoresViewSorter extends ViewerSorter {
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		
+
+        int cat1 = category(e1);
+        int cat2 = category(e2);
+
+        if (cat1 != cat2) {
+			return cat1 - cat2;
+		}
+
 		String sortName1 = getSortName(e1);
 		String sortName2 = getSortName(e2);
 		

@@ -38,6 +38,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.ClassesManager;
+import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 
 /**
  * @author Ricardo Belfor
@@ -60,7 +61,7 @@ public class ClassesView extends ViewPart {
 	public void createPartControl(Composite parent) {
 
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider( new ClassesViewContentProvider() );
+		viewer.setContentProvider( new ClassesViewContentProvider( ClassType.ALL_CLASSES ) );
 		viewer.setLabelProvider(new ClassesViewLabelProvider() );
 		viewer.setInput( ClassesManager.getManager() );
 		

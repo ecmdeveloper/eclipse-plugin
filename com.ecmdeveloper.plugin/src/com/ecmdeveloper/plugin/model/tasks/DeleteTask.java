@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2010, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -73,12 +73,8 @@ public class DeleteTask extends BaseTask {
 			
 			IndependentlyPersistableObject persistableObject = ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
 
-			if ( deleteAllVersions && objectStoreItem instanceof Document ) {
-				com.filenet.api.core.Document documentObject = (com.filenet.api.core.Document) persistableObject;
-				documentObject.fetchProperties( new String[] { PropertyNames.VERSION_SERIES} );
-				VersionSeries versionSeries = documentObject.get_VersionSeries();
-				versionSeries.delete();
-				versionSeries.save(RefreshMode.NO_REFRESH);
+			if ( objectStoreItem instanceof Document ) {
+				deleteDocument(objectStoreItem, persistableObject);
 			} else {
 				persistableObject.delete();
 				persistableObject.save(RefreshMode.REFRESH);
@@ -97,5 +93,38 @@ public class DeleteTask extends BaseTask {
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		return null;
+	}
+
+	private void deleteDocument(IObjectStoreItem objectStoreItem,
+			IndependentlyPersistableObject persistableObject) {
+
+		if ( deleteAllVersions ) {
+			deleteAllVersions(persistableObject);
+		}  else {
+			deleteOneVersion(objectStoreItem, persistableObject);
+		}
+	}
+
+	private void deleteOneVersion(IObjectStoreItem objectStoreItem,
+			IndependentlyPersistableObject persistableObject) {
+
+		VersionSeries versionSeries = getVersionSeries(persistableObject);
+		persistableObject.delete();
+		persistableObject.save(RefreshMode.NO_REFRESH);
+		versionSeries.fetchProperties( new String[] { PropertyNames.RELEASED_VERSION } );
+		((Document)objectStoreItem).refresh( (com.filenet.api.core.Document) versionSeries.get_ReleasedVersion() );
+	}
+
+	private void deleteAllVersions(IndependentlyPersistableObject persistableObject) {
+		VersionSeries versionSeries = getVersionSeries(persistableObject);
+		versionSeries.delete();
+		versionSeries.save(RefreshMode.NO_REFRESH);
+	}
+
+	private VersionSeries getVersionSeries(IndependentlyPersistableObject persistableObject) {
+		com.filenet.api.core.Document documentObject = (com.filenet.api.core.Document) persistableObject;
+		documentObject.fetchProperties( new String[] { PropertyNames.VERSION_SERIES} );
+		VersionSeries versionSeries = documentObject.get_VersionSeries();
+		return versionSeries;
 	}
 }
