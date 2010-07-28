@@ -94,7 +94,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	private void commitPropertyValue() {
 		try {
 			if ( emptyValueButton != null && emptyValueButton.getSelection() ) {
-				property.getObjectStoreItem().setValue( property.getName(), null );
+				property.setValue( null );
 			} else {
 				commitNotNullPropertyValue();
 			}
@@ -111,9 +111,9 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 			for ( Object valueElement : (Object[]) value ) {
 				valuesList.add( valueElement );
 			}
-			property.getObjectStoreItem().setValue( property.getName(), valuesList );
+			property.setValue( valuesList );
 		} else {
-			property.getObjectStoreItem().setValue( property.getName(), getValue() );
+			property.setValue( getValue() );
 		}
 	}
 	

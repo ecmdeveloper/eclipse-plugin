@@ -26,7 +26,6 @@ import java.util.List;
 import com.ecmdeveloper.plugin.classes.model.Choice;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.input.PropertyValueConversion;
 import com.filenet.api.core.Factory;
 
@@ -36,16 +35,12 @@ import com.filenet.api.core.Factory;
  */
 public class Property {
 
-	private ObjectStoreItem objectStoreItem;
+	private PropertiesObject propertiesObject;
 	private PropertyDescription propertyDescription;
 	
-	public Property(ObjectStoreItem objectStoreItem, PropertyDescription propertyDescription) {
-		this.objectStoreItem = objectStoreItem;
+	public Property(PropertiesObject objectStoreItem, PropertyDescription propertyDescription) {
+		this.propertiesObject = objectStoreItem;
 		this.propertyDescription = propertyDescription;
-	}
-
-	public ObjectStoreItem getObjectStoreItem() {
-		return objectStoreItem;
 	}
 
 	public PropertyDescription getPropertyDescription() {
@@ -65,7 +60,11 @@ public class Property {
 	}
 
 	public Object getValue() {
-		return objectStoreItem.getValue( getName() );
+		return propertiesObject.getValue( getName() );
+	}
+
+	public void setValue(Object value) throws Exception {
+		propertiesObject.setValue(getName(), value);
 	}
 	
 	public String getValueAsString() {

@@ -27,6 +27,9 @@ import org.eclipse.ui.IPersistableElement;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.Activator;
+import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
+import com.ecmdeveloper.plugin.properties.model.SavedPropertiesObject;
+import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
 
 /**
@@ -37,14 +40,21 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 
 	private ObjectStoreItem objectStoreItem;
 	private ClassDescription classDescription;
+	private PropertiesObject propertiesObject;
 	
 	public ObjectStoreItemEditorInput(ObjectStoreItem objectStoreItem, ClassDescription classDescription) {
 		this.objectStoreItem = objectStoreItem;
 		this.classDescription = classDescription;
+
+		if ( objectStoreItem == null ) {
+			propertiesObject = new UnsavedPropertiesObject();
+		} else {
+			propertiesObject = new SavedPropertiesObject(objectStoreItem);
+		}
 	}
 
-	protected ObjectStoreItem getObjectStoreItem() {
-		return objectStoreItem;
+	protected PropertiesObject getPropertiesObject() {
+		return propertiesObject;
 	}
 
 	protected ClassDescription getClassDescription() {
@@ -83,6 +93,8 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 			return objectStoreItem;
 		} else if ( adapter.equals( ClassDescription.class ) ) {
 			return classDescription;
+		} else if ( adapter.equals( PropertiesObject.class ) ) {
+			return propertiesObject;
 		}
 		return null;
 	}
