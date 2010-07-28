@@ -1,4 +1,8 @@
+<h2>project home</h2>
+<a href="http://sourceforge.net/projects/ecmdeveloper"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=277153&amp;type=14" width="150" height="40" alt="Get ECM Developer at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
+
 <h2>Navigation</h2>
+<ul>
 	<a href="index.shtml">start page</a><br/>
 	<a href="screen_shots.shtml">screen shots</a><br/>
 	<a href="installing.shtml">installation</a><br/>
@@ -8,24 +12,7 @@
 	<a href="editing_class_diagrams.shtml">editing class diagrams</a><br/>
 	<a href="editing_code_modules.shtml">editing code modules</a><br/>
 	<a href="code_templates.shtml">code templates</a><br/><br/>
+	<a href='version_history.shtml'>version history</a><br/>
 	<a href="copyright.shtml">copyright</a><br/>
 </ul>
 
-<h2>Recent Updates</h2>
-
-<p><strong>[7/xx/2010]</strong><p>Version 1.3.0 of the ECM Developer plug-in is available for download. This version
-adds a lot of actions on the document content, such as viewing, editing, downloading and comparing. 
-These actions along with some bug fixes are described <a href='version_history.shtml'>here</a>.<br/></p>
-
-<p><strong>[4/25/2010]</strong><p>Version 1.2.0 of the ECM Developer plug-in is available for download. This version
-has Content Engine 4.5.1. support. A new feature is the <a href="editing_class_diagrams.shtml">class diagram editor</a>. 
-The rest of the changes are described <a href='version_history.shtml'>here</a>.<br/></p>
-
-<p><strong>[3/5/2010]</strong><p>Version 1.1.0 of the ECM Developer plug-in is available for download. A new
-feature is the <a href="editing_objects.shtml">properties editor</a>. The rest of the changes are
-described <a href='version_history.shtml'>here</a>.<br/></p>
-
-<p><strong>[12/20/2009]</strong><p>The first version of the ECM Developer plug-in is available for download.</p>
-
-<h2>project home</h2>
-<a href="http://sourceforge.net/projects/ecmdeveloper"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=277153&amp;type=14" width="150" height="40" alt="Get ECM Developer at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>

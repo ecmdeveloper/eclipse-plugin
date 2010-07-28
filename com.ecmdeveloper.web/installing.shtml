@@ -18,7 +18,7 @@
 	<h2>Installing ECM Developer</h2>
 	
 	The ECM Developer plug-in uses Java 6, so first make sure that your Eclipse is running
-	with this version. The plug-in is tested with the recent versions of Galileo and Ganymede.
+	with this version. The plug-in is tested with the recent versions of Helios, Galileo and Ganymede.
 	<p> 
 	The plug-in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
 	Because the Java API is not distributed with this plug-in, using this plug-in requires 
