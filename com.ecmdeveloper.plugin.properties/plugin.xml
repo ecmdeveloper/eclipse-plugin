@@ -48,6 +48,11 @@
             id="com.ecmdeveloper.plugin.editDocumentVersion"
             name="Edit Version...">
       </command>
+      <command
+            description="New Folder"
+            id="com.ecmdeveloper.plugin.newFolder"
+            name="Folder">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -88,17 +93,41 @@
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
-                        </instanceof>
-                     </or>
-                  </iterate>
+                  <and>
+                     <count
+                           value="1">
+                     </count>
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate></and>
                </with>
             </visibleWhen>
          </command>
+         <menu
+               label="New">
+            <command
+                  commandId="com.ecmdeveloper.plugin.newFolder"
+                  icon="icons/folder.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Folder">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -170,6 +199,27 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.NewFolderHandler"
+            commandId="com.ecmdeveloper.plugin.newFolder">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="com.ecmdeveloper.plugin.category.contentEngine"
+            name="Content Engine">
+      </category>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.properties.wizard.NewFolderWizard"
+            icon="icons/folder.png"
+            id="com.ecmdeveloper.plugin.newFolder"
+            name="Folder">
+         <description>
+            Create a new object store item
+         </description>
+      </wizard>
    </extension>
 
 </plugin>
