@@ -284,12 +284,17 @@
          <enabledWhen>
             <with
                   variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="com.ecmdeveloper.plugin.model.Document">
-                  </instanceof>
-               </iterate>
+               <and>
+                  <count
+                        value="2">
+                  </count>
+                  <iterate
+                        ifEmpty="false">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                  </iterate>
+               </and>
             </with>
          </enabledWhen>
       </handler>
