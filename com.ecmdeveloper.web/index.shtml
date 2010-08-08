@@ -7,6 +7,7 @@
 <meta name="keywords" content="filenet,p8,eclipse,ricardo belfor,code module,ibm,content engine" />
 <meta name="description" content="ECM Developer is an Eclipse plug in aimed at supporting the development of applications using the IBM FileNet P8 Content Engine." />
 <link href="default.css" rel="stylesheet" type="text/css" />
+<link href="index.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div id="header">
@@ -20,91 +21,92 @@
 		<li><a href="http://sourceforge.net/projects/ecmdeveloper/forums">Forum</a></li>
 	</ul>
 </div>
-<div id="content">
-	<div id="left">
+<div id="outer">
+	<div id="content">
+		<div id="tertiaryContent">
+			<!--#include virtual="/navigation.shtml" -->
+		</div>
+		<div id="primaryContentContainer">
+			<div id="primaryContent">
+			
+				<h2>Description</h2>
+			 	<p>
+					ECM Developer is an open source Eclipse plug in aimed at supporting the development of applications using the 
+					IBM FileNet P8 Content Engine. It approaches the system from a developers point of view and tries to find solutions 
+					for day to day tasks. The project is hosted on <a href="http://sourceforge.net/projects/ecmdeveloper">sourceforge.net</a> 
+					and the plug in can be downloaded <a href="http://sourceforge.net/projects/ecmdeveloper/files/">here</a>.
+				</p>
+			 	
+				<h2>Features</h2>
+				<p>
+					<ul>
+						<li><a href='browsing_object_stores.shtml'>Browsing</a> Object Stores</li>
+						
+						<li>Performing some basic actions on Object Store objects such as 
+						<a href='browsing_object_stores.shtml#rename'>renaming</a>, 
+						<a href='browsing_object_stores.shtml#move'>moving</a> and 
+						<a href='browsing_object_stores.shtml#delete'>deleting</a>.</li>
+						
+						<li>Performing actions on the content of the document such as 
+						<a href='browsing_object_stores.shtml#view'>viewing</a>, editing 
+						(<a href='browsing_object_stores.shtml#checkout'>checkout</a>, 
+						<a href='browsing_object_stores.shtml#checkin'>checkin</a>), 
+						<a href='browsing_object_stores.shtml#download'>downloading</a> 
+						and <a href='browsing_object_stores.shtml#compare'>comparing</a>.</li>			   
+						
+						<li><a href='editing_objects.shtml'>Editing</a> of folder, document and custom object properties.</li>
+						
+						<li><a href='editing_class_diagrams.shtml'>Class Diagram Editor</a>, creating UML diagrams of the classes defined in the Object Store.<br>
+						<strong><a href="editing_class_diagrams_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
+						
+						<li>Java code wizards for event action handlers, document life cycle handlers and document classifiers.</li>
+						
+						<li>An editor for <a href='editing_code_modules.shtml'>updating code modules</a> and event actions.<br>
+						<strong><a href="editing_code_modules_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
+						</li>
+					</ul>
+				</p>
+				<p>
+				The plug in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
+				This is the most generic way of accessing the system and does not depend on the underlying 
+				system architecture. Because the Java API is not distributed with this plug in, using this plug in 
+				requires access to the Java API. Information about installing the plug in can be found <a href="installing.shtml">here</a>. 
+				After the plug in is installed the configuration of the Object Stores managed with this plug in must 
+				be imported into the plug in environment. 
+				Information about importing an Object Store can be found <a href="getting_started.shtml">here</a>.
+				</p>
+				<p>
+				This plug in is tested with the 4.5 version and the 4.5.1 version of the FileNet Content Engine. In one installation only
+				one of the versions is supported. 		
+				</p>
+			
+			</div>
+		</div>
+		<div id="secondaryContent">
 
-	<div id="primaryContentContainer">
-	<div id="primaryContent">
-	
-	<h2>News</h2>
-	
-	<p><strong>[7/26/2010]</strong><p>Version 1.3.0 of the ECM Developer plug-in is available for download. This version
-	adds a lot of actions on the document content, such as viewing, editing, downloading and comparing. 
-	These actions along with some bug fixes are described <a href='version_history.shtml'>here</a>.<br/></p>
-	
-	<p><strong>[4/25/2010]</strong><p>Version 1.2.0 of the ECM Developer plug-in is available for download. This version
-	has Content Engine 4.5.1. support. A new feature is the <a href="editing_class_diagrams.shtml">class diagram editor</a>. 
-	The rest of the changes are described <a href='version_history.shtml'>here</a>.<br/></p>
-	
-	<p><strong>[3/5/2010]</strong><p>Version 1.1.0 of the ECM Developer plug-in is available for download. A new
-	feature is the <a href="editing_objects.shtml">properties editor</a>. The rest of the changes are
-	described <a href='version_history.shtml'>here</a>.<br/></p>
-	
-	<p><strong>[12/20/2009]</strong><p>The first version of the ECM Developer plug-in is available for download.</p>
-	
+			<h2>News</h2>
+			
+			<p><strong>[7/26/2010]</strong><p>Version 1.3.0 of the ECM Developer plug-in is available for download. This version
+			adds a lot of actions on the document content, such as viewing, editing, downloading and comparing. 
+			These actions along with some bug fixes are described <a href='version_history.shtml'>here</a>.<br/></p>
+			
+			<p><strong>[4/25/2010]</strong><p>Version 1.2.0 of the ECM Developer plug-in is available for download. This version
+			has Content Engine 4.5.1. support. A new feature is the <a href="editing_class_diagrams.shtml">class diagram editor</a>. 
+			The rest of the changes are described <a href='version_history.shtml'>here</a>.<br/></p>
+			
+			<p><strong>[3/5/2010]</strong><p>Version 1.1.0 of the ECM Developer plug-in is available for download. A new
+			feature is the <a href="editing_objects.shtml">properties editor</a>. The rest of the changes are
+			described <a href='version_history.shtml'>here</a>.<br/></p>
+			
+			<p><strong>[12/20/2009]</strong><p>The first version of the ECM Developer plug-in is available for download.</p>
+							
+		</div>
+		<div class="clear"></div>
 	</div>
-	</div>
-	<div id="secondaryContent">
-	<h2>Description</h2>
- 	<p>
-	ECM Developer is an open source Eclipse plug in aimed at supporting the development of applications using the 
-	IBM FileNet P8 Content Engine. It approaches the system from a developers point of view and tries to find solutions 
-	for day to day tasks. The project is hosted on <a href="http://sourceforge.net/projects/ecmdeveloper">sourceforge.net</a>.
-	  
-	</p>
- 	
-	<h2>Features</h2>
-	<ul>
-			<li><a href='browsing_object_stores.shtml'>Browsing</a> Object Stores</li>
-			
-			<li>Performing some basic actions on Object Store objects such as 
-			<a href='browsing_object_stores.shtml#rename'>renaming</a>, 
-			<a href='browsing_object_stores.shtml#move'>moving</a> and 
-			<a href='browsing_object_stores.shtml#delete'>deleting</a>.</li>
-			
-			<li>Performing actions on the content of the document such as 
-			<a href='browsing_object_stores.shtml#view'>viewing</a>, editing 
-			(<a href='browsing_object_stores.shtml#checkout'>checkout</a>, 
-			<a href='browsing_object_stores.shtml#checkin'>checkin</a>), 
-			<a href='browsing_object_stores.shtml#download'>downloading</a> 
-			and <a href='browsing_object_stores.shtml#compare'>comparing</a>.</li>			   
-			
-			<li><a href='editing_objects.shtml'>Editing</a> of folder, document and custom object properties.</li>
-			
-			<li><a href='editing_class_diagrams.shtml'>Class Diagram Editor</a>, creating UML diagrams of the classes defined in the Object Store.<br>
-			<strong><a href="editing_class_diagrams_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
-			
-			<li>Java code wizards for event action handlers, document life cycle handlers and document classifiers.</li>
-			
-			<li>An editor for <a href='editing_code_modules.shtml'>updating code modules</a> and event actions.<br>
-			<strong><a href="editing_code_modules_demo.shtml">View the demo<img border=0 alt="View the demo" src="images/index/control_play.png"></a></strong>
-			</li>
-	</ul>
-	</p>
-	<p>
-	The plug in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
-	This is the most generic way of accessing the system and does not depend on the underlying 
-	system architecture. Because the Java API is not distributed with this plug in, using this plug in 
-	requires access to the Java API. Information about installing the plug in can be found <a href="installing.shtml">here</a>. 
-	After the plug in is installed the configuration of the Object Stores managed with this plug in must 
-	be imported into the plug in environment. 
-	Information about importing an Object Store can be found <a href="getting_started.shtml">here</a>.
-	</p>
-	<p>
-	This plug in is tested with the 4.5 version and the 4.5.1 version of the FileNet Content Engine. In one installation only
-	one of the versions is supported. 		
-	</p>
-	
-	</div>
-	
-	</div>
-	<div id="right">
-		<!--#include virtual="/navigation.shtml" -->
+	<div id="footer">
+		<p>Copyright &copy; 2009,2010 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
 	</div>
 </div>
-<div id="footer">
-	<p>Copyright &copy; 2009,2010 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
-</div>	
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

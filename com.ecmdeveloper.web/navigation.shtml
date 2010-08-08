@@ -2,17 +2,16 @@
 <a href="http://sourceforge.net/projects/ecmdeveloper"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=277153&amp;type=14" width="150" height="40" alt="Get ECM Developer at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
 
 <h2>Navigation</h2>
-<ul>
-	<a href="index.shtml">start page</a><br/>
-	<a href="screen_shots.shtml">screen shots</a><br/>
-	<a href="installing.shtml">installation</a><br/>
-	<a href="getting_started.shtml">getting started</a><br/><br/>
-	<a href="browsing_object_stores.shtml">browsing object stores</a><br/>
-	<a href="editing_objects.shtml">editing properties</a><br/>
-	<a href="editing_class_diagrams.shtml">editing class diagrams</a><br/>
-	<a href="editing_code_modules.shtml">editing code modules</a><br/>
-	<a href="code_templates.shtml">code templates</a><br/><br/>
-	<a href='version_history.shtml'>version history</a><br/>
-	<a href="copyright.shtml">copyright</a><br/>
-</ul>
+
+<a href="index.shtml">start page</a><br/>
+<a href="screen_shots.shtml">screen shots</a><br/>
+<a href="installing.shtml">installation</a><br/>
+<a href="getting_started.shtml">getting started</a><br/><br/>
+<a href="browsing_object_stores.shtml">browsing object stores</a><br/>
+<a href="editing_objects.shtml">editing properties</a><br/>
+<a href="editing_class_diagrams.shtml">editing class diagrams</a><br/>
+<a href="editing_code_modules.shtml">editing code modules</a><br/>
+<a href="code_templates.shtml">code templates</a><br/><br/>
+<a href='version_history.shtml'>version history</a><br/>
+<a href="copyright.shtml">copyright</a><br/>
 

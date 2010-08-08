@@ -117,24 +117,3 @@ a:hover {
 	font-size: small;
 	color: #CCCCCC;
 }
-
-#primaryContentContainer
-{
-	background-color: #fff;
-	float: right;
-	margin: 0em -19em 0em -19em;
-	width: 100%;
-}
-
-#primaryContent
-{
-	margin: 0em 19em 0em 17.25em;
-	padding: 0em 0em 0em 0em;
-}
-
-#secondaryContent
-{
-	position: relative;
-	float: left;
-	padding: 0em 0em 0em 0em;
-}
