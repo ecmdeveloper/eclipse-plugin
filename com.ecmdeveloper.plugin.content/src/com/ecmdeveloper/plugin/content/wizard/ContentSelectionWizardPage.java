@@ -77,7 +77,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 	
 	private ArrayList<Object> content;
 	
-	protected ContentSelectionWizardPage(String documentName ) {
+	public ContentSelectionWizardPage(String documentName ) {
 		super("contentSelectionWizardPage");
 		
 		setTitle( PAGE_TITLE );
