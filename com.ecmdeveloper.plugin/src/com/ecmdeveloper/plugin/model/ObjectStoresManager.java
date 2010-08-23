@@ -43,6 +43,9 @@ import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
+import com.ecmdeveloper.plugin.model.tasks.CreateFolderTask;
+import com.ecmdeveloper.plugin.model.tasks.CreateTask;
 import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
@@ -553,11 +556,8 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 			handleMoveTaskCompleted( taskCompleteEvent );
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, UpdateTask.class) ) {
 			handleUpdateTaskCompleted(taskCompleteEvent);
-//		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CheckoutTask.class) ||
-//				isTaskSourceInstanceOf(taskCompleteEvent, CancelCheckoutTask.class) ||
-//				isTaskSourceInstanceOf(taskCompleteEvent, CheckinTask.class) ) {
-//			handleDocumentTaskCompleted(taskCompleteEvent);
-//		}
+		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CreateTask.class) ) {
+			handleCreateTaskCompleted(taskCompleteEvent);
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, DocumentTask.class) ) {
 			handleDocumentTaskCompleted(taskCompleteEvent);
 		}
@@ -611,4 +611,11 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 		ObjectStoreItem objectStoreItem = documentTask.getDocument();
 		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
 	}
+
+	private void handleCreateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
+		CreateTask createTask = (CreateTask) taskCompleteEvent.getSource();
+		ObjectStoreItem objectStoreItem = (ObjectStoreItem) createTask.getParent();
+		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
+	}
+
 }

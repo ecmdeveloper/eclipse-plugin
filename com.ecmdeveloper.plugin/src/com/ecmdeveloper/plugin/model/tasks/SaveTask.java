@@ -44,6 +44,7 @@ public class SaveTask extends DocumentTask {
 
 	private Collection<Object> contents;
 	private String mimeType;
+	private Document reservationDocument;
 
 	public SaveTask(Document document, Collection<Object> contents, String mimeType ) {
 		super(document);
@@ -59,7 +60,13 @@ public class SaveTask extends DocumentTask {
 		reservation.set_MimeType( mimeType );
 		reservation.save( RefreshMode.REFRESH );
 		
+		reservationDocument = new Document( reservation, getDocument().getParent(), getDocument().getParent().getObjectStore() );
+		
 		return null;
+	}
+
+	public Document getReservationDocument() {
+		return reservationDocument;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -33,6 +33,10 @@ public class RefreshTask extends BaseTask {
 	public RefreshTask( IObjectStoreItem[] objectStoreItems ) {
 		this.objectStoreItems = objectStoreItems;
 	}
+
+	public RefreshTask( IObjectStoreItem objectStoreItem ) {
+		this.objectStoreItems = new IObjectStoreItem[] { objectStoreItem };
+	}
 	
 	@Override
 	public Object call() throws Exception {
