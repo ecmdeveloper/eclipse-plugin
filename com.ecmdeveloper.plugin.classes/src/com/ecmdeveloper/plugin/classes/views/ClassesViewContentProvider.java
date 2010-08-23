@@ -102,11 +102,7 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	public Object[] getChildren(Object parent) {
 
 		if ( parent instanceof ObjectStore ) {
-			if ( ClassType.ALL_CLASSES.equals( classesFilter ) ) {
-				return getVirtualFolders(parent);
-			} else {
-				throw new UnsupportedOperationException( "Not yet implemented" );
-			}
+			return getVirtualFolders(parent);
 		} else if ( parent instanceof VirtualFolder ) {
 			
 			VirtualFolder virtualFolder = (VirtualFolder) parent;
@@ -129,7 +125,7 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 		return new Object[0];
 	}
 
-	private Object[] getVirtualFolders(Object parent) {
+	private Object[] getAllVirtualFolders(Object parent) {
 		ArrayList<Object> virtualFolders = new ArrayList<Object>();
 		for (VirtualFolderType virtualFolderType : VirtualFolderType.values() ) {
 			virtualFolders.add( new VirtualFolder( virtualFolderType, (ObjectStore) parent )  );
@@ -137,6 +133,32 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 		return virtualFolders.toArray();
 	}
 
+	private Object[] getVirtualFolders(Object parent) {
+		
+		VirtualFolderType virtualFolderType = null;
+		
+		switch ( classesFilter ) {
+		case FOLDER_CLASSES:
+			virtualFolderType = VirtualFolderType.FOLDER_CLASSES;
+			break;
+		case DOCUMENT_CLASSES:
+			virtualFolderType = VirtualFolderType.DOCUMENT_CLASSES;
+			break;
+		case CUSTOM_OBJECT_CLASSES:
+			virtualFolderType = VirtualFolderType.CUSTOM_OBJECT_CLASSES;
+			break;
+		case ALL_CLASSES:
+			return getAllVirtualFolders(parent);
+		}
+		
+		if ( virtualFolderType != null ) {
+			VirtualFolder virtualFolder = new VirtualFolder( virtualFolderType, (ObjectStore) parent );
+			return new Object[] { virtualFolder };
+		}
+
+		throw new UnsupportedOperationException( "Unsupported classes filter" );
+	}
+	
 	@Override
 	public Object getParent(Object child) {
 		if (child instanceof IObjectStoreItem ) {
