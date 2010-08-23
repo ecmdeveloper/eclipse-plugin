@@ -48,7 +48,11 @@ public class Folder extends ObjectStoreItem {
 	 * @param objectStore the object store
 	 */
 	public Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore ) {
-		super(parent, objectStore );
+		this(folder, parent, objectStore, true );
+	}
+
+	public Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+		super(parent, objectStore, saved );
 		
 		this.folder = (com.filenet.api.core.Folder) folder;
 		contained = false;
@@ -75,6 +79,10 @@ public class Folder extends ObjectStoreItem {
 	 */
 	@Override
 	public void refresh() {
+		
+		if ( !saved ) {
+			return;
+		}
 		
 		folder.refresh( new String[] { PropertyNames.FOLDER_NAME,
 				PropertyNames.PATH_NAME, PropertyNames.ID,

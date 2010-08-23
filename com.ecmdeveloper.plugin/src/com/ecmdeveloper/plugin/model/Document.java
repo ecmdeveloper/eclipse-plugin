@@ -36,9 +36,13 @@ public class Document extends ObjectStoreItem {
 	protected String parentPath;
 	protected String containmentName;
 	private boolean reserved;
+
+	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore) {
+		this(document, parent,objectStore, true );
+	}
 	
-	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore ) {
-		super(parent, objectStore);
+	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+		super(parent, objectStore, saved);
 		
 		this.document = (com.filenet.api.core.Document) document;
 		refresh();
@@ -51,6 +55,11 @@ public class Document extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
+		
+		if ( !saved ) {
+			return;
+		}
+		
 		document.refresh(new String[] { PropertyNames.NAME, PropertyNames.ID,
 				PropertyNames.VERSION_SERIES, PropertyNames.IS_RESERVED });
 		name = document.get_Name();

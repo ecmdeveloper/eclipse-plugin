@@ -42,12 +42,18 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	protected String name;
 	protected String id;
 	protected ObjectStore objectStore;
-
+	protected boolean saved;
+	
 	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
 	
-	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore ) {
+	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
 		this.parent = parent;
 		this.objectStore = objectStore;
+		this.saved = saved;
+	}
+
+	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore) {
+		this(parent, objectStore, true );
 	}
 	
 	public abstract IndependentlyPersistableObject getObjectStoreObject();
@@ -106,6 +112,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	
 	public void save() {
 		getObjectStoreObject().save(RefreshMode.REFRESH);
+		saved = true;
 	}
 
 	public void removeChild(IObjectStoreItem childItem ) {
@@ -125,6 +132,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(String propertyName) {
+		
+		if ( !saved ) {
+			return null;
+		}
+		
 		Properties properties = getProperties();
 		Object objectValue = properties.getObjectValue(propertyName);
 
@@ -151,7 +163,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 
 		Properties properties = getProperties();
 		
-		if ( ! properties.get(propertyName).isSettable() ) {
+		if ( saved && ! properties.get(propertyName).isSettable() ) {
 			// TODO throw exception
 			return;
 		}
