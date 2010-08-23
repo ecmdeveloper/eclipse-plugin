@@ -20,8 +20,11 @@
 
 package com.ecmdeveloper.plugin.properties.wizard;
 
+import org.eclipse.ui.IEditorInput;
+
 import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
+import com.ecmdeveloper.plugin.properties.editors.input.NewFolderEditorInput;
 
 /**
  * @author Ricardo.Belfor
@@ -37,5 +40,9 @@ public class NewFolderWizard extends NewObjectStoreItemWizard {
 	@Override
 	protected String getEditorId() {
 		return FolderEditor.EDITOR_ID;
+	}
+
+	protected IEditorInput getEditorInput() {
+		return new NewFolderEditorInput( getClassDescription(), getParentFolder() );
 	}
 }

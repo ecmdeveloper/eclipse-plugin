@@ -34,7 +34,7 @@ public class SavedPropertiesObject implements PropertiesObject {
 
 	@Override
 	public String getName() {
-		return objectStoreItem.getName();
+		return objectStoreItem.getDisplayName();
 	}
 
 	public SavedPropertiesObject(ObjectStoreItem objectStoreItem) {

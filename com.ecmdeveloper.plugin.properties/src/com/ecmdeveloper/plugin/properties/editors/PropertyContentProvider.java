@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+import com.ecmdeveloper.plugin.properties.editors.input.ObjectStoreItemEditorInput;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.Property;
 

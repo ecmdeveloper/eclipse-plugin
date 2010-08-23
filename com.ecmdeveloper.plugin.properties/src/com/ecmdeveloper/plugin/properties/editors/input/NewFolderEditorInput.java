@@ -18,19 +18,18 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.properties.handlers;
+package com.ecmdeveloper.plugin.properties.editors.input;
 
-import com.ecmdeveloper.plugin.properties.wizard.NewFolderWizard;
-import com.ecmdeveloper.plugin.properties.wizard.NewObjectStoreItemWizard;
+import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.model.Folder;
 
 /**
- * @author Ricardo.Belfor
+ * @author ricardo.belfor
  *
  */
-public class NewFolderHandler extends NewObjectStoreItemHandler {
+public class NewFolderEditorInput extends NewObjectStoreItemEditorInput {
 
-	protected NewObjectStoreItemWizard getWizard() {
-		NewFolderWizard wizard = new NewFolderWizard();
-		return wizard;
+	public NewFolderEditorInput(ClassDescription classDescription, Folder parent) {
+		super(classDescription, parent);
 	}
 }

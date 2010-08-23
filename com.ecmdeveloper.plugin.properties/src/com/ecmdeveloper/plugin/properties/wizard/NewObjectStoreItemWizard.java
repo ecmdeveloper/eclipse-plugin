@@ -20,6 +20,11 @@
 
 package com.ecmdeveloper.plugin.properties.wizard;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ExecutionException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -31,9 +36,11 @@ import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
+import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditorInput;
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
@@ -42,17 +49,19 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
  */
 public abstract class NewObjectStoreItemWizard extends Wizard implements INewWizard {
 
+	private static final String GETTING_DEFAULT_CLASS_DESCRIPTION_FAILED_MESSAGE = "Getting default class description failed";
 	private static final String FAILED_MESSAGE = "Opening editor failed.";
 	private IStructuredSelection selection;
-	@SuppressWarnings("unused")
 	private IWorkbench workbench;
 	private ClassSelectionWizardPage classSelectionPage;
 	private ParentSelectionWizardPage parentSelectionWizardPage;
+	private ClassDescription defaultClassDescription;
 	
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 		this.workbench = workbench;
+		setNeedsProgressMonitor(true);
 	}
 
 	@Override
@@ -67,7 +76,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	protected abstract ClassType getClassType();
 
 	public String getObjectStoreId() {
-		Folder folder = parentSelectionWizardPage.getFolder();
+		Folder folder = getParentFolder();
 		if ( folder != null ) {
 			return folder.getObjectStore().getId();
 		}
@@ -94,27 +103,48 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	}
 	@Override
 	public boolean performFinish() {
-		IEditorInput input = getEditorInput();
-		if ( input != null ) {
-			return openEditor(input);
-		} 
+		
+		final Folder parentFolder = getParentFolder();
+		if ( parentFolder == null ) {
+			return false;
+		}
+		
+		if ( getClassDescription() == null ) {
+	         fetchDefaultClassDescription( parentFolder.getObjectStore() );
+		}
+		
+		if ( getParentFolder() != null && getClassDescription() != null ) {
+			IEditorInput input = getEditorInput();
+			if ( input != null ) {
+				return openEditor(input);
+			} 
+		}
 		return false;
 	}
 
-	private IEditorInput getEditorInput() {
-		
-		Folder parent = parentSelectionWizardPage.getFolder();
-		if ( parent == null ) {
-			return null;
+	private void fetchDefaultClassDescription(final ObjectStore objectStore) {
+
+		try {
+			getContainer().run(true, false, new GetDefaultClassDescriptionRunner(objectStore, "Document"));
+		} catch (Exception e) {
+			PluginMessage.openErrorFromThread(getShell(), getWindowTitle(),
+					GETTING_DEFAULT_CLASS_DESCRIPTION_FAILED_MESSAGE, e);
 		}
-		
+	}
+
+	protected abstract IEditorInput getEditorInput();
+	
+	protected ClassDescription getClassDescription() {
 		ClassDescription classDescription = classSelectionPage.getClassDescription();
 		if ( classDescription == null ) {
-			return null;
+			return defaultClassDescription;
 		}
-		
-		IEditorInput input = new ObjectStoreItemEditorInput( null, classDescription );
-		return input;
+		return classDescription;
+	}
+
+	protected Folder getParentFolder() {
+		Folder parent = parentSelectionWizardPage.getFolder();
+		return parent;
 	}
 
 	private boolean openEditor(IEditorInput input) {
@@ -129,4 +159,32 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	}
 
 	protected abstract String getEditorId();
+	
+	class GetDefaultClassDescriptionRunner implements IRunnableWithProgress {
+
+		private ObjectStore objectStore;
+		private String className;
+		
+		public GetDefaultClassDescriptionRunner(ObjectStore objectStore, String className) {
+			this.objectStore = objectStore;
+			this.className = className;
+		}
+
+		@Override
+		public void run(IProgressMonitor monitor) throws InvocationTargetException,
+				InterruptedException {
+			getDefaultClassDescription(objectStore);
+		}
+
+		private void getDefaultClassDescription(final ObjectStore objectStore) {
+			try {
+				GetClassDescriptionTask task = new GetClassDescriptionTask( className, objectStore );
+				ObjectStoresManager.getManager().executeTaskSync(task);
+				defaultClassDescription = task.getClassDescription();
+			} catch (ExecutionException e) {
+				PluginMessage.openErrorFromThread(getShell(), getWindowTitle(),
+						GETTING_DEFAULT_CLASS_DESCRIPTION_FAILED_MESSAGE, e);
+			}
+		}
+	}
 }

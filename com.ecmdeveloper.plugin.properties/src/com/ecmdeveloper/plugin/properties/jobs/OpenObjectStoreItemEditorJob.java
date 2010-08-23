@@ -39,7 +39,7 @@ import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
-import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditorInput;
+import com.ecmdeveloper.plugin.properties.editors.input.ObjectStoreItemEditorInput;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
