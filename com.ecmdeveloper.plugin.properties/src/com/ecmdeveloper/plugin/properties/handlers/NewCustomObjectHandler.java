@@ -20,17 +20,17 @@
 
 package com.ecmdeveloper.plugin.properties.handlers;
 
-import com.ecmdeveloper.plugin.properties.wizard.NewFolderWizard;
+import com.ecmdeveloper.plugin.properties.wizard.NewCustomObjectWizard;
 import com.ecmdeveloper.plugin.properties.wizard.NewObjectStoreItemWizard;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class NewFolderHandler extends NewObjectStoreItemHandler {
+public class NewCustomObjectHandler extends NewObjectStoreItemHandler {
 
 	protected NewObjectStoreItemWizard getWizard() {
-		NewFolderWizard wizard = new NewFolderWizard();
+		NewCustomObjectWizard wizard = new NewCustomObjectWizard();
 		return wizard;
 	}
 }

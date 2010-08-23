@@ -18,7 +18,7 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.properties.editors;
+package com.ecmdeveloper.plugin.properties.editors.input;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -38,9 +38,9 @@ import com.ecmdeveloper.plugin.properties.util.IconFiles;
  */
 public class ObjectStoreItemEditorInput implements IEditorInput {
 
-	private ObjectStoreItem objectStoreItem;
+	protected ObjectStoreItem objectStoreItem;
 	private ClassDescription classDescription;
-	private PropertiesObject propertiesObject;
+	protected PropertiesObject propertiesObject;
 	
 	public ObjectStoreItemEditorInput(ObjectStoreItem objectStoreItem, ClassDescription classDescription) {
 		this.objectStoreItem = objectStoreItem;
@@ -53,11 +53,11 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 		}
 	}
 
-	protected PropertiesObject getPropertiesObject() {
+	public PropertiesObject getPropertiesObject() {
 		return propertiesObject;
 	}
 
-	protected ClassDescription getClassDescription() {
+	public ClassDescription getClassDescription() {
 		return classDescription;
 	}
 
@@ -73,7 +73,7 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 
 	@Override
 	public String getName() {
-		return objectStoreItem.getDisplayName();
+		return propertiesObject.getName();
 	}
 
 	@Override

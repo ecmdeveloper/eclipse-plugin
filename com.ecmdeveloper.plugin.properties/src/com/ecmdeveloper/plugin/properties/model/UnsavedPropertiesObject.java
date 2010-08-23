@@ -21,8 +21,11 @@
 package com.ecmdeveloper.plugin.properties.model;
 
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Ricardo.Belfor
@@ -31,6 +34,7 @@ import java.util.Map;
 public class UnsavedPropertiesObject implements PropertiesObject {
 
 	private Map<String,Object> propertiesMap;
+	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
 	
 	public UnsavedPropertiesObject() {
 		propertiesMap = new HashMap<String, Object>();
@@ -46,23 +50,45 @@ public class UnsavedPropertiesObject implements PropertiesObject {
 
 	@Override
 	public void setValue(String propertyName, Object value) throws Exception {
+		
+		Object oldValue = getOldPropertyValue(propertyName);
+		
 		propertiesMap.put(propertyName, value);
+
+		if (pcsDelegate.hasListeners(propertyName)) {
+			pcsDelegate.firePropertyChange(propertyName, oldValue, value);
+		}
+	}
+
+	private Object getOldPropertyValue(String propertyName) {
+		Object oldValue = null;
+		if ( propertiesMap.containsKey(propertyName) ) {
+			oldValue = propertiesMap.get(propertyName);
+		}
+		return oldValue;
 	}
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+		if (listener == null) {
+			throw new IllegalArgumentException();
+		}
+		pcsDelegate.addPropertyChangeListener(listener);
 	}
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+		if (listener != null) {
+			pcsDelegate.removePropertyChangeListener(listener);
+		}
 	}
 
 	@Override
 	public String getName() {
 		return "Untitled Object";
+	}
+
+	public Collection<String> getPropertyNames() {
+		return propertiesMap.keySet();
 	}
 }

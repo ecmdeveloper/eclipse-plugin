@@ -36,7 +36,9 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
+import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
@@ -47,6 +49,8 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener {
 
 	private static final String SAVE_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveProperties";
+	private static final String SAVE_NEW_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveNewProperties";
+	
 	private PropertiesInputForm propertiesInputForm;
 	private ClassDescription classDescription;
 //	private ObjectStoreItem objectStoreItem;
@@ -62,7 +66,7 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 			
 			propertiesObject = (PropertiesObject) getEditorInput().getAdapter( PropertiesObject.class);
 			propertiesObject.addPropertyChangeListener(this);
-			isPageModified = false;
+			isPageModified = propertiesObject instanceof UnsavedPropertiesObject;
 		
 			updateTitle();
 			
@@ -113,6 +117,8 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	}
 
 	public void refreshProperties() {
+		
+		
 		getSite().getShell().getDisplay().syncExec( new Runnable() {
 			@Override
 			public void run() {
@@ -143,11 +149,29 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	@Override
 	public void doSave(final IProgressMonitor monitor) {
 		try {
+			String commandId = getSaveCommandId();
 			IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-			handlerService.executeCommand(SAVE_PROPERTIES_COMMAND_ID, null );
+			handlerService.executeCommand(commandId, null );
 		} catch (Exception e) {
-			PluginMessage.openError(getSite().getShell(), "Folder Editor" , "Save failed.", e );
+			PluginMessage.openError(getSite().getShell(), getEditorName() , "Save failed.", e );
 		}
+	}
+
+	private String getEditorName() {
+		// TODO fix this for other object types
+		return "Folder Editor";
+	}
+
+	private String getSaveCommandId() {
+		String commandId;
+		
+		Object object = getEditorInput().getAdapter( ObjectStoreItem.class);
+		if ( object == null ) {
+			commandId = SAVE_NEW_PROPERTIES_COMMAND_ID;
+		} else {
+			commandId = SAVE_PROPERTIES_COMMAND_ID;
+		}
+		return commandId;
 	}
 
 	@Override
@@ -168,5 +192,16 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 				firePropertyChange(IEditorPart.PROP_DIRTY);
 			}} 
 		);
+	}
+
+	public void saveNew() {
+		updatePropertiesObject();
+		saved();
+	}
+
+	private void updatePropertiesObject() {
+		propertiesObject.removePropertyChangeListener(this);
+		propertiesObject = (PropertiesObject) getEditorInput().getAdapter( PropertiesObject.class);
+		propertiesObject.addPropertyChangeListener(this);
 	}
 }

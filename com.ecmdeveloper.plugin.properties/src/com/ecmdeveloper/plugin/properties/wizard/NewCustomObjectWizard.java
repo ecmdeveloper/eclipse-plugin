@@ -18,19 +18,31 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.properties.handlers;
+package com.ecmdeveloper.plugin.properties.wizard;
 
-import com.ecmdeveloper.plugin.properties.wizard.NewFolderWizard;
-import com.ecmdeveloper.plugin.properties.wizard.NewObjectStoreItemWizard;
+import org.eclipse.ui.IEditorInput;
+
+import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
+import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
+import com.ecmdeveloper.plugin.properties.editors.input.NewCustomObjectEditorInput;
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class NewFolderHandler extends NewObjectStoreItemHandler {
+public class NewCustomObjectWizard extends NewObjectStoreItemWizard {
 
-	protected NewObjectStoreItemWizard getWizard() {
-		NewFolderWizard wizard = new NewFolderWizard();
-		return wizard;
+	@Override
+	protected ClassType getClassType() {
+		return ClassType.CUSTOM_OBJECT_CLASSES;
+	}
+
+	@Override
+	protected String getEditorId() {
+		return CustomObjectEditor.EDITOR_ID;
+	}
+
+	protected IEditorInput getEditorInput() {
+		return new NewCustomObjectEditorInput( getClassDescription(), getParentFolder() );
 	}
 }

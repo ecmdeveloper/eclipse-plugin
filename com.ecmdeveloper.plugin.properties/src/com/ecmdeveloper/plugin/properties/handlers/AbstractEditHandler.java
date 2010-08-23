@@ -33,7 +33,7 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
 import com.ecmdeveloper.plugin.properties.editors.DocumentEditor;
 import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
-import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditorInput;
+import com.ecmdeveloper.plugin.properties.editors.input.ObjectStoreItemEditorInput;
 import com.ecmdeveloper.plugin.properties.jobs.OpenObjectStoreItemEditorJob;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
 
@@ -94,7 +94,9 @@ public abstract class AbstractEditHandler extends AbstractHandler {
 		
 		ObjectStoreItemEditorInput editorInput = (ObjectStoreItemEditorInput) editor.getEditorInput();
 		ObjectStoreItem editorItem = (ObjectStoreItem) editorInput.getAdapter( ObjectStoreItem.class);
-		
-		return editorItem.getId().equalsIgnoreCase( objectStoreItem.getId() );
+		if ( editorItem == null ) {
+			return false;
+		}
+		return objectStoreItem.getId().equalsIgnoreCase( editorItem.getId() );
 	}
 }
