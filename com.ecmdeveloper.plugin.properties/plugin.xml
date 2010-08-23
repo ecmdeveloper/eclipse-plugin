@@ -53,6 +53,20 @@
             id="com.ecmdeveloper.plugin.newFolder"
             name="Folder">
       </command>
+      <command
+            description="New Document"
+            id="com.ecmdeveloper.plugin.newDocument"
+            name="Document">
+      </command>
+      <command
+            description="New Custom Object"
+            id="com.ecmdeveloper.plugin.newCustomObject"
+            name="Custom Object">
+      </command>
+      <command
+            id="com.ecmdeveloper.plugin.saveNewProperties"
+            name="Save New Properties">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -113,6 +127,40 @@
             <command
                   commandId="com.ecmdeveloper.plugin.newFolder"
                   icon="icons/folder.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Folder">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.newDocument"
+                  icon="icons/page_white.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Folder">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.newCustomObject"
+                  icon="icons/application_view_columns.png"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -202,6 +250,18 @@
       <handler
             class="com.ecmdeveloper.plugin.properties.handlers.NewFolderHandler"
             commandId="com.ecmdeveloper.plugin.newFolder">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.SaveNewEditorPropertiesHandler"
+            commandId="com.ecmdeveloper.plugin.saveNewProperties">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.NewDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.newDocument">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.NewCustomObjectHandler"
+            commandId="com.ecmdeveloper.plugin.newCustomObject">
       </handler>
    </extension>
    <extension
