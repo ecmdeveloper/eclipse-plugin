@@ -20,7 +20,6 @@
 
 package com.ecmdeveloper.plugin.classes.wizard;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -39,8 +38,6 @@ import com.ecmdeveloper.plugin.classes.model.Placeholder;
 import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.views.ClassesViewContentProvider;
 import com.ecmdeveloper.plugin.classes.views.ClassesViewLabelProvider;
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
@@ -53,6 +50,8 @@ public class ClassSelectionWizardPage extends WizardPage {
 
 	private TreeViewer viewer;
 	private ClassType classType;
+
+	private ClassesViewContentProvider classesViewContentProvider;
 
 	public ClassSelectionWizardPage(ClassType classType) {
 		super(PAGE_NAME);
@@ -86,7 +85,8 @@ public class ClassSelectionWizardPage extends WizardPage {
 
 		viewer = new TreeViewer(container, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER );
 		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		viewer.setContentProvider( new ClassesViewContentProvider( classType ) );
+		classesViewContentProvider = new ClassesViewContentProvider( classType );
+		viewer.setContentProvider( classesViewContentProvider );
 		viewer.setLabelProvider(new ClassesViewLabelProvider() );
 		viewer.setInput( ClassesManager.getManager() );
 		viewer.addSelectionChangedListener( new ISelectionChangedListener() {
@@ -101,6 +101,11 @@ public class ClassSelectionWizardPage extends WizardPage {
 		setPageComplete( getClassDescription() != null );
 	}
 
+	public void setDefaultClassDescription( ClassDescription classDescription ) {
+		classesViewContentProvider.setRootClassDescription(classDescription);
+		viewer.refresh();
+	}
+	
 	public void setObjectStoreId(String objectStoreId) {
 		viewer.setFilters( new ViewerFilter[] { new ObjectStoreFilter( objectStoreId) } );
 	}
