@@ -25,6 +25,10 @@ import java.util.Map;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.filenet.api.constants.AutoUniqueName;
+import com.filenet.api.constants.DefineSecurityParentage;
+import com.filenet.api.constants.RefreshMode;
+import com.filenet.api.core.ReferentialContainmentRelationship;
 
 /**
  * @author ricardo.belfor
@@ -63,5 +67,20 @@ public abstract class CreateTask extends BaseTask {
 		com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore
 				.getObjectStoreObject();
 		return internalObjectStore;
+	}
+
+	protected void fileInParent() {
+
+		com.filenet.api.core.Folder internalParent = (com.filenet.api.core.Folder) getParent()
+				.getObjectStoreObject();
+		
+		ObjectStoreItem newDocument = getNewObjectStoreItem();
+		
+		ReferentialContainmentRelationship relationship = internalParent.file(newDocument
+				.getObjectStoreObject(), AutoUniqueName.AUTO_UNIQUE, newDocument.getName(),
+				DefineSecurityParentage.DO_NOT_DEFINE_SECURITY_PARENTAGE);
+		relationship.save(RefreshMode.NO_REFRESH);
+		
+		getParent().addChild(newDocument);
 	}
 }
