@@ -37,14 +37,18 @@ import org.eclipse.swt.widgets.Label;
 public class ConfigureCheckinWizardPage extends WizardPage {
 
 	private Button selectContentButton;
+	@SuppressWarnings("unused")
 	private Button useSavedContentButton;
 	private Button CheckinMajorbutton;
+	private Button useTrackedContentButton;
+	private boolean isTrackedDocument;
 
-	protected ConfigureCheckinWizardPage() {
+	protected ConfigureCheckinWizardPage(boolean isTrackedDocument) {
 		super("configureCheckin");
 		
 		setTitle("Configure Checkin");
 		setDescription("Configure the checkin options.");
+		this.isTrackedDocument = isTrackedDocument;
 	}
 
 	@Override
@@ -57,9 +61,18 @@ public class ConfigureCheckinWizardPage extends WizardPage {
 		setControl(container);
 		
 		createLabel(container, "Select the source of the document content:" );
-		createSelectContentButton(container);
-		createUseSavedContentButton(container);
+		createContentRadioButtons(container);
 		createCheckinMajorButton(container);
+	}
+
+	private void createContentRadioButtons(Composite container) {
+
+		if ( isTrackedDocument ) {
+			useTrackedContentButton = createContentRadioButton(container, "Use &Tracked Content" );
+		}
+
+		selectContentButton = createContentRadioButton(container, "&Select Content" );
+		useSavedContentButton = createContentRadioButton(container, "&Use saved content" );
 	}
 
 	private void createLabel(Composite container, String text) {
@@ -69,18 +82,19 @@ public class ConfigureCheckinWizardPage extends WizardPage {
 		label.setText(text);
 	}
 
-	private void createSelectContentButton(Composite container) {
-
-		selectContentButton = new Button(container, SWT.RADIO);
-		selectContentButton.setText("Select Content");
-		selectContentButton.setLayoutData(getFullRowGridData());
-		selectContentButton.addSelectionListener(new SelectionAdapter() {
+	private Button createContentRadioButton(Composite container, String text) {
+		Button contentRadioButton = new Button(container, SWT.RADIO);
+		contentRadioButton.setText(text);
+		contentRadioButton.setLayoutData(getFullRowGridData());
+		contentRadioButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
 		});
+		
+		return contentRadioButton;
 	}
 
 	private GridData getFullRowGridData() {
@@ -91,20 +105,6 @@ public class ConfigureCheckinWizardPage extends WizardPage {
 
 	protected void updateButtons() {
 		getWizard().getContainer().updateButtons();
-	}
-
-	private void createUseSavedContentButton(Composite container) {
-
-		useSavedContentButton = new Button(container, SWT.RADIO);
-		useSavedContentButton.setText("Use saved content");
-		useSavedContentButton.setLayoutData(getFullRowGridData());
-		useSavedContentButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateButtons();
-			}
-		});
 	}
 
 	private void createCheckinMajorButton(Composite container) {
@@ -120,5 +120,9 @@ public class ConfigureCheckinWizardPage extends WizardPage {
 	
 	public boolean isSelectContent() {
 		return selectContentButton.getSelection();
+	}
+
+	public boolean isUseTrackedContent() {
+		return isTrackedDocument && useTrackedContentButton.getSelection();
 	}
 }

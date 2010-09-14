@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.content.util;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.content.Activator;
@@ -43,7 +44,7 @@ public class PluginMessage {
 
 	public static void openErrorFromThread(  final Shell parentShell, final String title, final String message, final Object details ) {
 		
-		parentShell.getDisplay().syncExec( new Runnable() {
+		Display.getDefault().syncExec( new Runnable() {
 
 			@Override
 			public void run() {

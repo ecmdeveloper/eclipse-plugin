@@ -30,7 +30,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.content.wizard.DownloadDocumentWizard;
 
 /**
@@ -104,22 +107,21 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 	}
 
 	private void addFileToTracker(String newFilename) {
-// TODO: add file tracker support		
-//		String id = document.getId();
-//		String name = document.getName();
-//		String className = document.getClassName();
-//
-//		ObjectStore objectStore = document.getObjectStore();
-//		String objectStoreName = objectStore.getName();
-//		String objectStoreDisplayName = objectStore.getDisplayName();
-//
-//		ContentEngineConnection connection = objectStore.getConnection();
-//		String connectionName = connection.getName();
-//		String connectionDisplayName = connection.getDisplayName();
-//		
-//		FilesTracker.getInstance().addTrackedFile(newFilename, id, name, className,
-//				document.getVersionSeriesId(), connectionName, connectionDisplayName,
-//				objectStoreName, objectStoreDisplayName);
+		String id = document.getId();
+		String name = document.getName();
+		String className = document.getClassName();
+
+		ObjectStore objectStore = document.getObjectStore();
+		String objectStoreName = objectStore.getName();
+		String objectStoreDisplayName = objectStore.getDisplayName();
+
+		ContentEngineConnection connection = objectStore.getConnection();
+		String connectionName = connection.getName();
+		String connectionDisplayName = connection.getDisplayName();
+		
+		FilesTracker.getInstance().addTrackedFile(newFilename, id, name, className,
+				document.getVersionSeriesId(), connectionName, connectionDisplayName,
+				objectStoreName, objectStoreDisplayName);
 	}
 
 }
