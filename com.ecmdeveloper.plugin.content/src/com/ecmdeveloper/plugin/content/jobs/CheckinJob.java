@@ -36,6 +36,7 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 
 /**
  * @author Ricardo.Belfor
@@ -80,17 +81,17 @@ public class CheckinJob extends Job {
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
 			monitor.done();
+			e.printStackTrace();
 			showError(e);
 		}
 		return Status.CANCEL_STATUS;
 	}
 
 	private void removeFromFilesTracker() {
-// TODO: add file tracker support		
-//		String versionSeriesId = document.getVersionSeriesId();
-//		if ( FilesTracker.getInstance().isVersionSeriesTracked(versionSeriesId) ) {
-//			FilesTracker.getInstance().removeTrackedVersionSeries(versionSeriesId);
-//		}
+		String versionSeriesId = document.getVersionSeriesId();
+		if ( FilesTracker.getInstance().isVersionSeriesTracked(versionSeriesId) ) {
+			FilesTracker.getInstance().removeTrackedVersionSeries(versionSeriesId);
+		}
 	}
 
 	private void saveContent(IProgressMonitor monitor) throws ExecutionException {

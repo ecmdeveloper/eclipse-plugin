@@ -21,74 +21,74 @@
 package com.ecmdeveloper.plugin.content.jobs;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
-import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
+import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
- * @author Ricardo.Belfor
+ * @author ricardo.belfor
  *
  */
-public class CancelCheckoutJob extends Job {
+public class SaveTrackedFileJob extends AbstractTrackedFileJob {
 
-	private static final String CANCELING_CHECKOUT_TASK = "Canceling Checkout \"{0}\"";
-	private static final String HANDLER_NAME = "Cancel Checkout";
-	private static final String FAILED_MESSAGE = "Canceling Checkout \"{0}\" failed";
+	private static final String JOB_NAME = "Save Tracked File";
+	private static final String TASK_MESSAGE = "Saving document \"{0}\"";
+	private static final String FAILED_MESSAGE = "Saving \"{0}\" failed";
 
-	private Document document;
-	private Shell shell;
-	
-	public CancelCheckoutJob(Document document, Shell shell) {
-		super(HANDLER_NAME);
-		this.document = document;
-		this.shell = shell;
-	}
+	private String mimeType;
 
-	public Document getDocument() {
-		return document;
+	public SaveTrackedFileJob(TrackedFile trackedFile, IFile file,
+			IWorkbenchWindow window, String mimeType) {
+		super(JOB_NAME, trackedFile, file, window);
+		this.mimeType = mimeType;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		
 		try {
-			String message = MessageFormat.format( CANCELING_CHECKOUT_TASK, document.getName() );
-			monitor.beginTask( message, IProgressMonitor.UNKNOWN );
-			DocumentTask task = new CancelCheckoutTask(document);
-			ObjectStoresManager.getManager().executeTaskSync(task);
-			removeFromFilesTracker();
+			Document document = getDocument(monitor);
+			saveDocument(document, monitor);
 			return Status.OK_STATUS;
-		} catch (Exception e) {
+		} catch (final Exception e) {
+			monitor.done();
 			showError(e);
 		}
 		return Status.CANCEL_STATUS;
 	}
 
-	private void removeFromFilesTracker() {
-		String versionSeriesId = document.getVersionSeriesId();
-		FilesTracker tracker = FilesTracker.getInstance();
-		if ( tracker.isVersionSeriesTracked(versionSeriesId) ) {
-			tracker.removeTrackedVersionSeries(versionSeriesId);
-		}
+	private void saveDocument(Document document, IProgressMonitor monitor) throws ExecutionException {
+		
+		String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
+		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
+		
+		Collection<Object> files = new ArrayList<Object>();
+		files.add( getFile() );
+		DocumentTask task = new SaveTask( document, files, mimeType);
+		ObjectStoresManager.getManager().executeTaskSync(task);
+		
+		monitor.done();
 	}
 
 	private void showError(final Exception e) {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				String message = MessageFormat.format(FAILED_MESSAGE, document.getName());
-				PluginMessage.openError(shell, HANDLER_NAME, message, e);
+				String message = MessageFormat.format(FAILED_MESSAGE, getFile().getName());
+				PluginMessage.openError(getWindow().getShell(), getName(), message, e);
 			}
 		});
 	}

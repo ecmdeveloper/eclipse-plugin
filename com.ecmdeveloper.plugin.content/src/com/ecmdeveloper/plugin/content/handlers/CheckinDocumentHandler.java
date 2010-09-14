@@ -37,7 +37,7 @@ public class CheckinDocumentHandler extends AbstractDocumentHandler {
 	}
 
 	private void openCheckinWizard(Document document) {
-		CheckinWizard wizard = new CheckinWizard( document );
+		CheckinWizard wizard = new CheckinWizard( document, false );
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.open();

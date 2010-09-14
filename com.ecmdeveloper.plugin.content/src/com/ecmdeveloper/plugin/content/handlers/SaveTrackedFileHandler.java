@@ -20,25 +20,49 @@
 
 package com.ecmdeveloper.plugin.content.handlers;
 
+import java.net.FileNameMap;
+import java.net.URLConnection;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.content.jobs.CheckinTrackedFileJob;
+import com.ecmdeveloper.plugin.content.jobs.SaveTrackedFileJob;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
- * @author Ricardo.Belfor
+ * @author ricardo.belfor
  *
  */
-public class CheckinTrackedFileHandler extends AbstractTrackedFileHandler {
+public class SaveTrackedFileHandler extends AbstractTrackedFileHandler {
+
+	private static final String MIME_TYPE_MESSAGE = "Document Mime Type:";
+	private static final String HANDLER_NAME = "Save Tracked File";
 
 	@Override
 	protected void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file) {
 		if ( trackedFile != null ) {
-			CheckinTrackedFileJob job = new CheckinTrackedFileJob(trackedFile,file,window);
+			String mimeType = getMimeType(window, file);
+			SaveTrackedFileJob job = new SaveTrackedFileJob(trackedFile, file, window, mimeType );
 			job.setUser(true);
 			job.schedule();
 		}
+	}
+
+	private String getMimeType(IWorkbenchWindow window, IFile file) {
+		
+		FileNameMap fileNameMap = URLConnection.getFileNameMap();
+		String mimeType = fileNameMap.getContentTypeFor( file.getName() );
+		
+		InputDialog inputDialog = new InputDialog( window.getShell(), HANDLER_NAME, MIME_TYPE_MESSAGE, mimeType, null );
+		int open = inputDialog.open();
+		
+		if ( open == InputDialog.OK ) {
+			return inputDialog.getValue();
+		}
+		
+		return mimeType;
 	}
 
 }

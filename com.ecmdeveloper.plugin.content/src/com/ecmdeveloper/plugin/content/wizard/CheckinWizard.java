@@ -44,15 +44,17 @@ public class CheckinWizard extends Wizard {
 	private ContentSelectionWizardPage contentSelectionPage;
 	private Document document;
 	private IFile initialContent;
+	private boolean isTrackedDocument;
 	
-	public CheckinWizard(Document document) {
+	public CheckinWizard(Document document, boolean isTrackedDocument ) {
 		this.document = document;
 		String title = MessageFormat.format( WINDOW_TITLE_MESSAGE, document.getName() );
 		setWindowTitle(title);
+		this.isTrackedDocument = isTrackedDocument;
 	}
 
 	public void addPages() {
-		configureCheckinPage = new ConfigureCheckinWizardPage();
+		configureCheckinPage = new ConfigureCheckinWizardPage(isTrackedDocument);
 		addPage(configureCheckinPage);
 		contentSelectionPage = new ContentSelectionWizardPage( document.getName() );
 		addPage(contentSelectionPage);

@@ -36,6 +36,10 @@ import org.eclipse.swt.widgets.Label;
  */
 public class ConfigureCheckoutWizardPage extends WizardPage {
 
+	private static final String TRACK_BUTTON_LABEL = "&Track Content";
+	private static final String EDIT_BUTTON_LABEL = "Download and &Edit Content";
+	private static final String DOWNLOAD_BUTTON_LABEL = "&Download Content";
+	private static final String NOTHING_BUTTON_LABEL = "&Nothing";
 	private Button downloadButton;
 	private Button editButton;
 	@SuppressWarnings("unused")
@@ -58,9 +62,7 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 	}
 
 	public boolean isTracked() {
-// TODO enable tracker
-//		return trackButton.getSelection();
-		return false;
+		return trackButton.getSelection();
 	}
 
 	@Override
@@ -87,15 +89,15 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 	}
 	
 	private void createNothingButton(Composite container) {
-		nothingButton = createButton(container, "Nothing", false );
+		nothingButton = createButton(container, NOTHING_BUTTON_LABEL, false );
 	}
 
 	private void createDownloadButton(Composite container) {
-		downloadButton = createButton(container, "Download Content", false );
+		downloadButton = createButton(container, DOWNLOAD_BUTTON_LABEL, false );
 	}
 
 	private void createEditButton(Composite container) {
-		editButton = createButton(container, "Download and Edit Content", false );
+		editButton = createButton(container, EDIT_BUTTON_LABEL, false );
 	}
 	
 	private Button createButton(Composite container, String text, boolean selection ) {
@@ -127,9 +129,8 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 
 	private void createTrackButton(Composite container) {
 		trackButton = new Button(container, SWT.CHECK );
-		trackButton.setText("Track Content");
+		trackButton.setText(TRACK_BUTTON_LABEL);
 		trackButton.setLayoutData(getFullRowGridData());
 		trackButton.setSelection(false);
-		trackButton.setVisible(false);
 	}
 }
