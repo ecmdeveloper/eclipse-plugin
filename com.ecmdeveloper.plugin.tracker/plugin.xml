@@ -2,6 +2,32 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Edit the Tracked File"
+            id="com.ecmdeveloper.plugin.tracker.editTrackedFile"
+            name="Edit Tracked File">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.ecmdeveloper.plugin.tracker.handlers.EditTrackedFileHandler"
+            commandId="com.ecmdeveloper.plugin.tracker.editTrackedFile">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.tracker.model.TrackedFile">
+                  </instanceof>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
@@ -11,25 +37,49 @@
             <command
                   commandId="com.ecmdeveloper.plugin.checkinTrackedFile"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <test
+                              forcePluginActivation="true"
+                              property="com.ecmdeveloper.plugin.tracker.isTracked">
+                        </test>
+                     </iterate>
+                  </with>
+               </visibleWhen>
             </command>
             <command
-                  commandId="org.eclipse.ui.file.properties"
+                  commandId="com.ecmdeveloper.plugin.saveTrackedFile"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <test
+                              forcePluginActivation="true"
+                              property="com.ecmdeveloper.plugin.tracker.isTracked">
+                        </test>
+                     </iterate>
+                  </with>
+               </visibleWhen>
             </command>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <test
-                           forcePluginActivation="true"
-                           property="com.ecmdeveloper.plugin.tracker.isTracked">
-                     </test>
-                  </iterate>
-               </with>
-            </visibleWhen>
          </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.views.TrackedFiles?after=edit">
+         <command
+               commandId="com.ecmdeveloper.plugin.tracker.editTrackedFile"
+               style="push">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveTrackedFile"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -41,6 +91,20 @@
             properties="isTracked"
             type="java.lang.Object">
       </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="com.ecmdeveloper.plugin.contentEngine"
+            name="Content Engine">
+      </category>
+      <view
+            category="com.ecmdeveloper.plugin.contentEngine"
+            class="com.ecmdeveloper.plugin.tracker.views.TrackerView"
+            id="com.ecmdeveloper.plugin.views.TrackedFiles"
+            name="Tracked Files"
+            restorable="true">
+      </view>
    </extension>
 
 </plugin>
