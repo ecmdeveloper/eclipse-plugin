@@ -67,6 +67,11 @@
             id="com.ecmdeveloper.plugin.saveNewProperties"
             name="Save New Properties">
       </command>
+      <command
+            description="New Document from Resource"
+            id="com.ecmdeveloper.plugin.newDocumentFromResource"
+            name="Add to Object Store">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -177,6 +182,29 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="contentEngine"
+               label="Content Engine">
+            <command
+                  commandId="com.ecmdeveloper.plugin.newDocumentFromResource"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <instanceof
+                              value="org.eclipse.core.resources.IFile">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -263,6 +291,10 @@
             class="com.ecmdeveloper.plugin.properties.handlers.NewCustomObjectHandler"
             commandId="com.ecmdeveloper.plugin.newCustomObject">
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.properties.handlers.NewDocumentFromResourceHandler"
+            commandId="com.ecmdeveloper.plugin.newDocumentFromResource">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -278,6 +310,26 @@
             name="Folder">
          <description>
             Create a new object store item
+         </description>
+      </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.properties.wizard.NewDocumentWizard"
+            icon="icons/page_white.png"
+            id="com.ecmdeveloper.plugin.newDocument"
+            name="Document">
+         <description>
+            Create a new document
+         </description>
+      </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.properties.wizard.NewCustomObjectWizard"
+            icon="icons/application_view_columns.png"
+            id="com.ecmdeveloper.plugin.newCustomObject"
+            name="Custom Object">
+         <description>
+            Create a new custom object
          </description>
       </wizard>
    </extension>
