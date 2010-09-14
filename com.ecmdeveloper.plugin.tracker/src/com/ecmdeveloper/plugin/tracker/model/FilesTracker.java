@@ -25,7 +25,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ui.IMemento;
@@ -45,6 +48,7 @@ public class FilesTracker {
 	private static final String FILES_TRACKER_FILENAME = "files_tracker.xml";
 	private static final int CURRENT_FILE_VERSION = 1;
 	private static FilesTracker filesTracker;
+	private List<FilesTrackerListener> listeners = new ArrayList<FilesTrackerListener>();
 
 	Map<String,TrackedFile> trackedFilesMap;
 	
@@ -76,6 +80,7 @@ public class FilesTracker {
 		trackedFilesMap.put(filename, trackedFile);
 		
 		saveTrackedFiles();
+		fireFilesChanged();
 	}
 	
 	public boolean isFileTracked(String filename) {
@@ -105,6 +110,7 @@ public class FilesTracker {
 				if ( versionSeriesId.equalsIgnoreCase( trackedFile.getVersionSeriesId() ) ) {
 					trackedFilesMap.remove(trackedFile.getFilename());
 					saveTrackedFiles();
+					fireFilesChanged();
 					return true;
 				}
 			}
@@ -112,6 +118,10 @@ public class FilesTracker {
 		return false;
 	}
 
+	public Collection<TrackedFile> getTrackedFiles() {
+		initializeTrackedFiles();
+		return trackedFilesMap.values();
+	}
 	public TrackedFile getTrackedFile(String filename ) {
 		initializeTrackedFiles();
 		if ( trackedFilesMap.containsKey(filename) ) {
@@ -230,5 +240,21 @@ public class FilesTracker {
 			PluginLog.error(e);
 		}	
 		return reader;
+	}
+
+	public void addCodeModuleManagerListener( FilesTrackerListener listener) {
+		if (!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+	}
+
+	public void removeCodeModulesManagerListener( FilesTrackerListener listener) {
+		listeners.remove(listener);
+	}
+	
+	private void fireFilesChanged() {
+		for (FilesTrackerListener listener : listeners) {
+			listener.filesChanged();
+		}
 	}
 }

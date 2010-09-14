@@ -20,12 +20,18 @@
 
 package com.ecmdeveloper.plugin.tracker.model;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+
 
 /**
  * @author Ricardo.Belfor
  *
  */
-public class TrackedFile {
+public class TrackedFile implements IAdaptable {
 
 	private String id;
 	private String name;
@@ -36,6 +42,7 @@ public class TrackedFile {
 	private String connectionDisplayName;
 	private String objectStoreName;
 	private String objectStoreDisplayName;
+	private IFile file;
 
 	public String getId() {
 		return id;
@@ -61,35 +68,57 @@ public class TrackedFile {
 	}
 	public void setFilename(String filename) {
 		this.filename = filename;
+		Path path = new Path( getFilename() );
+		file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 	}
+	
 	public String getVersionSeriesId() {
 		return versionSeriesId;
 	}
+	
 	public void setVersionSeriesId(String versionSeriesId) {
 		this.versionSeriesId = versionSeriesId;
 	}
+	
 	public String getConnectionName() {
 		return connectionName;
 	}
+	
 	public void setConnectionName(String connectionName) {
 		this.connectionName = connectionName;
 	}
+	
 	public String getConnectionDisplayName() {
 		return connectionDisplayName;
 	}
+	
 	public void setConnectionDisplayName(String connectionDisplayName) {
 		this.connectionDisplayName = connectionDisplayName;
 	}
+	
 	public String getObjectStoreName() {
 		return objectStoreName;
 	}
+	
 	public void setObjectStoreName(String objectStoreName) {
 		this.objectStoreName = objectStoreName;
 	}
+	
 	public String getObjectStoreDisplayName() {
 		return objectStoreDisplayName;
 	}
+	
 	public void setObjectStoreDisplayName(String objectStoreDisplayName) {
 		this.objectStoreDisplayName = objectStoreDisplayName;
+	}
+
+	public IFile getFile() {
+		return file;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }
