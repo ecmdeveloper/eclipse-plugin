@@ -60,7 +60,7 @@ public class SaveTask extends DocumentTask {
 		reservation.set_MimeType( mimeType );
 		reservation.save( RefreshMode.REFRESH );
 		
-		reservationDocument = new Document( reservation, getDocument().getParent(), getDocument().getParent().getObjectStore() );
+		reservationDocument = new Document( reservation, getDocument().getParent(), getDocument().getObjectStore() );
 		
 		return null;
 	}

@@ -20,19 +20,24 @@
 package com.ecmdeveloper.plugin.views;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import com.ecmdeveloper.plugin.jobs.RefreshJob;
+import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 
 public class ObjectStoresViewContentProvider implements
 		IStructuredContentProvider, ITreeContentProvider, ObjectStoresManagerListener {
@@ -74,27 +79,30 @@ public class ObjectStoresViewContentProvider implements
 		}
 		return null;
 	}
-	public Object [] getChildren(Object parent) {
+
+	public Object[] getChildren(Object parent) {
 		
 		if (parent instanceof IObjectStoreItem) {
-			
-			// Transform the collection to an array
 			
 			Collection<IObjectStoreItem> children = ((IObjectStoreItem)parent).getChildren();
 			
 			if ( children != null )
 			{
-				Object[]  childrenArray = new Object[children.size()];
-				int index = 0;
-				
-				for (IObjectStoreItem object : children) {
-					childrenArray[index++] = object;
-				}
-				
+				Object[] childrenArray = getChildrenAsArray(children);
 				return childrenArray;
 			}
 		}
 		return new Object[0];
+	}
+
+	private Object[] getChildrenAsArray(Collection<IObjectStoreItem> children) {
+		Object[]  childrenArray = new Object[children.size()];
+		int index = 0;
+		
+		for (IObjectStoreItem object : children) {
+			childrenArray[index++] = object;
+		}
+		return childrenArray;
 	}
 	
 	public boolean hasChildren(Object parent) {
@@ -117,33 +125,101 @@ public class ObjectStoresViewContentProvider implements
 			
 			@Override
 			public void run() {
-				if ( event.getItemsRemoved() != null ) {
-					viewer.remove( event.getItemsRemoved() );
-				}
-	
-				if ( event.getItemsAdded() != null ) {
-					
-					for ( IObjectStoreItem objectStoreItem : event.getItemsAdded() ) {
-						if ( objectStoreItem instanceof ObjectStore ) {
-							viewer.refresh(null, false );
-							viewer.add( invisibleRoot, objectStoreItem );
-						} else {
-						}
-					}
-				}
+				updateViewer(event);
+			}
+		});
+	}
+
+	private void updateViewer(final ObjectStoresManagerEvent event) {
+
+		if ( event.getItemsRemoved() != null ) {
+			viewer.remove( event.getItemsRemoved() );
+		}
+
+		if ( event.getItemsAdded() != null ) {
+			updateItemsAdded(event);
+		}
+		
+		if ( event.getItemsUpdated() != null ) {
+			updateItemsUpdated(event);
+		}
+	}
+
+	private void updateItemsUpdated(final ObjectStoresManagerEvent event) {
+		viewer.update( event.getItemsUpdated() , null );
+
+		for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
+			if ( objectStoreItem instanceof Folder ) {
+				viewer.refresh(objectStoreItem);
+			} else if ( objectStoreItem instanceof ObjectStore ) {
+				viewer.refresh( objectStoreItem, false );
+			}
+		}
+		
+		Object[] expandedElements = viewer.getExpandedElements();
+		for (IObjectStoreItem updatedItem : event.getItemsUpdated()) {
+			Collection<IObjectStoreItem> similarObjects = getSimilarObjects(expandedElements, updatedItem);
+//			for ( IObjectStoreItem similarObject : similarObjects ) {
+//				if ( similarObject instanceof Document ) {
+//					((Document)similarObject).refresh( (com.filenet.api.core.Document) ((ObjectStoreItem)updatedItem).getObjectStoreObject() );
+//					viewer.update(similarObject, null);
+//				}
+//			}
+			if ( similarObjects.size() > 0 ) {
+				RefreshTask refreshTask = new RefreshTask( similarObjects.toArray( new IObjectStoreItem[0] ) );
+				ObjectStoresManager.getManager().executeTaskASync(refreshTask);
 				
-				if ( event.getItemsUpdated() != null ) {
-					viewer.update( event.getItemsUpdated() , null );
-	
-					for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
-						if ( objectStoreItem instanceof Folder ) {
-							viewer.refresh(objectStoreItem);
-						} else if ( objectStoreItem instanceof ObjectStore ) {
-							viewer.refresh( objectStoreItem, false );
-						}
+//				RefreshJob refreshJob = new RefreshJob( similarObjects.toArray( new IObjectStoreItem[0] ) );
+//				refreshJob.schedule();
+			}
+		}
+	}
+
+	private Collection<IObjectStoreItem> getSimilarObjects(Object[] expandedElements, IObjectStoreItem updatedItem) {
+		
+		Collection<IObjectStoreItem> similarObjects = new HashSet<IObjectStoreItem>();
+		
+		for (Object object : expandedElements) {
+			if (object instanceof Folder) {
+				Folder folder = (Folder) object;
+				for (IObjectStoreItem child : folder.getChildren()) {
+					if ( isSimilarObject(updatedItem, child) ) {
+						similarObjects.add(child);
 					}
 				}
 			}
-		});
+		}
+		
+		return similarObjects;
+	}
+
+	private boolean isSimilarObject(IObjectStoreItem updatedItem, IObjectStoreItem otherItem) {
+		if ( !otherItem.equals(updatedItem) ) {
+			System.out.println( "Comparing " + otherItem.getName() + " with " + updatedItem.getName() );
+			if ( otherItem.getId() != null && otherItem.getId().equalsIgnoreCase(updatedItem.getId()) ) {
+//				System.out.println(otherItem.getDisplayName() + " found!");
+//				return true;
+			} 
+			else if ( isSameVersionSeries(updatedItem, otherItem) ) {
+				System.out.println(otherItem.getDisplayName() + " found!");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isSameVersionSeries(IObjectStoreItem updatedItem, IObjectStoreItem otherItem) {
+		return otherItem instanceof Document && updatedItem instanceof Document && 
+				((Document)otherItem).getVersionSeriesId().equalsIgnoreCase( ((Document)updatedItem).getVersionSeriesId() );
+	}
+
+	private void updateItemsAdded(final ObjectStoresManagerEvent event) {
+		for ( IObjectStoreItem objectStoreItem : event.getItemsAdded() ) {
+			if ( objectStoreItem instanceof ObjectStore ) {
+				viewer.refresh(null, false );
+				viewer.add( invisibleRoot, objectStoreItem );
+			} else {
+			}
+		}
 	}
 }

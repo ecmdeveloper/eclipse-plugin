@@ -33,9 +33,13 @@ public class CustomObject extends ObjectStoreItem {
 
 	protected com.filenet.api.core.CustomObject customObject;
 	
-	public CustomObject( Object customObject, IObjectStoreItem parent, ObjectStore objectStore ) {
+	public CustomObject(Object customObject, IObjectStoreItem parent, ObjectStore objectStore) {
+		this(customObject, parent, objectStore, true);
+	}
 
-		super(parent, objectStore );
+	public CustomObject( Object customObject, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+
+		super(parent, objectStore, saved );
 		
 		this.customObject = (com.filenet.api.core.CustomObject) customObject;
 		refresh();
@@ -63,6 +67,11 @@ public class CustomObject extends ObjectStoreItem {
 
 	@Override
 	public void refresh() {
+		
+		if ( !saved ) {
+			return;
+		}
+		
 		customObject.refresh( new String[] { PropertyNames.NAME, PropertyNames.ID } );
 		name = customObject.get_Name();
 		id = customObject.get_Id().toString();
