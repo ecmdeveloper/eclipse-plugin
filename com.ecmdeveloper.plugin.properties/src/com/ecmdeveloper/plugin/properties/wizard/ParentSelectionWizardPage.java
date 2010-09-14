@@ -39,8 +39,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
 import com.ecmdeveloper.plugin.model.CustomObject;
@@ -58,6 +56,10 @@ import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
  */
 public class ParentSelectionWizardPage extends WizardPage {
 
+	private static final String NO_PARENT_MESSAGE = "<no parent selected>";
+	private static final String DESCRIPTION = "Select the parent folder";
+	private static final String TITLE = "Select Parent";
+	private static final String BROWSE_BUTTON_LABEL = "Br&owse...";
 	private static final String PAGE_NAME = "selectParentPage";
 
 	private TreeViewer viewer;
@@ -73,8 +75,8 @@ public class ParentSelectionWizardPage extends WizardPage {
 
 	protected ParentSelectionWizardPage() {
 		super(PAGE_NAME);
-		setTitle( "Select Parent");
-		setDescription( "Select the parent folder" );
+		setTitle( TITLE);
+		setDescription( DESCRIPTION );
 	}
 
 	@Override
@@ -126,7 +128,7 @@ public class ParentSelectionWizardPage extends WizardPage {
 				browseForParent();
 			}
 		});
-		browseButton.setText("Browse...");
+		browseButton.setText(BROWSE_BUTTON_LABEL);
 	}
 	
 	private void browseForParent() {
@@ -162,7 +164,7 @@ public class ParentSelectionWizardPage extends WizardPage {
 			String objectStoreName = folder.getObjectStore().getDisplayName();
 			viewer.setInput( getPathElements( objectStoreName, pathName ) );
 		} else {
-			PathElement dummyPathElement = new PathElement("<no parent selected>", 2);
+			PathElement dummyPathElement = new PathElement(NO_PARENT_MESSAGE, 2);
 			viewer.setInput( new PathElement[] { dummyPathElement } );
 		}
 		viewer.refresh();

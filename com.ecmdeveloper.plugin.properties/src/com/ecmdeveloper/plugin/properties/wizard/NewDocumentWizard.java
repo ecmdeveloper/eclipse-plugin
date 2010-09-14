@@ -22,7 +22,10 @@ package com.ecmdeveloper.plugin.properties.wizard;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbench;
 
 import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.content.wizard.ContentSelectionWizardPage;
@@ -35,17 +38,36 @@ import com.ecmdeveloper.plugin.properties.editors.input.NewDocumentEditorInput;
  */
 public class NewDocumentWizard extends NewObjectStoreItemWizard {
 
+	private static final String WINDOW_TITLE = "New Document";
+	private static final String DEFAULT_CLASS_NAME = "Document";
 	private ContentSelectionWizardPage contentSelectionWizardPage;
 	private ConfigureCreateDocumentWizardPage configureCreateDocumentWizardPage;
+	private ArrayList<Object> files;
+
+	@Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		super.init(workbench, selection);
+		setWindowTitle(WINDOW_TITLE);
+	}
 	
 	@Override
 	public void addPages() {
 		super.addPages();
-		contentSelectionWizardPage = new ContentSelectionWizardPage(null);
-		addPage(contentSelectionWizardPage);
-		
+		addContentSelectionWizardPage();
+		addConfigureCreateDocumentWizardPage();
+	}
+
+	private void addConfigureCreateDocumentWizardPage() {
 		configureCreateDocumentWizardPage = new ConfigureCreateDocumentWizardPage();
 		addPage(configureCreateDocumentWizardPage);
+	}
+
+	private void addContentSelectionWizardPage() {
+		contentSelectionWizardPage = new ContentSelectionWizardPage(null);
+		if ( files != null ) {
+			contentSelectionWizardPage.setContent(files);
+		}
+		addPage(contentSelectionWizardPage);
 	}
 
 	@Override
@@ -74,5 +96,14 @@ public class NewDocumentWizard extends NewObjectStoreItemWizard {
 		newDocumentEditorInput.setAutoClassify(autoClassify);
 		
 		return newDocumentEditorInput;
+	}
+
+	@Override
+	protected String getDefaultClassName() {
+		return DEFAULT_CLASS_NAME;
+	}
+
+	public void setFiles(ArrayList<Object> files) {
+		this.files = files;
 	}
 }

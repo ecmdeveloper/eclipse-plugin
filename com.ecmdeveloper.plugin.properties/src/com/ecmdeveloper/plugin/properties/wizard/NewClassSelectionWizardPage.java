@@ -18,33 +18,28 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.properties.editors.input;
-
-import java.text.MessageFormat;
+package com.ecmdeveloper.plugin.properties.wizard;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
+import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
+import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class NewFolderEditorInput extends NewObjectStoreItemEditorInput {
+public class NewClassSelectionWizardPage extends ClassSelectionWizardPage {
 
-	private static final String DEFAULT_FOLDER_NAME = "Folder {0}";
-	private static final String FOLDER_TITLE_PROPERTY_NAME = "FolderName";
+	public NewClassSelectionWizardPage(ClassType classType) {
+		super(classType);
+	}
 
-	private static int newFolderIndex = 0;
-	
-	public NewFolderEditorInput(ClassDescription classDescription, Folder parent) {
-		super(classDescription, parent);
-		
-		try {
-			String unsavedTitle = MessageFormat.format(DEFAULT_FOLDER_NAME, ++newFolderIndex);
-			propertiesObject.setValue(FOLDER_TITLE_PROPERTY_NAME, unsavedTitle);
-			((UnsavedPropertiesObject) propertiesObject).setName(unsavedTitle);
-		} catch (Exception e) {
+	@Override
+	public void setVisible(boolean visible) {
+		if ( visible ) {
+			ClassDescription defaultClassDescription = ((NewObjectStoreItemWizard)getWizard()).getDefaultClassDescription();
+			setDefaultClassDescription( defaultClassDescription );
 		}
+		super.setVisible(visible);
 	}
 }

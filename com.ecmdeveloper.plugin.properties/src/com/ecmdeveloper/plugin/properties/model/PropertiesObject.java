@@ -28,6 +28,7 @@ import java.beans.PropertyChangeListener;
  */
 public interface PropertiesObject {
 	public String getName();
+	
 	public Object getValue(String propertyName);
 	public void setValue(String propertyName,Object value) throws Exception;
 	

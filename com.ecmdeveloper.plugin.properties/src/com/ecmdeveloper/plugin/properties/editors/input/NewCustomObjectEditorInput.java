@@ -20,8 +20,11 @@
 
 package com.ecmdeveloper.plugin.properties.editors.input;
 
+import java.text.MessageFormat;
+
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
 /**
  * @author ricardo.belfor
@@ -29,7 +32,17 @@ import com.ecmdeveloper.plugin.model.Folder;
  */
 public class NewCustomObjectEditorInput extends NewObjectStoreItemEditorInput {
 
+	private static final String DEFAULT_CUSTOM_OBJECT_NAME = "Custom Object {0}";
+
+	private static int newCustomObjectIndex = 0;
+	
 	public NewCustomObjectEditorInput(ClassDescription classDescription, Folder parent) {
 		super(classDescription, parent);
+
+		try {
+			String unsavedTitle = MessageFormat.format(DEFAULT_CUSTOM_OBJECT_NAME, ++newCustomObjectIndex);
+			((UnsavedPropertiesObject) propertiesObject).setName(unsavedTitle);
+		} catch (Exception e) {
+		}
 	}
 }
