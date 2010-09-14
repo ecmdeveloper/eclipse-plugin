@@ -33,8 +33,10 @@ import java.util.Set;
  */
 public class UnsavedPropertiesObject implements PropertiesObject {
 
+	private static final String DEFAULT_NAME = "Untitled Object";
 	private Map<String,Object> propertiesMap;
 	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
+	private String name = DEFAULT_NAME;
 	
 	public UnsavedPropertiesObject() {
 		propertiesMap = new HashMap<String, Object>();
@@ -85,7 +87,11 @@ public class UnsavedPropertiesObject implements PropertiesObject {
 
 	@Override
 	public String getName() {
-		return "Untitled Object";
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Collection<String> getPropertyNames() {

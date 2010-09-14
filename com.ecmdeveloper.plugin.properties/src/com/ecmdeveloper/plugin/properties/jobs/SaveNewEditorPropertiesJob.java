@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.properties.jobs;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -30,12 +31,14 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
+import com.ecmdeveloper.plugin.model.tasks.CreateCustomObjectTask;
 import com.ecmdeveloper.plugin.model.tasks.CreateDocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.CreateFolderTask;
 import com.ecmdeveloper.plugin.model.tasks.CreateTask;
 import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 import com.ecmdeveloper.plugin.model.tasks.SaveTask;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
+import com.ecmdeveloper.plugin.properties.editors.input.NewCustomObjectEditorInput;
 import com.ecmdeveloper.plugin.properties.editors.input.NewDocumentEditorInput;
 import com.ecmdeveloper.plugin.properties.editors.input.NewFolderEditorInput;
 import com.ecmdeveloper.plugin.properties.editors.input.NewObjectStoreItemEditorInput;
@@ -46,9 +49,9 @@ import com.ecmdeveloper.plugin.properties.editors.input.NewObjectStoreItemEditor
  */
 public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 
-	private static final String JOB_NAME = "Save Editor Properties";
+	private static final String JOB_NAME = "Creating new object";
 	private static final String MONITOR_MESSAGE = "Saving Editor Properties";
-	private static final String FAILED_MESSAGE = "Saving Editor Properties for new item failed. '{0}'";
+	private static final String FAILED_MESSAGE = "Creating new object \"{0}\" failed.";
 
 	public SaveNewEditorPropertiesJob(ObjectStoreItemEditor editor,IWorkbenchWindow window) {
 		super(editor, window, JOB_NAME);
@@ -56,7 +59,7 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 
 	@Override
 	protected String getFailedMessage() {
-		return FAILED_MESSAGE;		
+		return MessageFormat.format( FAILED_MESSAGE, getEditorInput().getName() );		
 	}
 
 	@Override
@@ -76,6 +79,7 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 	private void saveNew() throws ExecutionException {
 		
 		NewObjectStoreItemEditorInput editorInput = (NewObjectStoreItemEditorInput) getEditorInput();
+		
 		CreateTask task = createCreateTask(editorInput);
 		ObjectStoresManager.getManager().executeTaskSync(task);
 		editorInput.setObjectStoreItem( task.getNewObjectStoreItem() );
@@ -98,8 +102,10 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		
 		if ( editorInput instanceof NewFolderEditorInput ) {
 			return new CreateFolderTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
-		} if ( editorInput instanceof NewDocumentEditorInput ) {
+		} else if ( editorInput instanceof NewDocumentEditorInput ) {
 			return new CreateDocumentTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
+		} else if ( editorInput instanceof NewCustomObjectEditorInput ) {
+			return new CreateCustomObjectTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
 		} else {
 			throw new UnsupportedOperationException( "Creation using the class " + editorInput.getName() + " not yet implemented" );
 		}

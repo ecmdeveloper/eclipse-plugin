@@ -69,7 +69,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 		parentSelectionWizardPage = new ParentSelectionWizardPage();
 		parentSelectionWizardPage.setFolder( getInitialSelection() );
 		addPage( parentSelectionWizardPage );
-		classSelectionPage = new ClassSelectionWizardPage(getClassType());
+		classSelectionPage = new NewClassSelectionWizardPage(getClassType());
 		addPage( classSelectionPage );
 	}
 
@@ -82,9 +82,17 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 		}
 		return null;
 	}
+
+	public ObjectStore getObjectStore() {
+		Folder folder = getParentFolder();
+		if ( folder != null ) {
+			return folder.getObjectStore();
+		}
+		return null;
+	}
 	
 	private Folder getInitialSelection() {
-		if ( selection.size() == 1 ) {
+		if ( selection != null && selection.size() == 1 ) {
 			Object object = selection.iterator().next();
 			if ( object instanceof Folder ) {
 				return (Folder) object;
@@ -93,14 +101,6 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 		return null;
 	}
 
-	@Override
-	public IWizardPage getNextPage(IWizardPage page) {
-		if ( page instanceof ParentSelectionWizardPage ) {
-			classSelectionPage.setObjectStoreId( getObjectStoreId() );
-			return classSelectionPage;
-		}
-		return super.getNextPage(page);
-	}
 	@Override
 	public boolean performFinish() {
 		
@@ -122,17 +122,21 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 		return false;
 	}
 
-	private void fetchDefaultClassDescription(final ObjectStore objectStore) {
+	protected abstract IEditorInput getEditorInput();
 
-		try {
-			getContainer().run(true, false, new GetDefaultClassDescriptionRunner(objectStore, "Document"));
-		} catch (Exception e) {
-			PluginMessage.openErrorFromThread(getShell(), getWindowTitle(),
-					GETTING_DEFAULT_CLASS_DESCRIPTION_FAILED_MESSAGE, e);
+	public void fetchDefaultClassDescription(final ObjectStore objectStore) {
+
+		if ( defaultClassDescription == null && objectStore != null) {
+			try {
+				getContainer().run(true, false, new GetDefaultClassDescriptionRunner(objectStore, getDefaultClassName() ) );
+			} catch (Exception e) {
+				PluginMessage.openErrorFromThread(getShell(), getWindowTitle(),
+						GETTING_DEFAULT_CLASS_DESCRIPTION_FAILED_MESSAGE, e);
+			}
 		}
 	}
 
-	protected abstract IEditorInput getEditorInput();
+	protected abstract String getDefaultClassName();
 	
 	protected ClassDescription getClassDescription() {
 		ClassDescription classDescription = classSelectionPage.getClassDescription();
@@ -140,6 +144,11 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 			return defaultClassDescription;
 		}
 		return classDescription;
+	}
+
+	public ClassDescription getDefaultClassDescription() {
+		fetchDefaultClassDescription( getObjectStore() );
+		return defaultClassDescription;
 	}
 
 	protected Folder getParentFolder() {
@@ -173,7 +182,9 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException,
 				InterruptedException {
+			monitor.beginTask("Getting default class description", IProgressMonitor.UNKNOWN);
 			getDefaultClassDescription(objectStore);
+			monitor.done();
 		}
 
 		private void getDefaultClassDescription(final ObjectStore objectStore) {
