@@ -50,9 +50,19 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	private ObjectStores classesRoot;
 	private TreeViewer viewer;
 	private ClassType classesFilter;
-	
+	private VirtualFolder rootVirtualFolder;
 	public ClassesViewContentProvider(ClassType classesFilter) {
 		this.classesFilter = classesFilter;
+	}
+
+	public void setRootClassDescription(ClassDescription rootClassDescription ) {
+		Object[] virtualFolders = getVirtualFolders(rootClassDescription.getObjectStore() );
+		if ( virtualFolders.length == 1 ) {
+			ArrayList<Object> children = new ArrayList<Object>();
+			children.add( rootClassDescription );
+			rootVirtualFolder = (VirtualFolder)virtualFolders[0]; 
+			rootVirtualFolder.setChildren(children);
+		}
 	}
 	
 	@Override
@@ -73,6 +83,9 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	@Override
 	public Object[] getElements(Object parent) {
 		if ( ! ( parent instanceof IObjectStoreItem ) ) {
+			if ( rootVirtualFolder != null) {
+				return getChildren(rootVirtualFolder);
+			}
 			if ( classesRoot == null ) initialize();
 			return getChildren(classesRoot);
 		} else {
