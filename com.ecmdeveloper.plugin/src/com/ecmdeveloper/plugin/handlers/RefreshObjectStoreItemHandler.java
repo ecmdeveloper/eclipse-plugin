@@ -65,7 +65,7 @@ public class RefreshObjectStoreItemHandler extends AbstractHandler  {
 			elementsRefreshed.add( selectedObject );
 		}
 
-		RefreshTask refreshTask = new RefreshTask( elementsRefreshed.toArray(new IObjectStoreItem[0] ) );
+		RefreshTask refreshTask = new RefreshTask( elementsRefreshed.toArray(new IObjectStoreItem[0] ), true );
 		ObjectStoresManager.getManager().executeTaskASync(refreshTask);
 		
 		return null;

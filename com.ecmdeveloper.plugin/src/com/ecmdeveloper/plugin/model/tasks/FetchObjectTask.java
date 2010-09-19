@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.text.MessageFormat;
 
+import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
@@ -34,8 +35,10 @@ import com.filenet.api.core.IndependentObject;
  */
 public class FetchObjectTask extends BaseTask {
 
-	private static final String FOLDER_OBJECT_TYPE = "Folder";
-	private static final String DOCUMENT_OBJECT_TYPE = "Document";
+	public static final String FOLDER_OBJECT_TYPE = "Folder";
+	public static final String DOCUMENT_OBJECT_TYPE = "Document";
+	public static final String CUSTOM_OBJECT_TYPE = "Custom Object";
+	
 	private static final String UNSUPPORTED_OBJECT_TYPE_MESSAGE = "Objects of type {0} are not yet supported";
 	
 	private ObjectStore objectStore;
@@ -51,34 +54,21 @@ public class FetchObjectTask extends BaseTask {
 		this.objectType = objectType;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.Callable#call()
-	 */
 	@Override
 	public IObjectStoreItem call() throws Exception {
 		
 		com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore
 				.getObjectStoreObject();
 
-//		if ( id.startsWith("/") ) {
-//			if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
-//				com.filenet.api.core.Folder internalFolder = Factory.Folder.getInstance(internalObjectStore, className, id );
-//				return new Folder(internalFolder, null, objectStore );
-//			} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
-//				com.filenet.api.core.Document internalDocument = Factory.Document.getInstance(internalObjectStore, className, id );
-//				return new Document(internalDocument, null, objectStore );
-//			} else {
-//				throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
-//			}
-//		} else {
-			IndependentObject object = internalObjectStore.getObject(className, id);
-			if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
-				return new Folder(object, null, objectStore );
-			} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
-				return new Document(object, null, objectStore );
-			} else {
-				throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
-			}
-//		}
+		IndependentObject object = internalObjectStore.getObject(className, id);
+		if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
+			return new Folder(object, null, objectStore );
+		} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
+			return new Document(object, null, objectStore );
+		} else if ( CUSTOM_OBJECT_TYPE.equals(objectType) ) {
+			return new CustomObject(object,null, objectStore);
+		} else {
+			throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
+		}
 	}
 }

@@ -27,12 +27,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.ecmdeveloper.plugin.jobs.RefreshJob;
-import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
@@ -166,11 +163,8 @@ public class ObjectStoresViewContentProvider implements
 //				}
 //			}
 			if ( similarObjects.size() > 0 ) {
-				RefreshTask refreshTask = new RefreshTask( similarObjects.toArray( new IObjectStoreItem[0] ) );
-				ObjectStoresManager.getManager().executeTaskASync(refreshTask);
-				
-//				RefreshJob refreshJob = new RefreshJob( similarObjects.toArray( new IObjectStoreItem[0] ) );
-//				refreshJob.schedule();
+//				RefreshTask refreshTask = new RefreshTask( similarObjects.toArray( new IObjectStoreItem[0] ), false );
+//				ObjectStoresManager.getManager().executeTaskASync(refreshTask);
 			}
 		}
 	}
@@ -183,7 +177,7 @@ public class ObjectStoresViewContentProvider implements
 			if (object instanceof Folder) {
 				Folder folder = (Folder) object;
 				for (IObjectStoreItem child : folder.getChildren()) {
-					if ( isSimilarObject(updatedItem, child) ) {
+					if ( updatedItem.isSimilarObject(child) ) {
 						similarObjects.add(child);
 					}
 				}
@@ -191,26 +185,6 @@ public class ObjectStoresViewContentProvider implements
 		}
 		
 		return similarObjects;
-	}
-
-	private boolean isSimilarObject(IObjectStoreItem updatedItem, IObjectStoreItem otherItem) {
-		if ( !otherItem.equals(updatedItem) ) {
-			System.out.println( "Comparing " + otherItem.getName() + " with " + updatedItem.getName() );
-			if ( otherItem.getId() != null && otherItem.getId().equalsIgnoreCase(updatedItem.getId()) ) {
-//				System.out.println(otherItem.getDisplayName() + " found!");
-//				return true;
-			} 
-			else if ( isSameVersionSeries(updatedItem, otherItem) ) {
-				System.out.println(otherItem.getDisplayName() + " found!");
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isSameVersionSeries(IObjectStoreItem updatedItem, IObjectStoreItem otherItem) {
-		return otherItem instanceof Document && updatedItem instanceof Document && 
-				((Document)otherItem).getVersionSeriesId().equalsIgnoreCase( ((Document)updatedItem).getVersionSeriesId() );
 	}
 
 	private void updateItemsAdded(final ObjectStoresManagerEvent event) {
