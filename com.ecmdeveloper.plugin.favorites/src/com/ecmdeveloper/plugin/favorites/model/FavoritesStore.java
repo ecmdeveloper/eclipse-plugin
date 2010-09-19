@@ -47,24 +47,26 @@ public class FavoritesStore {
 	
 	public void saveFavorites(Collection<FavoriteObjectStoreItem> favorites ) {
 
-		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.FAVORITES);
-		memento.putInteger(PluginTagNames.VERSION, CURRENT_FILE_VERSION );
-	
+		XMLMemento favoritesChild = XMLMemento.createWriteRoot(PluginTagNames.FAVORITES);
+		favoritesChild.putInteger(PluginTagNames.VERSION, CURRENT_FILE_VERSION );
+		favoritesChild.createChild(PluginTagNames.FOLDERS );
+		favoritesChild.createChild(PluginTagNames.DOCUMENTS );
+		
 		for ( FavoriteObjectStoreItem favorite : favorites ) {
-			saveFavorite(memento, favorite);
+			saveFavorite(favoritesChild, favorite);
 		}
 		
-		saveFavoritesFile(memento);
+		saveFavoritesFile(favoritesChild);
 	}
 
-	private void saveFavorite(XMLMemento memento, FavoriteObjectStoreItem favorite) {
+	private void saveFavorite(XMLMemento favoritesChild, FavoriteObjectStoreItem favorite) {
 
-		IMemento foldersChild = memento.createChild(PluginTagNames.FOLDERS );
-		IMemento documentsChild = memento.createChild(PluginTagNames.DOCUMENTS );
 		if ( favorite instanceof FavoriteFolder ) {
-			saveFavoriteFolder(favorite, foldersChild.createChild(PluginTagNames.FOLDER ) );
+			IMemento foldersChild = favoritesChild.getChild( PluginTagNames.FOLDERS);
+			saveFavoriteFolder(favorite, foldersChild .createChild(PluginTagNames.FOLDER ) );
 		} else if ( favorite instanceof FavoriteDocument ) {
-			saveFavoriteDocument(favorite, documentsChild.createChild(PluginTagNames.DOCUMENT));
+			IMemento documentsChild = favoritesChild.getChild( PluginTagNames.DOCUMENTS );
+			saveFavoriteDocument(favorite, documentsChild .createChild(PluginTagNames.DOCUMENT));
 		} else {
 			throw new UnsupportedOperationException();
 		}

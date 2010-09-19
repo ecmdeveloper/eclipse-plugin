@@ -29,10 +29,14 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
-import com.ecmdeveloper.plugin.favorites.FetchFavoritesJob;
+import com.ecmdeveloper.plugin.favorites.jobs.FetchFavoritesJob;
+import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStores;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 
 /**
@@ -43,7 +47,7 @@ public class FavoritesManager {
 
 	private static FavoritesManager favoritesManager;
 	private List<FavoritesManagerListener> listeners = new ArrayList<FavoritesManagerListener>();
-	private Collection<Object> favoriteObjectStores;
+	private Collection<FavoriteObjectStore> favoriteObjectStores;
 	private FavoritesStore favoritesStore = new FavoritesStore();
 	Collection<FavoriteObjectStoreItem> favorites;
 	
@@ -67,22 +71,27 @@ public class FavoritesManager {
 		
 		ArrayList<FavoriteObjectStoreItem> objectStoreFavorites = new ArrayList<FavoriteObjectStoreItem>();
 
-		ObjectStore objectStore = favoriteObjectStore.getObjectStore();
-		String objectStoreName = objectStore.getName();
-		String connectionName = objectStore.getConnection().getName();
-
 		for ( FavoriteObjectStoreItem favorite : favorites ) {
-			if ( favorite.getObjectStoreName().equals( objectStoreName ) && 
-					favorite.getConnectionName().equals( connectionName ) ) {
+			if ( isFavoriteObjectStoreFavorite(favoriteObjectStore, favorite) ) {
 				objectStoreFavorites.add(favorite);
 			}
 		}
 		return objectStoreFavorites;
 	}
+
+	private boolean isFavoriteObjectStoreFavorite(FavoriteObjectStore favoriteObjectStore, FavoriteObjectStoreItem favorite) {
+
+		ObjectStore objectStore = favoriteObjectStore.getObjectStore();
+		String objectStoreName = objectStore.getName();
+		String connectionName = objectStore.getConnection().getName();
+		return favorite.getObjectStoreName().equals( objectStoreName ) && 
+				favorite.getConnectionName().equals( connectionName );
+	}
 	
-	public Object[] getFavoriteObjectStores(ObjectStores objectStores) {
+	public Object[] getFavoriteObjectStores() {
 		if ( favoriteObjectStores == null) {
-			favoriteObjectStores = new ArrayList<Object>();
+			favoriteObjectStores = new ArrayList<FavoriteObjectStore>();
+			ObjectStores objectStores = ObjectStoresManager.getManager().getObjectStores();
 			for ( IObjectStoreItem objectStore : objectStores.getChildren() ) {
 				favoriteObjectStores.add( new FavoriteObjectStore((ObjectStore) objectStore) );
 			}
@@ -106,12 +115,88 @@ public class FavoritesManager {
 
 				FetchFavoritesJob job = (FetchFavoritesJob) event.getJob();
 				favoriteObjectStore.refreshChildren(job.getObjectStoreItems());
-				
-				for ( FavoritesManagerListener listener : listeners ) {
-					listener.favoritesLoaded(favoriteObjectStore);
-				}
+				fireFavoriteObjectStoreChanged(favoriteObjectStore);
 			}} );
-		job.schedule();		
+		job.schedule();
+	}
+
+	public void addFavorite(ObjectStoreItem objectStoreItem) {
+
+		initializeFavorites();
+		
+		FavoriteObjectStoreItem favorite = createFavoriteObjectStoreItem(objectStoreItem);
+		favorites.add(favorite);
+		favoritesStore.saveFavorites(favorites);
+		addFavoriteToFavoriteObjectStore(favorite, objectStoreItem );
+	}
+
+	private void addFavoriteToFavoriteObjectStore(FavoriteObjectStoreItem favorite, ObjectStoreItem objectStoreItem) {
+		
+		FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(favorite);
+		if ( favoriteObjectStore != null ) {
+			favoriteObjectStore.addChild(objectStoreItem);
+			fireFavoriteObjectStoreChanged(favoriteObjectStore);
+		}
+		return;
+	}
+
+	private void fireFavoriteObjectStoreChanged(FavoriteObjectStore favoriteObjectStore) {
+		for ( FavoritesManagerListener listener : listeners ) {
+			listener.favoritesLoaded(favoriteObjectStore);
+		}
+	}
+
+	private FavoriteObjectStore getFavoriteObjectStore(FavoriteObjectStoreItem favorite) {
+		for ( FavoriteObjectStore favoriteObjectStore : favoriteObjectStores ) {
+			if ( isFavoriteObjectStoreFavorite(favoriteObjectStore, favorite) ) {
+				return favoriteObjectStore;
+			}
+		}
+		return null;
+	}
+
+	private FavoriteObjectStoreItem createFavoriteObjectStoreItem(ObjectStoreItem objectStoreItem) {
+		ObjectStore objectStore = objectStoreItem.getObjectStore();
+		String objectStoreName = objectStore.getName();
+		String connectionName = objectStore.getConnection().getName();
+		String className = objectStoreItem.getClassName();
+		String id = objectStoreItem.getId();
+
+		FavoriteObjectStoreItem favorite;
+		
+		if ( objectStoreItem instanceof Folder ) {
+			favorite = new FavoriteFolder(id, className, connectionName, objectStoreName );
+		} else if ( objectStoreItem instanceof Document ) {
+			favorite = new FavoriteDocument(id, className, connectionName, objectStoreName );
+		} else {
+			throw new UnsupportedOperationException();
+		}
+		return favorite;
+	}
+
+	public void removeFavorite(ObjectStoreItem objectStoreItem) {
+
+		FavoriteObjectStoreItem favorite = getObjectStoreItemFavorite(objectStoreItem);
+		if ( favorite == null ) {
+			return;
+		}
+		favorites.remove(favorite);
+		favoritesStore.saveFavorites(favorites);
+		
+		FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(favorite);
+		if ( favoriteObjectStore != null ) {
+			favoriteObjectStore.removeChild(objectStoreItem);
+			fireFavoriteObjectStoreChanged(favoriteObjectStore);
+		}
+	}
+
+	private FavoriteObjectStoreItem getObjectStoreItemFavorite(ObjectStoreItem objectStoreItem) {
+		for (FavoriteObjectStoreItem favorite  : favorites) {
+			if ( favorite.isFavoriteOf(objectStoreItem)) {
+				return favorite;
+			}
+		}
+		return null;
 	}
 
 	public void addFavoritesManagerListener(FavoritesManagerListener listener) {
@@ -122,5 +207,18 @@ public class FavoritesManager {
 
 	public void removeFavoritesManagerListener(FavoritesManagerListener listener) {
 		listeners.remove(listener);
+	}
+
+	public boolean isFavorite(ObjectStoreItem objectStoreItem) {
+
+		initializeFavorites();
+		
+		for ( FavoriteObjectStoreItem  favorite : favorites ) {
+			if ( favorite.isFavoriteOf(objectStoreItem) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

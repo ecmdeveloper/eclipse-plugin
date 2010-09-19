@@ -23,12 +23,6 @@ package com.ecmdeveloper.plugin.favorites.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
-import com.ecmdeveloper.plugin.favorites.FetchFavoritesJob;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.Placeholder;
@@ -40,7 +34,7 @@ import com.ecmdeveloper.plugin.model.Placeholder;
 public class FavoriteObjectStore {
 
 	private ObjectStore objectStore;
-	private Collection<Object> children;
+	private Collection<ObjectStoreItem> children;
 
 	public FavoriteObjectStore(ObjectStore objectStore) {
 		this.objectStore = objectStore;
@@ -50,11 +44,11 @@ public class FavoriteObjectStore {
 		return objectStore;
 	}
 
-	public Collection<Object> getChildren() 
+	public Collection<ObjectStoreItem> getChildren() 
 	{
 		if ( children == null )
 		{
-			children = new ArrayList<Object>();
+			children = new ArrayList<ObjectStoreItem>();
 			children.add( new Placeholder() );
 
 			FavoritesManager.getInstance().fetchFavorites(this);
@@ -72,5 +66,25 @@ public class FavoriteObjectStore {
 			return true;
 		}
 		return children.size() > 0;
+	}
+
+	public void addChild(ObjectStoreItem objectStoreItem) {
+		if (children == null ) {
+			children = new ArrayList<ObjectStoreItem>();
+		}
+		children.add(objectStoreItem);
+	}
+
+	public void removeChild(ObjectStoreItem objectStoreItem) {
+		if ( children == null ) {
+			return;
+		}
+		
+		for ( ObjectStoreItem child : children ) {
+			if ( child.equals(objectStoreItem) || child.isSimilarObject(objectStoreItem) ) {
+				children.remove(child);
+				return;
+			}
+		}
 	}
 }
