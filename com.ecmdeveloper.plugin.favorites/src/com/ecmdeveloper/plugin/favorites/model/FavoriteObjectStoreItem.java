@@ -20,6 +20,10 @@
 
 package com.ecmdeveloper.plugin.favorites.model;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+
 /**
  * @author ricardo.belfor
  *
@@ -49,5 +53,13 @@ public abstract class FavoriteObjectStoreItem {
 	}
 	public String getObjectStoreName() {
 		return objectStoreName;
+	}
+
+	public boolean isFavoriteOf(ObjectStoreItem objectStoreItem) {
+		ObjectStore objectStore = objectStoreItem.getObjectStore();
+		ContentEngineConnection connection = objectStore.getConnection();
+		return id.equalsIgnoreCase(objectStoreItem.getId())
+				&& objectStoreName.equals(objectStore.getName())
+				&& connectionName.equals(connection.getName());
 	}
 }

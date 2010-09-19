@@ -42,7 +42,7 @@ public class FavoritesContentProvider extends ObjectStoresViewContentProvider im
 	public Object[] getChildren(Object parent) {
 		
 		if (parent instanceof ObjectStores ) {
-			return getFavoriteObjectStores(parent);
+			return FavoritesManager.getInstance().getFavoriteObjectStores();
 		} else if ( parent instanceof FavoriteObjectStore ) {
 			FavoriteObjectStore favoriteObjectStore = (FavoriteObjectStore) parent;
 			return favoriteObjectStore.getChildren().toArray();
@@ -51,10 +51,7 @@ public class FavoritesContentProvider extends ObjectStoresViewContentProvider im
 		}
 	}
 
-	private Object[] getFavoriteObjectStores(Object parent) {
-		ObjectStores objectStores = (ObjectStores) parent;
-		return FavoritesManager.getInstance().getFavoriteObjectStores(objectStores);
-	}
+		
 
 	@Override
 	public boolean hasChildren(Object parent) {

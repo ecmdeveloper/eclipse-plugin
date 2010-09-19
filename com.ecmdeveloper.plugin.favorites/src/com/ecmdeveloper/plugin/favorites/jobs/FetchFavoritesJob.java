@@ -18,7 +18,7 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.favorites;
+package com.ecmdeveloper.plugin.favorites.jobs;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +29,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.ecmdeveloper.plugin.favorites.model.FavoriteCustomObject;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteDocument;
+import com.ecmdeveloper.plugin.favorites.model.FavoriteFolder;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStoreItem;
 import com.ecmdeveloper.plugin.favorites.util.PluginMessage;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -43,13 +45,15 @@ import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
  */
 public class FetchFavoritesJob extends Job {
 
+	private static final String FAILED_MESSAGE = "Fething favorites failed";
+	private static final String JOB_NAME = "Loading Favorites";
 	private Collection<FavoriteObjectStoreItem> favorites;
 	private ObjectStore objectStore;
 	private Collection<ObjectStoreItem> objectStoreItems;
 	
 	
 	public FetchFavoritesJob(Collection<FavoriteObjectStoreItem> favoriteFolders, ObjectStore objectStore) {
-		super("Fetch Favorites");
+		super(JOB_NAME);
 		this.favorites = favoriteFolders;
 		this.objectStore = objectStore;
 	}
@@ -58,23 +62,64 @@ public class FetchFavoritesJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		
 		objectStoreItems = new ArrayList<ObjectStoreItem>();
+		
+		if ( ! connectObjectStore(monitor) ) {
+			return Status.CANCEL_STATUS;
+		}
+			
+		monitor.beginTask(getName(), favorites.size() );
+		IStatus status = fetchFavorites(monitor);
+		monitor.done();
+		return status;
+	}
+
+	private IStatus fetchFavorites(IProgressMonitor monitor) {
 		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager(); 
 		for (FavoriteObjectStoreItem favorite : favorites ) {
-			//String objectType ,= null;
-			if ( favorite instanceof FavoriteDocument ) {
-				
+			fetchFavorite(objectStoresManager, favorite);
+			if ( monitor.isCanceled() ) {
+				return Status.CANCEL_STATUS;
 			}
-			// TODO fix this
-			FetchObjectTask task = new FetchObjectTask(objectStore, favorite.getId(), favorite.getClassName(), "Folder" );
+			monitor.worked(1);
+		}
+		return Status.OK_STATUS;
+	}
+
+	private boolean connectObjectStore(IProgressMonitor monitor) {
+		if ( ! objectStore.isConnected() ) {
 			try {
-				Object result = objectStoresManager.executeTaskSync(task);
-				objectStoreItems.add((ObjectStoreItem) result);
+				ObjectStoresManager.getManager().connectConnection(objectStore.getConnection(), monitor );
 			} catch (ExecutionException e) {
-				PluginMessage.openErrorFromThread(null, getName(), "Fething favorites failed", e);
+				PluginMessage.openErrorFromThread(null, getName(), FAILED_MESSAGE, e);
+				return false;
 			}
 		}
+		return true;
+	}
 
-		return Status.OK_STATUS;
+	private void fetchFavorite(ObjectStoresManager objectStoresManager, FavoriteObjectStoreItem favorite) {
+		String objectType = getFavoriteObjectType(favorite);
+		FetchObjectTask task = new FetchObjectTask(objectStore, favorite.getId(), favorite.getClassName(), objectType );
+		try {
+			Object result = objectStoresManager.executeTaskSync(task);
+			objectStoreItems.add((ObjectStoreItem) result);
+		} catch (ExecutionException e) {
+			PluginMessage.openErrorFromThread(null, getName(), FAILED_MESSAGE, e);
+		}
+	}
+
+	private String getFavoriteObjectType(FavoriteObjectStoreItem favorite) {
+		String objectType;
+		if ( favorite instanceof FavoriteDocument ) {
+			objectType = FetchObjectTask.DOCUMENT_OBJECT_TYPE;
+		} else if ( favorite instanceof FavoriteFolder ) {
+			objectType = FetchObjectTask.FOLDER_OBJECT_TYPE;
+		} else if ( favorite instanceof FavoriteCustomObject ) {
+			objectType = FetchObjectTask.CUSTOM_OBJECT_TYPE;
+		} else {
+			throw new UnsupportedOperationException();
+		}
+		return objectType;
 	}
 
 	public Collection<ObjectStoreItem> getObjectStoreItems() {
