@@ -84,11 +84,11 @@ public class ObjectStoreItemLabelProvider extends LabelProvider {
 		} else if ( obj instanceof Action ) {
 			return Activator.getImage( IconFiles.ICON_ACTION );
 		} else if (obj instanceof Folder) {
-		   return getStandardImage( ISharedImages.IMG_OBJ_FOLDER );
+		   return getDecoratedImage( obj, getStandardImage(ISharedImages.IMG_OBJ_FOLDER ) );
 		} else if (obj instanceof Document) {
 	        return getDecoratedImage(obj, getStandardImage(ISharedImages.IMG_OBJ_FILE ) );
 		} else if (obj instanceof CustomObject) {
-		   return getStandardImage( ISharedImages.IMG_OBJ_ELEMENT );
+		   return getDecoratedImage(obj, getStandardImage( ISharedImages.IMG_OBJ_ELEMENT ) );
 		}
 		
 		return getStandardImage(ISharedImages.IMG_OBJS_INFO_TSK);

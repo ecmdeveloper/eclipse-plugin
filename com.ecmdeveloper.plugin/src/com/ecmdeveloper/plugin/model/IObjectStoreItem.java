@@ -61,4 +61,6 @@ public interface IObjectStoreItem extends IAdaptable {
 	public Object getValue(String propertyName);
 
 	public void setValue(String propertyName, Object value ) throws Exception;
+	
+	public boolean isSimilarObject(IObjectStoreItem otherItem);
 }

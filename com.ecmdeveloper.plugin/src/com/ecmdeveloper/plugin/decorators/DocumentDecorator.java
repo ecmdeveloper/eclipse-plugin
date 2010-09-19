@@ -38,9 +38,9 @@ public class DocumentDecorator extends ObjectStoreItemDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
-		Document objectStore = (Document) element;
+		Document document = (Document) element;
 
-		if (objectStore.isCheckedOut()) {
+		if (document.isCheckedOut()) {
 			ImageDescriptor descriptor = Activator.getImageDescriptor(CHECKED_OUT_DECORATOR_IMAGE);
 			decoration.addOverlay(descriptor, quadrant);
 		}

@@ -137,4 +137,22 @@ public class Document extends ObjectStoreItem {
 	public boolean isCheckedOut() {
 		return reserved;
 	}
+
+	@Override
+	public boolean isSimilarObject(IObjectStoreItem otherItem) {
+		if ( super.isSimilarObject(otherItem) ) {
+			return true;
+		}
+		
+		if ( isSameVersionSeries(this, otherItem) ) {
+			System.out.println(otherItem.getDisplayName() + " found!");
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isSameVersionSeries(IObjectStoreItem updatedItem, IObjectStoreItem otherItem) {
+		return otherItem instanceof Document && updatedItem instanceof Document && 
+				((Document)otherItem).getVersionSeriesId().equalsIgnoreCase( ((Document)updatedItem).getVersionSeriesId() );
+	}
 }

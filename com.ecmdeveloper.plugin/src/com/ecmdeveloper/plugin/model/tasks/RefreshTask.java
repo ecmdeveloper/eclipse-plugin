@@ -29,13 +29,23 @@ import com.ecmdeveloper.plugin.util.PluginLog;
 public class RefreshTask extends BaseTask {
 
 	private IObjectStoreItem[] objectStoreItems;
-
-	public RefreshTask( IObjectStoreItem[] objectStoreItems ) {
-		this.objectStoreItems = objectStoreItems;
+	private boolean notifyListeners;
+	
+	public RefreshTask( IObjectStoreItem objectStoreItem ) {
+		this(objectStoreItem, true);
 	}
 
-	public RefreshTask( IObjectStoreItem objectStoreItem ) {
-		this.objectStoreItems = new IObjectStoreItem[] { objectStoreItem };
+	public RefreshTask( IObjectStoreItem[] objectStoreItems ) {
+		this(objectStoreItems, true);
+	}
+
+	public RefreshTask( IObjectStoreItem[] objectStoreItems, boolean notifyListeners ) {
+		this.objectStoreItems = objectStoreItems;
+		this.notifyListeners = notifyListeners;
+	}
+
+	public RefreshTask( IObjectStoreItem objectStoreItem, boolean notifyListeners ) {
+		this(new IObjectStoreItem[] { objectStoreItem }, notifyListeners);
 	}
 	
 	@Override
@@ -49,7 +59,9 @@ public class RefreshTask extends BaseTask {
 			}
 		}
 
-		fireTaskCompleteEvent( TaskResult.COMPLETED );
+		if (notifyListeners) {
+			fireTaskCompleteEvent( TaskResult.COMPLETED );
+		}
 
 		return null;
 	}

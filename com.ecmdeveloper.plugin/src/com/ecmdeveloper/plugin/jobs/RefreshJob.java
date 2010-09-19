@@ -44,7 +44,7 @@ public class RefreshJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		RefreshTask refreshTask = new RefreshTask( objectStoreItems );
+		RefreshTask refreshTask = new RefreshTask( objectStoreItems, true );
 		ObjectStoresManager.getManager().executeTaskASync(refreshTask);
 		return null;
 	}
