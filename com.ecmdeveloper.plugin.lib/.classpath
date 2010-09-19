@@ -3,7 +3,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/Jace.jar" sourcepath="com.ecmdeveloper.plugin.libsrc.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/Jace.jar" sourcepath="com.ecmdeveloper.plugin.libsrc.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/Data/FileNet Development/P8 4.5/ecm_help/ecm_help/developer_help/content_engine_api/javadocs/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar" sourcepath="com.ecmdeveloper.plugin.libsrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/stax-api.jar" sourcepath="com.ecmdeveloper.plugin.libsrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/xlxpScanner.jar" sourcepath="com.ecmdeveloper.plugin.libsrc.zip"/>
