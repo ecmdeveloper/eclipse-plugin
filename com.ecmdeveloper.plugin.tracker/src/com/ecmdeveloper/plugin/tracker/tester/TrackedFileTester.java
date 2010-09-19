@@ -43,7 +43,6 @@ public class TrackedFileTester extends PropertyTester {
 
 		if ( IS_TRACKED_PROPERTY.equals(property) ) {
 			String filename = ((IFile) receiver).getFullPath().toString();
-			System.out.println( filename );
 			return FilesTracker.getInstance().isFileTracked(filename);
 		}
 		
