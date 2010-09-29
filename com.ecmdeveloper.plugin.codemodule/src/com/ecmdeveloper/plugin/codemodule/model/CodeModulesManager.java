@@ -48,6 +48,7 @@ import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.model.tasks.CreateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.tasks.GetCodeModuleActionsTask;
 import com.ecmdeveloper.plugin.model.tasks.GetCodeModulesTask;
@@ -462,5 +463,9 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		if ( ! removedItems.isEmpty() ) {
 			fireCodeModuleFilesChanged(null, null, removedItems.toArray( new CodeModuleFile[ removedItems.size() ] ) );
 		}
+	}
+
+	@Override
+	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event) {
 	}
 }
