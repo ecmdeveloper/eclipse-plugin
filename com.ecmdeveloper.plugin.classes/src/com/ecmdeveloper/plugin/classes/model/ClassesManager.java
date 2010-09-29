@@ -34,6 +34,7 @@ import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.model.tasks.TaskListener;
@@ -214,5 +215,9 @@ public class ClassesManager implements ObjectStoresManagerListener, TaskListener
 		for (ClassesManagerListener listener : listeners) {
 			listener.classDescriptionsChanged(event);
 		}
+	}
+
+	@Override
+	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event) {
 	}
 }
