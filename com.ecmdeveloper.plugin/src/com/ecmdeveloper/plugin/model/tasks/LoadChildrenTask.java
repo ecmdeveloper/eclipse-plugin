@@ -28,6 +28,7 @@ import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentObject;
@@ -41,7 +42,8 @@ import com.filenet.api.core.ReferentialContainmentRelationship;
  */
 public class LoadChildrenTask extends BaseTask {
 
-	final protected ObjectStoreItem objectStoreItem;
+	private ObjectStoreItem objectStoreItem;
+	private ArrayList<IObjectStoreItem> children;
 	
 	/**
 	 * The constructor of this task is used to pass all the relevant input
@@ -55,6 +57,10 @@ public class LoadChildrenTask extends BaseTask {
 
 	public ObjectStoreItem getObjectStoreItem() {
 		return objectStoreItem;
+	}
+
+	public ArrayList<IObjectStoreItem> getChildren() {
+		return children;
 	}
 
 	/**
@@ -73,56 +79,16 @@ public class LoadChildrenTask extends BaseTask {
 	public String call() throws Exception {
 
 		try {
-			ArrayList<IObjectStoreItem> children = new ArrayList<IObjectStoreItem>();
+			children = new ArrayList<IObjectStoreItem>();
 			
-			com.filenet.api.core.Folder folder;
-	
-			if ( objectStoreItem instanceof ObjectStore ) {
-				com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) objectStoreItem.getObjectStoreObject();
-				objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
-				folder = objectStore.get_RootFolder();
-				folder.fetchProperties( new String[] { PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
-			} else if ( objectStoreItem instanceof Folder ) {
-				folder = (com.filenet.api.core.Folder) objectStoreItem.getObjectStoreObject();
-			} else {
-				return null;
+			com.filenet.api.core.Folder folder = getInternalFolder();
+			
+			if ( folder != null) {
+				ObjectStore objectStore = objectStoreItem.getObjectStore();
+				addSubFolders(folder, objectStore);
+				addContainees(folder, objectStore);
 			}
 			
-			Iterator<?> iterator = folder.get_SubFolders().iterator();
-			ObjectStore objectStore = objectStoreItem.getObjectStore();
-			while (iterator.hasNext()) {
-				children.add( new Folder( iterator.next(), objectStoreItem, objectStore ) );
-			}
-			
-			iterator = folder.get_Containees().iterator();
-			
-			while (iterator.hasNext() ) {
-				
-				ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
-				relation.fetchProperties( new String[]{ PropertyNames.HEAD, PropertyNames.CONTAINMENT_NAME } );
-	
-				IndependentObject object = relation.get_Head();
-	
-				if ( object instanceof com.filenet.api.core.Document )
-				{
-					Document document = new Document( object, objectStoreItem, objectStore );
-					document.setParentPath( ((Folder) objectStoreItem).getPathName() );
-					document.setContainmentName( relation.get_ContainmentName() );
-					children.add( document );
-				}
-				else if ( object instanceof com.filenet.api.core.Folder )
-				{
-					Folder childFolder = new Folder( object, objectStoreItem, objectStore );
-					childFolder.setContained(true);
-					children.add( childFolder );
-				}
-				else if ( object instanceof com.filenet.api.core.CustomObject )
-				{
-					children.add( new CustomObject( object, objectStoreItem, objectStore ) );
-				}
-			}
-			
-			objectStoreItem.setChildren(children);
 			fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		} catch (Exception e ) {
@@ -131,4 +97,60 @@ public class LoadChildrenTask extends BaseTask {
 		return null;
 	}
 
+	private void addContainees(com.filenet.api.core.Folder folder, ObjectStore objectStore) {
+		
+		Iterator<?> iterator = folder.get_Containees().iterator();
+		
+		while (iterator.hasNext() ) {
+			ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
+			relation.fetchProperties( new String[]{ PropertyNames.HEAD, PropertyNames.CONTAINMENT_NAME } );
+			IndependentObject object = relation.get_Head();
+			addContainee(object, objectStore, relation.get_ContainmentName() );
+		}
+	}
+
+	private void addContainee(IndependentObject object, ObjectStore objectStore, String containmentName) {
+		
+		if ( object instanceof com.filenet.api.core.Document )
+		{
+			Document document = ObjectStoreItemFactory.createDocument( object, objectStoreItem, objectStore );
+			document.setParentPath( ((Folder) objectStoreItem).getPathName() );
+			document.setContainmentName( containmentName );
+			children.add( document );
+		}
+		else if ( object instanceof com.filenet.api.core.Folder )
+		{
+			Folder childFolder = ObjectStoreItemFactory.createFolder( object, objectStoreItem, objectStore );
+			childFolder.setContained(true);
+			children.add( childFolder );
+		}
+		else if ( object instanceof com.filenet.api.core.CustomObject )
+		{
+			children.add( ObjectStoreItemFactory.createCustomObject( object, objectStoreItem, objectStore ) );
+		}
+	}
+
+	private ObjectStore addSubFolders(com.filenet.api.core.Folder folder, ObjectStore objectStore) {
+		Iterator<?> iterator = folder.get_SubFolders().iterator();
+		while (iterator.hasNext()) {
+			children.add( ObjectStoreItemFactory.createFolder( iterator.next(), objectStoreItem, objectStore ) );
+		}
+		return objectStore;
+	}
+
+	private com.filenet.api.core.Folder getInternalFolder() {
+		com.filenet.api.core.Folder folder;
+
+		if ( objectStoreItem instanceof ObjectStore ) {
+			com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) objectStoreItem.getObjectStoreObject();
+			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
+			folder = objectStore.get_RootFolder();
+			folder.fetchProperties( new String[] { PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
+		} else if ( objectStoreItem instanceof Folder ) {
+			folder = (com.filenet.api.core.Folder) objectStoreItem.getObjectStoreObject();
+		} else {
+			return null;
+		}
+		return folder;
+	}
 }

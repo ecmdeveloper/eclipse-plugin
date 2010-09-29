@@ -19,46 +19,61 @@
  */
 package com.ecmdeveloper.plugin.model;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.filenet.api.core.IndependentObject;
 
 /**
  * @author Ricardo.Belfor
- * @deprecated
+ * 
  */
 public class ObjectStoreItemFactory {
 
-	@SuppressWarnings("unchecked")
-	private static Map<String,Class> nameToClassMap = new HashMap<String, Class>();
+	private static ObjectStoreItemsModel objectStoreItemsModel = ObjectStoreItemsModel.getInstance();
 	
-	static
-	{
-		nameToClassMap.put( "CodeModule", CodeModule.class );
+	public static Folder createFolder(Object folder, IObjectStoreItem parent, ObjectStore objectStore ) {
+		Folder newFolder = new Folder(folder,parent,objectStore);
+		addToModel(newFolder);
+		return newFolder;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static IObjectStoreItem getObject( IndependentObject object, IObjectStoreItem parent, ObjectStore objectStore ) 
-	{
-		String className = object.getClassName();
-		
-		if ( nameToClassMap.containsKey( className) ) {
-			
-			Class clazz = nameToClassMap.get( className );
 
-			IObjectStoreItem objectStoreItem;
-			try {
-				Constructor constructor = clazz.getConstructor(new Class[] {Object.class, IObjectStoreItem.class, ObjectStore.class } );
-				objectStoreItem = (IObjectStoreItem) constructor.newInstance( new Object[] { object, parent, objectStore } );
-				return objectStoreItem;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			} 
-		} else {
-			throw new UnsupportedOperationException();
-		}
+	public static Folder createFolder(Object folder, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+		Folder newFolder = new Folder(folder, parent, objectStore, saved );
+		// TODO do something for unsaved documents
+		addToModel(newFolder);
+		return newFolder;
 	}
+
+	public static Document createDocument(Object document, IObjectStoreItem parent, ObjectStore objectStore) {
+		Document newDocument = new Document(document, parent,objectStore );
+		addToModel(newDocument);
+		return newDocument;
+	}
+	
+	public static Document createDocument(Object document, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+		Document newDocument = new Document(document, parent,objectStore, saved );
+		// TODO do something for unsaved documents
+		addToModel(newDocument);
+		return newDocument;
+	}
+
+	public static CustomObject createCustomObject(Object customObject, IObjectStoreItem parent, ObjectStore objectStore) {
+		CustomObject newCustomObject = new CustomObject(customObject, parent, objectStore);
+		addToModel(newCustomObject);
+		return newCustomObject;
+	}
+
+	public static CustomObject createCustomObject( Object customObject, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+		CustomObject newCustomObject = new CustomObject(customObject, parent, objectStore, saved);
+		// TODO do something for unsaved documents
+		addToModel(newCustomObject);
+		return newCustomObject;
+	}
+	
+	private static void addToModel(ObjectStoreItem objectStoreItem) {
+		objectStoreItemsModel.add(objectStoreItem);
+	}
+
+//	public static ObjectStore createObjectStore(String name, String displayName, IObjectStoreItem parent) {
+//		ObjectStore newObjectStore = new ObjectStore(name, displayName, parent );
+//		addToModel(newObjectStore);
+//		return newObjectStore;
+//	}
 }

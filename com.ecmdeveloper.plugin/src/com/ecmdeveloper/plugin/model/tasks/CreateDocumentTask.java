@@ -5,6 +5,7 @@ import java.util.Map;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.core.Factory;
 
 public class CreateDocumentTask extends CreateTask {
@@ -42,7 +43,7 @@ public class CreateDocumentTask extends CreateTask {
 	private void createNewDocument() {
 		com.filenet.api.core.Document internalDocument = createInternalDocument();
 		Folder parent = getParent();
-		newDocument = new Document(internalDocument, parent, parent.getObjectStore(), false );
+		newDocument = ObjectStoreItemFactory.createDocument(internalDocument, parent, parent.getObjectStore(), false );
 	}
 
 	private com.filenet.api.core.Document createInternalDocument() {

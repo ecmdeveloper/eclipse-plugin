@@ -37,11 +37,11 @@ public class Document extends ObjectStoreItem {
 	protected String containmentName;
 	private boolean reserved;
 
-	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore) {
+	protected Document(Object document, IObjectStoreItem parent, ObjectStore objectStore) {
 		this(document, parent,objectStore, true );
 	}
 	
-	public Document(Object document, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+	protected Document(Object document, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
 		super(parent, objectStore, saved);
 		
 		this.document = (com.filenet.api.core.Document) document;

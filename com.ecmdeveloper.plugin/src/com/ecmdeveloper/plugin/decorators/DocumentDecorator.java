@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IDecoration;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 
 /**
  * @author Ricardo.Belfor

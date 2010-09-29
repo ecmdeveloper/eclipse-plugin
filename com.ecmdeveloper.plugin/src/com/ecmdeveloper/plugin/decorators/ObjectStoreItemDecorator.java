@@ -34,6 +34,7 @@ import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 
 /**
  * @author Ricardo.Belfor
@@ -114,5 +115,9 @@ public abstract class ObjectStoreItemDecorator implements ILightweightLabelDecor
 
 	private boolean isDecoratedType(IObjectStoreItem objectStoreItem) {
 		return objectStoreItem instanceof ObjectStore || objectStoreItem instanceof Document;
+	}
+
+	@Override
+	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event) {
 	}
 }

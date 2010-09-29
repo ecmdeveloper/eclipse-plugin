@@ -224,9 +224,9 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	public boolean isSimilarObject(IObjectStoreItem otherItem) {
 
 		if ( !otherItem.equals(this) ) {
-			System.out.println( "Comparing " + otherItem.getName() + " with " + getName() );
 			if ( otherItem.getId() != null && otherItem.getId().equalsIgnoreCase(getId()) ) {
 				// TODO: add extra object store and connection test
+				System.out.println(this.toString() + " = " + otherItem.toString() );
 				System.out.println(otherItem.getDisplayName() + " found!");
 				return true;
 			} 

@@ -27,4 +27,5 @@ package com.ecmdeveloper.plugin.model;
 public interface ObjectStoresManagerListener {
 
 	public void objectStoreItemsChanged(ObjectStoresManagerEvent event);
+	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event);
 }

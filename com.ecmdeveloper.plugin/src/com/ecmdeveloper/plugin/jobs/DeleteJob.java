@@ -90,13 +90,9 @@ public class DeleteJob extends Job {
 			DeleteTask deleteTask = new DeleteTask(new IObjectStoreItem[] { objectStoreItem }, deleteAllVersions);
 			ObjectStoresManager.getManager().executeTaskSync(deleteTask);
 		} catch (final Exception e) {
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					PluginMessage.openError(shell, HANDLER_NAME, MessageFormat.format(
-							FAILED_MESSAGE, objectStoreItem.getName()), e);
-				}
-			});
+			String name = objectStoreItem.getName();
+			PluginMessage.openErrorFromThread(shell, HANDLER_NAME, MessageFormat.format(
+					FAILED_MESSAGE, name.replaceAll("{", "|").replaceAll("}", "|")), e);
 		}
 	}
 }

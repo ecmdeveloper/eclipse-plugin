@@ -42,7 +42,7 @@ public class ObjectStore extends ObjectStoreItem
 	private Collection<IObjectStoreItem> children;
 	private String displayName;
 
-	public ObjectStore(String objectStoreName, String displayName, IObjectStoreItem parent) {
+	protected ObjectStore(String objectStoreName, String displayName, IObjectStoreItem parent) {
 
 		super(parent, null);
 		this.name = objectStoreName;
@@ -128,6 +128,8 @@ public class ObjectStore extends ObjectStoreItem
 		objectStore.fetchProperties( new String[] { PropertyNames.ID, PropertyNames.DISPLAY_NAME } );
 		id = objectStore.get_Id().toString();
 		displayName = objectStore.get_DisplayName();
+		
+		ObjectStoreItemsModel.getInstance().add(this);
 	}
 	
 	public ContentEngineConnection getConnection() {

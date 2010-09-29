@@ -19,11 +19,6 @@
  */
 package com.ecmdeveloper.plugin.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,24 +33,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.XMLMemento;
 
-import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
-import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
-import com.ecmdeveloper.plugin.model.tasks.CreateFolderTask;
-import com.ecmdeveloper.plugin.model.tasks.CreateTask;
-import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
-import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
-import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
-import com.ecmdeveloper.plugin.model.tasks.MoveTask;
-import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
-import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
-import com.ecmdeveloper.plugin.model.tasks.TaskListener;
-import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
-import com.ecmdeveloper.plugin.util.PluginLog;
-import com.ecmdeveloper.plugin.util.PluginTagNames;
 
 /**
  * This class manages the connections to the Object Stores. It is also
@@ -64,10 +43,8 @@ import com.ecmdeveloper.plugin.util.PluginTagNames;
  * @author Ricardo Belfor
  * 
  */
-public class ObjectStoresManager implements IObjectStoresManager, TaskListener
+public class ObjectStoresManager implements IObjectStoresManager
 {
-	private static final int CURRENT_FILE_VERSION = 1;
-
 	private static final String CONNECT_MESSAGE = "Connecting to \"{0}\"";
 
 	private static ObjectStoresManager objectStoresManager;
@@ -78,9 +55,13 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 	private List<ObjectStoresManagerListener> listeners = new ArrayList<ObjectStoresManagerListener>();
 	
 	private ExecutorService executorService;
-
+	private ObjectStoresStore objectStoresStore;
+	private ObjectStoreItemsModelController modelController;
+	
 	private ObjectStoresManager() {
 		executorService = Executors.newSingleThreadExecutor();
+		objectStoresStore = new ObjectStoresStore();
+		modelController = new ObjectStoreItemsModelController();
 	}
 	
 	public static ObjectStoresManager getManager()
@@ -101,6 +82,16 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 		return connections.values();
 	}
 	
+	private void loadObjectStores() {
+		connections = new HashMap<String, ContentEngineConnection>();
+		objectStores = new ObjectStores();
+		objectStoresStore.load(objectStores, connections);
+	}
+
+	public void saveObjectStores() {
+		objectStoresStore.save(objectStores, connections);
+	}
+
 	public String createConnection(String url, String username, String password, IProgressMonitor monitor ) throws ExecutionException 
 	{
 		try {
@@ -167,7 +158,7 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 			public Object call() throws Exception {
 				objectStore.connect();
 				objectStores.add(objectStore);
-				fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
+				modelController.fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
 				return null;
 			}
 		};
@@ -204,7 +195,7 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 			connections.remove( connectionName );
 		}
 
-		fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
+		modelController.fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
 	}
 
 	public void connectObjectStore(ObjectStore objectStore, IProgressMonitor monitor ) throws ExecutionException
@@ -306,7 +297,7 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 	{
 		try {
 			if ( task instanceof BaseTask ) {
-				((BaseTask)task).addTaskListener(this);
+				((BaseTask)task).addTaskListener(modelController);
 			}
 			return executorService.submit(task).get();
 		} catch (InterruptedException e) {
@@ -317,14 +308,14 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 	public void executeTaskASync( Callable<Object> task )
 	{
 		if ( task instanceof BaseTask ) {
-			((BaseTask)task).addTaskListener(this);
+			((BaseTask)task).addTaskListener(modelController);
 		}
 		executorService.submit(task);
 	}
 	
 	public void moveObjectStoreItems( IObjectStoreItem[] objectStoreItems, IObjectStoreItem destination )
 	{
-		fireObjectStoreItemsChanged(null, objectStoreItems, null );
+		modelController.fireObjectStoreItemsChanged(null, objectStoreItems, null );
 
 		Set<IObjectStoreItem> updateSet = new HashSet<IObjectStoreItem>();
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
@@ -337,153 +328,17 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 		destination.refresh();
 		updateSet.add( destination );
 		
-		fireObjectStoreItemsChanged(null, null, updateSet.toArray( new IObjectStoreItem[0]) );
+		modelController.fireObjectStoreItemsChanged(null, null, updateSet.toArray( new IObjectStoreItem[0]) );
 	}
 	
-	private void saveObjectStores(XMLMemento memento) 
-	{
-		// First save the connection to the object store
-		
-		IMemento connectionsChild = memento.createChild(PluginTagNames.CONNECTIONS_TAG); 
-		
-		for ( ContentEngineConnection contentEngineConnection : connections.values() ) {
-			
-			IMemento connectionChild = connectionsChild.createChild(PluginTagNames.CONNECTION_TAG);
-			
-			connectionChild.putString( PluginTagNames.NAME_TAG, contentEngineConnection.getName() );
-			connectionChild.putString( PluginTagNames.DISPLAY_NAME_TAG, contentEngineConnection.getDisplayName() );
-			connectionChild.putString( PluginTagNames.URL_TAG, contentEngineConnection.getUrl() );
-			connectionChild.putString( PluginTagNames.USERNAME_TAG, contentEngineConnection.getUsername() );
-			String password = contentEngineConnection.getPassword();
-			// TODO add some basic encryption
-			connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
-			
-		}
-		
-		// Next save the object stores
-
-		IMemento objectStoresChild = memento.createChild(PluginTagNames.OBJECT_STORES_TAG); 
-		
-		for ( IObjectStoreItem objectStore : objectStores.getChildren()) {
-			
-			IMemento objectStoreChild = objectStoresChild.createChild(PluginTagNames.OBJECT_STORE_TAG);
-			
-			objectStoreChild.putString( PluginTagNames.NAME_TAG, objectStore.getName() );
-			objectStoreChild.putString( PluginTagNames.DISPLAY_NAME_TAG, objectStore.getDisplayName() );
-			objectStoreChild.putString( PluginTagNames.CONNECTION_NAME_TAG, ((ObjectStore)objectStore).getConnection().getName() );
-		}
-	}
-	
-	private void loadObjectStores(XMLMemento memento)
-	{
-		IMemento connectionsChild = memento.getChild(PluginTagNames.CONNECTIONS_TAG);
-		if ( connectionsChild != null ) {
-			for ( IMemento connectionChild : connectionsChild.getChildren(PluginTagNames.CONNECTION_TAG) ) {
-				
-				ContentEngineConnection contentEngineConnection = new ContentEngineConnection();
-				
-				contentEngineConnection.setName( connectionChild.getString( PluginTagNames.NAME_TAG ) );
-				contentEngineConnection.setDisplayName( connectionChild.getString( PluginTagNames.DISPLAY_NAME_TAG ) );
-				contentEngineConnection.setUrl( connectionChild.getString( PluginTagNames.URL_TAG ) );
-				contentEngineConnection.setUsername( connectionChild.getString( PluginTagNames.USERNAME_TAG ) );
-				contentEngineConnection.setPassword( connectionChild.getString( PluginTagNames.PASSWORD_TAG ) );
-				
-				connections.put(contentEngineConnection.getName(), contentEngineConnection );
-			}
-		}
-
-		IMemento objectStoresChild = memento.getChild(PluginTagNames.OBJECT_STORES_TAG);
-		if ( objectStoresChild != null )
-		{
-			for ( IMemento objectStoreChild : objectStoresChild.getChildren( PluginTagNames.OBJECT_STORE_TAG ) )
-			{
-				String name = objectStoreChild.getString( PluginTagNames.NAME_TAG );
-				String displayName = objectStoreChild.getString( PluginTagNames.DISPLAY_NAME_TAG );
-				ObjectStore objectStore = new ObjectStore( name, displayName, objectStores );
-				
-				String connectionName = objectStoreChild.getString( PluginTagNames.CONNECTION_NAME_TAG );
-				objectStore.setConnection( connections.get( connectionName ) );
-				
-				objectStores.add( objectStore );
-			}
-		}
-	}
-
-	private void loadObjectStores() {
-
-		connections = new HashMap<String, ContentEngineConnection>();
-		objectStores = new ObjectStores();
-		
-		FileReader reader = null;
-		try {
-			reader = new FileReader(getObjectStoresFile());
-			loadObjectStores(XMLMemento.createReadRoot(reader));
-		} catch (FileNotFoundException e) {
-			// Ignored... no object store items exist yet.
-		} catch (Exception e) {
-			// Log the exception and move on.
-			PluginLog.error(e);
-		} finally {
-			try {
-				if (reader != null)
-					reader.close();
-			} catch (IOException e) {
-				PluginLog.error(e);
-			}
-		}
-	}
-	
-	public void saveObjectStores()
-	{
-		if (connections == null) {
-			return;
-		}
-
-		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.OBJECT_STORES_TAG);
-		memento.putInteger(PluginTagNames.VERSION_TAG, CURRENT_FILE_VERSION );
-
-		saveObjectStores(memento);
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(getObjectStoresFile());
-			memento.save(writer);
-		} catch (IOException e) {
-			PluginLog.error(e);
-		} finally {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e) {
-				PluginLog.error(e);
-			}
-		}
-	 		
-	}
-	
-	private File getObjectStoresFile()
-	{
-		return Activator.getDefault().getStateLocation().append("objectstores.xml").toFile();
-	}
-
 	public void addObjectStoresManagerListener( ObjectStoresManagerListener listener) {
-		if (!listeners.contains(listener)) {
-			listeners.add(listener);
-		}
+		modelController.addObjectStoresManagerListener(listener);
 	}
 
 	public void removeObjectStoresManagerListener( ObjectStoresManagerListener listener) {
-		listeners.remove(listener);
+		modelController.removeObjectStoresManagerListener(listener);
 	}
 
-	private void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,
-			IObjectStoreItem[] itemsRemoved, IObjectStoreItem[] itemsUpdated ) {
-		ObjectStoresManagerEvent event = new ObjectStoresManagerEvent(this,
-				itemsAdded, itemsRemoved, itemsUpdated );
-		for (ObjectStoresManagerListener listener : listeners) {
-			listener.objectStoreItemsChanged(event);
-		}
-	}
-	
 	class ConnectConnectionTask implements Callable<Object> {
 		private Object connectionName;
 
@@ -506,7 +361,7 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 				}
 			}
 
-			fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
+			modelController.fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
 			return null;
 		}
 	}
@@ -539,83 +394,4 @@ public class ObjectStoresManager implements IObjectStoresManager, TaskListener
 			return objectStoreConnection.getName();
 		}
 	}
-
-	@Override
-	public void onTaskComplete(TaskCompleteEvent taskCompleteEvent) {
-		handleTaskCompleteEvent(taskCompleteEvent);
-	}
-
-	private void handleTaskCompleteEvent(TaskCompleteEvent taskCompleteEvent) {
-		if ( isTaskSourceInstanceOf(taskCompleteEvent, DeleteTask.class) ) {
-			handleDeleteTaskCompleted( taskCompleteEvent );
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, LoadChildrenTask.class) ) {
-			handleLoadChildrenTaskCompleted( taskCompleteEvent );
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, RefreshTask.class) ) {
-			handleRefreshTaskCompleted( taskCompleteEvent );
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, MoveTask.class) ) {
-			handleMoveTaskCompleted( taskCompleteEvent );
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, UpdateTask.class) ) {
-			handleUpdateTaskCompleted(taskCompleteEvent);
-		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CreateTask.class) ) {
-			handleCreateTaskCompleted(taskCompleteEvent);
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, DocumentTask.class) ) {
-			handleDocumentTaskCompleted(taskCompleteEvent);
-		}
-	}
-
-	private boolean isTaskSourceInstanceOf(TaskCompleteEvent taskCompleteEvent, Class<?> taskClass) {
-
-		Class<? extends Object> eventClass = taskCompleteEvent.getSource().getClass();
-		
-		do {
-			if ( eventClass.equals( taskClass ) ) {
-				return true;
-			}
-			eventClass = eventClass.getSuperclass();
-		} while ( ! eventClass.equals( Object.class ) );
-		
-		return false;
-	}
-
-	private void handleUpdateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		UpdateTask updateTask = (UpdateTask) taskCompleteEvent.getSource();
-		IObjectStoreItem[] objectStoreItems = updateTask.getObjectStoreItems();
-		fireObjectStoreItemsChanged(null, null, objectStoreItems );
-	}
-
-	private void handleDeleteTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		DeleteTask deleteTask = (DeleteTask) taskCompleteEvent.getSource();
-		IObjectStoreItem[] objectStoreItems = deleteTask.getObjectStoreItems();
-		fireObjectStoreItemsChanged(null, objectStoreItems, null );
-	}
-
-	private void handleLoadChildrenTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		LoadChildrenTask loadChildrenTask = (LoadChildrenTask) taskCompleteEvent.getSource();
-		ObjectStoreItem objectStoreItem = loadChildrenTask.getObjectStoreItem();
-		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
-	}
-
-	private void handleRefreshTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		RefreshTask refreshTask = (RefreshTask)taskCompleteEvent.getSource();
-		IObjectStoreItem[] objectStoreItems = refreshTask.getObjectStoreItems();
-		fireObjectStoreItemsChanged(null, null, objectStoreItems );
-	}
-
-	private void handleMoveTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		MoveTask moveTask = (MoveTask) taskCompleteEvent.getSource();
-		fireObjectStoreItemsChanged(null, moveTask.getObjectStoreItems(), moveTask.getUpdatedObjectStoreItems() );
-	}
-
-	private void handleDocumentTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		DocumentTask documentTask = (DocumentTask) taskCompleteEvent.getSource();
-		ObjectStoreItem objectStoreItem = documentTask.getDocument();
-		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
-	}
-
-	private void handleCreateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		CreateTask createTask = (CreateTask) taskCompleteEvent.getSource();
-		ObjectStoreItem objectStoreItem = (ObjectStoreItem) createTask.getParent();
-		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
-	}
-
 }

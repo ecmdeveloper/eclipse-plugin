@@ -33,11 +33,11 @@ public class CustomObject extends ObjectStoreItem {
 
 	protected com.filenet.api.core.CustomObject customObject;
 	
-	public CustomObject(Object customObject, IObjectStoreItem parent, ObjectStore objectStore) {
+	protected CustomObject(Object customObject, IObjectStoreItem parent, ObjectStore objectStore) {
 		this(customObject, parent, objectStore, true);
 	}
 
-	public CustomObject( Object customObject, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+	protected CustomObject( Object customObject, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
 
 		super(parent, objectStore, saved );
 		

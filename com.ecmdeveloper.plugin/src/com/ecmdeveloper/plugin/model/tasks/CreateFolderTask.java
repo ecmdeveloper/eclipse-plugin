@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.core.Factory;
 
 /**
@@ -55,8 +56,6 @@ public class CreateFolderTask extends CreateTask {
 		newFolder.save();
 		newFolder.refresh();
 	
-		getParent().addChild( newFolder );
-		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		return null;
@@ -64,7 +63,7 @@ public class CreateFolderTask extends CreateTask {
 
 	private void createNewFolder() {
 		com.filenet.api.core.Folder internalFolder = createInternalFolder();
-		newFolder = new Folder(internalFolder, getParent(), getParent().getObjectStore(), false );
+		newFolder = ObjectStoreItemFactory.createFolder(internalFolder, getParent(), getParent().getObjectStore(), false );
 	}
 
 	private com.filenet.api.core.Folder createInternalFolder() {

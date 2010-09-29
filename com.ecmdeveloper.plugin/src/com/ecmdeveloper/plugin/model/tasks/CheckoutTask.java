@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.constants.ReservationType;
 
@@ -47,7 +48,7 @@ public class CheckoutTask extends DocumentTask {
 		currentVersion.checkout( ReservationType.EXCLUSIVE, null, null, null);
 		currentVersion.save( RefreshMode.REFRESH );
 		getDocument().refresh();
-		checkoutDocument = new Document( currentVersion, null, getDocument().getObjectStore() );
+		checkoutDocument = ObjectStoreItemFactory.createDocument( currentVersion, null, getDocument().getObjectStore() );
 		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		

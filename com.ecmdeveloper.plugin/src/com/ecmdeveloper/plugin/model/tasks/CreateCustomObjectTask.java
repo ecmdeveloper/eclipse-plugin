@@ -26,6 +26,7 @@ import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.core.Factory;
 
 /**
@@ -62,7 +63,7 @@ public class CreateCustomObjectTask extends CreateTask {
 	private void createCustomObject() {
 		com.filenet.api.core.CustomObject internalCustomObject = createInternalCustomObject();
 		Folder parent = getParent();
-		newCustomObject = new CustomObject(internalCustomObject, parent, parent.getObjectStore(), false );
+		newCustomObject = ObjectStoreItemFactory.createCustomObject(internalCustomObject, parent, parent.getObjectStore(), false );
 	}
 
 	private com.filenet.api.core.CustomObject createInternalCustomObject() {
