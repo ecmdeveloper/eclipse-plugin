@@ -26,6 +26,7 @@ import java.util.List;
 
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.collection.VersionableSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Factory;
@@ -70,7 +71,7 @@ public class GetDocumentVersionsTask extends BaseTask {
 		while ( versionsIterator.hasNext() ) {
 			
 			com.filenet.api.core.Document version = (com.filenet.api.core.Document) versionsIterator.next();
-			versionsList.add( new Document(version, null, objectStore ) );
+			versionsList.add( ObjectStoreItemFactory.createDocument(version, null, objectStore ) );
 		}		
 
 		return null;

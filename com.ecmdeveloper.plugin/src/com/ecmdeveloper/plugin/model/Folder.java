@@ -47,11 +47,11 @@ public class Folder extends ObjectStoreItem {
 	 * @param parent the parent
 	 * @param objectStore the object store
 	 */
-	public Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore ) {
+	protected Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore ) {
 		this(folder, parent, objectStore, true );
 	}
 
-	public Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
+	protected Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
 		super(parent, objectStore, saved );
 		
 		this.folder = (com.filenet.api.core.Folder) folder;
@@ -114,8 +114,7 @@ public class Folder extends ObjectStoreItem {
 	@Override
 	public Collection<IObjectStoreItem> getChildren() 
 	{
-		if ( children == null )
-		{
+		if ( children == null )	{
 			children = new ArrayList<IObjectStoreItem>();
 			children.add( new Placeholder() );
 
@@ -126,6 +125,15 @@ public class Folder extends ObjectStoreItem {
 		return children;
 	}
 
+	public Collection<IObjectStoreItem> getLoadedChildren() 
+	{
+		if ( children == null )	{
+			return new ArrayList<IObjectStoreItem>();
+		}
+		
+		return children;
+	}
+	
 	/**
 	 * Removes the child object. This is only to keep the model consistent with
 	 * reality and will not actually remove the object.

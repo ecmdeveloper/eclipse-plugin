@@ -80,7 +80,5 @@ public abstract class CreateTask extends BaseTask {
 				.getObjectStoreObject(), AutoUniqueName.AUTO_UNIQUE, newDocument.getName(),
 				DefineSecurityParentage.DO_NOT_DEFINE_SECURITY_PARENTAGE);
 		relationship.save(RefreshMode.NO_REFRESH);
-		
-		getParent().addChild(newDocument);
 	}
 }

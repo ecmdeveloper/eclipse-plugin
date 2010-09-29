@@ -27,6 +27,7 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.core.IndependentObject;
 
 /**
@@ -62,11 +63,11 @@ public class FetchObjectTask extends BaseTask {
 
 		IndependentObject object = internalObjectStore.getObject(className, id);
 		if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
-			return new Folder(object, null, objectStore );
+			return ObjectStoreItemFactory.createFolder(object, null, objectStore );
 		} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
-			return new Document(object, null, objectStore );
+			return ObjectStoreItemFactory.createDocument(object, null, objectStore );
 		} else if ( CUSTOM_OBJECT_TYPE.equals(objectType) ) {
-			return new CustomObject(object,null, objectStore);
+			return ObjectStoreItemFactory.createCustomObject(object,null, objectStore);
 		} else {
 			throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
 		}

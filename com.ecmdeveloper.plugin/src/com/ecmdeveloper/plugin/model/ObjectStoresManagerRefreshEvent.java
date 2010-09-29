@@ -18,34 +18,26 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.model.tasks;
+package com.ecmdeveloper.plugin.model;
 
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
+import java.util.EventObject;
 
 /**
- * @author Ricardo.Belfor
+ * @author ricardo.belfor
  *
  */
-public class GetCurrentVersionTask extends DocumentTask {
+public class ObjectStoresManagerRefreshEvent extends EventObject {
 
-	private Document currentVersionDocument;
-
-	public Document getCurrentVersionDocument() {
-		return currentVersionDocument;
+	private static final long serialVersionUID = 3013080318558217087L;
+	
+	private final IObjectStoreItem[] itemsRefreshed;
+	
+	public ObjectStoresManagerRefreshEvent(Object source, IObjectStoreItem[] itemsRefreshed) {
+		super(source);
+		this.itemsRefreshed = itemsRefreshed;
 	}
 
-	public GetCurrentVersionTask(Document document) {
-		super(document);
+	public IObjectStoreItem[] getItemsRefreshed() {
+		return itemsRefreshed;
 	}
-
-	@Override
-	public Object call() throws Exception {
-		
-		com.filenet.api.core.Document currentVersion = getCurrentVersion();
-		currentVersionDocument = ObjectStoreItemFactory.createDocument( currentVersion, null, getDocument().getObjectStore() );
-		
-		return currentVersionDocument;
-	}
-
 }

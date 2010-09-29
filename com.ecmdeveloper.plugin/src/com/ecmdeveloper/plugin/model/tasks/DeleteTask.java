@@ -21,9 +21,7 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.RefreshMode;
@@ -70,29 +68,24 @@ public class DeleteTask extends BaseTask {
 	public Object call() throws Exception {
 
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
-			
-			IndependentlyPersistableObject persistableObject = ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
-
-			if ( objectStoreItem instanceof Document ) {
-				deleteDocument(objectStoreItem, persistableObject);
-			} else {
-				persistableObject.delete();
-				persistableObject.save(RefreshMode.REFRESH);
-			}
-			
-			IObjectStoreItem parent = objectStoreItem.getParent();
-			if ( parent != null ) {
-				if ( parent instanceof Folder ) {
-					((Folder)parent).removeChild(objectStoreItem);
-				} else if ( parent instanceof ObjectStore ) {
-					((ObjectStore)parent).removeChild(objectStoreItem);
-				}
-			}
+			deleteObjectStoreItem(objectStoreItem);
 		}
 		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		return null;
+	}
+
+	private void deleteObjectStoreItem(IObjectStoreItem objectStoreItem) {
+		
+		IndependentlyPersistableObject persistableObject = ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
+
+		if ( objectStoreItem instanceof Document ) {
+			deleteDocument(objectStoreItem, persistableObject);
+		} else {
+			persistableObject.delete();
+			persistableObject.save(RefreshMode.REFRESH);
+		}
 	}
 
 	private void deleteDocument(IObjectStoreItem objectStoreItem,

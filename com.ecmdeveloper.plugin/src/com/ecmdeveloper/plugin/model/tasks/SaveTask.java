@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
 import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.ContentTransfer;
@@ -60,7 +61,7 @@ public class SaveTask extends DocumentTask {
 		reservation.set_MimeType( mimeType );
 		reservation.save( RefreshMode.REFRESH );
 		
-		reservationDocument = new Document( reservation, getDocument().getParent(), getDocument().getObjectStore() );
+		reservationDocument = ObjectStoreItemFactory.createDocument( reservation, getDocument().getParent(), getDocument().getObjectStore() );
 		
 		return null;
 	}

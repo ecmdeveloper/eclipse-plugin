@@ -34,6 +34,7 @@ import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 
 public class ObjectStoresViewContentProvider implements
@@ -153,20 +154,14 @@ public class ObjectStoresViewContentProvider implements
 			}
 		}
 		
-		Object[] expandedElements = viewer.getExpandedElements();
-		for (IObjectStoreItem updatedItem : event.getItemsUpdated()) {
-			Collection<IObjectStoreItem> similarObjects = getSimilarObjects(expandedElements, updatedItem);
-//			for ( IObjectStoreItem similarObject : similarObjects ) {
-//				if ( similarObject instanceof Document ) {
-//					((Document)similarObject).refresh( (com.filenet.api.core.Document) ((ObjectStoreItem)updatedItem).getObjectStoreObject() );
-//					viewer.update(similarObject, null);
-//				}
-//			}
-			if ( similarObjects.size() > 0 ) {
-//				RefreshTask refreshTask = new RefreshTask( similarObjects.toArray( new IObjectStoreItem[0] ), false );
+//		Object[] expandedElements = viewer.getExpandedElements();
+//		for (IObjectStoreItem updatedItem : event.getItemsUpdated()) {
+//			Collection<IObjectStoreItem> similarObjects = getSimilarObjects(expandedElements, updatedItem);
+//			if ( similarObjects.size() > 0 ) {
+//				RefreshTask refreshTask = new RefreshTask( similarObjects.toArray( new IObjectStoreItem[0] ), true );
 //				ObjectStoresManager.getManager().executeTaskASync(refreshTask);
-			}
-		}
+//			}
+//		}
 	}
 
 	private Collection<IObjectStoreItem> getSimilarObjects(Object[] expandedElements, IObjectStoreItem updatedItem) {
@@ -176,7 +171,7 @@ public class ObjectStoresViewContentProvider implements
 		for (Object object : expandedElements) {
 			if (object instanceof Folder) {
 				Folder folder = (Folder) object;
-				for (IObjectStoreItem child : folder.getChildren()) {
+				for (IObjectStoreItem child : folder.getLoadedChildren()) {
 					if ( updatedItem.isSimilarObject(child) ) {
 						similarObjects.add(child);
 					}
@@ -193,6 +188,29 @@ public class ObjectStoresViewContentProvider implements
 				viewer.refresh(null, false );
 				viewer.add( invisibleRoot, objectStoreItem );
 			} else {
+			}
+		}
+	}
+
+	@Override
+	public void objectStoreItemsRefreshed(final ObjectStoresManagerRefreshEvent event) {
+		viewer.getTree().getDisplay().asyncExec( new Runnable() {
+			
+			@Override
+			public void run() {
+				refreshViewer(event);
+			}
+		});
+	}
+
+	protected void refreshViewer(ObjectStoresManagerRefreshEvent event) {
+		viewer.update( event.getItemsRefreshed(), null );
+
+		for ( IObjectStoreItem objectStoreItem : event.getItemsRefreshed() ) {
+			if ( objectStoreItem instanceof Folder ) {
+	//			viewer.refresh(objectStoreItem);
+			} else if ( objectStoreItem instanceof ObjectStore ) {
+				viewer.refresh( objectStoreItem, false );
 			}
 		}
 	}
