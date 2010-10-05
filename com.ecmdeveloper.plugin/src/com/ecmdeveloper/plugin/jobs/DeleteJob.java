@@ -91,8 +91,9 @@ public class DeleteJob extends Job {
 			ObjectStoresManager.getManager().executeTaskSync(deleteTask);
 		} catch (final Exception e) {
 			String name = objectStoreItem.getName();
+			String safeName = name; //name.replaceAll("{", "").replaceAll("}", "");
 			PluginMessage.openErrorFromThread(shell, HANDLER_NAME, MessageFormat.format(
-					FAILED_MESSAGE, name.replaceAll("{", "|").replaceAll("}", "|")), e);
+					FAILED_MESSAGE, safeName), e);
 		}
 	}
 }

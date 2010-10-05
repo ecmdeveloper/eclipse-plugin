@@ -26,9 +26,12 @@ import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectNotFoundException;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.core.IndependentObject;
+import com.filenet.api.exception.EngineRuntimeException;
+import com.filenet.api.exception.ExceptionCode;
 
 /**
  * @author Ricardo Belfor
@@ -58,18 +61,26 @@ public class FetchObjectTask extends BaseTask {
 	@Override
 	public IObjectStoreItem call() throws Exception {
 		
-		com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore
-				.getObjectStoreObject();
-
-		IndependentObject object = internalObjectStore.getObject(className, id);
-		if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
-			return ObjectStoreItemFactory.createFolder(object, null, objectStore );
-		} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
-			return ObjectStoreItemFactory.createDocument(object, null, objectStore );
-		} else if ( CUSTOM_OBJECT_TYPE.equals(objectType) ) {
-			return ObjectStoreItemFactory.createCustomObject(object,null, objectStore);
-		} else {
-			throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
+		try {
+			com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore
+					.getObjectStoreObject();
+	
+			IndependentObject object = internalObjectStore.getObject(className, id);
+			if ( FOLDER_OBJECT_TYPE.equals( objectType) ) {
+				return ObjectStoreItemFactory.createFolder(object, null, objectStore );
+			} else if ( DOCUMENT_OBJECT_TYPE.equals(objectType) ) {
+				return ObjectStoreItemFactory.createDocument(object, null, objectStore );
+			} else if ( CUSTOM_OBJECT_TYPE.equals(objectType) ) {
+				return ObjectStoreItemFactory.createCustomObject(object,null, objectStore);
+			} else {
+				throw new UnsupportedOperationException( MessageFormat.format( UNSUPPORTED_OBJECT_TYPE_MESSAGE, objectType ) );
+			}
+		} catch (EngineRuntimeException e) {
+			if ( e.getExceptionCode().equals( ExceptionCode.E_OBJECT_NOT_FOUND ) ) {
+				throw new ObjectNotFoundException(e);
+			} else {
+				throw e;
+			}
 		}
 	}
 }

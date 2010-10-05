@@ -89,6 +89,10 @@ public class ObjectStoreItemsModelController implements TaskListener {
 		UpdateTask updateTask = (UpdateTask) taskCompleteEvent.getSource();
 		IObjectStoreItem[] objectStoreItems = updateTask.getObjectStoreItems();
 		fireObjectStoreItemsChanged(null, null, objectStoreItems );
+		
+		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
+			refreshSimilarObjects(objectStoreItem);
+		}
 	}
 
 	private void handleDeleteTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
@@ -124,14 +128,23 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	private void handleDocumentTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
 		DocumentTask documentTask = (DocumentTask) taskCompleteEvent.getSource();
 		ObjectStoreItem objectStoreItem = documentTask.getDocument();
-		
+ 		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
+		refreshSimilarObjects(objectStoreItem);
+	}
+
+	private void refreshSimilarObjects(IObjectStoreItem objectStoreItem) {
 		System.out.println( objectStoreItem.getId() + " " + objectStoreItem.toString() );
-		Collection<ObjectStoreItem> objectStoreItems = objectStoreItemsModel.get(objectStoreItem);
+		Collection<ObjectStoreItem> objectStoreItems = objectStoreItemsModel.get((ObjectStoreItem) objectStoreItem);
 		for (ObjectStoreItem o : objectStoreItems ) {
-			System.out.println( o.getId() + " " + ((Document)o).getVersionSeriesId() + " " + objectStoreItem.toString() );
+			if ( ! o.equals(objectStoreItem ) ) {
+//				System.out.println( o.getId() + " " + ((Document)o).getVersionSeriesId() + " " + objectStoreItem.toString() );
+//				if ( documentTask instanceof CheckinTask ) {
+					RefreshTask refreshTask = new RefreshTask( o );
+					ObjectStoresManager.getManager().executeTaskASync(refreshTask);
+//				}
+			}
 		}
 		
-		fireObjectStoreItemsChanged(null, null, new ObjectStoreItem[] { objectStoreItem } );
 	}
 
 	private void handleCreateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {

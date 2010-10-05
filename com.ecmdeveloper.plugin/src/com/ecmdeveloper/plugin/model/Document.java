@@ -35,6 +35,7 @@ public class Document extends ObjectStoreItem {
 	protected String versionSeriesId;
 	protected String parentPath;
 	protected String containmentName;
+	private String mimeType;
 	private boolean reserved;
 
 	protected Document(Object document, IObjectStoreItem parent, ObjectStore objectStore) {
@@ -61,9 +62,10 @@ public class Document extends ObjectStoreItem {
 		}
 		
 		document.refresh(new String[] { PropertyNames.NAME, PropertyNames.ID,
-				PropertyNames.VERSION_SERIES, PropertyNames.IS_RESERVED });
+				PropertyNames.VERSION_SERIES, PropertyNames.IS_RESERVED, PropertyNames.MIME_TYPE });
 		name = document.get_Name();
 		id = document.get_Id().toString();
+		mimeType = document.get_MimeType();
 		VersionSeries versionSeries = document.get_VersionSeries();
 		versionSeriesId = versionSeries.get_Id().toString();
 		reserved = versionSeries.get_IsReserved();
@@ -120,6 +122,14 @@ public class Document extends ObjectStoreItem {
 
 	public void setContainmentName(String containmentName) {
 		this.containmentName = containmentName;
+	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
 	public String getPathName() {
