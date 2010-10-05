@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import com.ecmdeveloper.plugin.favorites.jobs.FetchFavoritesJob;
+import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
@@ -37,19 +38,24 @@ import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 
 
 /**
  * @author ricardo.belfor
  *
  */
-public class FavoritesManager {
+public class FavoritesManager implements ObjectStoresManagerListener {
 
 	private static FavoritesManager favoritesManager;
 	private List<FavoritesManagerListener> listeners = new ArrayList<FavoritesManagerListener>();
 	private Collection<FavoriteObjectStore> favoriteObjectStores;
 	private FavoritesStore favoritesStore = new FavoritesStore();
 	Collection<FavoriteObjectStoreItem> favorites;
+	private ObjectStoresManager objectStoresManager;
 	
 	public static FavoritesManager getInstance()
 	{
@@ -58,6 +64,12 @@ public class FavoritesManager {
 			favoritesManager = new FavoritesManager();
 		}
 		return favoritesManager;
+	}
+
+	public FavoritesManager() {
+		objectStoresManager = ObjectStoresManager.getManager();
+		objectStoresManager.addObjectStoresManagerListener(this);
+		// TODO find a place to remove this object as listener
 	}
 
 	private void initializeFavorites() {
@@ -116,6 +128,7 @@ public class FavoritesManager {
 				FetchFavoritesJob job = (FetchFavoritesJob) event.getJob();
 				favoriteObjectStore.refreshChildren(job.getObjectStoreItems());
 				fireFavoriteObjectStoreChanged(favoriteObjectStore);
+				favoritesStore.saveFavorites(favorites);
 			}} );
 		job.schedule();
 	}
@@ -161,13 +174,16 @@ public class FavoritesManager {
 		String connectionName = objectStore.getConnection().getName();
 		String className = objectStoreItem.getClassName();
 		String id = objectStoreItem.getId();
-
+		String name = objectStoreItem.getDisplayName();
+		
 		FavoriteObjectStoreItem favorite;
 		
 		if ( objectStoreItem instanceof Folder ) {
-			favorite = new FavoriteFolder(id, className, connectionName, objectStoreName );
+			favorite = new FavoriteFolder(id, name, className, connectionName, objectStoreName );
 		} else if ( objectStoreItem instanceof Document ) {
-			favorite = new FavoriteDocument(id, className, connectionName, objectStoreName );
+			favorite = new FavoriteDocument(id, name, className, connectionName, objectStoreName );
+		} else if ( objectStoreItem instanceof CustomObject ) {
+			favorite = new FavoriteCustomObject(id, name, className, connectionName, objectStoreName );
 		} else {
 			throw new UnsupportedOperationException();
 		}
@@ -188,6 +204,11 @@ public class FavoritesManager {
 			favoriteObjectStore.removeChild(objectStoreItem);
 			fireFavoriteObjectStoreChanged(favoriteObjectStore);
 		}
+	}
+
+	public void removeFavorite(FavoriteObjectStoreItem favorite) {
+		favorites.remove(favorite);
+		favoritesStore.saveFavorites(favorites);
 	}
 
 	private FavoriteObjectStoreItem getObjectStoreItemFavorite(ObjectStoreItem objectStoreItem) {
@@ -220,5 +241,38 @@ public class FavoritesManager {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
+		if ( event.getItemsRemoved() != null) {
+			for ( IObjectStoreItem objectStoreItem : event.getItemsRemoved() ) {
+				if ( isFavorite((ObjectStoreItem) objectStoreItem)) {
+					removeFavorite2((ObjectStoreItem) objectStoreItem);
+				}
+			}
+		}
+	}
+
+	public void removeFavorite2(ObjectStoreItem objectStoreItem) {
+
+		FavoriteObjectStoreItem favorite = getObjectStoreItemFavorite(objectStoreItem);
+		if ( favorite == null ) {
+			return;
+		}
+		favorites.remove(favorite);
+		favoritesStore.saveFavorites(favorites);
+		
+//		FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(favorite);
+//		if ( favoriteObjectStore != null ) {
+//			favoriteObjectStore.removeChild(objectStoreItem);
+//			fireFavoriteObjectStoreChanged(favoriteObjectStore);
+//		}
+	}
+	
+	@Override
+	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 }

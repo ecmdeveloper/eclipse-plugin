@@ -34,14 +34,24 @@ public abstract class FavoriteObjectStoreItem {
 	private String className;
 	private String connectionName;
 	private String objectStoreName;
+	private String name;
 
-	public FavoriteObjectStoreItem(String id, String className, String connectionName, String objectStoreName) {
+	public FavoriteObjectStoreItem(String id, String name, String className, String connectionName, String objectStoreName) {
 		this.id = id;
 		this.className = className;
 		this.connectionName = connectionName;
 		this.objectStoreName = objectStoreName;
+		this.name = name;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getId() {
 		return id;
 	}
