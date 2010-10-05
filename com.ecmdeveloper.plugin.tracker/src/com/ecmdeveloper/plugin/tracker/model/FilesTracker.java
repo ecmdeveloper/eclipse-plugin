@@ -62,7 +62,8 @@ public class FilesTracker {
 	}
 	
 	public void addTrackedFile(String filename, String id, String name, String className,
-			String versionSeriesId, String connectionName, String connectionDisplayName, String objectStoreName, String objectStoreDisplayName)
+			String versionSeriesId, String connectionName, String connectionDisplayName,
+			String objectStoreName, String objectStoreDisplayName, String mimeType)
 	{
 		initializeTrackedFiles();
 		
@@ -77,6 +78,8 @@ public class FilesTracker {
 		trackedFile.setObjectStoreName(objectStoreName);
 		trackedFile.setObjectStoreDisplayName(objectStoreDisplayName);
 		trackedFile.setClassName( className );
+		trackedFile.setMimeType(mimeType);
+		
 		trackedFilesMap.put(filename, trackedFile);
 		
 		saveTrackedFiles();
@@ -116,6 +119,13 @@ public class FilesTracker {
 			}
 		}
 		return false;
+	}
+
+	public void removeTrackedFile(TrackedFile trackedFile) {
+		initializeTrackedFiles();
+		trackedFilesMap.remove( trackedFile.getFilename() );
+		saveTrackedFiles();
+		fireFilesChanged();
 	}
 
 	public Collection<TrackedFile> getTrackedFiles() {
@@ -176,6 +186,8 @@ public class FilesTracker {
 		trackedFile.setConnectionDisplayName(trackedFileChild.getString( FilesTrackerTagNames.CONNECTION_DISPLAY_NAME ) );
 		trackedFile.setObjectStoreName(trackedFileChild.getString( FilesTrackerTagNames.OBJECT_STORE_NAME ) );
 		trackedFile.setObjectStoreDisplayName(trackedFileChild.getString( FilesTrackerTagNames.OBJECT_STORE_DISPLAY_NAME ) );
+		trackedFile.setMimeType(trackedFileChild.getString( FilesTrackerTagNames.MIME_TYPE ) );
+		
 		return trackedFile;
 	}
 	
@@ -206,6 +218,7 @@ public class FilesTracker {
 		trackedFileChild.putString(FilesTrackerTagNames.CONNECTION_DISPLAY_NAME, trackedFile.getConnectionDisplayName() );
 		trackedFileChild.putString(FilesTrackerTagNames.OBJECT_STORE_NAME, trackedFile.getObjectStoreName() );
 		trackedFileChild.putString(FilesTrackerTagNames.OBJECT_STORE_DISPLAY_NAME, trackedFile.getObjectStoreDisplayName() );
+		trackedFileChild.putString(FilesTrackerTagNames.MIME_TYPE, trackedFile.getMimeType() );
 	}
 
 	private File getFilesTrackerFile()

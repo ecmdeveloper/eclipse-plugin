@@ -38,4 +38,5 @@ public class FilesTrackerTagNames {
 	public static final String CLASS_NAME = "className";
 	public static final String OBJECT_STORE_NAME = "objectStoreName";
 	public static final String OBJECT_STORE_DISPLAY_NAME = "objectStoreDisplayName";
+	public static final String MIME_TYPE = "mimeType";
 }
