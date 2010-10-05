@@ -22,7 +22,6 @@ package com.ecmdeveloper.plugin.properties.wizard;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbench;
@@ -65,7 +64,7 @@ public class NewDocumentWizard extends NewObjectStoreItemWizard {
 	private void addContentSelectionWizardPage() {
 		contentSelectionWizardPage = new ContentSelectionWizardPage(null);
 		if ( files != null ) {
-			contentSelectionWizardPage.setContent(files);
+			contentSelectionWizardPage.setContent(files, null);
 		}
 		addPage(contentSelectionWizardPage);
 	}
