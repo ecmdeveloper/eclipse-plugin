@@ -59,6 +59,11 @@
             name="Cancel Checkout">
       </command>
       <command
+            description="Cancel Checkout Tracked File"
+            id="com.ecmdeveloper.plugin.cancelCheckoutTrackedFile"
+            name="Cancel Checkout">
+      </command>
+      <command
             description="Save Document"
             id="com.ecmdeveloper.plugin.saveDocument"
             name="Save">
@@ -321,6 +326,25 @@
       <handler
             class="com.ecmdeveloper.plugin.content.handlers.SaveTrackedFileHandler"
             commandId="com.ecmdeveloper.plugin.saveTrackedFile">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <or>
+                     <test
+                           property="com.ecmdeveloper.plugin.tracker.isTracked">
+                     </test>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.tracker.model.TrackedFile">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.content.handlers.CancelCheckoutTrackedFileHandler"
+            commandId="com.ecmdeveloper.plugin.cancelCheckoutTrackedFile">
          <enabledWhen>
             <with
                   variable="selection">
@@ -613,6 +637,14 @@
             locationURI="popup:com.ecmdeveloper.plugin.views.TrackedFiles?after=edit">
          <command
                commandId="com.ecmdeveloper.plugin.checkinTrackedFile"
+               style="push">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveTrackedFile"
+               style="push">
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.cancelCheckoutTrackedFile"
                style="push">
          </command>
       </menuContribution>

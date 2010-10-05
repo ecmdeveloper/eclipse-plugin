@@ -76,6 +76,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 	private Text mimeTypeText;
 	
 	private ArrayList<Object> content;
+	private String mimeType;
 	
 	public ContentSelectionWizardPage(String documentName ) {
 		super("contentSelectionWizardPage");
@@ -90,8 +91,9 @@ public class ContentSelectionWizardPage extends WizardPage {
 		return content;
 	}
 
-	public void setContent(ArrayList<Object> content) {
+	public void setContent(ArrayList<Object> content, String mimeType) {
 		this.content = content;
+		this.mimeType = mimeType;
 	}
 
 	public String getMimeType() {
@@ -227,10 +229,19 @@ public class ContentSelectionWizardPage extends WizardPage {
 	}
 
 	private void updateMimeType() {
-		
-		String contentType = getFirstContentElementType();
-		if ( contentType != null ) {
-			mimeTypeText.setText( contentType );
+		if ( content.size() > 0 ) {
+			if ( mimeType == null ) {
+				mimeType = getFirstContentElementType();
+			}
+		} else {
+			mimeType = null;
+		}
+		setMimeTypeText();
+	}
+
+	private void setMimeTypeText() {
+		if ( mimeType != null ) {
+			mimeTypeText.setText( mimeType );
 		} else {
 			mimeTypeText.setText("");
 		}

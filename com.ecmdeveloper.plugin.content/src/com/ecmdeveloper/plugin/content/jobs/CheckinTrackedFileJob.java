@@ -62,7 +62,7 @@ public class CheckinTrackedFileJob extends AbstractTrackedFileJob {
 
 	private void openCheckinWizard(Document document) {
 		CheckinWizard wizard = new CheckinWizard( document, true );
-		wizard.setInitialContent(getFile());
+		wizard.setInitialContent(getFile(), getMimeType() );
 
 		final WizardDialog dialog = new WizardDialog(getWindow().getShell(), wizard);
 		getWindow().getWorkbench().getDisplay().syncExec( new Runnable() {

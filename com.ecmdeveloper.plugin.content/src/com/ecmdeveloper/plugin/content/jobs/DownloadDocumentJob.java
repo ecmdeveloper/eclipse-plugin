@@ -110,6 +110,7 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 		String id = document.getId();
 		String name = document.getName();
 		String className = document.getClassName();
+		String mimeType = document.getMimeType();
 
 		ObjectStore objectStore = document.getObjectStore();
 		String objectStoreName = objectStore.getName();
@@ -121,7 +122,7 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 		
 		FilesTracker.getInstance().addTrackedFile(newFilename, id, name, className,
 				document.getVersionSeriesId(), connectionName, connectionDisplayName,
-				objectStoreName, objectStoreDisplayName);
+				objectStoreName, objectStoreDisplayName, mimeType);
 	}
 
 }

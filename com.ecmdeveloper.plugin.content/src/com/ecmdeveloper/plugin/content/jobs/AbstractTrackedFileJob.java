@@ -61,6 +61,9 @@ public abstract class AbstractTrackedFileJob extends Job {
 		return file;
 	}
 
+	protected String getMimeType() {
+		return trackedFile.getMimeType();
+	}
 	protected Document getDocument(IProgressMonitor monitor) throws ExecutionException {
 		
 		ObjectStore objectStore = getObjectStore(monitor);
