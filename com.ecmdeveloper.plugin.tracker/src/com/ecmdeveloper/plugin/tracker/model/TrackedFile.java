@@ -42,8 +42,9 @@ public class TrackedFile implements IAdaptable {
 	private String connectionDisplayName;
 	private String objectStoreName;
 	private String objectStoreDisplayName;
+	private String mimeType;
 	private IFile file;
-
+	
 	public String getId() {
 		return id;
 	}
@@ -112,6 +113,12 @@ public class TrackedFile implements IAdaptable {
 		this.objectStoreDisplayName = objectStoreDisplayName;
 	}
 
+	public String getMimeType() {
+		return mimeType;
+	}
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
+	}
 	public IFile getFile() {
 		return file;
 	}
