@@ -46,6 +46,7 @@ public class SaveTask extends DocumentTask {
 	private Collection<Object> contents;
 	private String mimeType;
 	private Document reservationDocument;
+	private com.filenet.api.core.Document reservation;
 
 	public SaveTask(Document document, Collection<Object> contents, String mimeType ) {
 		super(document);
@@ -56,13 +57,13 @@ public class SaveTask extends DocumentTask {
 	@Override
 	public Object call() throws Exception {
 
-		com.filenet.api.core.Document reservation = getReservation();
+		reservation = getReservation();
 		reservation.set_ContentElements( createContent() );
 		reservation.set_MimeType( mimeType );
 		reservation.save( RefreshMode.REFRESH );
-		
+				
 		reservationDocument = ObjectStoreItemFactory.createDocument( reservation, getDocument().getParent(), getDocument().getObjectStore() );
-		
+
 		return null;
 	}
 

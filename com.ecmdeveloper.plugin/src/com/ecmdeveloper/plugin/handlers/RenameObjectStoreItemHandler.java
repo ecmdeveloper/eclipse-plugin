@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.jobs.RenameJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
@@ -56,13 +57,10 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
  */
 public class RenameObjectStoreItemHandler extends AbstractHandler implements IHandler {
 
-	private static final String PROGRESS_MESSAGE = Messages.RenameObjectStoreItemHandler_ProgressMessage;
-	private static final String MONITOR_MESSAGE = Messages.RenameObjectStoreItemHandler_MonitorMessage;
 	private static final String NEW_NAME_MESSAGE = Messages.NewNameMessage;
 	private static final String HANDLER_NAME = Messages.HandlerName;
 	private static final String INVALID_CHARS_MESSAGE = Messages.RenameObjectStoreItemHandler_InvalidCharsMessage;
 	private static final String INVALID_LENGTH_MESSAGE = Messages.RenameObjectStoreItemHandler_InvalidLengthMessage;
-	private static final String FAILED_MESSAGE = Messages.RenameObjectStoreItemHandler_FailedMessage;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -117,55 +115,6 @@ public class RenameObjectStoreItemHandler extends AbstractHandler implements IHa
 		
 		return null;
 	}
-
-	class RenameJob extends Job
-	{
-		private ArrayList<IObjectStoreItem> itemsRenamed;
-		private Shell shell;
-
-		public RenameJob(ArrayList<IObjectStoreItem> itemsRenamed, Shell shell) {
-			super(HANDLER_NAME);
-			this.itemsRenamed = itemsRenamed;
-			this.shell = shell;
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-
-			try {
-				monitor.beginTask( MONITOR_MESSAGE, itemsRenamed.size() );
-				for ( IObjectStoreItem objectStoreItem : itemsRenamed ) {
-					monitor.subTask( MessageFormat.format(PROGRESS_MESSAGE, objectStoreItem.getName() ) );
-					updateItem( objectStoreItem );
-					monitor.worked(1);
-
-					if ( monitor.isCanceled() ) {
-						break;
-					}
-				}
-				
-				return Status.OK_STATUS;
-			} finally {
-				monitor.done();
-			}
-		}
-
-		private void updateItem(final IObjectStoreItem objectStoreItem ) {
-
-			try {
-				UpdateTask updateTask = new UpdateTask( itemsRenamed.toArray( new ObjectStoreItem[ itemsRenamed.size() ] ) );
-				ObjectStoresManager.getManager().executeTaskSync( updateTask );
-			} catch(final Exception e ) {
-				Display.getDefault().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						PluginMessage.openError(shell, HANDLER_NAME, 
-								MessageFormat.format(FAILED_MESSAGE, objectStoreItem.getName() ), e );
-					}
-				} );
-			}
-		}
-	}	
 
 	class FolderNameValidator implements IInputValidator
 	{
