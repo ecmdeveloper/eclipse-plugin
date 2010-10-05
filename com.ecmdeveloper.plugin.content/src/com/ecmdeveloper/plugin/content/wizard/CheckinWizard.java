@@ -44,6 +44,7 @@ public class CheckinWizard extends Wizard {
 	private ContentSelectionWizardPage contentSelectionPage;
 	private Document document;
 	private IFile initialContent;
+	private String initialMimeType;
 	private boolean isTrackedDocument;
 	
 	public CheckinWizard(Document document, boolean isTrackedDocument ) {
@@ -85,7 +86,7 @@ public class CheckinWizard extends Wizard {
 		if ( initialContent != null ) {
 			ArrayList<Object> content = new ArrayList<Object>();
 			content.add(initialContent);
-			contentSelectionPage.setContent(content);
+			contentSelectionPage.setContent(content, initialMimeType);
 		}
 	}
 
@@ -103,7 +104,11 @@ public class CheckinWizard extends Wizard {
 		Collection<Object> content = null;
 		String mimeType = null;
 
-		if ( configureCheckinPage.isSelectContent() ) {
+		if ( configureCheckinPage.isUseTrackedContent() && contentSelectionPage.getContent().size() == 0 ) {
+			addInitialContent();
+		}
+		
+		if ( configureCheckinPage.isSelectContent() || configureCheckinPage.isUseTrackedContent() ) {
 			content = contentSelectionPage.getContent();
 			mimeType = contentSelectionPage.getMimeType();
 		}
@@ -114,7 +119,8 @@ public class CheckinWizard extends Wizard {
 		return checkinJob;
 	}
 
-	public void setInitialContent(IFile initialContent) {
+	public void setInitialContent(IFile initialContent, String mimeType ) {
 		this.initialContent = initialContent;
+		this.initialMimeType = mimeType;
 	}
 }

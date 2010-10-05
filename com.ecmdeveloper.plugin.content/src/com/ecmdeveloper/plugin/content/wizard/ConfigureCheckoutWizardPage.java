@@ -119,6 +119,7 @@ public class ConfigureCheckoutWizardPage extends WizardPage {
 
 	protected void updateTrackButton() {
 		trackButton.setEnabled( isDowload() );
+		trackButton.setSelection( isDowload() );
 	}
 
 	private GridData getFullRowGridData() {
