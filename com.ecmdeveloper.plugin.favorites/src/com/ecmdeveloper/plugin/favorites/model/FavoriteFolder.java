@@ -26,7 +26,7 @@ package com.ecmdeveloper.plugin.favorites.model;
  */
 public class FavoriteFolder extends FavoriteObjectStoreItem {
 
-	public FavoriteFolder(String id, String className, String connectionName, String objectStoreName) {
-		super(id, className, connectionName, objectStoreName );
+	public FavoriteFolder(String id, String name, String className, String connectionName, String objectStoreName) {
+		super(id, name, className, connectionName, objectStoreName );
 	}
 }

@@ -51,6 +51,7 @@ public class FavoritesStore {
 		favoritesChild.putInteger(PluginTagNames.VERSION, CURRENT_FILE_VERSION );
 		favoritesChild.createChild(PluginTagNames.FOLDERS );
 		favoritesChild.createChild(PluginTagNames.DOCUMENTS );
+		favoritesChild.createChild(PluginTagNames.CUSTOM_OBJECTS );
 		
 		for ( FavoriteObjectStoreItem favorite : favorites ) {
 			saveFavorite(favoritesChild, favorite);
@@ -66,23 +67,32 @@ public class FavoritesStore {
 			saveFavoriteFolder(favorite, foldersChild .createChild(PluginTagNames.FOLDER ) );
 		} else if ( favorite instanceof FavoriteDocument ) {
 			IMemento documentsChild = favoritesChild.getChild( PluginTagNames.DOCUMENTS );
-			saveFavoriteDocument(favorite, documentsChild .createChild(PluginTagNames.DOCUMENT));
+			saveFavoriteDocument(favorite, documentsChild.createChild(PluginTagNames.DOCUMENT));
+		} else if ( favorite instanceof FavoriteCustomObject ) {
+			IMemento customObjectsChild = favoritesChild.getChild( PluginTagNames.CUSTOM_OBJECTS );
+			saveFavoriteCustomObject(favorite, customObjectsChild.createChild(PluginTagNames.CUSTOM_OBJECT));
 		} else {
 			throw new UnsupportedOperationException();
 		}
 	}
 
-	private void saveFavoriteDocument(FavoriteObjectStoreItem favorite, IMemento documentsChild) {
-		saveFavoriteObjectStoreItem(favorite, documentsChild);
+	
+	private void saveFavoriteCustomObject(FavoriteObjectStoreItem favorite, IMemento customObjectChild) {
+		saveFavoriteObjectStoreItem(favorite, customObjectChild);
+	}
+
+	private void saveFavoriteDocument(FavoriteObjectStoreItem favorite, IMemento documentChild) {
+		saveFavoriteObjectStoreItem(favorite, documentChild);
 //		trackedFileChild.putString(FilesTrackerTagNames.VERSION_SERIES_ID, trackedFile.getVersionSeriesId() );
 	}
 
-	private void saveFavoriteFolder(FavoriteObjectStoreItem favorite, IMemento foldersChild) {
-		saveFavoriteObjectStoreItem(favorite, foldersChild);
+	private void saveFavoriteFolder(FavoriteObjectStoreItem favorite, IMemento folderChild) {
+		saveFavoriteObjectStoreItem(favorite, folderChild);
 	}
 
 	private void saveFavoriteObjectStoreItem(FavoriteObjectStoreItem favorite, IMemento trackedFileChild) {
 		trackedFileChild.putString(PluginTagNames.ID, favorite.getId() );
+		trackedFileChild.putString(PluginTagNames.NAME, favorite.getName() );
 		trackedFileChild.putString(PluginTagNames.CLASS_NAME, favorite.getClassName() );
 		trackedFileChild.putString(PluginTagNames.CONNECTION_NAME, favorite.getConnectionName() );
 		trackedFileChild.putString(PluginTagNames.OBJECT_STORE_NAME, favorite.getObjectStoreName() );
@@ -122,6 +132,7 @@ public class FavoritesStore {
 			XMLMemento favoritesChild = XMLMemento.createReadRoot( reader );
 			loadFavoriteFolders(favorites, favoritesChild);
 			loadFavoriteDocuments(favorites, favoritesChild);
+			loadFavoriteCustomObjects(favorites, favoritesChild);
 		} catch (WorkbenchException e) {
 			PluginLog.error(e);
 		} finally {
@@ -150,14 +161,34 @@ public class FavoritesStore {
 		}
 	}
 
+	private void loadFavoriteCustomObjects(Collection<FavoriteObjectStoreItem> favorites, XMLMemento favoritesChild) {
+		IMemento documentsChild = favoritesChild.getChild( PluginTagNames.CUSTOM_OBJECTS );
+		for ( IMemento documentChild : documentsChild.getChildren( PluginTagNames.CUSTOM_OBJECT) ) {
+			FavoriteCustomObject favoriteCustomObject = loadFavoriteCustomObject(documentChild);
+			favorites.add( favoriteCustomObject );
+		}
+	}
+	
+	private FavoriteCustomObject loadFavoriteCustomObject(IMemento customObjectChild) {
+
+		String objectStoreName = customObjectChild.getString( PluginTagNames.OBJECT_STORE_NAME );
+		String connectionName = customObjectChild.getString( PluginTagNames.CONNECTION_NAME );
+		String className = customObjectChild.getString( PluginTagNames.CLASS_NAME );
+		String id = customObjectChild.getString( PluginTagNames.ID );
+		String name = customObjectChild.getString( PluginTagNames.NAME );
+		
+		return new FavoriteCustomObject(id, name, className, connectionName, objectStoreName );
+	}
+
 	private FavoriteFolder loadFavoriteFolder(IMemento folderChild) {
 		
 		String objectStoreName = folderChild.getString( PluginTagNames.OBJECT_STORE_NAME );
 		String connectionName = folderChild.getString( PluginTagNames.CONNECTION_NAME );
 		String className = folderChild.getString( PluginTagNames.CLASS_NAME );
 		String id = folderChild.getString( PluginTagNames.ID );
-		
-		return new FavoriteFolder(id, className, connectionName, objectStoreName );
+		String name = folderChild.getString( PluginTagNames.NAME );
+
+		return new FavoriteFolder(id, name, className, connectionName, objectStoreName );
 	}
 
 	private FavoriteDocument loadFavoriteDocument(IMemento documentChild) {
@@ -166,10 +197,11 @@ public class FavoritesStore {
 		String connectionName = documentChild.getString( PluginTagNames.CONNECTION_NAME );
 		String className = documentChild.getString( PluginTagNames.CLASS_NAME );
 		String id = documentChild.getString( PluginTagNames.ID );
+		String name = documentChild.getString( PluginTagNames.NAME );
 		
 		// TODO something with version series
 		
-		return new FavoriteDocument(id, className, connectionName, objectStoreName );
+		return new FavoriteDocument(id, name, className, connectionName, objectStoreName );
 	}
 	
 	private FileReader getFilesTrackerFileReader() {

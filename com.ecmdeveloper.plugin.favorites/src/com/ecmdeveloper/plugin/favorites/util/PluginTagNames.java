@@ -31,4 +31,7 @@ public class PluginTagNames {
 	public static final String DOCUMENTS = "documents";
 	public static final String FOLDER = "folder";
 	public static final String DOCUMENT = "document";
+	public static final String NAME = "name";
+	public static final String CUSTOM_OBJECTS = "customObjects";
+	public static final String CUSTOM_OBJECT = "customObject";
 }

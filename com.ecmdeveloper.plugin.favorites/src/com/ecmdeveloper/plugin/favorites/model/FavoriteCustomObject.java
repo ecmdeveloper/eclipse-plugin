@@ -26,9 +26,9 @@ package com.ecmdeveloper.plugin.favorites.model;
  */
 public class FavoriteCustomObject extends FavoriteObjectStoreItem {
 
-	public FavoriteCustomObject(String id, String className, String connectionName,
+	public FavoriteCustomObject(String id, String name, String className, String connectionName,
 			String objectStoreName) {
-		super(id, className, connectionName, objectStoreName);
+		super(id, name, className, connectionName, objectStoreName);
 	}
 
 }

@@ -20,9 +20,11 @@
 
 package com.ecmdeveloper.plugin.favorites.jobs;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
+import javax.print.attribute.standard.MediaSize.Engineering;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,7 +35,9 @@ import com.ecmdeveloper.plugin.favorites.model.FavoriteCustomObject;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteDocument;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteFolder;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStoreItem;
+import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
 import com.ecmdeveloper.plugin.favorites.util.PluginMessage;
+import com.ecmdeveloper.plugin.model.ObjectNotFoundException;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
@@ -45,6 +49,7 @@ import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
  */
 public class FetchFavoritesJob extends Job {
 
+	private static final String FAVORITE_NOT_FOUND_MESSAGE = "The favorite \"{0}\" is not found and will be removed from the list of favorites";
 	private static final String FAILED_MESSAGE = "Fething favorites failed";
 	private static final String JOB_NAME = "Loading Favorites";
 	private Collection<FavoriteObjectStoreItem> favorites;
@@ -101,11 +106,23 @@ public class FetchFavoritesJob extends Job {
 		String objectType = getFavoriteObjectType(favorite);
 		FetchObjectTask task = new FetchObjectTask(objectStore, favorite.getId(), favorite.getClassName(), objectType );
 		try {
-			Object result = objectStoresManager.executeTaskSync(task);
-			objectStoreItems.add((ObjectStoreItem) result);
+			ObjectStoreItem objectStoreItem = (ObjectStoreItem) objectStoresManager.executeTaskSync(task);
+			objectStoreItems.add(objectStoreItem);
+			favorite.setName( objectStoreItem.getDisplayName() );
 		} catch (ExecutionException e) {
-			PluginMessage.openErrorFromThread(null, getName(), FAILED_MESSAGE, e);
+			handleError(favorite, e);
 		}
+	}
+
+	private void handleError(FavoriteObjectStoreItem favorite, ExecutionException e) {
+		String message;
+		if ( e.getCause() != null && e.getCause() instanceof ObjectNotFoundException ) {
+			message = MessageFormat.format(FAVORITE_NOT_FOUND_MESSAGE, favorite.getName() );
+			FavoritesManager.getInstance().removeFavorite(favorite);
+		} else {
+			message = FAILED_MESSAGE;
+		}
+		PluginMessage.openErrorFromThread(null, getName(), message, e);
 	}
 
 	private String getFavoriteObjectType(FavoriteObjectStoreItem favorite) {
