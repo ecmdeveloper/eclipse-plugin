@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.favorites.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.Placeholder;
@@ -61,7 +62,10 @@ public class FavoriteObjectStore {
 		this.children.addAll( children );
 	}
 
-	boolean hasChildren() {
+	public boolean hasChildren() {
+		if ( !objectStore.isConnected() ) {
+			return false;
+		}
 		if (children == null ) {
 			return true;
 		}
@@ -86,5 +90,13 @@ public class FavoriteObjectStore {
 				return;
 			}
 		}
+	}
+	
+	public boolean isObjectStoreOf(ObjectStore objectStore) {
+		ContentEngineConnection connection = objectStore.getConnection();
+		String objectStoreName = this.objectStore.getName();
+		String connectionName = this.objectStore.getConnection().getName();
+		return objectStoreName.equals(objectStore.getName())
+				&& connectionName.equals(connection.getName());
 	}
 }
