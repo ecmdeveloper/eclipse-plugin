@@ -20,8 +20,12 @@
 
 package com.ecmdeveloper.plugin.favorites.views;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.PlatformUI;
 
+import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 
@@ -31,11 +35,30 @@ import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
  */
 public class FavoritesLabelProvider extends ObjectStoreItemLabelProvider {
 
+//	private IDecoratorManager decorator;
+//	
+//	public FavoritesLabelProvider() {
+//		super();
+//		decorator = PlatformUI.getWorkbench().getDecoratorManager();
+//	}
+//
+//	public void addListener(ILabelProviderListener listener) {
+//		decorator.addListener(listener);
+//		super.addListener(listener);
+//	}
+//
+//	public void removeListener(ILabelProviderListener listener) {
+//		decorator.removeListener(listener);
+//		super.removeListener(listener);
+//	}
+
 	@Override
 	public Image getImage(Object object) {
 		if ( object instanceof FavoriteObjectStore ) {
-			FavoriteObjectStore favoriteObjectStore = (FavoriteObjectStore) object;
-			return super.getImage(favoriteObjectStore.getObjectStore() );
+			
+			return getDecoratedImage(object, "icons/database.png");
+			
+//			return super.getImage(favoriteObjectStore.getObjectStore() );
 		}
 		return super.getImage(object);
 	}
@@ -47,5 +70,17 @@ public class FavoritesLabelProvider extends ObjectStoreItemLabelProvider {
 			return super.getText(favoriteObjectStore.getObjectStore() );
 		}
 		return super.getText(object);
+	}
+
+	private Image getDecoratedImage(Object obj, String iconFile) {
+		Image image = Activator.getImage(iconFile);
+		return getDecoratedImage(obj, image);
+	}
+
+	private Image getDecoratedImage(Object obj, Image image) {
+		Image decorated = decorator.decorateImage(image, obj);
+		if (decorated != null)
+			return decorated;
+		return image;
 	}
 }

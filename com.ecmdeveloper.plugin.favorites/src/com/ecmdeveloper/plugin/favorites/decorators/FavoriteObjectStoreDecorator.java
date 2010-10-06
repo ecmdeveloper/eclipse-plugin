@@ -22,52 +22,39 @@ package com.ecmdeveloper.plugin.favorites.decorators;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
+import com.ecmdeveloper.plugin.decorators.ObjectStoreItemDecorator;
 import com.ecmdeveloper.plugin.favorites.Activator;
-import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
+import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.favorites.util.IconFiles;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class FavoriteDecorator implements ILightweightLabelDecorator {
+public class FavoriteObjectStoreDecorator extends ObjectStoreItemDecorator {
 
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
+		FavoriteObjectStore favoriteObjectStore = (FavoriteObjectStore) element;
+		ObjectStore objectStore = favoriteObjectStore.getObjectStore();
 
-		ObjectStoreItem objectStoreItem = (ObjectStoreItem) element;
-
-		if ( FavoritesManager.getInstance().isFavorite(objectStoreItem) ) {
-			ImageDescriptor descriptor = Activator.getImageDescriptor(IconFiles.FAVORITE_DECORATOR_IMAGE);
-			decoration.addOverlay(descriptor, IDecoration.TOP_LEFT);
+		ImageDescriptor descriptor = null;
+		if ( objectStore.isConnected() ) {
+			descriptor = Activator.getImageDescriptor( IconFiles.CONNECTED_DECORATOR_IMAGE );
+		} else {
+			descriptor = Activator.getImageDescriptor( IconFiles.NOT_CONNECTED_DECORATOR_IMAGE );
 		}
-	}
-
-	@Override
-	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
 		
-	}
+		decoration.addOverlay(descriptor,IDecoration.BOTTOM_RIGHT);
 
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		ImageDescriptor favoriteDescriptor = Activator.getImageDescriptor( IconFiles.FAVORITE_DECORATOR_IMAGE );
+		decoration.addOverlay(favoriteDescriptor, IDecoration.TOP_LEFT );
 	}
 
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
-
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

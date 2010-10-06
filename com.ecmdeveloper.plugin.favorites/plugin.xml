@@ -18,6 +18,11 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <category
+            description="Commands related to the Content Engine"
+            id="com.ecmdeveloper.plugin.category"
+            name="Content Engine Commands">
+      </category>
       <command
             description="Add to Favorites"
             id="com.ecmdeveloper.plugin.addToFavorites"
@@ -27,6 +32,12 @@
             description="Remove from Favorites"
             id="com.ecmdeveloper.plugin.removeFromFavorites"
             name="Remove from Favorites">
+      </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Connect to the Object Store"
+            id="com.ecmdeveloper.plugin.connectFavoriteObjectStore"
+            name="Connect">
       </command>
    </extension>
    <extension
@@ -73,6 +84,20 @@
                            value="com.ecmdeveloper.plugin.model.CustomObject">
                      </instanceof>
                   </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.favorites.handlers.ConnectFavoriteObjectStoreHandler"
+            commandId="com.ecmdeveloper.plugin.connectFavoriteObjectStore">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore">
+                  </instanceof>
                </iterate>
             </with>
          </enabledWhen>
@@ -127,6 +152,25 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.connectFavoriteObjectStore"
+               icon="icons/database_connect.png"
+               style="push"
+               tooltip="Connect to the Object Store">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -151,6 +195,19 @@
          <enablement>
             <objectClass
                   name="com.ecmdeveloper.plugin.model.ObjectStoreItem">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
+            adaptable="true"
+            class="com.ecmdeveloper.plugin.favorites.decorators.FavoriteObjectStoreDecorator"
+            id="com.ecmdeveloper.plugin.decorators.FavoriteObjectStoreDecorator"
+            label="Favorite Object Store Decorator"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore">
             </objectClass>
          </enablement>
       </decorator>
