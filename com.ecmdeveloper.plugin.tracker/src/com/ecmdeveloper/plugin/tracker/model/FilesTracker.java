@@ -92,18 +92,25 @@ public class FilesTracker {
 	}
 	
 	public boolean isVersionSeriesTracked(String versionSeriesId) {
-		
+		return getVersionSeriesTrackedFile(versionSeriesId) != null;
+	}
+
+	public TrackedFile getVersionSeriesTrackedFile(String versionSeriesId) {
+
 		if ( versionSeriesId == null){
-			return false;
+			return null;
 		}
 		
 		initializeTrackedFiles();
+		TrackedFile t2 = null;
+		
 		for ( TrackedFile trackedFile : trackedFilesMap.values() ) {
 			if ( versionSeriesId.equalsIgnoreCase( trackedFile.getVersionSeriesId() ) ) {
-				return true;
+				t2 = trackedFile;
+				break;
 			}
 		}
-		return false;
+		return t2;
 	}
 
 	public boolean removeTrackedVersionSeries(String versionSeriesId) {
