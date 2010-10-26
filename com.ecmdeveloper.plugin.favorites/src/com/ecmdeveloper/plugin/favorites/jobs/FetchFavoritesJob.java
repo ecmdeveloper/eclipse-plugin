@@ -24,7 +24,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-import javax.print.attribute.standard.MediaSize.Engineering;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -49,6 +48,7 @@ import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
  */
 public class FetchFavoritesJob extends Job {
 
+	private static final String OBJECT_STORE_NOT_CONNECTED_MESSAGE = "The Object Store \"{0}\" is not connected";
 	private static final String FAVORITE_NOT_FOUND_MESSAGE = "The favorite \"{0}\" is not found and will be removed from the list of favorites";
 	private static final String FAILED_MESSAGE = "Fething favorites failed";
 	private static final String JOB_NAME = "Loading Favorites";
@@ -67,11 +67,13 @@ public class FetchFavoritesJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		
 		objectStoreItems = new ArrayList<ObjectStoreItem>();
-		
-		if ( ! connectObjectStore(monitor) ) {
+
+		if ( ! objectStore.isConnected() ) {
+			String message = MessageFormat.format( OBJECT_STORE_NOT_CONNECTED_MESSAGE, objectStore.getDisplayName() );
+			PluginMessage.openErrorFromThread(null, getName(), message, null);
 			return Status.CANCEL_STATUS;
 		}
-			
+		
 		monitor.beginTask(getName(), favorites.size() );
 		IStatus status = fetchFavorites(monitor);
 		monitor.done();
@@ -88,18 +90,6 @@ public class FetchFavoritesJob extends Job {
 			monitor.worked(1);
 		}
 		return Status.OK_STATUS;
-	}
-
-	private boolean connectObjectStore(IProgressMonitor monitor) {
-		if ( ! objectStore.isConnected() ) {
-			try {
-				ObjectStoresManager.getManager().connectConnection(objectStore.getConnection(), monitor );
-			} catch (ExecutionException e) {
-				PluginMessage.openErrorFromThread(null, getName(), FAILED_MESSAGE, e);
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private void fetchFavorite(ObjectStoresManager objectStoresManager, FavoriteObjectStoreItem favorite) {

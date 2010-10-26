@@ -95,9 +95,16 @@
             <with
                   variable="selection">
                <iterate>
-                  <instanceof
-                        value="com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore">
-                  </instanceof>
+                  <and>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore">
+                     </instanceof>
+                     <not>
+                        <test
+                              property="com.ecmdeveloper.plugin.favorites.isConnected">
+                        </test>
+                     </not>
+                  </and>
                </iterate>
             </with>
          </enabledWhen>
@@ -180,6 +187,13 @@
             id="com.ecmdeveloper.plugin.favorites.favoritesTester"
             namespace="com.ecmdeveloper.plugin.favorites"
             properties="isFavorite"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="com.ecmdeveloper.plugin.favorites.tester.FavoriteObjectStoreTester"
+            id="com.ecmdeveloper.plugin.favorites.favoriteObjectStoreTester"
+            namespace="com.ecmdeveloper.plugin.favorites"
+            properties="isConnected"
             type="java.lang.Object">
       </propertyTester>
    </extension>

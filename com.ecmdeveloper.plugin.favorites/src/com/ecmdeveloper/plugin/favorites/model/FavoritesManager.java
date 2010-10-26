@@ -43,7 +43,6 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
 import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 
 
 /**
@@ -161,6 +160,12 @@ public class FavoritesManager implements ObjectStoresManagerListener {
 		}
 	}
 
+	private void fireFavoriteObjectStoreRemoved(FavoriteObjectStore favoriteObjectStore) {
+		for ( FavoritesManagerListener listener : listeners ) {
+			listener.favoriteObjectStoreRemoved(favoriteObjectStore);
+		}
+	}
+	
 	private FavoriteObjectStore getFavoriteObjectStore(FavoriteObjectStoreItem favorite) {
 		for ( FavoriteObjectStore favoriteObjectStore : favoriteObjectStores ) {
 			if ( isFavoriteObjectStoreFavorite(favoriteObjectStore, favorite) ) {
@@ -262,20 +267,50 @@ public class FavoritesManager implements ObjectStoresManagerListener {
 		}
 		
 		notifyUpdatedFavoriteObjectStores(event);		
+		notifyRemovedFavoriteObjectStores(event);
+		notifyAddFavoriteObjectStores(event);
 	}
 
 	private void notifyUpdatedFavoriteObjectStores(ObjectStoresManagerEvent event) {
 		Collection<ObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsUpdated());
 		for ( ObjectStore objectStore : objectStoreItems) {
-			for (FavoriteObjectStore  favoriteObjectStore : getFavoriteObjectStores() ) {
-				if ( favoriteObjectStore.isObjectStoreOf(objectStore) ) {
-					fireFavoriteObjectStoreChanged(favoriteObjectStore);
-					break;
-				}
+			FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(objectStore);
+			if ( favoriteObjectStore != null ) {
+				fireFavoriteObjectStoreChanged(favoriteObjectStore);
 			}
 		}
 	}
 
+	private void notifyRemovedFavoriteObjectStores(ObjectStoresManagerEvent event) {
+		Collection<ObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsRemoved());
+		for ( ObjectStore objectStore : objectStoreItems) {
+			FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(objectStore);
+			if ( favoriteObjectStore != null ) {
+				favoriteObjectStores.remove(favoriteObjectStore);
+				fireFavoriteObjectStoreRemoved(favoriteObjectStore);
+			}
+		}
+	}
+
+	private void notifyAddFavoriteObjectStores(ObjectStoresManagerEvent event) {
+		Collection<ObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsAdded());
+		for ( ObjectStore objectStore : objectStoreItems) {
+			FavoriteObjectStore favoriteObjectStore = new FavoriteObjectStore(objectStore);
+			favoriteObjectStores.add( favoriteObjectStore );
+			fireFavoriteObjectStoreChanged(favoriteObjectStore);
+		}
+	}
+	
+	private FavoriteObjectStore getFavoriteObjectStore(ObjectStore objectStore) {
+		for (FavoriteObjectStore  favoriteObjectStore : getFavoriteObjectStores() ) {
+			if ( favoriteObjectStore.isObjectStoreOf(objectStore) ) {
+				return favoriteObjectStore;
+			}
+		}
+		return null;
+	}
+
+	
 	private Collection<ObjectStore> getObjectStoreItems(IObjectStoreItem[] objectStoreItems ) {
 		Set<ObjectStore> objectStores = new HashSet<ObjectStore>();
 

@@ -27,4 +27,5 @@ package com.ecmdeveloper.plugin.favorites.model;
 public interface FavoritesManagerListener {
 
 	public void favoritesLoaded(FavoriteObjectStore favoriteObjectStore);
+	public void favoriteObjectStoreRemoved(FavoriteObjectStore favoriteObjectStore);
 }

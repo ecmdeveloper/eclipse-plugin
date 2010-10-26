@@ -20,20 +20,21 @@
 
 package com.ecmdeveloper.plugin.favorites.handlers;
 
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 /**
@@ -42,10 +43,14 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItem;
  */
 public class AddToFavoritesHandler extends AbstractHandler implements IHandler {
 
+	private static final String ALREADY_FAVORITE_MESSAGE = "The object \"{0}\" is already a favorite.";
+	
+	private IWorkbenchWindow window;
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if (window == null)	return null;
 
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
@@ -56,9 +61,26 @@ public class AddToFavoritesHandler extends AbstractHandler implements IHandler {
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
 			ObjectStoreItem objectStoreItem = (ObjectStoreItem) iterator.next();
-			FavoritesManager.getInstance().addFavorite( objectStoreItem );
+			addToFavorites(objectStoreItem, event);
 		}
 		return null;
 	}
 
+	private void addToFavorites(ObjectStoreItem objectStoreItem, ExecutionEvent event) {
+		FavoritesManager favoritesManager = FavoritesManager.getInstance();
+		if ( ! favoritesManager.isFavorite(objectStoreItem)) {
+			favoritesManager.addFavorite( objectStoreItem );
+		} else {
+			String message = MessageFormat.format( ALREADY_FAVORITE_MESSAGE, objectStoreItem.getDisplayName() );
+			MessageDialog.openInformation(window.getShell(), getCommandName(event), message );
+		}
+	}
+
+	private String getCommandName(ExecutionEvent event) {
+		try {
+			return event.getCommand().getName();
+		} catch (NotDefinedException nde) {
+			return "";
+		}
+	}
 }
