@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
@@ -62,7 +63,7 @@ public abstract class AbstractTrackedFileHandler extends AbstractHandler impleme
 	}
 
 	private void handleSelectedObject(IWorkbenchWindow window, Object selectedObject) {
-		IFile file;
+		IFile file = null;
 		TrackedFile trackedFile;
 		if ( selectedObject instanceof IFile ) {
 			file = (IFile) selectedObject;
@@ -71,6 +72,12 @@ public abstract class AbstractTrackedFileHandler extends AbstractHandler impleme
 		} else if ( selectedObject instanceof TrackedFile ) {
 			trackedFile = (TrackedFile) selectedObject;
 			file = trackedFile.getFile();
+		} else if ( selectedObject instanceof Document ) { 
+			Document document = (Document) selectedObject;
+			trackedFile = FilesTracker.getInstance().getVersionSeriesTrackedFile( document.getVersionSeriesId() );
+			if ( trackedFile != null ) {
+				file = trackedFile.getFile();
+			}
 		} else {
 			throw new UnsupportedOperationException("Invalid selection for " + this.getClass().getName() );
 		}

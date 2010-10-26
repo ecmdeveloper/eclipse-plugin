@@ -31,6 +31,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
+import com.ecmdeveloper.plugin.content.Activator;
+
 /**
  * @author Ricardo.Belfor
  *
@@ -46,8 +48,16 @@ public class DownloadDocumentWizardPage extends WizardNewFileCreationPage {
 		super("downloadPage", selection);
 		setTitle(WIZARD_TITLE);
 		setDescription(WIZARD_DESCRIPTION);
-		setContainerFullPath( new Path("/") );
+		setContainerFullPath( Activator.getSelectionRoot().getFullPath() );
 		setAllowExistingResources(true);
+	}
+
+	public void setInitialContents(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	protected InputStream getInitialContents() {
+		return inputStream;
 	}
 
 	public boolean deleteExistingFile(IProgressMonitor monitor) throws Exception {
@@ -71,11 +81,10 @@ public class DownloadDocumentWizardPage extends WizardNewFileCreationPage {
 		return confirm;
 	}
 	
-	public void setInitialContents(InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
-
-	protected InputStream getInitialContents() {
-		return inputStream;
+	@Override
+	public IFile createNewFile() {
+		IFile file = super.createNewFile();
+		Activator.setSelectionRoot(file);
+		return file;
 	}
 }
