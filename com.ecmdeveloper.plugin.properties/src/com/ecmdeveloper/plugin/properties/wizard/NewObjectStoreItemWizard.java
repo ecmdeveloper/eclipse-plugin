@@ -40,6 +40,7 @@ import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
@@ -67,7 +68,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	@Override
 	public void addPages() {
 		parentSelectionWizardPage = new ParentSelectionWizardPage();
-		parentSelectionWizardPage.setFolder( getInitialSelection() );
+		parentSelectionWizardPage.setSelection( getInitialSelection() );
 		addPage( parentSelectionWizardPage );
 		classSelectionPage = new NewClassSelectionWizardPage(getClassType());
 		addPage( classSelectionPage );
@@ -75,28 +76,28 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 
 	protected abstract ClassType getClassType();
 
-	public String getObjectStoreId() {
-		Folder folder = getParentFolder();
-		if ( folder != null ) {
-			return folder.getObjectStore().getId();
+	public String getParentObjectStoreId() {
+		ObjectStoreItem parent = getParent();
+		if ( parent != null ) {
+			return parent.getObjectStore().getId();
 		}
 		return null;
 	}
 
-	public ObjectStore getObjectStore() {
-		Folder folder = getParentFolder();
-		if ( folder != null ) {
-			return folder.getObjectStore();
+	public ObjectStore getParentObjectStore() {
+		ObjectStoreItem parent = getParent();
+		if ( parent != null ) {
+			return parent.getObjectStore();
 		}
 		return null;
 	}
 	
-	private Folder getInitialSelection() {
+	private ObjectStoreItem getInitialSelection() {
 		if ( selection != null && selection.size() == 1 ) {
 			Object object = selection.iterator().next();
-			if ( object instanceof Folder ) {
-				return (Folder) object;
-			}
+			if ( object instanceof Folder || object instanceof ObjectStore ) {
+				return (ObjectStoreItem) object;
+			} 
 		}
 		return null;
 	}
@@ -104,16 +105,16 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	@Override
 	public boolean performFinish() {
 		
-		final Folder parentFolder = getParentFolder();
-		if ( parentFolder == null ) {
+		final ObjectStoreItem parent = getParent();
+		if ( parent == null ) {
 			return false;
 		}
 		
 		if ( getClassDescription() == null ) {
-	         fetchDefaultClassDescription( parentFolder.getObjectStore() );
+	         fetchDefaultClassDescription( parent.getObjectStore() );
 		}
 		
-		if ( getParentFolder() != null && getClassDescription() != null ) {
+		if ( getParent() != null && getClassDescription() != null ) {
 			IEditorInput input = getEditorInput();
 			if ( input != null ) {
 				return openEditor(input);
@@ -147,12 +148,12 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	}
 
 	public ClassDescription getDefaultClassDescription() {
-		fetchDefaultClassDescription( getObjectStore() );
+		fetchDefaultClassDescription( getParentObjectStore() );
 		return defaultClassDescription;
 	}
 
-	protected Folder getParentFolder() {
-		Folder parent = parentSelectionWizardPage.getFolder();
+	protected ObjectStoreItem getParent() {
+		ObjectStoreItem parent = parentSelectionWizardPage.getSelection();
 		return parent;
 	}
 

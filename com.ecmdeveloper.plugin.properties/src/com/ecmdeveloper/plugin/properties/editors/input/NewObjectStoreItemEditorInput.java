@@ -35,14 +35,14 @@ import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
  */
 public class NewObjectStoreItemEditorInput extends ObjectStoreItemEditorInput {
 
-	private Folder parent;
+	private ObjectStoreItem parent;
 
-	public NewObjectStoreItemEditorInput(ClassDescription classDescription, Folder parent) {
+	public NewObjectStoreItemEditorInput(ClassDescription classDescription, ObjectStoreItem parent) {
 		super(null, classDescription);
 		this.parent = parent;
 	}
 
-	public Folder getParent() {
+	public ObjectStoreItem getParent() {
 		return parent;
 	}
 	

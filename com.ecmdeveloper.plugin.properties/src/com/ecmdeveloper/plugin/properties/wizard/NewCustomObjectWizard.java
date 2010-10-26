@@ -54,7 +54,7 @@ public class NewCustomObjectWizard extends NewObjectStoreItemWizard {
 	}
 
 	protected IEditorInput getEditorInput() {
-		return new NewCustomObjectEditorInput( getClassDescription(), getParentFolder() );
+		return new NewCustomObjectEditorInput( getClassDescription(), getParent() );
 	}
 
 	@Override

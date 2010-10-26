@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
 /**
@@ -46,7 +46,7 @@ public class NewDocumentEditorInput extends NewObjectStoreItemEditorInput {
 	private boolean checkinMajor;
 	private boolean autoClassify;
 	
-	public NewDocumentEditorInput(ClassDescription classDescription, Folder parent) {
+	public NewDocumentEditorInput(ClassDescription classDescription, ObjectStoreItem parent) {
 		super(classDescription, parent);
 		String unsavedTitle = MessageFormat.format(DEFAULT_DOCUMENT_NAME, ++newDocumentIndex);
 		setName(unsavedTitle);
