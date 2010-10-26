@@ -11,6 +11,13 @@
 <body>
 <!--#include virtual="/header.shtml" -->
 <div id="content">
+	<h3>Version 1.4.0.0 xx/xx/2010</h3>
+	<ul>
+	<li>Creation of new folders, documents and custom objects.</li>
+	<li>Tracking of files checked out into the workspace.</li>
+	<li>Favorites view.</li>
+	<li>Content Engine Perspective, modified Class Diagram editing perspective.</li>
+	</ul>
 	<div id="left">
 	<h3>Version 1.3.0.0 7/26/2010</h3>
 	<ul>
