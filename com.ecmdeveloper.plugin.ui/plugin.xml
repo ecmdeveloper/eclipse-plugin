@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="com.ecmdeveloper.plugin.ui.perspectives.ContentEnginePerspectiveFactory"
+            id="com.ecmdeveloper.plugin.ui.contentEnginePerspective"
+            name="Content Engine">
+         <description>
+            This perspective is designed to support working with Content Engines. It offers an Object Store explorer, a Favorities view, a Code Modules view and a Tracker view.
+         </description>
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="Commands related to the Content Engine"
+            id="com.ecmdeveloper.plugin.category"
+            name="Content Engine Commands">
+      </category>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Deletes the selected item from the Object Store"
+            id="com.ecmdeveloper.plugin.delete"
+            name="Delete">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.ecmdeveloper.plugin.ui.handlers.DeleteObjectStoreItemHandler"
+            commandId="com.ecmdeveloper.plugin.delete">
+      </handler>
+   </extension>
+
+</plugin>
