@@ -87,7 +87,7 @@ public class NewDocumentWizard extends NewObjectStoreItemWizard {
 		boolean checkinMajor = configureCreateDocumentWizardPage.isCheckinMajor();
 		boolean autoClassify = configureCreateDocumentWizardPage.isAutoClassify();
 		
-		NewDocumentEditorInput newDocumentEditorInput = new NewDocumentEditorInput( getClassDescription(), getParentFolder() );
+		NewDocumentEditorInput newDocumentEditorInput = new NewDocumentEditorInput( getClassDescription(), getParent() );
 		
 		newDocumentEditorInput.setContent( content);
 		newDocumentEditorInput.setMimeType( mimeType );

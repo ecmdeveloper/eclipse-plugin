@@ -54,7 +54,7 @@ public class NewFolderWizard extends NewObjectStoreItemWizard {
 	}
 
 	protected IEditorInput getEditorInput() {
-		return new NewFolderEditorInput( getClassDescription(), getParentFolder() );
+		return new NewFolderEditorInput( getClassDescription(), getParent() );
 	}
 
 	@Override

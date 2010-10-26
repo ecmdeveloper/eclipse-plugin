@@ -44,6 +44,8 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
@@ -63,14 +65,14 @@ public class ParentSelectionWizardPage extends WizardPage {
 	private static final String PAGE_NAME = "selectParentPage";
 
 	private TreeViewer viewer;
-	private Folder folder;
+	private ObjectStoreItem selection;
 	
-	public Folder getFolder() {
-		return folder;
+	public ObjectStoreItem getSelection() {
+		return selection;
 	}
 
-	public void setFolder(Folder folder) {
-		this.folder = folder;
+	public void setSelection(ObjectStoreItem folder) {
+		this.selection = folder;
 	}
 
 	protected ParentSelectionWizardPage() {
@@ -105,11 +107,12 @@ public class ParentSelectionWizardPage extends WizardPage {
 		ArrayList<PathElement> pathElements = new ArrayList<PathElement>();
 		pathElements.add( new PathElement(objectStoreName, 0 ) );
 		
-		String[] pathParts = folderPath.substring(1).split("/");
-		for ( String pathPart : pathParts ) {
-			pathElements.add( new PathElement( pathPart, 1) );
+		if (folderPath.length() > 0 ) {
+			String[] pathParts = folderPath.substring(1).split("/");
+			for ( String pathPart : pathParts ) {
+				pathElements.add( new PathElement( pathPart, 1) );
+			}
 		}
-		
 		return pathElements.toArray( new PathElement[0] );
 	}
 	private void addLabel(Composite container, String text, boolean enabled) {
@@ -137,8 +140,8 @@ public class ParentSelectionWizardPage extends WizardPage {
 
 		if ( dialog.open() == ElementTreeSelectionDialog.OK ) {
 			Object result = dialog.getFirstResult();
-			if ( result instanceof Folder ) {
-				folder = (Folder) result;
+			if ( result instanceof Folder || result instanceof ObjectStore ) {
+				selection = (ObjectStoreItem) result;
 				setViewerInput();
 			}
 			return;
@@ -159,9 +162,9 @@ public class ParentSelectionWizardPage extends WizardPage {
 	}
 
 	private void setViewerInput() {
-		if ( folder != null ) {
-			String pathName = folder.getPathName();
-			String objectStoreName = folder.getObjectStore().getDisplayName();
+		if ( selection != null ) {
+			String pathName = getSelectionPathName();
+			String objectStoreName = selection.getObjectStore().getDisplayName();
 			viewer.setInput( getPathElements( objectStoreName, pathName ) );
 		} else {
 			PathElement dummyPathElement = new PathElement(NO_PARENT_MESSAGE, 2);
@@ -170,7 +173,17 @@ public class ParentSelectionWizardPage extends WizardPage {
 		viewer.refresh();
 		viewer.expandAll();
 		
-		setPageComplete( folder != null );
+		setPageComplete( selection != null );
+	}
+
+	private String getSelectionPathName() {
+		String pathName;
+		if ( selection instanceof Folder ) {
+			pathName = ((Folder) selection).getPathName();
+		} else {
+			pathName = "";
+		}
+		return pathName;
 	}
 	
 	class ParentTargetFilter extends ViewerFilter

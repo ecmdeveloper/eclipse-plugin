@@ -23,7 +23,7 @@ package com.ecmdeveloper.plugin.properties.editors.input;
 import java.text.MessageFormat;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
 /**
@@ -36,7 +36,7 @@ public class NewCustomObjectEditorInput extends NewObjectStoreItemEditorInput {
 
 	private static int newCustomObjectIndex = 0;
 	
-	public NewCustomObjectEditorInput(ClassDescription classDescription, Folder parent) {
+	public NewCustomObjectEditorInput(ClassDescription classDescription, ObjectStoreItem parent) {
 		super(classDescription, parent);
 
 		try {
