@@ -39,6 +39,25 @@ public class FavoritesContentProvider extends ObjectStoresViewContentProvider im
 	private TreeViewer viewer;
 
 	@Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		super.inputChanged(viewer, oldInput, newInput);
+		
+		this.viewer = (TreeViewer) viewer;
+		
+		if (manager != null) {
+			manager.removeFavoritesManagerListener(this);
+		}
+		
+		manager = FavoritesManager.getInstance();
+		
+		if (manager != null) {
+			manager.addFavoritesManagerListener(this);
+		}
+	}
+
+
+
+	@Override
 	public Object[] getChildren(Object parent) {
 		
 		if (parent instanceof ObjectStores ) {
@@ -63,7 +82,15 @@ public class FavoritesContentProvider extends ObjectStoresViewContentProvider im
 
 	@Override
 	public void favoritesLoaded(final FavoriteObjectStore favoriteObjectStore) {
+		refreshViewer(favoriteObjectStore);
+	}
 
+	@Override
+	public void favoriteObjectStoreRemoved(FavoriteObjectStore favoriteObjectStore) {
+		refreshViewer((FavoriteObjectStore)null);
+	}
+
+	private void refreshViewer(final FavoriteObjectStore favoriteObjectStore) {
 		viewer.getTree().getDisplay().asyncExec( new Runnable() {
 			
 			@Override
@@ -71,22 +98,5 @@ public class FavoritesContentProvider extends ObjectStoresViewContentProvider im
 				viewer.refresh( favoriteObjectStore );
 			}
 		});
-	}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		super.inputChanged(viewer, oldInput, newInput);
-		
-		this.viewer = (TreeViewer) viewer;
-		
-		if (manager != null) {
-			manager.removeFavoritesManagerListener(this);
-		}
-		
-		manager = FavoritesManager.getInstance();
-		
-		if (manager != null) {
-			manager.addFavoritesManagerListener(this);
-		}
 	}
 }
