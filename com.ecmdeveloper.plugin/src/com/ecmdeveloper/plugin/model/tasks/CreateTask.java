@@ -37,16 +37,18 @@ import com.filenet.api.core.ReferentialContainmentRelationship;
 public abstract class CreateTask extends BaseTask {
 
 	private Map<String,Object> propertiesMap;
-	private Folder parent;
+	private ObjectStoreItem parent;
 	private String className;
+	private boolean addedToParent;
 	
-	public CreateTask(Folder parent, String className, Map<String, Object> propertiesMap) {
+	public CreateTask(ObjectStoreItem parent, String className, Map<String, Object> propertiesMap) {
 		this.propertiesMap = propertiesMap;
 		this.parent = parent;
 		this.className = className;
+		addedToParent = false;
 	}
 
-	public Folder getParent() {
+	public ObjectStoreItem getParent() {
 		return parent;
 	}
 	
@@ -80,5 +82,14 @@ public abstract class CreateTask extends BaseTask {
 				.getObjectStoreObject(), AutoUniqueName.AUTO_UNIQUE, newDocument.getName(),
 				DefineSecurityParentage.DO_NOT_DEFINE_SECURITY_PARENTAGE);
 		relationship.save(RefreshMode.NO_REFRESH);
+		setAddedToParent(true);
+	}
+
+	public boolean isAddedToParent() {
+		return addedToParent;
+	}
+
+	protected void setAddedToParent(boolean addedToParent) {
+		this.addedToParent = addedToParent;
 	}
 }

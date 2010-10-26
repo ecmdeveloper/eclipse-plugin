@@ -21,6 +21,7 @@ package com.ecmdeveloper.plugin.handlers;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -29,14 +30,19 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.jobs.DeleteJob;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.util.Messages;
+import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
 
 /**
  * 
@@ -59,38 +65,66 @@ public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHa
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 
-		ArrayList<IObjectStoreItem> itemsDeleted = new ArrayList<IObjectStoreItem>();
+		ArrayList<IObjectStoreItem> itemsDeleted = getItemsDeleted(selection);
+		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
 		
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		while ( iterator.hasNext() ) {
-
-			Object elem = iterator.next();
-
-			if ( !( elem instanceof IObjectStoreItem ) ) {
-				continue;
-			}
-
-			IObjectStoreItem objectStoreItem = (IObjectStoreItem)elem;
+		ITreeContentProvider contentProvider = new DeletedItemsContentProvider(itemsDeleted);
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
+		
 			
-			if ( ! objectStoreItem.hasChildren() ) {
-
-				String name = objectStoreItem.getName();
-				boolean answerTrue = MessageDialog.openQuestion(window
-						.getShell(), HANDLER_NAME, MessageFormat.format(
-						DELETE_MESSAGE, name) );
-				if (answerTrue) {
-					itemsDeleted.add(objectStoreItem);
-				}
-			} else {
-				// TODO: show a new confirmation dialog
-				MessageDialog.openInformation( window.getShell(), HANDLER_NAME, "Deleting objects with children is not yet supported" ); //$NON-NLS-1$
-			}
-		}
+//			if ( ! objectStoreItem.hasChildren() ) {
+//
+//				String name = objectStoreItem.getName();
+//				boolean answerTrue = MessageDialog.openQuestion(window
+//						.getShell(), HANDLER_NAME, MessageFormat.format(
+//						DELETE_MESSAGE, name) );
+//				if (answerTrue) {
+//					itemsDeleted.add(objectStoreItem);
+//				}
+//			} else {
+//				// TODO: show a new confirmation dialog
+//				MessageDialog.openInformation( window.getShell(), HANDLER_NAME, "Deleting objects with children is not yet supported" ); //$NON-NLS-1$
+//			}
+//		}
 
 		Job deleteJob = new DeleteJob(itemsDeleted, window.getShell() );
 		deleteJob.setUser(true);
 		deleteJob.schedule();
 		
 		return null;
+	}
+
+	private ArrayList<IObjectStoreItem> getItemsDeleted(ISelection selection) {
+		ArrayList<IObjectStoreItem> itemsDeleted = new ArrayList<IObjectStoreItem>();
+		
+		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+		while ( iterator.hasNext() ) {
+
+			Object elem = iterator.next();
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem)elem;
+
+			if ( !( elem instanceof IObjectStoreItem ) ) {
+				continue;
+			}
+			itemsDeleted.add(objectStoreItem);
+		}
+		return itemsDeleted;
+	}
+	
+	class DeletedItemsContentProvider extends ObjectStoresViewContentProvider {
+		
+		Collection<IObjectStoreItem> deletedItems;
+		
+		public DeletedItemsContentProvider(Collection<IObjectStoreItem> deletedItems) {
+			this.deletedItems = deletedItems;
+		}
+
+		public Object[] getElements(Object parent) {
+			if ( ! ( parent instanceof IObjectStoreItem ) ) {
+				return deletedItems.toArray();
+			} else {
+				return super.getElements(parent);
+			}
+		}		
 	}
 }

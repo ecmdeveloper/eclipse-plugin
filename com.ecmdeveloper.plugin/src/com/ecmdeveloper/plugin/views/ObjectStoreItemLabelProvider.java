@@ -38,7 +38,7 @@ import com.ecmdeveloper.plugin.util.IconFiles;
 
 public class ObjectStoreItemLabelProvider extends LabelProvider {
 
-	final IDecoratorManager decorator;
+	protected IDecoratorManager decorator;
 
 	
 	public ObjectStoreItemLabelProvider() {

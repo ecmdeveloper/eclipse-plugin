@@ -54,12 +54,6 @@
       </command>
       <command
             categoryId="com.ecmdeveloper.plugin.category"
-            description="Deletes the selected item from the Object Store"
-            id="com.ecmdeveloper.plugin.delete"
-            name="Delete">
-      </command>
-      <command
-            categoryId="com.ecmdeveloper.plugin.category"
             description="Moves the selected items to another location in the Object Store"
             id="com.ecmdeveloper.plugin.move"
             name="Move...">
@@ -397,10 +391,6 @@
       <handler
             class="com.ecmdeveloper.plugin.handlers.RemoveObjectStoreHandler"
             commandId="com.ecmdeveloper.plugin.removeObjectStore">
-      </handler>
-      <handler
-            class="com.ecmdeveloper.plugin.handlers.DeleteObjectStoreItemHandler"
-            commandId="com.ecmdeveloper.plugin.delete">
       </handler>
       <handler
             class="com.ecmdeveloper.plugin.handlers.MoveObjectStoreItemHandler"

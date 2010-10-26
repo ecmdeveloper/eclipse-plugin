@@ -37,7 +37,7 @@ public class CreateCustomObjectTask extends CreateTask {
 
 	private CustomObject newCustomObject;
 
-	public CreateCustomObjectTask(Folder parent, String className, Map<String, Object> propertiesMap) {
+	public CreateCustomObjectTask(ObjectStoreItem parent, String className, Map<String, Object> propertiesMap) {
 		super(parent, className, propertiesMap);
 	}
 
@@ -53,7 +53,9 @@ public class CreateCustomObjectTask extends CreateTask {
 		setProperties(newCustomObject);
 		newCustomObject.save();
 		newCustomObject.refresh();
-		fileInParent();
+		if ( getParent() instanceof Folder ) {
+			fileInParent();
+		}
 		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 
@@ -62,7 +64,7 @@ public class CreateCustomObjectTask extends CreateTask {
 
 	private void createCustomObject() {
 		com.filenet.api.core.CustomObject internalCustomObject = createInternalCustomObject();
-		Folder parent = getParent();
+		ObjectStoreItem parent = getParent();
 		newCustomObject = ObjectStoreItemFactory.createCustomObject(internalCustomObject, parent, parent.getObjectStore(), false );
 	}
 

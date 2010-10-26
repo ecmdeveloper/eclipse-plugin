@@ -21,17 +21,19 @@
 package com.ecmdeveloper.plugin.jobs;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.model.CustomObject;
+import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginMessage;
@@ -42,36 +44,68 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
  */
 public class DeleteJob extends Job {
 	
+	private static final String FETCHING_CHILDREN_SUBTASK_MESSAGE = "Fetching children of \"{0}\"";
+	private static final String DELETE_SUBTASK_MESSAGE = "Deleting \"{0}\"";
 	private static final String MONITOR_MESSAGE = Messages.DeleteJob_MonitorMessage;
 	private static final String PROGRESS_MESSAGE = Messages.DeleteJob_ProgressMessage;
 	private static final String FAILED_MESSAGE = Messages.DeleteJob_FailedMessage;
 	private static final String HANDLER_NAME = Messages.DeleteJob_HandlerName;
 
-	private ArrayList<IObjectStoreItem> itemsDeleted;
+	private Collection<IObjectStoreItem> itemsDeleted;
 	private Shell shell;
 	private boolean deleteAllVersions;
+	private boolean deleteContainedDocuments;
+	private boolean deleteContainedCustomObjects;
+	private boolean deleteContainedFolders;
 	
-	public DeleteJob(ArrayList<IObjectStoreItem> itemsDeleted, Shell shell) {
+	public DeleteJob(Collection<IObjectStoreItem> itemsDeleted, Shell shell) {
 		this(itemsDeleted, shell, true);
 	}
 
-	public DeleteJob(ArrayList<IObjectStoreItem> itemsDeleted, Shell shell, boolean deleteAllVersions) {
+	public DeleteJob(Collection<IObjectStoreItem> itemsDeleted, Shell shell, boolean deleteAllVersions) {
 		super(HANDLER_NAME);
 		this.itemsDeleted = itemsDeleted;
 		this.shell = shell;
 		this.deleteAllVersions = deleteAllVersions;
 	}
 
+	public boolean isDeleteContainedDocuments() {
+		return deleteContainedDocuments;
+	}
+
+	public void setDeleteContainedDocuments(boolean deleteContainedDocuments) {
+		this.deleteContainedDocuments = deleteContainedDocuments;
+	}
+
+	public boolean isDeleteContainedCustomObjects() {
+		return deleteContainedCustomObjects;
+	}
+
+	public void setDeleteContainedCustomObjects(boolean deleteContainedCustomObjects) {
+		this.deleteContainedCustomObjects = deleteContainedCustomObjects;
+	}
+
+	public boolean isDeleteContainedFolders() {
+		return deleteContainedFolders;
+	}
+
+	public void setDeleteContainedFolders(boolean deleteContainedFolders) {
+		this.deleteContainedFolders = deleteContainedFolders;
+	}
+
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 
 		try {
-
 			monitor.beginTask(MONITOR_MESSAGE, itemsDeleted.size());
 			for (IObjectStoreItem objectStoreItem : itemsDeleted) {
 				monitor.subTask(MessageFormat.format(PROGRESS_MESSAGE, objectStoreItem.getName()));
-				deleteItem(objectStoreItem);
-				monitor.worked(1);
+				try {
+					deleteItem(objectStoreItem, monitor);
+					monitor.worked(1);
+				} catch (final Exception e) {
+					showError(objectStoreItem, e);
+				}
 
 				if (monitor.isCanceled()) {
 					break;
@@ -84,16 +118,68 @@ public class DeleteJob extends Job {
 		}
 	}
 
-	private void deleteItem(final IObjectStoreItem objectStoreItem) {
+	private void showError(IObjectStoreItem objectStoreItem, final Exception e) {
+		String name = objectStoreItem.getName();
+		String safeName = name; //name.replaceAll("{", "").replaceAll("}", "");
+		PluginMessage.openErrorFromThread(shell, HANDLER_NAME, MessageFormat.format(
+				FAILED_MESSAGE, safeName), e);
+	}
 
+	private void deleteItem(final IObjectStoreItem objectStoreItem, IProgressMonitor monitor) throws ExecutionException {
+		if ( !(objectStoreItem instanceof Folder) || ((Folder)objectStoreItem).isContained() ) {
+			deleteItemWithoutChildren(objectStoreItem, monitor);
+		} else {
+			deleteItemWithChildren(objectStoreItem, monitor);
+		}
+	}
+
+	private void deleteItemWithChildren(final IObjectStoreItem objectStoreItem,
+			IProgressMonitor monitor) throws ExecutionException {
+		
+		if (monitor.isCanceled()) {
+			return;
+		}
+		
+		Folder folder = (Folder) objectStoreItem;
+		if ( folder.hasChildren() ) {
+			String message = MessageFormat.format( FETCHING_CHILDREN_SUBTASK_MESSAGE, objectStoreItem.getDisplayName() );
+			monitor.subTask( message );
+			Collection<IObjectStoreItem> children = folder.getChildrenSync();
+			for ( IObjectStoreItem child : children ) {
+				if ( !isExcludedChild(child) ) {
+					deleteItem(child, monitor);
+				}
+			}
+			deleteItemWithoutChildren(objectStoreItem, monitor);
+		}
+	}
+
+	private boolean isExcludedChild(IObjectStoreItem child) {
+		if ( child instanceof Document && !deleteContainedDocuments ) {
+			return true;
+		} else if ( child instanceof CustomObject && !deleteContainedCustomObjects) {
+			return true;
+		} else if ( child instanceof Folder && ((Folder)child).isContained() && !deleteContainedFolders) {
+			return true;
+		}
+		return false;
+	}
+
+	private void deleteItemWithoutChildren(final IObjectStoreItem objectStoreItem,
+			IProgressMonitor monitor) throws ExecutionException {
+		
+		if (monitor.isCanceled()) {
+			return;
+		}
+		
+		String message = MessageFormat.format( DELETE_SUBTASK_MESSAGE, objectStoreItem.getDisplayName() );
+		monitor.subTask( message );
+		DeleteTask deleteTask = new DeleteTask(new IObjectStoreItem[] { objectStoreItem }, deleteAllVersions);
+		System.out.println( message );
+		//ObjectStoresManager.getManager().executeTaskSync(deleteTask);
 		try {
-			DeleteTask deleteTask = new DeleteTask(new IObjectStoreItem[] { objectStoreItem }, deleteAllVersions);
-			ObjectStoresManager.getManager().executeTaskSync(deleteTask);
-		} catch (final Exception e) {
-			String name = objectStoreItem.getName();
-			String safeName = name; //name.replaceAll("{", "").replaceAll("}", "");
-			PluginMessage.openErrorFromThread(shell, HANDLER_NAME, MessageFormat.format(
-					FAILED_MESSAGE, safeName), e);
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
 		}
 	}
 }

@@ -43,6 +43,7 @@ public class ObjectStoresViewContentProvider implements
 	private ObjectStoresManager manager;
 	private ObjectStores invisibleRoot;
 	private TreeViewer viewer;
+	private Object[] rootElements;
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		
@@ -62,11 +63,21 @@ public class ObjectStoresViewContentProvider implements
 	public void dispose() {
 	}
 
+	public void setRootElements(Object[] rootElements) {
+		this.rootElements = rootElements;
+	}
+	
 	public Object[] getElements(Object parent) {
 
 		if ( ! ( parent instanceof IObjectStoreItem ) ) {
-			if ( invisibleRoot == null ) initialize();
-			return getChildren(invisibleRoot);
+			if ( rootElements == null ) {
+				if ( invisibleRoot == null ) {
+					initialize();
+				}
+				return getChildren(invisibleRoot);
+			} else {
+				return rootElements;
+			}
 		} else {
 			return getChildren(parent);
 		}
@@ -162,24 +173,6 @@ public class ObjectStoresViewContentProvider implements
 //				ObjectStoresManager.getManager().executeTaskASync(refreshTask);
 //			}
 //		}
-	}
-
-	private Collection<IObjectStoreItem> getSimilarObjects(Object[] expandedElements, IObjectStoreItem updatedItem) {
-		
-		Collection<IObjectStoreItem> similarObjects = new HashSet<IObjectStoreItem>();
-		
-		for (Object object : expandedElements) {
-			if (object instanceof Folder) {
-				Folder folder = (Folder) object;
-				for (IObjectStoreItem child : folder.getLoadedChildren()) {
-					if ( updatedItem.isSimilarObject(child) ) {
-						similarObjects.add(child);
-					}
-				}
-			}
-		}
-		
-		return similarObjects;
 	}
 
 	private void updateItemsAdded(final ObjectStoresManagerEvent event) {

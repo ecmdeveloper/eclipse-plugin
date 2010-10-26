@@ -23,8 +23,10 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.util.Map;
 
 import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
+import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Factory;
 
 /**
@@ -35,7 +37,7 @@ public class CreateFolderTask extends CreateTask {
 
 	private Folder newFolder;
 
-	public CreateFolderTask(Folder parent, String className, Map<String,Object> propertiesMap) {
+	public CreateFolderTask(ObjectStoreItem parent, String className, Map<String,Object> propertiesMap) {
 		super( parent, className, propertiesMap );
 	}
 
@@ -69,8 +71,22 @@ public class CreateFolderTask extends CreateTask {
 	private com.filenet.api.core.Folder createInternalFolder() {
 		com.filenet.api.core.ObjectStore internalObjectStore = getInternalObjectStore();
 		com.filenet.api.core.Folder internalFolder = Factory.Folder.createInstance(internalObjectStore, getClassName() );
-		com.filenet.api.core.Folder internalParent = (com.filenet.api.core.Folder) getParent().getObjectStoreObject();
+		com.filenet.api.core.Folder internalParent = getInternalParent();
 		internalFolder.set_Parent(internalParent);
+		setAddedToParent(true);
 		return internalFolder;
+	}
+
+	private com.filenet.api.core.Folder getInternalParent() {
+		ObjectStoreItem parent = getParent();
+		if ( parent instanceof Folder ) {
+			return (com.filenet.api.core.Folder) getParent().getObjectStoreObject();
+		} else if ( parent instanceof ObjectStore ) {
+			com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) parent.getObjectStoreObject();
+			internalObjectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
+			return internalObjectStore.get_RootFolder();
+		} else {
+			throw new UnsupportedOperationException("Invalid parent type" );
+		}
 	}
 }

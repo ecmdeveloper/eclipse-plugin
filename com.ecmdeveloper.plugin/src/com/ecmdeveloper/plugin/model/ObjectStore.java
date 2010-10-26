@@ -100,12 +100,10 @@ public class ObjectStore extends ObjectStoreItem
 	@Override
 	public void addChild(IObjectStoreItem childItem) {
 
-		if ( children == null ) {
-			children = new ArrayList<IObjectStoreItem>();
-		}
-		
-		if ( ! children.contains( childItem ) ) {
-			children.add(childItem);
+		if ( children != null ) {
+			if ( ! children.contains( childItem ) ) {
+				children.add(childItem);
+			}
 		}
 	}
 
