@@ -37,9 +37,10 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.jobs.CompareDocumentJob;
-import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.handlers.AbstractDocumentVersionHandler;
+import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.model.Document;
 
 /**
@@ -68,7 +69,9 @@ public class CompareDocumentVersionWithLocalFileHandler extends AbstractDocument
 		fileSelectionDialog.open();
 		if (fileSelectionDialog.getReturnCode() == Dialog.OK ) {
 			if ( isFileSelected( fileSelectionDialog.getResult() ) ) {
-				return (IFile) fileSelectionDialog.getResult()[0];
+				IFile file = (IFile) fileSelectionDialog.getResult()[0];
+				Activator.setSelectionRoot( file );
+				return file;
 			}
 		}
 		return null;
@@ -85,7 +88,8 @@ public class CompareDocumentVersionWithLocalFileHandler extends AbstractDocument
 		String message = MessageFormat.format( SELECT_FILE_MESSAGE, document.getName() );
 		dialog.setTitle(FILE_SELECTION_TITLE);
 		dialog.setMessage( message );
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		dialog.setInput( ResourcesPlugin.getWorkspace().getRoot() );
+		dialog.setInitialSelection( Activator.getSelectionRoot() );
 		dialog.setAllowMultiple(false);
 		return dialog;
 	}

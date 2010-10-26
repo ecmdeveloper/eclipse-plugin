@@ -62,12 +62,12 @@ import com.ecmdeveloper.plugin.content.util.IconFiles;
 public class ContentSelectionWizardPage extends WizardPage {
 
 	private static final String SELECT_WORKSPACE_FILE_MESSAGE = "Select a file:";
-	private static final String REMOVE_LABEL = "Remove";
+	private static final String REMOVE_LABEL = "&Remove";
 	private static final String MIME_TYPE_LABEL_TEXT = "Document Mime Type:";
 	private static final String PAGE_DESCRIPTION_MESSAGE = "Select the files for the content of document \"{0}\"";
 	private static final String PAGE_TITLE = "Select Document Content";
-	private static final String ADD_WORKSPACE_FILE_LABEL = "Add Workspace File...";
-	private static final String ADD_EXTERNAL_FILE_LABEL = "Add External File...";
+	private static final String ADD_WORKSPACE_FILE_LABEL = "Add &Workspace File...";
+	private static final String ADD_EXTERNAL_FILE_LABEL = "Add &External File...";
 
 	private TableViewer contentTable;
 	private Button addWorkspaceFileButton;
@@ -83,7 +83,6 @@ public class ContentSelectionWizardPage extends WizardPage {
 		
 		setTitle( PAGE_TITLE );
 		setDescription( MessageFormat.format( PAGE_DESCRIPTION_MESSAGE, documentName ) );
-		
 		content = new ArrayList<Object>();
 	}
 
@@ -212,20 +211,27 @@ public class ContentSelectionWizardPage extends WizardPage {
 	
 	private void selectWorkspaceFile() {
 		
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog( getShell(),
-				new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
-		dialog.setTitle( PAGE_TITLE );
-		dialog.setMessage(SELECT_WORKSPACE_FILE_MESSAGE);
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		ElementTreeSelectionDialog dialog = getWorkspaceFileSelectionDialog();
 		if ( dialog.open() == Window.OK ) {
 			Object result = dialog.getFirstResult();
 			if ( result instanceof IFile ) {
-				
-				content.add((IFile) result);
+				IFile file = (IFile) result;
+				Activator.setSelectionRoot( file.getParent() );
+				content.add(file);
 				updateMimeType();
 				contentTable.refresh();
 			}
 		}
+	}
+
+	private ElementTreeSelectionDialog getWorkspaceFileSelectionDialog() {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog( getShell(),
+				new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+		dialog.setTitle( PAGE_TITLE );
+		dialog.setMessage(SELECT_WORKSPACE_FILE_MESSAGE);
+		dialog.setInput( ResourcesPlugin.getWorkspace().getRoot() );
+		dialog.setInitialSelection( Activator.getSelectionRoot() );
+		return dialog;
 	}
 
 	private void updateMimeType() {
@@ -268,6 +274,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 		}
 		return filename;
 	}
+
 	private void removeSelection() {
 		IStructuredSelection selection = (IStructuredSelection) contentTable.getSelection();
 		Iterator<?> iterator = selection.iterator();

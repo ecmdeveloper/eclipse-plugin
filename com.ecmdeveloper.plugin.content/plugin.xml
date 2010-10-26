@@ -158,6 +158,9 @@
             <with
                   variable="selection">
                <iterate>
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
                   <test
                         property="com.ecmdeveloper.plugin.isCheckedOut">
                   </test>
@@ -172,6 +175,9 @@
             <with
                   variable="selection">
                <iterate>
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
                   <test
                         property="com.ecmdeveloper.plugin.isCheckedOut">
                   </test>
@@ -186,9 +192,20 @@
             <with
                   variable="selection">
                <iterate>
-                  <test
-                        property="com.ecmdeveloper.plugin.isCheckedOut">
-                  </test>
+                  <and>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <test
+                           property="com.ecmdeveloper.plugin.isCheckedOut">
+                     </test>
+                     <not>
+                        <test
+                              forcePluginActivation="true"
+                              property="com.ecmdeveloper.plugin.content.isTracked">
+                        </test>
+                     </not>
+                  </and>
                </iterate>
             </with>
          </enabledWhen>
@@ -206,6 +223,9 @@
                      </test>
                      <instanceof
                            value="com.ecmdeveloper.plugin.tracker.model.TrackedFile">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
                      </instanceof>
                   </or>
                </iterate>
@@ -249,11 +269,16 @@
             <with
                   variable="selection">
                <iterate>
-                  <not>
-                     <test
-                           property="com.ecmdeveloper.plugin.isCheckedOut">
-                     </test>
-                  </not>
+                  <and>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
+                     </instanceof>
+                     <not>
+                        <test
+                              property="com.ecmdeveloper.plugin.isCheckedOut">
+                        </test>
+                     </not>
+                  </and>
                </iterate>
             </with>
          </enabledWhen>
@@ -336,6 +361,9 @@
                      </test>
                      <instanceof
                            value="com.ecmdeveloper.plugin.tracker.model.TrackedFile">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.model.Document">
                      </instanceof>
                   </or>
                </iterate>
@@ -606,9 +634,41 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <not>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="com.ecmdeveloper.plugin.content.isTracked">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveTrackedFile"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <test
+                                 forcePluginActivation="true"
+                                 property="com.ecmdeveloper.plugin.content.isTracked">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -624,9 +684,41 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <not>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="com.ecmdeveloper.plugin.content.isTracked">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkinTrackedFile"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <test
+                                 forcePluginActivation="true"
+                                 property="com.ecmdeveloper.plugin.content.isTracked">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -917,6 +1009,16 @@
             </visibleWhen>
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="com.ecmdeveloper.plugin.content.tester.TrackedDocumentTester"
+            id="com.ecmdeveloper.plugin.content.trackedDocumentTester"
+            namespace="com.ecmdeveloper.plugin.content"
+            properties="isTracked"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 
 </plugin>

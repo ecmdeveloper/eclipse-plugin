@@ -1,5 +1,9 @@
 package com.ecmdeveloper.plugin.content;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -15,10 +19,8 @@ public class Activator extends AbstractUIPlugin {
 
 	private static Activator plugin;
 	private ContentCache contentCache;
-	
-	/**
-	 * The constructor
-	 */
+	private static IContainer selectionRoot;
+
 	public Activator() {
 	}
 
@@ -46,5 +48,20 @@ public class Activator extends AbstractUIPlugin {
 
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	public static IContainer getSelectionRoot() {
+		if ( selectionRoot == null ) {
+			selectionRoot = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		return selectionRoot;
+	}
+
+	public static void setSelectionRoot(IResource resource) {
+		if ( resource instanceof IContainer ) {
+			Activator.selectionRoot = (IContainer) resource;
+		} else if ( resource instanceof IFile ) {
+			Activator.selectionRoot = ((IFile) resource).getParent();
+		}
 	}
 }
