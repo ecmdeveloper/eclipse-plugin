@@ -87,7 +87,10 @@ public class ObjectStoreItemsModelController implements TaskListener {
 
 	private void handleUpdateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
 		UpdateTask updateTask = (UpdateTask) taskCompleteEvent.getSource();
-		IObjectStoreItem[] objectStoreItems = updateTask.getObjectStoreItems();
+		refreshUpdatedItems(updateTask.getObjectStoreItems());
+	}
+
+	private void refreshUpdatedItems(IObjectStoreItem[] objectStoreItems) {
 		fireObjectStoreItemsChanged(null, null, objectStoreItems );
 		
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
@@ -98,9 +101,25 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	private void handleDeleteTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
 		DeleteTask deleteTask = (DeleteTask) taskCompleteEvent.getSource();
 		IObjectStoreItem[] objectStoreItems = deleteTask.getObjectStoreItems();
-		
-		Collection<ObjectStoreItem> deletedItems = objectStoreItemsModel.delete(toCollection(objectStoreItems) );
+		Collection<ObjectStoreItem> collection = toCollection(objectStoreItems);
+		Collection<ObjectStoreItem> updatedItems = new ArrayList<ObjectStoreItem>();
+
+		if ( ! deleteTask.isDeleteAllVersions() ) {
+			
+			for ( IObjectStoreItem objectStoreItem : objectStoreItems ) {
+				if (objectStoreItem instanceof Document ) {
+					updatedItems.add((ObjectStoreItem) objectStoreItem);
+					collection.remove(objectStoreItem);
+				}
+			}
+		}
+
+		Collection<ObjectStoreItem> deletedItems = objectStoreItemsModel.delete(collection );
 		fireObjectStoreItemsChanged(null, toArray(deletedItems), null );
+
+		if ( !deleteTask.isDeleteAllVersions() ) {
+			refreshUpdatedItems(toArray(updatedItems));
+		}
 	}
 
 	private void handleLoadChildrenTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
@@ -133,26 +152,23 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	}
 
 	private void refreshSimilarObjects(IObjectStoreItem objectStoreItem) {
-		System.out.println( objectStoreItem.getId() + " " + objectStoreItem.toString() );
 		Collection<ObjectStoreItem> objectStoreItems = objectStoreItemsModel.get((ObjectStoreItem) objectStoreItem);
 		for (ObjectStoreItem o : objectStoreItems ) {
 			if ( ! o.equals(objectStoreItem ) ) {
-//				System.out.println( o.getId() + " " + ((Document)o).getVersionSeriesId() + " " + objectStoreItem.toString() );
-//				if ( documentTask instanceof CheckinTask ) {
-					RefreshTask refreshTask = new RefreshTask( o );
-					ObjectStoresManager.getManager().executeTaskASync(refreshTask);
-//				}
+				RefreshTask refreshTask = new RefreshTask( o );
+				ObjectStoresManager.getManager().executeTaskASync(refreshTask);
 			}
 		}
-		
 	}
 
 	private void handleCreateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
 		CreateTask createTask = (CreateTask) taskCompleteEvent.getSource();
-		objectStoreItemsModel.add( createTask.getNewObjectStoreItem() );
-		Collection<ObjectStoreItem> parents = objectStoreItemsModel.addChild(
-				createTask.getParent(), createTask.getNewObjectStoreItem());
-		fireObjectStoreItemsChanged(null, null, toArray(parents) );
+		if ( createTask.isAddedToParent() ) {
+			objectStoreItemsModel.add( createTask.getNewObjectStoreItem() );
+			Collection<ObjectStoreItem> parents = objectStoreItemsModel.addChild(
+					createTask.getParent(), createTask.getNewObjectStoreItem());
+			fireObjectStoreItemsChanged(null, null, toArray(parents) );
+		}
 	}
 
 	public void fireObjectStoreItemsChanged(IObjectStoreItem[] itemsAdded,

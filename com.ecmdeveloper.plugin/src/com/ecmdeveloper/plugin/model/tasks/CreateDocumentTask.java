@@ -12,7 +12,7 @@ public class CreateDocumentTask extends CreateTask {
 
 	private Document newDocument;
 
-	public CreateDocumentTask(Folder parent, String className, Map<String,Object> propertiesMap) {
+	public CreateDocumentTask(ObjectStoreItem parent, String className, Map<String,Object> propertiesMap) {
 		super(parent, className, propertiesMap);
 	}
 
@@ -32,7 +32,9 @@ public class CreateDocumentTask extends CreateTask {
 		setProperties(newDocument);
 		newDocument.save();
 		newDocument.refresh();
-		fileInParent();
+		if ( getParent() instanceof Folder ) {
+			fileInParent();
+		}
 		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
@@ -42,7 +44,7 @@ public class CreateDocumentTask extends CreateTask {
 
 	private void createNewDocument() {
 		com.filenet.api.core.Document internalDocument = createInternalDocument();
-		Folder parent = getParent();
+		ObjectStoreItem parent = getParent();
 		newDocument = ObjectStoreItemFactory.createDocument(internalDocument, parent, parent.getObjectStore(), false );
 	}
 

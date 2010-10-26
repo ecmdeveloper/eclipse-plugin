@@ -21,6 +21,7 @@ package com.ecmdeveloper.plugin.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.filenet.api.constants.PropertyNames;
@@ -112,8 +113,7 @@ public class Folder extends ObjectStoreItem {
 	 * @see com.ecmdeveloper.plugin.model.IObjectStoreItem#getChildren()
 	 */
 	@Override
-	public Collection<IObjectStoreItem> getChildren() 
-	{
+	public Collection<IObjectStoreItem> getChildren() {
 		if ( children == null )	{
 			children = new ArrayList<IObjectStoreItem>();
 			children.add( new Placeholder() );
@@ -125,10 +125,11 @@ public class Folder extends ObjectStoreItem {
 		return children;
 	}
 
-	public Collection<IObjectStoreItem> getLoadedChildren() 
-	{
+	public Collection<IObjectStoreItem> getChildrenSync() throws ExecutionException {
 		if ( children == null )	{
-			return new ArrayList<IObjectStoreItem>();
+			children = new ArrayList<IObjectStoreItem>();
+			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
+			ObjectStoresManager.getManager().executeTaskSync(loadChildrenTask);
 		}
 		
 		return children;

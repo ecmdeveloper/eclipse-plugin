@@ -36,9 +36,13 @@ import com.filenet.api.core.VersionSeries;
  */
 public class DeleteTask extends BaseTask {
 
-	protected IObjectStoreItem[] objectStoreItems;
-	protected boolean deleteAllVersions;
+	private IObjectStoreItem[] objectStoreItems;
+	private boolean deleteAllVersions;
 	
+	public boolean isDeleteAllVersions() {
+		return deleteAllVersions;
+	}
+
 	/**
 	 * The constructor of this task is used to pass all the relevant input
 	 * to perform the task.
