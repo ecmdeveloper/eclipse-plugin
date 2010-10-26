@@ -25,7 +25,7 @@
             preferredPerspectives="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
             project="false">
          <description>
-            Creates a new Content Engine Class Diagram
+            This perspective is designed to support editing of Content Engine Class Diagrams. It offers an Object Store Classes explorer and a properties view.
          </description>
       </wizard>
       <category

@@ -30,18 +30,30 @@ import org.eclipse.ui.IPerspectiveFactory;
  */
 public class ClassDiagramPerspectiveFactory implements IPerspectiveFactory {
 
+	private static final String CONTENT_ENGINE_PERSPECTIVE_ID = "com.ecmdeveloper.plugin.ui.contentEnginePerspective";
 	private static final String CLASSES_VIEW_ID = "com.ecmdeveloper.plugin.classes.views.ClassesView";
+	private static final String NEW_CLASS_DIAGRAM_COMMAND_ID = "com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard";
 
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
+		addViews(layout);
+		addShortcuts(layout);
+	}
 
+	private void addViews(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		
-		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, 0.25f, editorArea );
-		left.addView( CLASSES_VIEW_ID);
-		left.addView( IPageLayout.ID_RES_NAV );
+		layout.addView(CLASSES_VIEW_ID, IPageLayout.LEFT, 0.25f, editorArea );
+		layout.addView(IPageLayout.ID_RES_NAV , IPageLayout.BOTTOM, 0.5f, CLASSES_VIEW_ID );
 		
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.66f, editorArea );
 		bottom.addView( IPageLayout.ID_PROP_SHEET );
+	}
+
+	private void addShortcuts(IPageLayout layout) {
+		layout.addNewWizardShortcut(NEW_CLASS_DIAGRAM_COMMAND_ID);
+		layout.addShowViewShortcut(CLASSES_VIEW_ID);
+		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
+		layout.addPerspectiveShortcut(CONTENT_ENGINE_PERSPECTIVE_ID);
 	}
 }
