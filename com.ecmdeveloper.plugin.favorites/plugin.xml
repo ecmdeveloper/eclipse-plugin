@@ -39,6 +39,11 @@
             id="com.ecmdeveloper.plugin.connectFavoriteObjectStore"
             name="Connect">
       </command>
+      <command
+            defaultHandler="com.ecmdeveloper.plugin.favorites.handlers.FavoritesViewDoubleClickHandler"
+            id="com.ecmdeveloper.plugin.FavoritesViewDoubleClick"
+            name="Double Click">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

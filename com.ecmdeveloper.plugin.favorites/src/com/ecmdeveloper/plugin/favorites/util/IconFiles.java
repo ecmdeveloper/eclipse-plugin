@@ -27,7 +27,7 @@ package com.ecmdeveloper.plugin.favorites.util;
  */
 public class IconFiles {
 
-	public static final String FAVORITE_DECORATOR_IMAGE = "icons/bullet_star.png"; //$NON-NLS-1$
+	public static final String FAVORITE_DECORATOR_IMAGE = "icons/star_small.png"; //$NON-NLS-1$
 	public static final String NOT_CONNECTED_DECORATOR_IMAGE = "icons/bullet_red.png"; //$NON-NLS-1$
 	public static final String CONNECTED_DECORATOR_IMAGE = "icons/bullet_green.png"; //$NON-NLS-1$
 }
