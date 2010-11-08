@@ -46,10 +46,8 @@ import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
 public class PreviewDeleteWizardPage extends WizardPage {
 
 	private static final String CONTAINED_DELETE_MESSAGE = "It will also delete all the contained ";
-	private static final String DELETE_MESSAGE = "The following items and subfolders will be deleted. ";
-	private static final String CUSTOM_OBJECTS_TYPE_NAME = "custom objects";
-	private static final String FOLDERS_TYPE_NAME = "folders";
-	private static final String DOCUMENTS_TYPE_NAME = "documents";
+	private static final String DELETE_MESSAGE = "The following items will be deleted. ";
+	private static final String DELETE_MESSAGE_WITH_FOLDER = "The following items and subfolders will be deleted. ";
 	private static final String PAGE_NAME = "Preview Delete";
 
 	private TreeViewer viewer;
@@ -100,32 +98,19 @@ public class PreviewDeleteWizardPage extends WizardPage {
 	}
 
 	private String getPageDescription() {
-		ArrayList<String> deletedItemTypes = getDeletedItemTypes();
+		ArrayList<String> deletedItemTypes = ((DeleteWizard)getWizard()).getDeletedItemTypes();
+		
 		StringBuffer description = new StringBuffer();
-		description.append(DELETE_MESSAGE);
-		if ( ! deletedItemTypes.isEmpty() ) {
-			getContainedObjectsDescription(deletedItemTypes, description);
+		if ( ((DeleteWizard)getWizard()).isFolderDeleted() ) {
+			description.append(DELETE_MESSAGE_WITH_FOLDER);
+			if ( ! deletedItemTypes.isEmpty() ) {
+				getContainedObjectsDescription(deletedItemTypes, description);
+			}
+		} else {
+			description.append(DELETE_MESSAGE);
 		}
 		
 		return description.toString();
-	}
-
-	private ArrayList<String> getDeletedItemTypes() {
-		boolean filterDocuments = !((DeleteWizard)getWizard()).isDeleteContainedDocuments();
-		boolean filterCustomObjects =  !((DeleteWizard)getWizard()).isDeleteContainedCustomObjects();
-		boolean filterContainedFolders  =  !((DeleteWizard)getWizard()).isDeleteContainedFolders();
-	
-		ArrayList<String> deletedItemTypes = new ArrayList<String>();
-		if ( ! filterDocuments ) {
-			deletedItemTypes.add(DOCUMENTS_TYPE_NAME);
-		}
-		if ( ! filterCustomObjects ) {
-			deletedItemTypes.add(CUSTOM_OBJECTS_TYPE_NAME);
-		}
-		if ( ! filterContainedFolders ) {
-			deletedItemTypes.add(FOLDERS_TYPE_NAME);
-		}
-		return deletedItemTypes;
 	}
 
 	private void getContainedObjectsDescription(ArrayList<String> deletedItemTypes, StringBuffer description) {

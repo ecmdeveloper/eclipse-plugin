@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.ui.wizard;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -37,6 +38,9 @@ public class DeleteWizard extends Wizard {
 
 	private static final String WINDOW_TITLE = "Delete";
 	private static final String DELETE_MESSAGE = "Do you want to perform the delete operation?";
+	private static final String CUSTOM_OBJECTS_TYPE_NAME = "custom objects";
+	private static final String FOLDERS_TYPE_NAME = "folders";
+	private static final String DOCUMENTS_TYPE_NAME = "documents";
 	
 	private PreviewDeleteWizardPage confirmDeleteWizardPage;
 	private ConfigureDeleteWizardPage configureDeleteWizardPage;
@@ -60,7 +64,7 @@ public class DeleteWizard extends Wizard {
 		addPage(confirmDeleteWizardPage);
 	}
 
-	private boolean isFolderDeleted() {
+	public boolean isFolderDeleted() {
 		for ( IObjectStoreItem objectStoreItem : itemsDeleted ) {
 			if ( objectStoreItem instanceof Folder) {
 				return true;
@@ -98,10 +102,24 @@ public class DeleteWizard extends Wizard {
 	}
 
 	private DeleteJob createDeleteJob() {
-		DeleteJob deleteJob = new DeleteJob(itemsDeleted, getShell() );
+		DeleteJob deleteJob = new DeleteJob(itemsDeleted );
 		deleteJob.setDeleteContainedDocuments(isDeleteContainedDocuments() );
 		deleteJob.setDeleteContainedCustomObjects(isDeleteContainedCustomObjects() );
 		deleteJob.setDeleteContainedFolders(isDeleteContainedFolders() );
 		return deleteJob;
+	}
+
+	public ArrayList<String> getDeletedItemTypes() {
+		ArrayList<String> deletedItemTypes = new ArrayList<String>();
+		if ( isDeleteContainedDocuments() ) {
+			deletedItemTypes.add(DOCUMENTS_TYPE_NAME);
+		}
+		if ( isDeleteContainedCustomObjects() ) {
+			deletedItemTypes.add(CUSTOM_OBJECTS_TYPE_NAME);
+		}
+		if ( isDeleteContainedFolders() ) {
+			deletedItemTypes.add(FOLDERS_TYPE_NAME);
+		}
+		return deletedItemTypes;
 	}
 }
