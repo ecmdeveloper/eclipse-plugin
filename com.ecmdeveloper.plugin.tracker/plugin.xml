@@ -121,6 +121,7 @@
       <view
             category="com.ecmdeveloper.plugin.contentEngine"
             class="com.ecmdeveloper.plugin.tracker.views.TrackerView"
+            icon="icons/tracker.png"
             id="com.ecmdeveloper.plugin.views.TrackedFiles"
             name="Tracked Files"
             restorable="true">
