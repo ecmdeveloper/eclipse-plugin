@@ -102,15 +102,13 @@ public class FilesTracker {
 		}
 		
 		initializeTrackedFiles();
-		TrackedFile t2 = null;
 		
 		for ( TrackedFile trackedFile : trackedFilesMap.values() ) {
 			if ( versionSeriesId.equalsIgnoreCase( trackedFile.getVersionSeriesId() ) ) {
-				t2 = trackedFile;
-				break;
+				return trackedFile;
 			}
 		}
-		return t2;
+		return null;
 	}
 
 	public boolean removeTrackedVersionSeries(String versionSeriesId) {
