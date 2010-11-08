@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -44,7 +45,7 @@ import com.ecmdeveloper.plugin.views.ObjectStoresViewSorter;
  */
 public class FavoritesView extends ViewPart {
 
-	public static final String VIEW_DOCUMENT_HANDLER_ID = "com.ecmdeveloper.plugin.viewDocument";
+	private static final String DOUBLE_CLICK_HANDLER_ID = "com.ecmdeveloper.plugin.FavoritesViewDoubleClick";
 
 	private TreeViewer viewer;
 	
@@ -79,14 +80,25 @@ public class FavoritesView extends ViewPart {
    private void hookMouse() {
 		viewer.getTree().addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
-				try {
-					IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-					handlerService.executeCommand(VIEW_DOCUMENT_HANDLER_ID, null );
-				} catch (Exception exception) {
-					PluginLog.error( exception );
-				}
+				handleDoubleClick();
 			}
 		});
+	}
+
+	private void handleDoubleClick() {
+        IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+        Object element = selection.getFirstElement();
+
+        if (viewer.isExpandable(element)) {
+        	viewer.setExpandedState(element, !viewer.getExpandedState(element));
+        } else {
+			try {
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				handlerService.executeCommand(DOUBLE_CLICK_HANDLER_ID, null );
+			} catch (Exception exception) {
+				PluginLog.error( exception );
+			}
+        }
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
