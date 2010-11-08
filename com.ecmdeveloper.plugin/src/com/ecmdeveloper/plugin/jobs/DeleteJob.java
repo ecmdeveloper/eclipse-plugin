@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.jobs;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
@@ -34,6 +35,7 @@ import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.DeleteTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginMessage;
@@ -58,14 +60,13 @@ public class DeleteJob extends Job {
 	private boolean deleteContainedCustomObjects;
 	private boolean deleteContainedFolders;
 	
-	public DeleteJob(Collection<IObjectStoreItem> itemsDeleted, Shell shell) {
-		this(itemsDeleted, shell, true);
+	public DeleteJob(Collection<IObjectStoreItem> itemsDeleted ) {
+		this(itemsDeleted, true);
 	}
 
-	public DeleteJob(Collection<IObjectStoreItem> itemsDeleted, Shell shell, boolean deleteAllVersions) {
+	public DeleteJob(Collection<IObjectStoreItem> itemsDeleted, boolean deleteAllVersions) {
 		super(HANDLER_NAME);
 		this.itemsDeleted = itemsDeleted;
-		this.shell = shell;
 		this.deleteAllVersions = deleteAllVersions;
 	}
 
@@ -121,7 +122,7 @@ public class DeleteJob extends Job {
 	private void showError(IObjectStoreItem objectStoreItem, final Exception e) {
 		String name = objectStoreItem.getName();
 		String safeName = name; //name.replaceAll("{", "").replaceAll("}", "");
-		PluginMessage.openErrorFromThread(shell, HANDLER_NAME, MessageFormat.format(
+		PluginMessage.openErrorFromThread(HANDLER_NAME, MessageFormat.format(
 				FAILED_MESSAGE, safeName), e);
 	}
 
@@ -144,14 +145,16 @@ public class DeleteJob extends Job {
 		if ( folder.hasChildren() ) {
 			String message = MessageFormat.format( FETCHING_CHILDREN_SUBTASK_MESSAGE, objectStoreItem.getDisplayName() );
 			monitor.subTask( message );
-			Collection<IObjectStoreItem> children = folder.getChildrenSync();
+			Collection<IObjectStoreItem> children = new ArrayList<IObjectStoreItem>();
+			children.addAll( folder.getChildrenSync() ); 
+				
 			for ( IObjectStoreItem child : children ) {
 				if ( !isExcludedChild(child) ) {
 					deleteItem(child, monitor);
 				}
 			}
-			deleteItemWithoutChildren(objectStoreItem, monitor);
 		}
+		deleteItemWithoutChildren(objectStoreItem, monitor);
 	}
 
 	private boolean isExcludedChild(IObjectStoreItem child) {
@@ -175,11 +178,11 @@ public class DeleteJob extends Job {
 		String message = MessageFormat.format( DELETE_SUBTASK_MESSAGE, objectStoreItem.getDisplayName() );
 		monitor.subTask( message );
 		DeleteTask deleteTask = new DeleteTask(new IObjectStoreItem[] { objectStoreItem }, deleteAllVersions);
+		ObjectStoresManager.getManager().executeTaskSync(deleteTask);
 		System.out.println( message );
-		//ObjectStoresManager.getManager().executeTaskSync(deleteTask);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-		}
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//		}
 	}
 }

@@ -61,7 +61,7 @@ public class DeleteDocumentVersionHandler extends AbstractDocumentVersionHandler
 			
 			ArrayList<IObjectStoreItem> itemsDeleted = new ArrayList<IObjectStoreItem>();
 			itemsDeleted.addAll( job.getSelectedVersions() );
-			Job deleteJob = new DeleteJob(itemsDeleted, window.getShell(), false );
+			Job deleteJob = new DeleteJob(itemsDeleted, false );
 			deleteJob.setUser(true);
 			deleteJob.schedule();
 		}			

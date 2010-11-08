@@ -85,6 +85,11 @@
             id="com.ecmdeveloper.plugin.deleteDocumentVersion"
             name="Delete Versions...">
       </command>
+      <command
+            defaultHandler="com.ecmdeveloper.plugin.handlers.ObjectStoresViewDoubleClickHandler"
+            id="com.ecmdeveloper.plugin.objectStoresViewDoubleClick"
+            name="DoubleClick">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -473,29 +478,6 @@
                      </instanceof>
                      <instanceof
                            value="com.ecmdeveloper.plugin.model.Document">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="com.ecmdeveloper.plugin.handlers.DeleteObjectStoreItemHandler"
-            commandId="org.eclipse.ui.edit.delete">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <or>
-                     <instanceof
-                           value="com.ecmdeveloper.plugin.model.Folder">
-                     </instanceof>
-                     <instanceof
-                           value="com.ecmdeveloper.plugin.model.Document">
-                     </instanceof>
-                     <instanceof
-                           value="com.ecmdeveloper.plugin.model.CustomObject">
                      </instanceof>
                   </or>
                </iterate>

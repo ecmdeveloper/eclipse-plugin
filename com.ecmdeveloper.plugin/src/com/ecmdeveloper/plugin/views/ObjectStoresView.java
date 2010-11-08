@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -34,8 +35,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
-import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.util.PluginLog;
 
 /**
  * 
@@ -44,8 +45,8 @@ import com.ecmdeveloper.plugin.model.ObjectStoresManager;
  */
 public class ObjectStoresView extends ViewPart {
 	
-	public static final String VIEW_DOCUMENT_HANDLER_ID = "com.ecmdeveloper.plugin.viewDocument";
-
+	private static final String DOUBLE_CLICK_HANDLER_ID = "com.ecmdeveloper.plugin.objectStoresViewDoubleClick";
+	
 	private TreeViewer viewer;
 	
 	class NameSorter extends ViewerSorter {
@@ -91,16 +92,28 @@ public class ObjectStoresView extends ViewPart {
    private void hookMouse() {
 		viewer.getTree().addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
-				try {
-					IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-					handlerService.executeCommand(VIEW_DOCUMENT_HANDLER_ID, null );
-				} catch (Exception exception) {
-					PluginLog.error( exception );
-				}
+				handleDoubleClick();
 			}
 		});
 	}
 	
+	private void handleDoubleClick() {
+		
+        IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+        Object element = selection.getFirstElement();
+
+        if (viewer.isExpandable(element)) {
+        	viewer.setExpandedState(element, !viewer.getExpandedState(element));
+        } else {
+			try {
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				handlerService.executeCommand(DOUBLE_CLICK_HANDLER_ID, null );
+			} catch (Exception exception) {
+				PluginLog.error( exception );
+			}
+        }
+	}
+
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(new Separator("edit") );
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));

@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.util;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.Activator;
@@ -41,14 +42,31 @@ public class PluginMessage {
 		return dialog.open();
 	}
 
-	public static void openErrorFromThread(  final Shell parentShell, final String title, final String message, final Object details ) {
+	public static void openErrorFromThread( String title, String message, Object details ) {
+		openErrorFromThread(null, Display.getDefault(), title, message, details);
+	}
+
+	public static void openErrorFromThread( Shell parentShell, String title, String message, Object details ) {
+		Display display;
+		try {
+			display = parentShell.getDisplay();
+		} catch (org.eclipse.swt.SWTException  e) {
+			// Assuming a " Widget is disposed" exception
+			display = Display.getDefault();
+		}
+		openErrorFromThread(parentShell, display, title, message, details);
+	}
+
+	private static void openErrorFromThread( final Shell parentShell, Display display, final String title, final String message, final Object details ) {
 		
-		parentShell.getDisplay().syncExec( new Runnable() {
+		display.syncExec( new Runnable() {
 
 			@Override
 			public void run() {
 
-				ExceptionDetailsDialog dialog = new ExceptionDetailsDialog(parentShell,
+				Shell shell;
+				shell = parentShell == null ? Display.getDefault().getActiveShell() : parentShell; 
+				ExceptionDetailsDialog dialog = new ExceptionDetailsDialog(shell,
 						title, null, message, details, Activator.getDefault()
 								.getBundle());
 
