@@ -144,9 +144,11 @@ public class Folder extends ObjectStoreItem {
 	 * @see com.ecmdeveloper.plugin.model.ObjectStoreItem#removeChild(com.ecmdeveloper.plugin.model.IObjectStoreItem)
 	 */
 	public void removeChild(IObjectStoreItem childItem ) {
-		if ( children.contains( childItem ) ) {
-			children.remove(childItem);
-			hasChildren = ! children.isEmpty();
+		if (children != null) {
+			if ( children.contains( childItem ) ) {
+				children.remove(childItem);
+				hasChildren = ! children.isEmpty();
+			}
 		}
 	}
 
