@@ -36,7 +36,12 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
@@ -46,14 +51,13 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
  * @author Ricardo.Belfor
  *
  */
-public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener {
+public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener, ObjectStoresManagerListener {
 
 	private static final String SAVE_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveProperties";
 	private static final String SAVE_NEW_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveNewProperties";
 	
 	private PropertiesInputForm propertiesInputForm;
 	private ClassDescription classDescription;
-//	private ObjectStoreItem objectStoreItem;
 	private PropertiesObject propertiesObject;
 	private boolean isPageModified;
 	
@@ -69,6 +73,8 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 			isPageModified = propertiesObject instanceof UnsavedPropertiesObject;
 		
 			updateTitle();
+			
+			ObjectStoresManager.getManager().addObjectStoresManagerListener(this);
 			
 		} catch (PartInitException e) {
 			PluginLog.error( e );
@@ -203,5 +209,35 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 		propertiesObject.removePropertyChangeListener(this);
 		propertiesObject = (PropertiesObject) getEditorInput().getAdapter( PropertiesObject.class);
 		propertiesObject.addPropertyChangeListener(this);
+	}
+
+	@Override
+	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
+		if ( event.getItemsRemoved() != null ) {
+			closeEditorOnDelete(event);
+		}
+	}
+
+	private void closeEditorOnDelete(ObjectStoresManagerEvent event) {
+		ObjectStoreItem objectStoreItem;
+		objectStoreItem = (ObjectStoreItem) getEditorInput().getAdapter(ObjectStoreItem.class);
+		if (objectStoreItem != null) {
+			for (IObjectStoreItem itemRemoved : event.getItemsRemoved()) {
+				if (itemRemoved.equals(objectStoreItem)) {
+					close(false);
+					return;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event) {
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		ObjectStoresManager.getManager().removeObjectStoresManagerListener(this);
 	}
 }
