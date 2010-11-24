@@ -21,8 +21,11 @@ package com.ecmdeveloper.plugin.codemodule.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.jdt.core.IJavaElement;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -31,11 +34,12 @@ public class CodeModuleFile {
 
 	private List<CodeModuleFileListener> listeners;
 
-	protected String id;
-	protected String name;
-	protected String filename;
+	private String id;
+	private String name;
+	private String filename;
 	
-	protected ArrayList<File> files;
+	private ArrayList<File> files;
+	private ArrayList<IJavaElement> javaElements;
 
 	private String connectionName;
 	private String connectionDisplayName;
@@ -56,6 +60,8 @@ public class CodeModuleFile {
 		this.objectStoreDisplayName = objectStoreDisplayName;
 
 		files = new ArrayList<File>();
+		javaElements = new ArrayList<IJavaElement>();
+		
 	    listeners = new ArrayList<CodeModuleFileListener>();
 	}
 
@@ -87,8 +93,19 @@ public class CodeModuleFile {
 		this.id = id;
 	}
 
-	public ArrayList<File> getFiles() {
+	public Collection<File> getFiles() {
 		return files;
+	}
+
+	public Collection<IJavaElement> getJavaElements() {
+		return javaElements;
+	}
+	
+	public ArrayList<Object> getContentElements() {
+		ArrayList<Object> contentElements = new ArrayList<Object>();
+		contentElements.addAll(javaElements);
+		contentElements.addAll(files);
+		return contentElements;
 	}
 	
 	public String getObjectStoreName() {
@@ -112,10 +129,22 @@ public class CodeModuleFile {
 		filesChanged();
 	}
 	
-	public void removeFile( File file )
-	{
+	public void removeFile( File file ) {
 		files.remove( file );
 		filesChanged();
+	}
+	
+	public void addJavaElement(IJavaElement javaElement) {
+		javaElements.add(javaElement);
+		filesChanged();
+	}
+
+	public boolean removeJavaElement(IJavaElement javaElement) {
+		boolean removed = javaElements.remove(javaElement);
+		if (removed) {
+			filesChanged();
+		} 
+		return removed;
 	}
 	
 	public void addPropertyFileListener(CodeModuleFileListener listener) {
@@ -140,5 +169,9 @@ public class CodeModuleFile {
 		while (iter.hasNext()) {
 			iter.next().filesChanged();
 		}
+	}
+
+	public boolean isEmpty() {
+		return files.isEmpty() && javaElements.isEmpty();
 	}
 }

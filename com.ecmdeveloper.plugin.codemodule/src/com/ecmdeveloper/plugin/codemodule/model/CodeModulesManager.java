@@ -64,19 +64,15 @@ import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
  */
 public class CodeModulesManager implements ObjectStoresManagerListener {
 
-	private static final int CURRENT_FILE_VERSION = 1;
-
-	private static final String CODE_MODULE_FILE_FORMAT = "{0}_{1}_{2}.{3}";
-	private static final String CODEMODULES_FOLDER = "codemodules";
-	private static final String CODEMODULE_FILE_EXTENSION = "codemodule";
-
 	private static CodeModulesManager codeModulesManager;
-	protected ArrayList<CodeModuleFile> codeModulefiles;
+	protected Collection<CodeModuleFile> codeModulefiles;
 	protected ObjectStoresManager objectStoresManager;
+	private CodeModuleFileStore codeModuleFileStore;
 	
 	private List<CodeModulesManagerListener> listeners = new ArrayList<CodeModulesManagerListener>();
 	
 	private CodeModulesManager() {
+		codeModuleFileStore = new CodeModuleFileStore();
 		getObjectStoresManager();
 		getCodeModuleFiles();	
 	}
@@ -152,23 +148,7 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 
 		if ( codeModulefiles == null )
 		{
-			File codeModulesPath = getCodeModulesPath().toFile();
-	
-		    FilenameFilter fileFilter = new FilenameFilter() {
-				@Override
-				public boolean accept(File parent, String name) {
-					return name.endsWith( "." + CODEMODULE_FILE_EXTENSION );
-				}
-		    };
-	
-		    codeModulefiles = new ArrayList<CodeModuleFile>();
-		    
-		    for ( File file : codeModulesPath.listFiles(fileFilter) ) {
-		    	CodeModuleFile codeModuleFile = loadCodeModuleFile(file.getPath() );
-		    	if ( codeModuleFile != null) {
-		    		codeModulefiles.add( codeModuleFile );
-		    	}
-		    }
+			codeModulefiles = codeModuleFileStore.getCodeModuleFiles();
 		}
 		
 	    return codeModulefiles;
@@ -186,7 +166,7 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	public CodeModuleFile createCodeModuleFile(CodeModule codeModule, ObjectStore objectStore) {
 
 		CodeModuleFile codeModuleFile = new CodeModuleFile( codeModule, objectStore );
-		codeModuleFile.setFilename( getCodeModuleFile(codeModuleFile).getPath() );
+		codeModuleFile.setFilename( codeModuleFileStore.getCodeModuleFile(codeModuleFile).getPath() );
 		saveCodeModuleFile(codeModuleFile, true);
 		codeModulefiles.add(codeModuleFile);
 
@@ -199,34 +179,7 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 
 	private void saveCodeModuleFile(CodeModuleFile codeModuleFile, boolean saveNew ) {
 
-		XMLMemento memento = XMLMemento.createWriteRoot(PluginTagNames.CODE_MODULE);
-		memento.putInteger(PluginTagNames.VERSION_TAG, CURRENT_FILE_VERSION );
-		
-		boolean saved = false;
-		saveCodeModuleFile(codeModuleFile, memento);
-		FileWriter writer = null;
-		try {
-			File outputFile;
-			if ( codeModuleFile.getFilename() != null) {
-				outputFile = new File( codeModuleFile.getFilename() );
-			}
-			else
-			{
-				outputFile = getCodeModuleFile(codeModuleFile);
-			}
-			writer = new FileWriter( outputFile );
-			memento.save(writer);
-			saved = true;
-		} catch (IOException e) {
-			PluginLog.error(e);
-		} finally {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e) {
-				PluginLog.error(e);
-			}
-		}
+		boolean saved = codeModuleFileStore.save(codeModuleFile);
 		
 		if ( saved) {
 			if ( saveNew ) {
@@ -250,7 +203,7 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		
 		saveCodeModuleFile(codeModuleFile, true);
 
-		codeModuleFile.setFilename( getCodeModuleFile(codeModuleFile).getPath() );
+		codeModuleFile.setFilename( codeModuleFileStore.getCodeModuleFile(codeModuleFile).getPath() );
 		codeModulefiles.add(codeModuleFile);
 	}
 
@@ -266,70 +219,6 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 					.getObjectStoreName() );
 		}
 		return objectStore;
-	}
-
-	private void saveCodeModuleFile(CodeModuleFile codeModuleFile, XMLMemento memento) 
-	{
-		memento.putString( PluginTagNames.NAME_TAG, codeModuleFile.getName() );
-		memento.putString( PluginTagNames.ID_TAG, codeModuleFile.getId() );
-		memento.putString( PluginTagNames.CONNECTION_NAME_TAG, codeModuleFile.getConnectionName() );
-		memento.putString( PluginTagNames.CONNECTION_DISPLAY_NAME_TAG, codeModuleFile.getConnectionDisplayName() );
-		memento.putString( PluginTagNames.OBJECT_STORE_NAME_TAG, codeModuleFile.getObjectStoreName() );
-		memento.putString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME_TAG, codeModuleFile.getObjectStoreDisplayName() );
-		
-		IMemento filesChild = memento.createChild(PluginTagNames.FILES_TAG); 
-		
-		for ( File file : codeModuleFile.getFiles() ) {
-			
-			IMemento fileChild = filesChild.createChild(PluginTagNames.FILE_TAG);
-			fileChild.putString( PluginTagNames.NAME_TAG, file.getAbsolutePath() );
-		}
-	}
-
-	public CodeModuleFile loadCodeModuleFile(String filename )
-	{
-		FileReader reader = null;
-		try {
-			reader = new FileReader( filename );
-			return loadCodeModuleFile(XMLMemento.createReadRoot(reader), filename);
-		} catch (FileNotFoundException e) {
-			// Ignored... no object store items exist yet.
-		} catch (Exception e) {
-			// Log the exception and move on.
-			PluginLog.error(e);
-		} finally {
-			try {
-				if (reader != null)
-					reader.close();
-			} catch (IOException e) {
-				PluginLog.error(e);
-			}
-		}
-		return null;
-	}
-	
-	private CodeModuleFile loadCodeModuleFile(XMLMemento memento, String filename) 
-	{
-		String name = memento.getString( PluginTagNames.NAME_TAG );
-		String id = memento.getString( PluginTagNames.ID_TAG );
-		String connectionName = memento.getString( PluginTagNames.CONNECTION_NAME_TAG );
-		String connectionDisplayName = memento.getString( PluginTagNames.CONNECTION_DISPLAY_NAME_TAG );
-		String objectStoreName = memento.getString( PluginTagNames.OBJECT_STORE_NAME_TAG );
-		String objectStoreDisplayName = memento.getString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME_TAG );
-		
-		CodeModuleFile codeModuleFile = new CodeModuleFile(name, id, connectionName, connectionDisplayName, 
-				objectStoreName, objectStoreDisplayName );
-		
-		IMemento filesChild = memento.getChild(PluginTagNames.FILES_TAG );
-		if ( filesChild != null ) {
-			for ( IMemento fileChild : filesChild.getChildren(PluginTagNames.FILE_TAG) ) {
-				codeModuleFile.addFile( new File( fileChild.getString( PluginTagNames.NAME_TAG ) ) );
-			}
-		}
-		
-		codeModuleFile.setFilename( filename );
-		
-		return codeModuleFile;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -359,27 +248,6 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 			}
 		}
 		
-	}
-
-	public static IPath getCodeModulesPath() {
-		IPath parentFolder = Activator.getDefault().getStateLocation().append(CODEMODULES_FOLDER);
-		
-		if ( ! parentFolder.toFile().exists() )
-		{
-			parentFolder.toFile().mkdir();
-		}
-		return parentFolder;
-	}
-	
-	public File getCodeModuleFile(CodeModuleFile codeModuleFile) {
-		
-		String filename = MessageFormat.format( CODE_MODULE_FILE_FORMAT, 
-				codeModuleFile.getConnectionName(),
-				codeModuleFile.getObjectStoreName(),
-				codeModuleFile.getId(),
-				CODEMODULE_FILE_EXTENSION );
-		
-		return CodeModulesManager.getCodeModulesPath().append( filename ).toFile();
 	}
 
 	public void removeCodeModuleFile(CodeModuleFile selectedObject) 
