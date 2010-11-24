@@ -36,7 +36,6 @@ public class CodeModuleEditor extends FormEditor implements CodeModulesManagerLi
 		@Override
 		public void filesChanged() {
 			setCodeModuleFileModified();
-			codeModuleEditorForm.refreshFilesTableContent();
 		}
 	};
 
