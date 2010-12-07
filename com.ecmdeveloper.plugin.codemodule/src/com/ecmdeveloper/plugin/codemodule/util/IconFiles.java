@@ -31,4 +31,5 @@ public class IconFiles {
 	public static final String ICON_ADD_FILE = "icons/page_world_add.png";
 	public static final String ICON_EXTERNAL_FILE = "icons/page_world.png";
 	public static final String ICON_ADD_JAVA_ELEMENT = "icons/page_add_java.png";
+	public static final String ICON_REFRESH_FILES = "icons/page_refresh.png";
 }

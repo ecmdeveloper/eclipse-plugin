@@ -230,12 +230,12 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		return (Collection<Action>) getObjectStoresManager().executeTaskSync(task);
 	}
 	
-	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws ExecutionException {
+	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws Exception {
 		
 		ObjectStore objectStore = getObjectStore(codeModuleFile);
 		ObjectStore.assertConnected(objectStore);
 		UpdateCodeModuleTask task = new UpdateCodeModuleTask(codeModuleFile
-				.getId(), codeModuleFile.getName(), codeModuleFile.getFiles(),
+				.getId(), codeModuleFile.getName(), codeModuleFile.getContentElementFiles(),
 				objectStore);
 		
 		CodeModule codeModule = (CodeModule) getObjectStoresManager().executeTaskSync(task);

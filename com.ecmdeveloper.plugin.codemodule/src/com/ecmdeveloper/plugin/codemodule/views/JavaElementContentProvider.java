@@ -95,7 +95,7 @@ public class JavaElementContentProvider implements IStructuredContentProvider,
 			}
 			return children.toArray();
 
-		} catch (JavaModelException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
