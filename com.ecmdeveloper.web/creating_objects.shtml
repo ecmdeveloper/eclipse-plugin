@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>ECM Developer - creating objects</title>
+<meta name="keywords" content="filenet,p8,eclipse" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!--#include virtual="/header.shtml" -->
+<div id="content">
+	<div id="left">
+	
+	<h2>Creating Objects</h2>
+	<p>
+	One of the features of the ECM Developer plug in is creating new Folders, Documents and Custom Objects. There
+	are different ways the object creation wizard can be started:
+	<ul>
+	<li>With the <strong>New</strong> command of the context menu when an Object Store or a Folder is selected in 
+	the Object Stores view or the Object Store Favorites View.</li>
+	<li>With the standard Eclipse New wizard by using the <strong>File &gt; New &gt; Other</strong> command, and  
+	after that selecting the desired item in the <strong>Content Engine</strong> category.
+	</li>
+	<li>If the <strong>Content Engine</strong> perspective is selected then there is a shortcut to the different
+	items under the <strong>File &gt; New</strong> menu.
+	<li>For documents there is an extra option. A specific file in the Workspace can be added using the 
+	<strong>Content Engine &gt; Add to Object Store</strong> command of the context menu of the file.</li>
+	</ul>
+	<p>
+	On the first page of the creation wizard the parent must be selected. If the wizard was started from the context
+	menu of a Object Store or a Folder then this wizard page is already pre-populated with the selection:
+	</p>
+	<img>
+	<p>
+	It is possible to select an Object Store as parent when a Document or Custom Object is created. In that case the
+	resulting object will be created unfiled. If the wizard is finished at this point the default class will be used 
+	for the object to be created.
+	</p>
+	<p>
+	On the second page of the wizard the class of the new object can be selected:
+	</p>
+	<img>
+	<p>
+	For Folders and Custom Objects this is the last wizard page. For Documents there are two more pages left. If the
+	wizard is finished at this time a major version Document with no content will be created. 
+	</p>
+	<p>
+	On the next page the content of the document can be set. If the wizard was started from the content menu of a file
+	in the Workspace then the this wizard page is already pre-populated with the selected file:
+	</p>
+	<img>
+	<p>
+	On the final wizard page some additional details can be specified:
+	</p>
+	<img>
+	<p>
+	When the creation wizard is finished the <a href='editing_objects.shtml'>properties editor</a> is opened. In this
+	editor the properties of the new object can be edited and the required properties can be given a value. If this 
+	editor is saved then the new object will be created.
+	</p> 
+	 
+	</div>
+	<div id="right">
+		<!--#include virtual="/navigation.shtml" -->
+	</div>
+</div>
+<div id="footer">
+	<p>Copyright &copy; 2009 ecmdeveloper.com. Designed by <a href="http://www.freecsstemplates.org" class="link1">Free CSS Templates</a></p>
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-723834-3");
+pageTracker._trackPageview();
+} catch(err) {}</script></body>
+</html>

@@ -14,22 +14,35 @@
 	<div id="left">
 	
 	<h2>Browsing Object Stores</h2>
-	The main view of the ECM Developer plug-in is the Object Stores View. You can open
-	this view using the <strong>Window &gt; Show view &gt;Other</strong> command. The
-	Object Stores view is located in the <strong>Content Engine</strong> category. Selecting
-	this view will show the following window:
+	<p>
+	There are two views that can be used for browsing the object stores: the <strong>Object Stores</strong>
+	view or the <strong>Object Store Favorites</strong> view. Most of the actions described here are available 
+	for both views. Changes made in one view will also be visible in the other view. 
+	</p>
+	<p>
+	You can open both views by switching to the <strong>Content Engine</strong> perspective or by using the 
+	<strong>Window &gt; Show view &gt;Other</strong> command. Both views are located in the 
+	<strong>Content Engine</strong> category. Selecting	the Object Stores view will show the following window:
 	<p><img alt='object stores view' src='images/browsing_object_stores/object_stores_view.jpg'/></p>
 	If this window is empty you have to setup your connections to the Content Engine. See the 
 	<a href='getting_started.shtml'>getting started</a> page for details.
+	</p>
 	<p>
 	First you have to make a connection to the Object Store using either the context menu of
 	the Object Store or the toolbar button (<img width='16' height='16' alt='Connect' src='images/icons/database_connect.png'/>) 
-	of the view. When the Object Store is connected the
+	of the view. Double clicking will also connect the Object Store. When the Object Store is connected the
 	Object Store can be browsed, showing folders, documents and custom objects. Also additional
 	Object Stores can be added to this view using the toolbar button 
 	(<img width='16' height='16' alt='Import' src='images/icons/database_add.png'/>). In this view you can
-	perform the operations possible on Object Store items.</p>
+	perform the operations possible on Object Store items.
+	</p>
 	
+	<a name='new'><h3>Create</h3></a>
+	<p>
+	Object Store items can be created using the <strong>New</strong> command of the 
+	context menu when an Object Store or a Folder is selected. This command will open the 
+	<a href='creating_objects.shtml'>new objects</a> wizard.
+	</p>
 	<h3>Edit</h3>
 	<p>
 	The properties of an Object Store item can be edited using the <strong>Edit</strong> command of the 
@@ -49,6 +62,12 @@
 	of the item on the server.
 	</p>
 	
+	<a name='add_favorite'><h3>Add to Favorites</h3></a>
+	An Object Store item can be added to Content Engine Favorites view using the <strong>Add to Favorites</strong> 
+	command of the context menu. The item is now also visible in the Object Store Favorites view
+	directly under the Object Store the item belongs to. The <strong>Remove from Favorites</strong> 
+	command of the context menu can be used to remove the item from the Object Store Favorites view.
+	</
 	<a name='rename'><h3>Rename</h3></a>
 	<p>
 	An Object Store item can be renamed using either the <strong>File &gt; Rename</strong> command
@@ -132,35 +151,10 @@
 	</ul>
 	<p>The contents of the documents are compared using the standard text compare engine of Eclipse.</p>
 	
-	<a name='checkout'><h3>Checkout</h3></a>
+	<h3>Checkout, Cancel Checkout, Save and Checkin</h3></a>
 	<p>
-	Documents can be checked out using the <strong>Checkout</strong> command of the context menu. A wizard 
-	will be shown allowing different checkout options to be set:
-	</p> 
-	<p><img alt='Configure Checkout' src='images/browsing_object_stores/configure_checkout.png'/></p>
-	
-	<a name='cancel_checkout'><h3>Cancel Checkout</h3></a>
-	<p>
-	The checkout of document can be canceled using the <strong>Cancel Checkout</strong> command of the context menu.
+	These actions are described <a href='editing_content.shtml'>here</a>.
 	</p>
-
-	<a name='save'><h3>Save</h3></a>
-	<p>
-	The contents of a document can be saved using the <strong>Save</strong> command of the context menu. A wizard
-	will be shown allowing the selection of the different content elements: 
-	</p> 
-	<p><img alt='Select document content' src='images/browsing_object_stores/select_document_content.png'/></p>
-	<p>Either files in the Eclipse workspace or external files may be added. The first file determines the
-	mime type of the document. If the mime type cannot be determined or the mime type is different, 
-	then the mime type can be entered manually.</p>
-	   	
-	<a name='checkin'><h3>Checkin</h3></a>
-	Documents can be checked in using the <strong>Checkin</strong> command of the context menu. A wizard 
-	will be shown allowing different checkin options to be set:
-	</p> 
-	<p><img alt='Configure Checkin' src='images/browsing_object_stores/configure_checkin.png'/></p>
-	<p>If new content is necessary then after the first wizard page the content selection page shown 
-	for the <strong>Save</strong> command is shown.</p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
