@@ -23,7 +23,14 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.resources.WorkspaceDescription;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.Dialog;
@@ -34,8 +41,16 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -43,8 +58,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IManagedForm;
@@ -59,12 +77,14 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.codemodule.Activator;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.IconFiles;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
+import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
 import com.ecmdeveloper.plugin.codemodule.views.JavaElementContentProvider;
 
 /**
@@ -145,16 +165,27 @@ public class CodeModuleEditorForm extends FormPage {
 
 	private void validateForm()
 	{
-		if ( codeModuleFile.isEmpty()   ) {
-			messageManager.addMessage(FILES_MESSAGE_KEY, NO_FILES_MESSAGE, null, IMessageProvider.ERROR );
-		} else {
-			messageManager.removeMessage(FILES_MESSAGE_KEY);
-		}
-		
+		validateFormFiles();
+		validateFormName();
+	}
+
+	private void validateFormName() {
 		if ( codeModuleFile.getName().isEmpty() ) {
 			messageManager.addMessage( NAME_MESSAGE_KEY, EMPTY_NAME_MESSAGE, null, IMessage.ERROR );
 		} else {
 			messageManager.removeMessage( NAME_MESSAGE_KEY );
+		}
+	}
+
+	private void validateFormFiles() {
+		try {
+			if ( codeModuleFile.isEmpty()   ) {
+				messageManager.addMessage(FILES_MESSAGE_KEY, NO_FILES_MESSAGE, null, IMessageProvider.ERROR );
+			} else {
+				messageManager.removeMessage(FILES_MESSAGE_KEY);
+			}
+		} catch ( Exception e ) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -393,6 +424,11 @@ public class CodeModuleEditorForm extends FormPage {
 		}
 	}
 
+	protected void performRefreshFilesTreeViewer() {
+		filesTreeViewer.setInput( codeModuleFile );
+		validateFormFiles();
+	}
+
 	private void handleNameModified( String newName )
 	{
 		if ( codeModuleFile != null ) {
@@ -413,18 +449,128 @@ public class CodeModuleEditorForm extends FormPage {
 		filesTreeViewer.setContentProvider(new JavaElementContentProvider());
 		filesTreeViewer.setLabelProvider(new FilesLabelProvider());
 		filesTreeViewer.getTree().setHeaderVisible(true);
+		filesTreeViewer.getTree().addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				handleFilesTreeDoubleClick();
+			}
+		});
 
+		createFilesTreeViewerContextMenu(client);
+		
 		TreeColumn treeColumn1 = new TreeColumn(filesTreeViewer.getTree(), SWT.LEFT );
 		treeColumn1.setWidth(300);
 		treeColumn1.setText(NAME_COLUMN_LABEL);
 		treeColumn1.setResizable(true);
 
 		TreeColumn treeColumn2 = new TreeColumn(filesTreeViewer.getTree(), SWT.LEFT );
-		treeColumn2.setWidth(300);
+		treeColumn2.setWidth(500);
 		treeColumn2.setText(PATH_COLUMN_LABEL);
 		treeColumn2.setResizable(true);
 	}
+
+	private void createFilesTreeViewerContextMenu(Composite client) {
+		Menu menu = createFilesTreeViewerMenu(client);
+		createFilesTreeViewerOpenMenuItem(menu);
+		createFilesTreeViewerAddMenuItem(menu);
+		createFilesTreeViewerRemoveMenuItem(menu);
+		createFilesTreeViewerRefreshMenuItem(menu);
+		filesTreeViewer.getTree().setMenu( menu );
+	}
+
+	private Menu createFilesTreeViewerMenu(Composite client) {
+
+		final Menu menu = new Menu(client);
+		menu.addMenuListener( new MenuAdapter() {
+
+			@Override
+			public void menuShown(MenuEvent e) {
+				
+		        IStructuredSelection selection = (IStructuredSelection) filesTreeViewer.getSelection();
+		        boolean openableSelected = isSelectionOpenable(selection);
+				MenuItem item = menu.getItem(0);
+				item.setEnabled(openableSelected);
+				
+				item = menu.getItem(2);
+				item.setEnabled( !selection.isEmpty() );
+			}
+
+			private boolean isSelectionOpenable(IStructuredSelection selection) {
+				Iterator<?> iterator = selection.iterator();
+		        boolean openableSelected = !selection.isEmpty();
+		        while ( iterator.hasNext() && openableSelected ) {
+		        	Object element = iterator.next();
+		        	openableSelected = element instanceof ICompilationUnit || element instanceof File;
+		        }
+				return openableSelected;
+			}
+		} );
+		return menu;
+	}
 	
+	private void createFilesTreeViewerOpenMenuItem(Menu menu) {
+		MenuItem menuItem = new MenuItem(menu, SWT.PUSH );
+		menuItem.setText("&Open");
+		menuItem.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection) filesTreeViewer.getSelection();
+				openTreeViewerFileEditor(selection);
+			}
+		} );
+	}
+
+	private void createFilesTreeViewerAddMenuItem(Menu menu) {
+		MenuItem addSubmenuItem = new MenuItem(menu, SWT.CASCADE);
+		addSubmenuItem.setText("Add");
+		
+		Menu addSubmenu = new Menu(addSubmenuItem);
+		addSubmenuItem.setMenu(addSubmenu);
+
+		MenuItem addJavaElementMenuItem = new MenuItem(addSubmenu, SWT.PUSH );
+		addJavaElementMenuItem.setText("&Java Element");
+		addJavaElementMenuItem.setImage( Activator.getImage( IconFiles.ICON_ADD_JAVA_ELEMENT ) );
+		addJavaElementMenuItem.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				performAddJavaElement();
+			}
+		} );
+
+		MenuItem addFileMenuItem = new MenuItem(addSubmenu, SWT.PUSH );
+		addFileMenuItem.setText("&File");
+		addFileMenuItem.setImage( Activator.getImage( IconFiles.ICON_ADD_FILE ) );
+		addFileMenuItem.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				performAddFile();
+			}
+		} );
+	}
+
+	private void createFilesTreeViewerRemoveMenuItem(Menu menu) {
+		MenuItem menuItem = new MenuItem(menu, SWT.PUSH );
+		menuItem.setText("&Remove");
+		menuItem.setImage( Activator.getImage( IconFiles.ICON_REMOVE_CONTENT ) );
+		menuItem.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				performRemoveFiles();
+			}
+		} );
+	}
+
+	private void createFilesTreeViewerRefreshMenuItem(Menu menu) {
+		MenuItem menuItem = new MenuItem(menu, SWT.PUSH );
+		menuItem.setText("R&efresh");
+		menuItem.setImage(Activator.getImage( IconFiles.ICON_REFRESH_FILES ) );
+		menuItem.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				performRefreshFilesTreeViewer();
+			}
+		} );
+	}
+
 	private void addLabel(Composite container, String text) {
 		Label label = new Label( container, SWT.NONE );
 		GridData gridData_1 = new GridData(GridData.BEGINNING);
@@ -432,6 +578,40 @@ public class CodeModuleEditorForm extends FormPage {
 		label.setText(text);
 	}
 
+	private void handleFilesTreeDoubleClick() {
+		
+        IStructuredSelection selection = (IStructuredSelection) filesTreeViewer.getSelection();
+        Object element = selection.getFirstElement();
+
+        if (filesTreeViewer.isExpandable(element)) {
+        	filesTreeViewer.setExpandedState(element, !filesTreeViewer.getExpandedState(element));
+        } else {
+    		openTreeViewerFileEditor(selection);
+        }
+	}
+
+	private void openTreeViewerFileEditor(IStructuredSelection selection) {
+		
+		Iterator<?> iterator = selection.iterator();
+		while ( iterator.hasNext() ) {
+			try {
+				Object element = iterator.next();
+				if ( element instanceof ICompilationUnit) {
+					IResource resource = ((IJavaElement)element).getResource();
+					if ( resource != null && resource instanceof IFile ) {
+						IDE.openEditor(getSite().getPage(), (IFile) resource );
+					}
+				} else if ( element instanceof File) {
+					File file = (File)  element;
+					IFileStore store = EFS.getLocalFileSystem().getStore( new Path( file.getPath() ) );
+					IDE.openEditorOnFileStore( getSite().getPage(), store);
+				}
+			} catch (PartInitException e) {
+				PluginMessage.openError(getSite().getShell(), "Error", e.getLocalizedMessage(), e);
+			}
+		}
+	}
+	
 	class FilesLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		private static final int PATH_COLUMN_INDEX = 1;

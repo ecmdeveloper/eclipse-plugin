@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaModelException;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -101,9 +102,20 @@ public class CodeModuleFile {
 		return javaElements;
 	}
 	
-	public ArrayList<Object> getContentElements() {
+	public ArrayList<File> getContentElementFiles() throws Exception {
+		ArrayList<File> contentElements = new ArrayList<File>();
+		
+		JavaElementFilesFinder javaElementFilesFinder = new JavaElementFilesFinder();
+		for ( IJavaElement javaElement : javaElements) {
+			contentElements.addAll( javaElementFilesFinder.findFiles(javaElement) );
+		}
+		contentElements.addAll(files);
+		return contentElements;
+	}
+
+	public ArrayList<Object> getContentElements() throws Exception {
 		ArrayList<Object> contentElements = new ArrayList<Object>();
-		contentElements.addAll(javaElements);
+		contentElements.addAll( javaElements );
 		contentElements.addAll(files);
 		return contentElements;
 	}
@@ -171,7 +183,17 @@ public class CodeModuleFile {
 		}
 	}
 
-	public boolean isEmpty() {
-		return files.isEmpty() && javaElements.isEmpty();
+	public boolean isEmpty() throws Exception {
+		if ( ! files.isEmpty() ) {
+			return false;
+		}
+
+		JavaElementFilesFinder javaElementFilesFinder = new JavaElementFilesFinder();
+		for ( IJavaElement javaElement : javaElements) {
+			if ( !javaElementFilesFinder.findFiles(javaElement).isEmpty() ) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
