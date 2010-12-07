@@ -40,20 +40,21 @@
 				<h2>Features</h2>
 				<p>
 					<ul>
-						<li><a href='browsing_object_stores.shtml'>Browsing</a> Object Stores</li>
+						<li><a href='browsing_object_stores.shtml'>Browsing</a> Object Stores using the Object Stores View 
+						or the Object Store Favorites View.</li>
 						
 						<li>Performing some basic actions on Object Store objects such as 
 						<a href='browsing_object_stores.shtml#rename'>renaming</a>, 
 						<a href='browsing_object_stores.shtml#move'>moving</a> and 
 						<a href='browsing_object_stores.shtml#delete'>deleting</a>.</li>
-						
+						<li><a href='creating_objects.shtml'>Creating</a> new Object Store objects.</li>
 						<li>Performing actions on the content of the document such as 
 						<a href='browsing_object_stores.shtml#view'>viewing</a>, editing 
-						(<a href='browsing_object_stores.shtml#checkout'>checkout</a>, 
-						<a href='browsing_object_stores.shtml#checkin'>checkin</a>), 
+						(<a href='editing_content.shtml#checkout'>checkout</a>, 
+						<a href='editing_content.shtml#checkin'>checkin</a>), 
 						<a href='browsing_object_stores.shtml#download'>downloading</a> 
 						and <a href='browsing_object_stores.shtml#compare'>comparing</a>.</li>			   
-						
+						<li><a href='editing_content.shtml#tracked_files_view'>Tracking</a> the content of the document in the Workspace.</li>
 						<li><a href='editing_objects.shtml'>Editing</a> of folder, document and custom object properties.</li>
 						
 						<li><a href='editing_class_diagrams.shtml'>Class Diagram Editor</a>, creating UML diagrams of the classes defined in the Object Store.<br>
