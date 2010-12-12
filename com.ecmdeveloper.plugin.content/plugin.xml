@@ -730,14 +730,50 @@
          <command
                commandId="com.ecmdeveloper.plugin.checkinTrackedFile"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.tracker.model.TrackedFile">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.saveTrackedFile"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.tracker.model.TrackedFile">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
          <command
                commandId="com.ecmdeveloper.plugin.cancelCheckoutTrackedFile"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.tracker.model.TrackedFile">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
