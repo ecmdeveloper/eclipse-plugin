@@ -26,7 +26,7 @@
 	<p> 
 	The Tracked Files lists all the tracked files in the Workspace:
 	</p>
-	<img>
+	<p><img alt='Tracked Files Viewer' src='images/editing_content/tracked_files_viewer.png'/></p>
 	<p>
 	Actions like Checkin, save and cancel checkout can also be performed using the context menu of this view. 
 	Additional actions from the contect menu are Editing the tracked file in the available editor and removing 
@@ -37,9 +37,10 @@
 	Documents can be checked out using the <strong>Checkout</strong> command of the context menu. A wizard 
 	will be shown allowing different checkout options to be set:
 	</p> 
-	<p><img alt='Configure Checkout' src='images/browsing_object_stores/configure_checkout.png'/></p>
+	<p><img alt='Configure Checkout' src='images/editing_content/configure_checkout.png'/></p>
 	If the content of the document is saved to a file in the Workspace then it can be tracked. This is the 
 	default setting. The file is now visible in the Tracked Files View.  
+
 	<a name='save'><h3>Save</h3></a>
 	<p>
 	The contents of a document can be saved using the <strong>Save</strong> command of the context menu. For 
@@ -48,24 +49,26 @@
 	<p>
 	There is a difference in behavior between tracked and non-tracked documents. If the document is tracked
 	then the content of the tracked file is used automatically and a dialog will appear allowing changing
-	of the mime type of the document. This dialog will already contain the mime type of the existing document.
+	of the mime type of the document. This dialog will already contain the mime type of the existing document:
 	</p>
+	<p><img alt='Save Tracked File' src='images/editing_content/save_tracked_file.png'/></p>
 	<p>
 	When the document is not tracked then a wizard will be shown allowing the selection of the different content elements: 
 	</p> 
-	<p><img alt='Select document content' src='images/browsing_object_stores/select_document_content.png'/></p>
+	<p><img alt='Select document content' src='images/editing_content/select_document_content.png'/></p>
 	<p>Either files in the Eclipse workspace or external files may be added. The first file determines the
 	mime type of the document. If the mime type cannot be determined or the mime type is different, 
 	then the mime type can be entered manually.</p>
 	   	
 	<a name='checkin'><h3>Checkin</h3></a>
+	<p>
 	Documents can be checked in using the <strong>Checkin</strong> command of the context menu. For 
-	tracked documents saving can also be done using the	<strong>Content Engine &gt; Save</strong> command 
+	tracked documents the check in can also be done using the <strong>Content Engine &gt; Checkin</strong> command 
 	of the context menu of the file. A wizard will be shown allowing different checkin options to be set. 
 	If the document was tracked then an extra option is added allowing the content of the tracked file to 
 	be used:
 	</p> 
-	<p><img alt='Configure Checkin' src='images/browsing_object_stores/configure_checkin.png'/></p>
+	<p><img alt='Configure Checkin' src='images/editing_content/configure_checkin.png'/></p>
 	<p>If new content is necessary then after the first wizard page the content selection page shown 
 	for the <strong>Save</strong> command is shown.</p>
 
