@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>ECM Developer - deleting objects</title>
-<meta name="keywords" content="filenet,p8,eclipse" />
+<meta name="keywords" content="filenet,p8,eclipse,content engine" />
 <meta name="description" content="" />
 <link href="default.css" rel="stylesheet" type="text/css" />
 </head>
@@ -13,6 +13,22 @@
 <div id="content">
 	<div id="left">
 	<h2>Deleting objects</h2>
+	<p>
+	Object Store items can be deleted using either the <strong>Edit &gt; Delete</strong> command, the delete key
+	or the <strong>Delete</strong> command of the context menu. This command will open the 
+	delete wizard. If the selection contains a  folder then first the <strong>Configure Delete</strong>
+	wizard page is shown:
+	</p>
+	<p><img alt='object stores view' src='images/deleting_objects/configure_delete.png'/></p>
+	Here the actions to perform with the contained objects can be configured. They can be either left unfiled or
+	deleted along with the folder.
+	<p>
+	The next wizard page gives a preview of all the items being deleted with the current selection:  
+	<p><img alt='object stores view' src='images/deleting_objects/preview_delete.png'/></p>
+	<p>
+	When this wizard page is finished a delete confirmation is requested and the objects are being deleted. During
+	the delete action this operation may be canceled. In this case there is no rollback of the items already deleted.
+	</p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->

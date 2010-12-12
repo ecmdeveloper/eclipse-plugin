@@ -33,7 +33,9 @@
 	<li>
 	Start the standard Eclipse New wizard by using the <strong>File &gt; New &gt; Other</strong> command: 
 	<p><img alt='New Code Module' src='images/editing_code_module/new_code_module.jpg'></p>
-	Select <strong>Code Module</strong> in the <strong>Content Engine</strong> category.
+	Select <strong>Code Module</strong> in the <strong>Content Engine</strong> category. If the 
+	Content Engine perspective is active then there is a short cut to the new code module wizard in the
+	<strong>File &gt; New</strong> menu.
 	</li>
 	<li>
 	In the next page of the wizard the necessary information can be supplied to start editing the
@@ -43,14 +45,27 @@
 	<li>
 	If the wizard is finished the Code Module editor is opened using the name and Object Store supplied in 
 	the wizard: 
-	<p><img alt='New Code Module Editor' src='images/editing_code_module/new_code_module_editor.jpg'></p>
+	<p><img alt='New Code Module Editor' src='images/editing_code_module/new_code_module_editor.png'></p>
 	</li>
 	</ul>
 	</p>
 	<p>
 	The name can still be changed, the Object Store not. Initially the editor will show an error message 
-	because the content of the Code Module is not yet set. Use the <strong>Add</strong> command of the editor
-	to add files to the Code Module. This have to be either compiled Java class-files, tar-files or zip-files.
+	because the content of the Code Module is not yet set. Use the add commands of the editor
+	to add files to the Code Module. There are two ways files can be added to the Code Module:
+	<ul>
+	<li><strong>Add Java Element</strong>: a dialog is shown with a tree view containing all the Java projects in the workspace.
+	In this tree view either a project, package of java class can be selected. If a project or package is selected then
+	all the child classes are added to code module. The editor will locate the compiled Java classes.</li>
+	<li><strong>Add External File</strong>: a dialog is show allowing the selection of an external file. 
+	This have to be either compiled Java class-files, tar-files or zip-files.</li>
+	</ul>
+	<p>
+	These commands are also available in the context menu of the files tree view. 
+	With the <strong>Remove</strong> button unwanted elements can be removed from the Code Module. The files tree
+	can be refreshed with the <strong>Refresh</strong> commands of the context menu.
+	</p>
+	<p>
 	Use the <strong>Save</strong> command of the editor to create a new Code Module in the Object Store.
 	</p>
 	<p>

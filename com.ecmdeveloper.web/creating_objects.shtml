@@ -26,13 +26,14 @@
 	<li>If the <strong>Content Engine</strong> perspective is selected then there is a shortcut to the different
 	items under the <strong>File &gt; New</strong> menu.
 	<li>For documents there is an extra option. A specific file in the Workspace can be added using the 
-	<strong>Content Engine &gt; Add to Object Store</strong> command of the context menu of the file.</li>
+	<strong>Content Engine &gt; Add to Object Store</strong> command of the context menu of the file. In this case the
+	name of the file is the default document title.</li>
 	</ul>
 	<p>
 	On the first page of the creation wizard the parent must be selected. If the wizard was started from the context
 	menu of a Object Store or a Folder then this wizard page is already pre-populated with the selection:
 	</p>
-	<img>
+	<p><img alt='Select Parent' src='images/creating_objects/select_parent.png'/></p>
 	<p>
 	It is possible to select an Object Store as parent when a Document or Custom Object is created. In that case the
 	resulting object will be created unfiled. If the wizard is finished at this point the default class will be used 
@@ -41,7 +42,7 @@
 	<p>
 	On the second page of the wizard the class of the new object can be selected:
 	</p>
-	<img>
+	<p><img alt='Select Class' src='images/creating_objects/select_class.png'/></p>
 	<p>
 	For Folders and Custom Objects this is the last wizard page. For Documents there are two more pages left. If the
 	wizard is finished at this time a major version Document with no content will be created. 
@@ -50,11 +51,11 @@
 	On the next page the content of the document can be set. If the wizard was started from the content menu of a file
 	in the Workspace then the this wizard page is already pre-populated with the selected file:
 	</p>
-	<img>
+	<p><img alt='Select Document Content' src='images/creating_objects/select_document_content.png'/></p>
 	<p>
 	On the final wizard page some additional details can be specified:
 	</p>
-	<img>
+	<p><img alt='Configure Create Document' src='images/creating_objects/configure_create_document.png'/></p>
 	<p>
 	When the creation wizard is finished the <a href='editing_objects.shtml'>properties editor</a> is opened. In this
 	editor the properties of the new object can be edited and the required properties can be given a value. If this 

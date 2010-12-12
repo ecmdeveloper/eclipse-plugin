@@ -46,7 +46,7 @@
 						<li>Performing some basic actions on Object Store objects such as 
 						<a href='browsing_object_stores.shtml#rename'>renaming</a>, 
 						<a href='browsing_object_stores.shtml#move'>moving</a> and 
-						<a href='browsing_object_stores.shtml#delete'>deleting</a>.</li>
+						<a href='deleting_objects.shtml'>deleting</a>.</li>
 						<li><a href='creating_objects.shtml'>Creating</a> new Object Store objects.</li>
 						<li>Performing actions on the content of the document such as 
 						<a href='browsing_object_stores.shtml#view'>viewing</a>, editing 

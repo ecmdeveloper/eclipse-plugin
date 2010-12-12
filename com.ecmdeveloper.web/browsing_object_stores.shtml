@@ -37,12 +37,18 @@
 	perform the operations possible on Object Store items.
 	</p>
 	
-	<a name='new'><h3>Create</h3></a>
+	<a name='new'><h3>New</h3></a>
 	<p>
-	Object Store items can be created using the <strong>New</strong> command of the 
+	One of the ways new Folders, documents and Custom Objects can be created is using the <strong>New</strong> command of the 
 	context menu when an Object Store or a Folder is selected. This command will open the 
 	<a href='creating_objects.shtml'>new objects</a> wizard.
 	</p>
+	
+	<h3>Checkout, Cancel Checkout, Save and Checkin</h3></a>
+	<p>
+	See the <a href='editing_content.shtml'>editing content</a> page for more details.
+	</p>
+	
 	<h3>Edit</h3>
 	<p>
 	The properties of an Object Store item can be edited using the <strong>Edit</strong> command of the 
@@ -63,11 +69,12 @@
 	</p>
 	
 	<a name='add_favorite'><h3>Add to Favorites</h3></a>
+	<p>
 	An Object Store item can be added to Content Engine Favorites view using the <strong>Add to Favorites</strong> 
 	command of the context menu. The item is now also visible in the Object Store Favorites view
 	directly under the Object Store the item belongs to. The <strong>Remove from Favorites</strong> 
 	command of the context menu can be used to remove the item from the Object Store Favorites view.
-	</
+	</p>
 	<a name='rename'><h3>Rename</h3></a>
 	<p>
 	An Object Store item can be renamed using either the <strong>File &gt; Rename</strong> command
@@ -88,9 +95,9 @@
 	 	
 	<a name='delete'><h3>Delete</h3></a>
 	<p>
-	An Object Store item can be deleted using either the <strong>Edit &gt; Delete</strong> command
-	or the <strong>Delete</strong> command of the context menu. A confirmation is request for each
-	item to be deleted. 
+	Object Store items can be deleted using either the <strong>Edit &gt; Delete</strong> command
+	or the <strong>Delete</strong> command of the context menu. This command will open the 
+	<a href='deleting_objects.shtml'>delete</a> wizard. 
 	</p>
 	
 	<a name='delete_versions'><h3>Delete Versions</h3></a>
@@ -151,10 +158,6 @@
 	</ul>
 	<p>The contents of the documents are compared using the standard text compare engine of Eclipse.</p>
 	
-	<h3>Checkout, Cancel Checkout, Save and Checkin</h3></a>
-	<p>
-	These actions are described <a href='editing_content.shtml'>here</a>.
-	</p>
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
