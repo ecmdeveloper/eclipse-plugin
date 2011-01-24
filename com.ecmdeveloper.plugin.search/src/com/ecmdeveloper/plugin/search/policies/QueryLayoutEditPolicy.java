@@ -26,6 +26,9 @@ import org.eclipse.gef.commands.UnexecutableCommand;
 import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 
+import com.ecmdeveloper.plugin.search.commands.QueryComponentCreateCommand;
+import com.ecmdeveloper.plugin.search.parts.QueryConditionEditPart;
+
 /**
  * @author ricardo.belfor
  *
@@ -33,12 +36,24 @@ import org.eclipse.gef.requests.CreateRequest;
 public class QueryLayoutEditPolicy extends XYLayoutEditPolicy {
 
 	@Override
-	protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
+	protected Command getCreateCommand(CreateRequest request) {
+		if (request.getType() == REQ_CREATE && getHost() instanceof QueryConditionEditPart ) {
+			QueryComponentCreateCommand command = new QueryComponentCreateCommand();
+			// TODO add model objects
+			return command;
+		}
 		return UnexecutableCommand.INSTANCE;
 	}
 
-	@Override
-	protected Command getCreateCommand(CreateRequest request) {
+	
+	protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
+
+//		if (child instanceof AbstractClassesGraphicalEditPart) {
+//			if (constraint instanceof Rectangle) {
+//				return new AdjustConstraintCommand((AbstractClassesGraphicalEditPart) child,
+//						(Rectangle) constraint);
+//			}
+//		}
 		return UnexecutableCommand.INSTANCE;
 	}
 }

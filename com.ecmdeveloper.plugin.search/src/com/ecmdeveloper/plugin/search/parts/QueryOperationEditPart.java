@@ -32,12 +32,13 @@ import com.ecmdeveloper.plugin.search.figures.QueryConditionFigure;
 import com.ecmdeveloper.plugin.search.figures.QueryOperationFigure;
 import com.ecmdeveloper.plugin.search.model.QueryOperation;
 import com.ecmdeveloper.plugin.search.policies.QueryComponentEditPolicy;
+import com.ecmdeveloper.plugin.search.policies.QueryLayoutEditPolicy;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryOperationEditPart extends AbstractGraphicalEditPart {
+public class QueryOperationEditPart extends QueryBaseEditPart {
 
 	public QueryOperationEditPart(QueryOperation model) {
 		super();
@@ -57,6 +58,7 @@ public class QueryOperationEditPart extends AbstractGraphicalEditPart {
 	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.COMPONENT_ROLE, new QueryComponentEditPolicy() );
+		installEditPolicy(EditPolicy.LAYOUT_ROLE, new QueryLayoutEditPolicy() );	
 	}
 
 	@Override

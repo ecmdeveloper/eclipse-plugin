@@ -25,9 +25,12 @@ import java.util.List;
 
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.StackLayout;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editpolicies.ContainerEditPolicy;
+import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
+import org.eclipse.gef.requests.CreateRequest;
 
 import com.ecmdeveloper.plugin.search.layout.QueryLayoutManager;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -56,6 +59,19 @@ public class QueryEditPart extends AbstractGraphicalEditPart {
 
 	@Override
 	protected void createEditPolicies() {
+		
+		installEditPolicy(EditPolicy.CONTAINER_ROLE, new ContainerEditPolicy() {
+
+			@Override
+			protected Command getCreateCommand(CreateRequest arg0) {
+				return null;
+			}
+			
+		});
+		installEditPolicy(EditPolicy.NODE_ROLE, null);
+		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, null);
+		installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, null);
+		installEditPolicy(EditPolicy.COMPONENT_ROLE, new RootComponentEditPolicy());    	
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, new QueryLayoutEditPolicy());		
 	}
 
