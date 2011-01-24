@@ -46,7 +46,7 @@ public class QueryLayoutManager extends AbstractLayout {
 	@Override
 	public void layout(IFigure figure) {
 		System.out.println( "layout: " + figure.toString() );
-		layoutFigure(figure, 100, 50 );
+		layoutFigure(figure, 0, 5 );
 		
 //		for ( Object childFigure : figure.getChildren() )
 //		{

@@ -28,12 +28,13 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import com.ecmdeveloper.plugin.search.figures.QueryConditionFigure;
 import com.ecmdeveloper.plugin.search.model.QueryCondition;
 import com.ecmdeveloper.plugin.search.policies.QueryComponentEditPolicy;
+import com.ecmdeveloper.plugin.search.policies.QueryLayoutEditPolicy;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryConditionEditPart extends AbstractGraphicalEditPart {
+public class QueryConditionEditPart extends QueryBaseEditPart {
 	
 	public QueryConditionEditPart(QueryCondition model) {
 		super();
@@ -53,6 +54,7 @@ public class QueryConditionEditPart extends AbstractGraphicalEditPart {
 	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.COMPONENT_ROLE, new QueryComponentEditPolicy() );
+		installEditPolicy(EditPolicy.LAYOUT_ROLE, new QueryLayoutEditPolicy() );	
 	}
 
 	protected void refreshVisuals() { 

@@ -38,7 +38,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 public class QueryOperationFigure extends Figure {
 	
 	private static final int BORDER_SIZE = 5;
-	private static final int INSET_SIZE = 0;
+	private static final int INSET_SIZE = 2;
 	private static final Insets CLIENT_AREA_INSETS = new Insets(INSET_SIZE, INSET_SIZE, INSET_SIZE, INSET_SIZE);
 	private static final int OPERATION_WIDTH = 30;
 
@@ -58,7 +58,7 @@ public class QueryOperationFigure extends Figure {
       add(labelName);
       setConstraint(labelName, new Rectangle(5, 5, -1, -1));
 		
-		setBorder(new LineBorder(BORDER_SIZE));
+//		setBorder(new LineBorder(BORDER_SIZE));
 	}
 	
 	public void setName(String name) {

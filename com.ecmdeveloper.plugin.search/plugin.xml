@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="com.ecmdeveloper.plugin.search.editor.SearchEditor"
+            class="com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor"
             default="false"
             extensions="search"
             id="com.ecmdeveloper.plugin.search.searchEditor"
