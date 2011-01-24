@@ -20,9 +20,24 @@
 
 package com.ecmdeveloper.plugin.search.editor;
 
+import java.util.EventObject;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.gef.KeyHandler;
+import org.eclipse.gef.KeyStroke;
+import org.eclipse.gef.commands.CommandStackListener;
+import org.eclipse.gef.palette.PaletteRoot;
+import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.actions.GEFActionConstants;
+import org.eclipse.gef.ui.parts.SelectionSynchronizer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.MultiPageEditorPart;
+
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
@@ -31,13 +46,52 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 public class SearchEditor extends MultiPageEditorPart {
 
 	private QueryPage queryPage;
-	
+    private PaletteRoot paletteRoot;
+    private SelectionSynchronizer synchronizer;
+    private KeyHandler sharedKeyHandler;
+    private ActionRegistry actionRegistry;
+    private boolean isDirty = false;
+
+    private DelegatingCommandStack delegatingCommandStack;
+    private MultiPageCommandStackListener multiPageCommandStackListener;
+
+    /**
+     * The <code>CommandStackListener</code> that listens for
+     * changes of the <code>DelegatingCommandStack</code>.
+     */
+    private CommandStackListener delegatingCommandStackListener =
+        new CommandStackListener()
+    {
+        public void commandStackChanged(EventObject event)
+        {
+            //updateActions(stackActionIDs);
+        }
+    };
+    
+    private ISelectionListener selectionListener = new ISelectionListener()
+    {
+        public void selectionChanged(IWorkbenchPart part, ISelection selection)
+        {
+// TODO: use this and fix this        	
+//            updateActions(editPartActionIDs);
+        }
+    };
+
+    
 	@Override
 	protected void createPages() {
 		
 		queryPage = new QueryPage(this);
 		try {
 			addPage(queryPage, getEditorInput() );
+			
+            getMultiPageCommandStackListener().addCommandStack(
+                    queryPage.getCommandStack());
+                
+                // activate delegating command stack
+                getDelegatingCommandStack().setCurrentCommandStack(
+                    queryPage.getCommandStack());
+			
 		} catch (PartInitException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,4 +114,106 @@ public class SearchEditor extends MultiPageEditorPart {
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
+
+	public PaletteRoot getPaletteRoot() {
+        if (null == paletteRoot)
+        {
+            paletteRoot = new QueryPaletteRoot();
+        }
+        return paletteRoot;
+	}
+
+	public SelectionSynchronizer getSelectionSynchronizer() {
+        if (synchronizer == null)
+            synchronizer = new SelectionSynchronizer();
+        return synchronizer;
+	}
+
+	public Query getQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public KeyHandler getSharedKeyHandler() {
+        if (sharedKeyHandler == null)
+        {
+            sharedKeyHandler = new KeyHandler();
+
+            // configure common keys for all viewers
+            sharedKeyHandler.put(
+                KeyStroke.getPressed(SWT.DEL, 127, 0),
+                getActionRegistry().getAction(GEFActionConstants.DELETE));
+            sharedKeyHandler.put(
+                KeyStroke.getPressed(SWT.F2, 0),
+                getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
+        }
+        return sharedKeyHandler;
+	}
+
+	private ActionRegistry getActionRegistry() {
+        if (actionRegistry == null)
+            actionRegistry = new ActionRegistry();
+
+        return actionRegistry;
+	}
+
+	@Override
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+    protected DelegatingCommandStack getDelegatingCommandStack()
+    {
+        if (null == delegatingCommandStack)
+        {
+            delegatingCommandStack = new DelegatingCommandStack();
+            if (null != getCurrentPage())
+                delegatingCommandStack.setCurrentCommandStack(
+                    getCurrentPage().getCommandStack());
+        }
+
+        return delegatingCommandStack;
+    }
+
+    protected CommandStackListener getDelegatingCommandStackListener()
+    {
+        return delegatingCommandStackListener;
+    }
+    
+    private AbstractEditorPage getCurrentPage()
+    {
+        if (getActivePage() == -1)
+            return null;
+
+        return (AbstractEditorPage) getEditor(getActivePage());
+    }
+
+    protected MultiPageCommandStackListener getMultiPageCommandStackListener()
+    {
+        if (null == multiPageCommandStackListener)
+            multiPageCommandStackListener = new MultiPageCommandStackListener();
+        return multiPageCommandStackListener;
+    }
+
+    public void dispose()
+    {
+        // dispose multi page command stack listener
+        getMultiPageCommandStackListener().dispose();
+
+        // remove delegating CommandStackListener
+        getDelegatingCommandStack().removeCommandStackListener( getDelegatingCommandStackListener() );
+
+//        // remove selection listener
+//        getSite()
+//            .getWorkbenchWindow()
+//            .getSelectionService()
+//            .removeSelectionListener(
+//            getSelectionListener());
+//
+        // disposy the ActionRegistry (will dispose all actions)
+        getActionRegistry().dispose();
+
+        // important: always call super implementation of dispose
+        super.dispose();
+    }
 }
