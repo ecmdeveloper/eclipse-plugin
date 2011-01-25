@@ -5,6 +5,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="com.ecmdeveloper.plugin.ui.perspectives.ContentEnginePerspectiveFactory"
+            icon="icons/database_table.png"
             id="com.ecmdeveloper.plugin.ui.contentEnginePerspective"
             name="Content Engine">
          <description>
