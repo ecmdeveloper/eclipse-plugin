@@ -5,7 +5,8 @@ Bundle-SymbolicName: com.ecmdeveloper.plugin.lib
 Bundle-Version: 1.2.0
 Bundle-Activator: com.ecmdeveloper.plugin.lib.Activator
 Bundle-Vendor: ECMDEVELOPER
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/Jace.jar,

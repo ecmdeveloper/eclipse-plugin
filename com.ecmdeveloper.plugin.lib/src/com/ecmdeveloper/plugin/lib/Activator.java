@@ -1,5 +1,5 @@
 /**
- * Copyright 2009,2010, Ricardo Belfor
+ * Copyright 2009,2010,2011, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -20,18 +20,38 @@
 package com.ecmdeveloper.plugin.lib;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends Plugin {
 
-	private static final String MISSING_JAAS_FILE_MESSAGE = "The file jaas.conf.WSI is not found in the folder {0}/config or the folder {0}/config/samples. Make sure it is located at one of these locations.";
+	private static final String INSTALLATION_ERROR_TITLE = "ECM Developer Installation Error";
+
+	private static final String MISSING_JAAS_FILE_MESSAGE = "There was a problem starting the ECM Developer plugin.\n\n" +
+			"The file jaas.conf.WSI is not found in the folder {0}config " +
+			"or the folder {0}config/samples. Make sure it is located at one of these locations.\n\n" +
+			"This could also mean that the Content Engine client libraries are not copied to the folder {0}."; 
+			
+	private static final String INSTALL_LINK_MESSAGE = "Visit <a href=\"http://www.ecmdeveloper.com/install\">http://www.ecmdeveloper.com/install</a> for the plug in installation instructions.";
+	
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin.lib";
 	private static Activator plugin;
 
@@ -46,7 +66,7 @@ public class Activator extends Plugin {
 		{
 			jaasConfigFile = installLocation + "/config/samples/jaas.conf.WSI";
 			if ( ! new File( jaasConfigFile ).exists() ) {
-				throw new RuntimeException( MessageFormat.format( MISSING_JAAS_FILE_MESSAGE, installLocation ) );
+				showInvalidInstallationMessage(installLocation );
 			}
 		}
 		System.setProperty("java.security.auth.login.config", jaasConfigFile );
@@ -67,4 +87,64 @@ public class Activator extends Plugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
+	
+	private void showInvalidInstallationMessage(String installLocation )
+	{
+		String message = MessageFormat.format( MISSING_JAAS_FILE_MESSAGE, installLocation );
+		String title = INSTALLATION_ERROR_TITLE;
+		
+		Display display = Display.getDefault();
+		 
+		MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null,
+				message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0) {
+
+			@Override
+			protected Control createCustomArea(Composite parent) {
+
+				Link link = new Link(parent, SWT.NONE);     
+				String message = INSTALL_LINK_MESSAGE;     
+				link.setText(message);    
+				link.setSize(400, 100);
+				link.addSelectionListener(new SelectionAdapter(){         
+					public void widgetSelected(SelectionEvent event) 
+					{                
+						openLinkInBrowser(event);
+					}
+
+				}); 
+
+				return link;
+
+			}}; 
+			dialog.open();
+	}
+
+	private void openLinkInBrowser(SelectionEvent event) {
+		URL url = getURL(event);
+		if ( url != null) {
+			openURL(url, event.display );
+		}
+	}
+
+	private URL getURL(SelectionEvent event) {
+		URL url = null;
+		try {
+			url = new URL(event.text);
+		} catch (MalformedURLException e) {
+			MessageDialog.openError(event.display.getActiveShell(), INSTALLATION_ERROR_TITLE, e
+					.getLocalizedMessage());
+		}
+		return url;
+	}
+
+	private void openURL(URL url, Display display) {
+		try {                 
+			PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser()
+					.openURL(url);               
+		}               
+		catch (PartInitException e) {                 
+			MessageDialog.openError(display.getActiveShell(), INSTALLATION_ERROR_TITLE, e
+					.getLocalizedMessage());
+		}              
+	}     
 }
