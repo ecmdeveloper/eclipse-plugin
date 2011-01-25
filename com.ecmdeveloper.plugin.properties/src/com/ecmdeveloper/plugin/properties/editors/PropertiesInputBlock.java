@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -40,7 +41,10 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 
@@ -52,10 +56,10 @@ import com.ecmdeveloper.plugin.properties.util.PluginLog;
 
 public class PropertiesInputBlock extends MasterDetailsBlock {
 
-	private static final String REFRESH_TOOL_TIP = "Refresh Property Values";
-	private static final String FILTER_TOOL_TIP = "Toggle Read Only Properties";
+	private static final String REFRESH_LABEL = "Refresh Property Values";
+	private static final String FILTER_LABEL = "Toggle Read Only Properties";
 	private static final String REFRESH_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.refreshProperties";
-	private static final String DESCRIPTION_TEXT = "Select a property from the list";
+	private static final String DESCRIPTION_TEXT = "To edit a value select a property from the list.";
 	private static final String TITLE_BAR_TEXT = "{0} Class Properties";
 	
 	private FormPage page;
@@ -77,13 +81,63 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = createSection(parent, toolkit);
-		createToolbar(section);
+		//createToolbar(section);
 		Composite client = createClient(toolkit, section);
+
+		Composite buttons = createLinksClient(client);
+		createToggleReadOnlyLink(toolkit, buttons);
+		createRefreshLink(toolkit, buttons);
+		
 		final SectionPart spart = new SectionPart(section);
 		Table table = createTable(toolkit, client);
 		managedForm.addPart(spart);
 		createTableViewer(managedForm, spart, table);
 		section.setClient(client);
+	}
+
+	private Composite createLinksClient(Composite client) {
+		Composite buttons = new Composite(client, SWT.NONE );
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.HORIZONTAL;
+		fillLayout.spacing = 10;
+		buttons.setLayout(fillLayout);
+		return buttons;
+	}
+
+	private void createToggleReadOnlyLink(FormToolkit toolkit, Composite client) {
+		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
+		link.setText(FILTER_LABEL);
+		link.setImage( Activator.getImage(IconFiles.READ_ONLY) );
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				performToggleReadOnly();
+			}
+	    });
+	}
+
+	protected void performToggleReadOnly() {
+		filterReadOnly = !filterReadOnly;
+		viewer.refresh();
+	}
+
+	private void createRefreshLink(FormToolkit toolkit, Composite client) {
+		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
+		link.setText(REFRESH_LABEL);
+		link.setImage( Activator.getImage(IconFiles.REFRESH) );
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				performRefresh();
+			}
+	    });
+	}
+	
+	protected void performRefresh() {
+		IHandlerService handlerService = (IHandlerService) page.getSite().getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(REFRESH_PROPERTIES_COMMAND_ID, null );
+		} catch (Exception exception) {
+			PluginLog.error( exception );
+		}
 	}
 
 	private void createToolbar(Section section) {
@@ -96,7 +150,7 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 	private void createFilterReadOnlyButton(ToolBar tbar) {
 		ToolItem titem = new ToolItem(tbar, SWT.CHECK );
         titem.setImage(Activator.getImage( IconFiles.READ_ONLY ));
-        titem.setToolTipText(FILTER_TOOL_TIP);
+        titem.setToolTipText(FILTER_LABEL);
         titem.setSelection( filterReadOnly );
         titem.addSelectionListener( new SelectionAdapter() {
 
@@ -112,18 +166,12 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 
 	private void createRefreshButton(ToolBar tbar) {
 		ToolItem titem = new ToolItem(tbar, SWT.PUSH );
-        titem.setToolTipText(REFRESH_TOOL_TIP);
+        titem.setToolTipText(REFRESH_LABEL);
         titem.addSelectionListener( new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
-				IHandlerService handlerService = (IHandlerService) page.getSite().getService(IHandlerService.class);
-				try {
-					handlerService.executeCommand(REFRESH_PROPERTIES_COMMAND_ID, null );
-				} catch (Exception exception) {
-					PluginLog.error( exception );
-				}
+				performRefresh();
 			}} 
         );
         titem.setImage(Activator.getImage( IconFiles.REFRESH ));
