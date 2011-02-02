@@ -18,14 +18,14 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.policies;
-
-import org.eclipse.gef.editpolicies.ComponentEditPolicy;
+package com.ecmdeveloper.plugin.search.model;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryComponentEditPolicy extends ComponentEditPolicy {
-
+public interface IQueryField {
+	public String getName();
+	public QueryFieldType getType();
+	
 }

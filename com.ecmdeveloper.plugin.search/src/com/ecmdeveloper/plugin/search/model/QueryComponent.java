@@ -18,39 +18,42 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.editor;
+package com.ecmdeveloper.plugin.search.model;
 
-import org.eclipse.gef.requests.CreationFactory;
+import java.io.IOException;
 
-import com.ecmdeveloper.plugin.search.model.QueryCondition;
+import org.eclipse.draw2d.geometry.Dimension;
+
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryComponentCreationFactory implements CreationFactory {
+public abstract class QueryComponent extends QuerySubpart{
 
-	private Class<?> template; 
-	
-	public QueryComponentCreationFactory(Class<?> template) { 
-		this.template = template; 
+	private static final long serialVersionUID = 1L;
+
+	private static int count;
+
+	public QueryComponent() {
+		super();
+		size.width = 200;
 	}
 	
-	@Override
-	public Object getNewObject() {
-		
-		if (template == null) {
-			return null;		
-		} else if ( template == QueryCondition.class ) {
-			
-		}
-			
-		// TODO Auto-generated method stub
-		return null;
+	protected String getNewID() {
+		return Integer.toString(count++);
 	}
 
-	@Override
-	public Object getObjectType() {
-		return template;
+	private void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
+		s.defaultReadObject();
+	}
+
+	public Dimension getSize() {
+		return new Dimension(size.width, -1);
+	}
+
+	public void setSize(Dimension d) {
+		d.height = -1;
+		super.setSize(d);
 	}
 }

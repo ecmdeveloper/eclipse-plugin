@@ -18,28 +18,34 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.commands;
-
-import org.eclipse.gef.commands.Command;
-
-import com.ecmdeveloper.plugin.search.model.QueryOperation;
+package com.ecmdeveloper.plugin.search.model;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryOperationCreateCommand extends Command {
+public class QueryField implements IQueryField {
 
-	private final QueryOperation queryOperation;
-	private final Object parent;
+	private final String name;
+	private final QueryFieldType queryFieldType;
 	
-	public QueryOperationCreateCommand(QueryOperation queryOperation, Object parent) {
-		this.queryOperation = queryOperation;
-		this.parent = parent;
+	public QueryField(String name, QueryFieldType queryFieldType) {
+		this.name = name;
+		this.queryFieldType = queryFieldType;
 	}
 
 	@Override
-	public void execute() {
+	public String getName() {
+		return name;
 	}
-	
+
+	@Override
+	public QueryFieldType getType() {
+		return queryFieldType;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

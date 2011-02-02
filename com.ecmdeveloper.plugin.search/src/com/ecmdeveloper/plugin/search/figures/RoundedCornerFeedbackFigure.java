@@ -18,12 +18,16 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model;
+package com.ecmdeveloper.plugin.search.figures;
 
 /**
  * @author ricardo.belfor
  *
  */
-public abstract class QueryBase {
+public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
 
+	public RoundedCornerFeedbackFigure() {
+//		this.setFill(false);
+//		this.setXOR(true);
+	}
 }

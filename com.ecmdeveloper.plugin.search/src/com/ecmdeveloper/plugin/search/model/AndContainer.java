@@ -24,19 +24,13 @@ package com.ecmdeveloper.plugin.search.model;
  * @author ricardo.belfor
  *
  */
-public class Query extends QueryBase {
-	
-	private QueryOperation queryOperation;
+public class AndContainer extends QueryContainer {
 
-	public Query() {
-		super();
-	}
+	private static final String AND_LABEL = "and";
+	private static final long serialVersionUID = 1L;
 
-	public QueryOperation getQueryOperation() {
-		return queryOperation;
-	}
-
-	public void setQueryOperation(QueryOperation queryOperation) {
-		this.queryOperation = queryOperation;
+	@Override
+	public String toString() {
+		return AND_LABEL;
 	}
 }
