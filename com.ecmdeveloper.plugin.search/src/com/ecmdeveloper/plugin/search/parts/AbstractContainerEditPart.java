@@ -20,34 +20,40 @@
 
 package com.ecmdeveloper.plugin.search.parts;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartFactory;
+import java.util.List;
 
-import com.ecmdeveloper.plugin.search.model.Query;
-import com.ecmdeveloper.plugin.search.model.QueryCondition;
-import com.ecmdeveloper.plugin.search.model.QueryOperation;
+import org.eclipse.gef.AccessibleEditPart;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+
+import com.ecmdeveloper.plugin.search.model.QueryDiagram;
+import com.ecmdeveloper.plugin.search.policies.AbstractContainerEditPolicy;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryEditPartFactory implements EditPartFactory {
+public abstract class AbstractContainerEditPart extends LogicEditPart {
 
-	@Override
-	public EditPart createEditPart(EditPart context, Object model) {
-
-		if ( model instanceof Query ) 
-			return new QueryEditPart((Query) model);
-		
-		if ( model instanceof QueryOperation ) 
-			return new QueryOperationEditPart((QueryOperation) model);
-		
-		if ( model instanceof QueryCondition ) 
-			return new QueryConditionEditPart((QueryCondition) model);
-
-		throw new IllegalStateException(
-				"Couldn't create an edit part for the model object: "
-						+ model.getClass().getName());
+	protected AccessibleEditPart createAccessible() {
+		return new AccessibleGraphicalEditPart(){
+			public void getName(AccessibleEvent e) {
+				e.result = getQueryDiagram().toString();
+			}
+		};
 	}
 
+	protected void createEditPolicies() {
+		super.createEditPolicies();
+		installEditPolicy(EditPolicy.CONTAINER_ROLE, new AbstractContainerEditPolicy());
+	}
+
+	protected QueryDiagram getQueryDiagram() {
+		return (QueryDiagram)getModel();
+	}
+
+	@SuppressWarnings("unchecked")
+	protected List getModelChildren() {
+		return getQueryDiagram().getChildren();
+	}
 }

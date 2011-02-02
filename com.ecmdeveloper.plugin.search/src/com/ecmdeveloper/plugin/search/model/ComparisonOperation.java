@@ -24,6 +24,54 @@ package com.ecmdeveloper.plugin.search.model;
  * @author ricardo.belfor
  *
  */
-public abstract class QueryPart extends QueryBase {
+public enum ComparisonOperation {
 
+	EQUAL("=") { 		
+		@Override
+		public String toString() {
+			return "Equals";
+		}
+		
+	},
+	NOT_EQUAL("<>") { 		
+		@Override
+		public String toString() {
+			return "Not Equals";
+		}
+	},
+	LESS("<") { 		
+		@Override
+		public String toString() {
+			return "Less";
+		}
+	},
+	LESS_OR_EQUAL("<=") { 		
+		@Override
+		public String toString() {
+			return "Less or Equal";
+		}
+	},
+	GREATER(">") { 		
+		@Override
+		public String toString() {
+			return "Greater";
+		}
+	},
+	GREATER_OR_EQUAL(">=") { 		
+		@Override
+		public String toString() {
+			return "Greater or Equal";
+		}
+	};
+
+	private String operation;
+
+	private ComparisonOperation(String operation) {
+		this.operation = operation;
+	}
+	
+	public String getOperation() {
+		return operation;
+	}
+	
 }

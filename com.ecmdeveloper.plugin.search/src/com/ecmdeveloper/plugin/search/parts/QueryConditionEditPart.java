@@ -1,14 +1,14 @@
 /**
  * Copyright 2011, Ricardo Belfor
  * 
- * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
- * is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
+ * free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * The ECM Developer plug-in is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * The ECM Developer plug-in is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
  * General Public License for more details.
  * 
@@ -20,46 +20,75 @@
 
 package com.ecmdeveloper.plugin.search.parts;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import java.beans.PropertyChangeEvent;
 
-import com.ecmdeveloper.plugin.search.figures.QueryConditionFigure;
-import com.ecmdeveloper.plugin.search.model.QueryCondition;
-import com.ecmdeveloper.plugin.search.policies.QueryComponentEditPolicy;
-import com.ecmdeveloper.plugin.search.policies.QueryLayoutEditPolicy;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef.AccessibleEditPart;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.RequestConstants;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+
+import com.ecmdeveloper.plugin.search.figures.TextFigure;
+import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.policies.QueryTextEditPolicy;
 
 /**
+ * 
  * @author ricardo.belfor
  *
  */
-public class QueryConditionEditPart extends QueryBaseEditPart {
-	
-	public QueryConditionEditPart(QueryCondition model) {
-		super();
-		setModel(model);
-	}
-	
-	public QueryCondition getQueryCondition() {
-		return (QueryCondition) getModel();
+public class QueryConditionEditPart extends LogicEditPart {
+
+	protected AccessibleEditPart createAccessible() {
+		return new AccessibleGraphicalEditPart() {
+			public void getValue(AccessibleControlEvent e) {
+				e.result = getLogicLabel().toString();
+			}
+
+			public void getName(AccessibleEvent e) {
+				e.result = "Label";
+			}
+		};
 	}
 
-	@Override
-	protected IFigure createFigure() {
-		QueryConditionFigure figure = new QueryConditionFigure();
-		return figure;
-	}
-
-	@Override
 	protected void createEditPolicies() {
-		installEditPolicy(EditPolicy.COMPONENT_ROLE, new QueryComponentEditPolicy() );
-		installEditPolicy(EditPolicy.LAYOUT_ROLE, new QueryLayoutEditPolicy() );	
+		super.createEditPolicies();
+		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, null);
+		// installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new
+		// LabelDirectEditPolicy());
+		installEditPolicy(EditPolicy.COMPONENT_ROLE, new QueryTextEditPolicy());
 	}
 
-	protected void refreshVisuals() { 
-		QueryConditionFigure figure = (QueryConditionFigure)getFigure();
-		figure.setLayout( new Rectangle(0,0,300, 30) );
-		figure.setName( this.toString() );
+	protected IFigure createFigure() {
+		TextFigure label = new TextFigure();
+		return label;
+	}
+
+	private Comparison getLogicLabel() {
+		return (Comparison) getModel();
+	}
+
+	private void performDirectEdit() {
+		// new LogicLabelEditManager(this,
+		// new LabelCellEditorLocator((StickyNoteFigure)getFigure())).show();
+	}
+
+	public void performRequest(Request request) {
+		if (request.getType() == RequestConstants.REQ_DIRECT_EDIT)
+			performDirectEdit();
+	}
+
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equalsIgnoreCase("labelContents"))//$NON-NLS-1$
+			refreshVisuals();
+		else
+			super.propertyChange(evt);
+	}
+
+	protected void refreshVisuals() {
+		((TextFigure) getFigure()).setText(getLogicLabel().toString());
+		super.refreshVisuals();
 	}
 }

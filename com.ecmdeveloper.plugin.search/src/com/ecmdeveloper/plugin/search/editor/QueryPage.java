@@ -20,33 +20,6 @@
 
 package com.ecmdeveloper.plugin.search.editor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.gef.EditDomain;
-import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
-import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
-import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.EditorPart;
-
-import com.ecmdeveloper.plugin.search.model.Query;
-import com.ecmdeveloper.plugin.search.model.QueryCondition;
-import com.ecmdeveloper.plugin.search.model.QueryOperation;
-import com.ecmdeveloper.plugin.search.model.QueryOperationType;
-import com.ecmdeveloper.plugin.search.parts.QueryEditPartFactory;
 
 /**
  * 

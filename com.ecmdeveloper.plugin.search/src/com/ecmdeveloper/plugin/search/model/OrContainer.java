@@ -20,39 +20,17 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryOperation extends QueryPart {
+public class OrContainer extends QueryContainer {
 
-	private ArrayList<QueryPart> queryParts;
-	private final QueryOperationType queryOperationType;
-	
-	public QueryOperation(QueryOperationType queryOperationType) {
-		super();
-		this.queryOperationType = queryOperationType;
-		queryParts = new ArrayList<QueryPart>();
-	}
-
-	public boolean add(QueryPart queryPart ) {
-		return queryParts.add(queryPart);
-	}
-	
-	public boolean remove(QueryPart queryPart ) {
-		return queryParts.remove(queryPart);
-	}
-
-	public Collection<QueryPart> getQueryParts()
-	{
-		return queryParts;
-	}
+	private static final String OR_LABEL = "or";
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String toString() {
-		return queryOperationType.toString();
+		return OR_LABEL;
 	}
 }
