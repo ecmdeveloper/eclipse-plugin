@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.text.MessageFormat;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
@@ -59,7 +60,7 @@ public class FetchObjectTask extends BaseTask {
 	}
 
 	@Override
-	public IObjectStoreItem call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		try {
 			com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore
@@ -82,5 +83,10 @@ public class FetchObjectTask extends BaseTask {
 				throw e;
 			}
 		}
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStore.getConnection();
 	}
 }

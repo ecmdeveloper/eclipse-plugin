@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
@@ -76,7 +77,7 @@ public class LoadChildrenTask extends BaseTask {
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
-	public String call() throws Exception {
+	protected Object execute() throws Exception {
 
 		try {
 			children = new ArrayList<IObjectStoreItem>();
@@ -152,5 +153,10 @@ public class LoadChildrenTask extends BaseTask {
 			return null;
 		}
 		return folder;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStoreItem.getObjectStore().getConnection();
 	}
 }

@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.constants.PropertyNames;
@@ -43,7 +44,7 @@ public class GetContentInfoTask  extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		com.filenet.api.core.Document internalDocument = (com.filenet.api.core.Document) document.getObjectStoreObject();
 		contentElementsMap.clear();
@@ -68,5 +69,10 @@ public class GetContentInfoTask  extends BaseTask {
 
 	public Map<String,Integer> getContentElementsMap() {
 		return contentElementsMap;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return document.getObjectStore().getConnection();
 	}
 }

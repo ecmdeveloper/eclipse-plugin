@@ -51,7 +51,7 @@ public class CreateFolderTask extends CreateTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		createNewFolder();
 		setProperties(newFolder);

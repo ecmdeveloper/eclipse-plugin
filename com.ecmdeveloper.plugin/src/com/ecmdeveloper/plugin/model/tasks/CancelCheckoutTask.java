@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.constants.RefreshMode;
 
@@ -33,8 +34,7 @@ public class CancelCheckoutTask extends DocumentTask {
 		super(document);
 	}
 
-	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		cancelCheckout();
 		getDocument().refresh();

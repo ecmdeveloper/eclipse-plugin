@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.io.InputStream;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.constants.PropertyNames;
@@ -52,7 +53,7 @@ public class GetContentTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		com.filenet.api.core.Document internalDocument = (com.filenet.api.core.Document) document.getObjectStoreObject();
 	
@@ -78,6 +79,11 @@ public class GetContentTask extends BaseTask {
 		}
 
 		return contentStream;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return document.getObjectStore().getConnection();
 	}
 
 }

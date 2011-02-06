@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.constants.AutoClassify;
@@ -55,7 +56,7 @@ public class UpdateCodeModuleTask extends CodeModuleTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		com.filenet.api.core.ObjectStore objectStoreObject = (com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
 		
@@ -75,5 +76,10 @@ public class UpdateCodeModuleTask extends CodeModuleTask {
 		reservation.save(RefreshMode.REFRESH);
 
 		return new CodeModule( versionSeries, objectStore, objectStore );
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStore.getConnection();
 	}
 }

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
@@ -53,7 +54,7 @@ public class GetDocumentVersionsTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		ObjectStore objectStore = document.getObjectStore();
 		com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
@@ -86,5 +87,10 @@ public class GetDocumentVersionsTask extends BaseTask {
 		propertyFilter.addIncludeProperty( new FilterElement(1, null, null, PropertyNames.MINOR_VERSION_NUMBER, null ) );
 
 		versionSeries.fetchProperties(propertyFilter);
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return document.getObjectStore().getConnection();
 	}
 }

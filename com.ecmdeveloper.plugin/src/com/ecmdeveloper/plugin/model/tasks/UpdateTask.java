@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
@@ -43,7 +44,7 @@ public class UpdateTask extends BaseTask {
 	}
 
 	@Override
-	public String call() throws Exception {
+	protected Object execute() throws Exception {
 
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
 			((ObjectStoreItem)objectStoreItem).save();
@@ -52,5 +53,13 @@ public class UpdateTask extends BaseTask {
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 		
 		return null;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		if ( objectStoreItems.length == 0) {
+			throw new IllegalArgumentException();
+		}
+		return objectStoreItems[0].getObjectStore().getConnection();
 	}
 }

@@ -41,8 +41,7 @@ public class CheckoutTask extends DocumentTask {
 		return checkoutDocument;
 	}
 
-	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		com.filenet.api.core.Document currentVersion = getCurrentVersion();
 		currentVersion.checkout( ReservationType.EXCLUSIVE, null, null, null);
