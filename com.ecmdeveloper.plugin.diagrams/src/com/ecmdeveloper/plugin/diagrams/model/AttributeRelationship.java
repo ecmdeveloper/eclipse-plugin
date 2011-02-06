@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.diagrams.model;
 
 import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.constants.DeletionAction;
 import com.filenet.api.meta.ClassDescription;
 import com.filenet.api.meta.PropertyDescriptionObject;
@@ -41,9 +42,9 @@ public class AttributeRelationship extends ClassDiagramBase {
 	private ClassConnector targetConnector;
 	private boolean active;
 	
-	public AttributeRelationship(PropertyDescriptionObject targetPropertyDescription, ClassDiagramClass parent ) throws Exception {
+	public AttributeRelationship(PropertyDescriptionObject targetPropertyDescription, ClassDiagramClass parent, ObjectStore objectStore ) throws Exception {
 
-		GetRequiredClassDescription task = new GetRequiredClassDescription( targetPropertyDescription );
+		GetRequiredClassDescription task = new GetRequiredClassDescription( targetPropertyDescription, objectStore );
 		ClassesManager.getManager().executeTaskSync( task );
 		ClassDescription requiredClass = task.getRequiredClass(); 
 		PropertyDescriptionObject sourcePropertyDescription = task.getReflectivePropertyDescription();

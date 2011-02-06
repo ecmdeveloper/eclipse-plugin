@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.classes.model.Choice;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 import com.filenet.api.admin.ChoiceList;
@@ -37,17 +39,20 @@ public class GetChoiceValuesTask extends BaseTask {
 	private Choice parentChoice;
 	public ChoiceList choiceList;
 	private ArrayList<Choice> choices;
+	private final ObjectStore objectStore;
 	
-	public GetChoiceValuesTask(Choice parentChoice) {
+	public GetChoiceValuesTask(Choice parentChoice, ObjectStore objectStore) {
 		this.parentChoice = parentChoice;
+		this.objectStore = objectStore;
 	}
 
-	public GetChoiceValuesTask(ChoiceList choiceList) {
+	public GetChoiceValuesTask(ChoiceList choiceList, ObjectStore objectStore) {
 		this.choiceList = choiceList;
+		this.objectStore = objectStore;
 	}
 	
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		Iterator<?> iterator = getChoiceValuesIterator();
 		choices = getChoices(iterator);
@@ -65,7 +70,7 @@ public class GetChoiceValuesTask extends BaseTask {
 
 		while (iterator.hasNext()) {
 			com.filenet.api.admin.Choice internalChildChoice = (com.filenet.api.admin.Choice) iterator.next();
-			choices.add( new Choice( internalChildChoice, parentChoice ) );
+			choices.add( new Choice( internalChildChoice, parentChoice, objectStore ) );
 		}
 		return choices;
 	}
@@ -83,5 +88,10 @@ public class GetChoiceValuesTask extends BaseTask {
 			throw new UnsupportedOperationException();
 		}
 		return iterator;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStore.getConnection();
 	}
 }

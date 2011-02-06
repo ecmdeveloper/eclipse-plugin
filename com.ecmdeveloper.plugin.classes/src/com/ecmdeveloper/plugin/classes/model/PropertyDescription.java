@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Platform;
 
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.classes.model.task.GetChoiceValuesTask;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.model.tasks.TaskListener;
 import com.filenet.api.admin.ChoiceList;
@@ -79,8 +80,10 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 	private boolean settableOnCheckIn;
 	private boolean settableOnEdit;
 	private Boolean systemOwned;
+	private final ObjectStore objectStore;
 	
-	public PropertyDescription(Object internalPropertyDescription) {
+	public PropertyDescription(Object internalPropertyDescription, ObjectStore objectStore ) {
+		this.objectStore = objectStore;
 		this.propertyDescription = (com.filenet.api.meta.PropertyDescription) internalPropertyDescription;
 		name = propertyDescription.get_SymbolicName();
 		displayName = propertyDescription.get_DisplayName();
@@ -100,6 +103,10 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 		settableOnEdit = settability.equals( PropertySettability.READ_WRITE );
 		settableOnCheckIn = settability.equals( PropertySettability.SETTABLE_ONLY_BEFORE_CHECKIN );
 		settableOnCreate = settability.equals( PropertySettability.SETTABLE_ONLY_ON_CREATE );
+	}
+
+	public ObjectStore getObjectStore() {
+		return objectStore;
 	}
 
 	public String getName() {
@@ -168,7 +175,7 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 			choices = new ArrayList<Choice>();
 			choices.add( new ChoicePlaceholder() );
 			
-			GetChoiceValuesTask task = new GetChoiceValuesTask(choiceList);
+			GetChoiceValuesTask task = new GetChoiceValuesTask(choiceList, objectStore);
 			task.addTaskListener(this);
 			ClassesManager.getManager().executeTaskASync(task);
 		}

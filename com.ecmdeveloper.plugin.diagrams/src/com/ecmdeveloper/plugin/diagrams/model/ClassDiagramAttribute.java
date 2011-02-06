@@ -76,7 +76,8 @@ public class ClassDiagramAttribute {
 			PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
 			try {
 				// TODO: make this asynchronous?
-				GetRequiredClassDescription task = new GetRequiredClassDescription( objectPropertyDescription );
+				GetRequiredClassDescription task = new GetRequiredClassDescription(
+						objectPropertyDescription, propertyDescription.getObjectStore());
 				ClassesManager.getManager().executeTaskSync( task );
 				com.filenet.api.meta.ClassDescription requiredClass = task.getRequiredClass();
 				this.type = requiredClass.get_SymbolicName();

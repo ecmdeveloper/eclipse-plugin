@@ -25,6 +25,7 @@ import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.Placeholder;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 import com.filenet.api.collection.ClassDescriptionSet;
@@ -57,7 +58,7 @@ public class GetChildClassDescriptionsTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		getImmediateSubclassDescriptions();
 		fireTaskCompleteEvent(TaskResult.COMPLETED);
 		return null;
@@ -89,5 +90,10 @@ public class GetChildClassDescriptionsTask extends BaseTask {
 		oldChildren = parent.getChildren();
 		parent.setChildren( children );
 
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return parent.getObjectStore().getConnection();
 	}
 }

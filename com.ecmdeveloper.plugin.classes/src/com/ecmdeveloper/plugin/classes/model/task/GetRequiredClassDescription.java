@@ -22,6 +22,8 @@ package com.ecmdeveloper.plugin.classes.model.task;
 
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.filenet.api.meta.ClassDescription;
 import com.filenet.api.meta.PropertyDescription;
@@ -37,13 +39,15 @@ public class GetRequiredClassDescription extends BaseTask {
 	private PropertyDescriptionObject propertyDescription;
 	private PropertyDescriptionObject reflectivePropertyDescription;
 	private ClassDescription requiredClass;
+	private final ObjectStore objectStore;
 
-	public GetRequiredClassDescription(PropertyDescriptionObject propertyDescription) {
+	public GetRequiredClassDescription(PropertyDescriptionObject propertyDescription, ObjectStore objectStore) {
 		this.propertyDescription = propertyDescription;
+		this.objectStore = objectStore;
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		requiredClass = propertyDescription.get_RequiredClass();
 		
@@ -68,6 +72,11 @@ public class GetRequiredClassDescription extends BaseTask {
 
 	public ClassDescription getRequiredClass() {
 		return requiredClass;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStore.getConnection();
 	}
 }
 	

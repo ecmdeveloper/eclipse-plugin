@@ -6,7 +6,7 @@ import java.util.Collection;
 public class ChoicePlaceholder extends Choice {
 
 	public ChoicePlaceholder() {
-		super(null,null);
+		super(null,null,null);
 	}
 
 	@Override
