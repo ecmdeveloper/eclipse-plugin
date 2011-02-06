@@ -12,6 +12,8 @@
 <!--#include virtual="/header.shtml" -->
 <div id="content">
 
+	<div id="left">
+
 	<h2>Editing Content</h2>
 	The content of a document can be edited using the checkout and the checking commands. If the content of the
 	document is saved to the Workspace then the document can be tracked. In this case the document is coupled to
@@ -77,11 +79,6 @@
 	The checkout of document can be canceled using the <strong>Cancel Checkout</strong> command of the context menu.
 	</p>
 		
-	</div>
-	<div id="right">
-		<!--#include virtual="/navigation.shtml" -->
-	</div>
-	
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->

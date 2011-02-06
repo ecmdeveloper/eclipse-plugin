@@ -34,7 +34,8 @@
 					ECM Developer is an open source Eclipse plug in aimed at supporting the development of applications using the 
 					IBM FileNet P8 Content Engine. It approaches the system from a developers point of view and tries to find solutions 
 					for day to day tasks. The project is hosted on <a href="http://sourceforge.net/projects/ecmdeveloper">sourceforge.net</a> 
-					and the plug in can be downloaded <a href="http://sourceforge.net/projects/ecmdeveloper/files/">here</a>.
+					and the plug in can be downloaded <a href="http://sourceforge.net/projects/ecmdeveloper/files/">here</a> or by using
+					the Eclipse update site <strong>http://www.ecmdeveloper.com/update</strong>
 				</p>
 			 	
 				<h2>Features</h2>
@@ -86,6 +87,10 @@
 		<div id="secondaryContent">
 
 			<h2>News</h2>
+
+			<p><strong>[2/6/2011]</strong><p>Version 1.4.0 of the ECM Developer plug-in is available for download. New in this 
+			version is the ability to create objects, a simplified code module editor and a favorites view. 
+			The full list of changes can be found here <a href='version_history.shtml'>here</a>.<br/></p>
 			
 			<p><strong>[7/26/2010]</strong><p>Version 1.3.0 of the ECM Developer plug-in is available for download. This version
 			adds a lot of actions on the document content, such as viewing, editing, downloading and comparing. 
@@ -95,11 +100,13 @@
 			has Content Engine 4.5.1. support. A new feature is the <a href="editing_class_diagrams.shtml">class diagram editor</a>. 
 			The rest of the changes are described <a href='version_history.shtml'>here</a>.<br/></p>
 			
+			<!--
 			<p><strong>[3/5/2010]</strong><p>Version 1.1.0 of the ECM Developer plug-in is available for download. A new
 			feature is the <a href="editing_objects.shtml">properties editor</a>. The rest of the changes are
 			described <a href='version_history.shtml'>here</a>.<br/></p>
 			
 			<p><strong>[12/20/2009]</strong><p>The first version of the ECM Developer plug-in is available for download.</p>
+			-->
 							
 		</div>
 		<div class="clear"></div>
