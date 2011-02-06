@@ -31,6 +31,7 @@ import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.model.AndContainer;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.policies.ContainerHighlightEditPolicy;
+import com.ecmdeveloper.plugin.search.policies.QueryCommandFactory;
 import com.ecmdeveloper.plugin.search.policies.QueryContainerEditPolicy;
 
 
@@ -44,7 +45,7 @@ public class QueryContainerEditPart extends AbstractContainerEditPart {
 		super.createEditPolicies();
 		installEditPolicy(EditPolicy.NODE_ROLE, null);
 		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, null);
-		installEditPolicy(EditPolicy.LAYOUT_ROLE, new QueryContainerEditPolicy());
+		installEditPolicy(EditPolicy.LAYOUT_ROLE, new QueryContainerEditPolicy( new QueryCommandFactory() ));
 		installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new ContainerHighlightEditPolicy());
 	}
 

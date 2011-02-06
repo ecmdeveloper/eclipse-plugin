@@ -18,16 +18,34 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.figures;
+package com.ecmdeveloper.plugin.search.model;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
+public class QueryTable implements IQueryTable {
 
-	public RoundedCornerFeedbackFigure() {
-		super();
-		setFill(false);
+	private ArrayList<IQueryField> fields;
+
+	@Override
+	public Collection<IQueryField> getQueryFields() {
+		if ( fields == null) {
+			fields = createMockFields();
+		}
+		return fields;
+	}
+	
+	protected ArrayList<IQueryField> createMockFields() {
+		ArrayList<IQueryField> fields = new ArrayList<IQueryField>();
+		for (int i = 0; i < 10; i++) {
+			QueryField queryField = new QueryField("Field " + i , QueryFieldType.STRING );
+			fields.add(queryField);
+		}
+		return fields;
 	}
 }
+

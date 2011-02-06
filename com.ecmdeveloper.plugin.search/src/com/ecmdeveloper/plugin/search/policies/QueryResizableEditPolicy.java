@@ -31,6 +31,7 @@ import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 
 import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.figures.QueryContainerFeedbackFigure;
+import com.ecmdeveloper.plugin.search.figures.RoundedCornerFeedbackFigure;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 
@@ -48,6 +49,7 @@ public class QueryResizableEditPolicy extends ResizableEditPolicy {
 		return figure;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected IFigure createFigure(GraphicalEditPart part, IFigure parent) {
 
 		IFigure child = getCustomFeedbackFigure(part.getModel());
@@ -78,11 +80,11 @@ public class QueryResizableEditPolicy extends ResizableEditPolicy {
 		
 		IFigure figure;
 
-		if (modelPart instanceof QueryContainer)
+		if (modelPart instanceof QueryContainer) {
 			figure = new QueryContainerFeedbackFigure();
-//		else if (modelPart instanceof Comparison)
-//		 figure = new LabelFeedbackFigure();
-		else {
+		} else if (modelPart instanceof Comparison) {
+			figure = new RoundedCornerFeedbackFigure();
+		}else {
 			figure = new RectangleFigure();
 			((RectangleFigure) figure).setXOR(true);
 			((RectangleFigure) figure).setFill(true);

@@ -18,16 +18,16 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.figures;
+package com.ecmdeveloper.plugin.search.model;
+
+import java.util.Collection;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
+public interface IQueryTable {
 
-	public RoundedCornerFeedbackFigure() {
-		super();
-		setFill(false);
-	}
+	public Collection<IQueryField> getQueryFields();
+	
 }

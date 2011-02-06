@@ -18,16 +18,30 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.figures;
+package com.ecmdeveloper.plugin.search.editor;
+
+import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
+public class QueryContextMenuManager  extends MenuManager {
 
-	public RoundedCornerFeedbackFigure() {
-		super();
-		setFill(false);
+	private ActionRegistry actionRegistry;
+
+	public QueryContextMenuManager(ActionRegistry actionRegistry) {
+		this.actionRegistry = actionRegistry;
+		
+		add( getAction(ActionFactory.UNDO.getId() ) );
+		add( getAction(ActionFactory.REDO.getId() ) );
+		add( getAction(ActionFactory.DELETE.getId() ) );
+	}
+
+	private IAction getAction(String actionId) {
+		return actionRegistry.getAction(actionId);
 	}
 }

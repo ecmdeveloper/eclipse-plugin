@@ -35,11 +35,13 @@ public class RoundedCornerFigure extends Figure {
 	protected static int DEFAULT_CORNER_SIZE = 10;
 
 	private int cornerSize;
-
+	private boolean fill;
+	
 	public RoundedCornerFigure() {
 		setBackgroundColor(ColorConstants.tooltipBackground);
 		setForegroundColor(ColorConstants.tooltipForeground);
 		setCornerSize(DEFAULT_CORNER_SIZE);
+		setFill(true);
 	}
 
 	public int getCornerSize() {
@@ -56,9 +58,19 @@ public class RoundedCornerFigure extends Figure {
 		graphics.translate(getLocation());
 
 		Rectangle roundRectangle = new Rectangle(1,1, rect.width-3, rect.height-3);
-		graphics.fillRoundRectangle(roundRectangle, cornerSize,cornerSize );
+		if ( fill )
+		{
+			graphics.fillRoundRectangle(roundRectangle, cornerSize,cornerSize );
+		}
 		graphics.drawRoundRectangle(roundRectangle, cornerSize,cornerSize );
-
 		graphics.translate(getLocation().getNegated());
+	}
+
+	public void setFill(boolean fill) {
+		this.fill = fill;
+	}
+
+	public boolean isFill() {
+		return fill;
 	}
 }

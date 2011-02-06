@@ -20,7 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -47,7 +47,7 @@ public class QueryFieldWizardPage extends WizardPage {
 	private static final String DESCRIPTION = "Select the desired query field.";
 
 	private TableViewer contentTable;
-	private ArrayList<IQueryField> content;
+	private Collection<IQueryField> content;
 	private IQueryField field;
 	
 	protected QueryFieldWizardPage() {
@@ -90,7 +90,7 @@ public class QueryFieldWizardPage extends WizardPage {
 			}} );
 	}
 
-	public void setContent(ArrayList<IQueryField> fields) {
+	public void setContent(Collection<IQueryField> fields) {
 		this.content = fields;
 	}
 

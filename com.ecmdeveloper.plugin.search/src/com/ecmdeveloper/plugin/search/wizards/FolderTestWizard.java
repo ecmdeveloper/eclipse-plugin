@@ -18,16 +18,34 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.figures;
+package com.ecmdeveloper.plugin.search.wizards;
+
+import java.util.ArrayList;
+
+import com.ecmdeveloper.plugin.search.model.IQueryField;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
+public class FolderTestWizard extends QueryComponentWizard {
 
-	public RoundedCornerFeedbackFigure() {
-		super();
-		setFill(false);
+	private String folder = "/Animals/Fish";
+	
+	public FolderTestWizard(ArrayList<IQueryField> fields) {
+		super(fields);
+	}
+
+	@Override
+	public boolean performFinish() {
+		return true;
+	}
+
+	public void setFolder(String folder) {
+		this.folder = folder;
+	}
+
+	public String getFolder() {
+		return folder;
 	}
 }

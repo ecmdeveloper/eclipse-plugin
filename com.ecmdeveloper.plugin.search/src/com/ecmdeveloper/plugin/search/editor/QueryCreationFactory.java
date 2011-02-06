@@ -18,16 +18,41 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.figures;
+package com.ecmdeveloper.plugin.search.editor;
+
+import java.lang.reflect.Constructor;
+
+import org.eclipse.gef.requests.CreationFactory;
+
+import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
+public class QueryCreationFactory implements CreationFactory {
 
-	public RoundedCornerFeedbackFigure() {
-		super();
-		setFill(false);
+	private Class<? extends QueryElement> type;
+	private final Query query;
+
+	public QueryCreationFactory(Query query, Class<? extends QueryElement> type) {
+		this.query = query;
+		this.type = type;
+	}
+	
+	@Override
+	public Object getNewObject() {
+		try {
+			Constructor<? extends QueryElement> constructor = type.getConstructor( Query.class );
+			return constructor.newInstance(query);
+		} catch (Exception exc) {
+			return null;
+		}
+	}
+
+	@Override
+	public Object getObjectType() {
+		return type;
 	}
 }

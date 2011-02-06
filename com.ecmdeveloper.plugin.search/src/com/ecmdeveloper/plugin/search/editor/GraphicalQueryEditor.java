@@ -22,8 +22,6 @@ package com.ecmdeveloper.plugin.search.editor;
 
 import java.util.EventObject;
 
-import javax.management.Query;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
@@ -38,16 +36,25 @@ import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionFactory;
 
 import com.ecmdeveloper.plugin.search.dnd.TextTransferDropTargetListener;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.parts.GraphicalPartFactory;
 
@@ -57,7 +64,8 @@ import com.ecmdeveloper.plugin.search.parts.GraphicalPartFactory;
  */
 public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 
-	private QueryDiagram logicDiagram = new QueryDiagram();
+	private Query query = new Query();
+	private TableViewer tableViewer;
 	private PaletteRoot root;
 
 	public GraphicalQueryEditor() {
@@ -69,11 +77,12 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 		super.commandStackChanged(event);
 	}
 
-//	public void createPartControl(Composite parent) {
-//		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
-//		super.createPartControl(sashForm);
+	public void createPartControl(Composite parent) {
+		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		super.createPartControl(sashForm);
 //		createLabel(sashForm, "Hello, Editor 2!");
-//	}	
+		createTableViewer( sashForm);
+	}	
 
 	private void createLabel(Composite container, String text) {
 		final Label label = new Label(container, SWT.BORDER);
@@ -81,23 +90,40 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 		label.setLayoutData(gridData);
 		label.setText(text);
 	}
+
+	private void createTableViewer(Composite parent) {
+
+		tableViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
+				| SWT.FULL_SELECTION | SWT.BORDER);
+
+		final Table table = tableViewer.getTable();
+		TableColumnLayout layout = new TableColumnLayout();
+		parent.setLayout(layout);
+
+		TableColumn typeColumn = new TableColumn(table, SWT.LEFT);
+		typeColumn.setText("");
+		layout.setColumnData(typeColumn, new ColumnPixelData(18));
+
+		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
+		nameColumn.setText("Name");
+		layout.setColumnData(nameColumn, new ColumnWeightData(1));
+
+		TableColumn objectStoreColumn = new TableColumn(table, SWT.LEFT);
+		objectStoreColumn.setText("Object Store");
+		layout.setColumnData(objectStoreColumn, new ColumnWeightData(1));
+
+		table.setHeaderVisible(true);
+		table.setLinesVisible(false);
+
+		// viewer.setContentProvider( new CodeModulesViewContentProvider() );
+		// viewer.setLabelProvider( new CodeModulesViewLabelProvider() );
+		// viewer.setInput( CodeModulesManager.getManager() );
+
+		getSite().setSelectionProvider(tableViewer);
+	}
 	
 	@Override
 	protected PaletteRoot getPaletteRoot() {
-		
-//		PaletteRoot root = new PaletteRoot();
-//		
-//		PaletteGroup instGroup = new PaletteGroup("Creation d'elemnts"); 
-//		root.add(instGroup);		
-//		
-//		instGroup.add(new CreationToolEntry("Condition", "Creation of a condition",
-//				new SimpleFactory(QueryCondition.class)
-//				/*new QueryComponentCreationFactory(QueryCondition.class)*/, null, null));
-//		instGroup.add(new CreationToolEntry("Operation", "Creation of an operation",
-//				new SimpleFactory(QueryOperation.class)
-//				/*new QueryComponentCreationFactory(QueryOperation.class)*/, null, null));
-//		return root;
-		
 		if( root == null ){
 			root = QueryPaletteFactory.createPalette();
 		}
@@ -108,24 +134,25 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
 		GraphicalViewer viewer = configureViewer();
-		
-		
-//		configureContextMenu(viewer);
+		configureContextMenu(viewer);
 	}
-
+	
 	private GraphicalViewer configureViewer() {
 		GraphicalViewer viewer = getGraphicalViewer();
-//	    viewer.setEditPartFactory(new QueryEditPartFactory() );
-		
 		viewer.setEditPartFactory(new GraphicalPartFactory());
 	    viewer.setRootEditPart(new ScalableFreeformRootEditPart());
 		return viewer;
 	}
 
+	private void configureContextMenu(GraphicalViewer viewer) {
+		MenuManager menuManager = new QueryContextMenuManager( getActionRegistry() );
+		viewer.setContextMenu( menuManager );
+	}
+
 	@Override
 	protected void initializeGraphicalViewer() {
 		GraphicalViewer viewer = getGraphicalViewer();
-		viewer.setContents(/*createMockModel()*/ getLogicDiagram() );
+		viewer.setContents(/*createMockModel()*/ getQueryDiagram() );
 //		viewer.addDropTargetListener(createTransferDropTargetListener());
 //		viewer.addDropTargetListener((TransferDropTargetListener)
 //				new TemplateTransferDropTargetListener(getGraphicalViewer()));
@@ -183,17 +210,15 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 //		};
 //	}
 
-	protected QueryDiagram getLogicDiagram() {
-		return logicDiagram;
+	protected QueryDiagram getQueryDiagram() {
+		return query.getQueryDiagram();
 	}
 
 	@Override
 	protected void createActions() {
 		super.createActions();
 		ActionRegistry registry = getActionRegistry();
-		IAction action;
-		
-		action = new CopyTemplateAction(this);
+		IAction action = new CopyTemplateAction(this);
 		registry.registerAction(action);
 	}
 }

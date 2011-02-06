@@ -34,10 +34,19 @@ public abstract class QueryComponent extends QuerySubpart{
 	private static final long serialVersionUID = 1L;
 
 	private static int count;
+	private IQueryField field;
 
-	public QueryComponent() {
-		super();
+	public QueryComponent(Query query) {
+		super(query);
 		size.width = 200;
+	}
+
+	public void setField(IQueryField queryField) {
+		this.field = queryField;
+	}
+
+	public IQueryField getField() {
+		return field;
 	}
 	
 	protected String getNewID() {

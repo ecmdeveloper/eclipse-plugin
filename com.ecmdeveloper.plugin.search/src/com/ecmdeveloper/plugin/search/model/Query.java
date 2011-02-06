@@ -18,16 +18,39 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.figures;
+package com.ecmdeveloper.plugin.search.model;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
+public class Query {
 
-	public RoundedCornerFeedbackFigure() {
-		super();
-		setFill(false);
+	private ArrayList<QueryTable> queryTables = new ArrayList<QueryTable>();
+	private QueryDiagram queryDiagram;
+	
+	public Query() {
+		queryDiagram = new QueryDiagram(this);
+		add( new QueryTable() );
 	}
+	public Collection<QueryTable> getQueryTables() {
+		return queryTables;
+	}
+	
+	public void add(QueryTable queryTable) {
+		queryTables.add(queryTable);
+	}
+	
+	public void remove(QueryTable queryTable) {
+		queryTables.remove(queryTable);
+	}
+	
+	public QueryDiagram getQueryDiagram() {
+		return queryDiagram;
+	}
+	
+	
 }

@@ -28,6 +28,10 @@ package com.ecmdeveloper.plugin.search.model;
  */
 public abstract class QueryContainer extends QueryDiagram {
 
+	public QueryContainer(Query query) {
+		super(query);
+	}
+
 	private static final long serialVersionUID = 1L;
 
 }

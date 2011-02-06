@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.search.parts;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 
+import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.Comparison;
@@ -38,12 +39,18 @@ public class GraphicalPartFactory implements EditPartFactory {
 
 		if (model instanceof QueryContainer) {
 			child = new QueryContainerEditPart();
-		} else if (model instanceof Comparison) {
-			child = new QueryConditionEditPart();
+		} else if (model instanceof QueryComponent) {
+			child = new QueryComponentEditPart();
 		} else if (model instanceof QueryDiagram) {
 			child = new QueryDiagramEditPart();
 		}
+		
+		if ( child == null ) {
+			throw new IllegalStateException("Couldn't create an edit part for the model object: "
+					+ model.getClass().getName());
+		}
 		child.setModel(model);
 		return child;
+
 	}
 }

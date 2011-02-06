@@ -25,29 +25,28 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.Comparison;
-import com.ecmdeveloper.plugin.search.model.QueryTable;
-import com.ecmdeveloper.plugin.search.wizards.ComparisonWizard;
+import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.QueryComponent;
+import com.ecmdeveloper.plugin.search.wizards.NullTestWizard;
 
 /**
  * @author ricardo.belfor
- * 
+ *
  */
-public class CreateComparisonCommand extends CreateCommand {
+public class CreateNullTestCommand extends CreateCommand {
 
 	@Override
 	public void execute() {
 
 		Shell shell = Display.getCurrent().getActiveShell();
-
-		QueryTable queryTable = child.getQuery().getQueryTables().iterator().next();
-		ComparisonWizard wizard = new ComparisonWizard( queryTable.getQueryFields() );
+		
+		NullTestWizard wizard = new NullTestWizard(createMockFields());
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {
-			((Comparison)child).setField( wizard.getField() );
-			((Comparison)child).setComparisonOperation( wizard.getComparisonOperation() );
+			((QueryComponent)child).setField( wizard.getField() );
+			((NullTest)child).setNegated( wizard.isNegated() );
 			super.execute();
 		}
-	}
+	}	
 }

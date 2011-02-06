@@ -48,7 +48,9 @@ public class QueryDiagram extends QuerySubpart {
 	private boolean gridEnabled = false;
 	private double zoom = 1.0;
 
-	public QueryDiagram() {
+	public QueryDiagram(Query query) {
+		super(query);
+		
 		size.width = 400;
 		size.height = 100;
 		location.x = 20;
