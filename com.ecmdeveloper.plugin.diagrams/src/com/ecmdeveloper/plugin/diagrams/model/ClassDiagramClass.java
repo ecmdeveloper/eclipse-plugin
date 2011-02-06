@@ -125,7 +125,7 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		.getAdapter(com.filenet.api.meta.PropertyDescription.class );
 		PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
 		try {
-			AttributeRelationship attributeRelationship = new AttributeRelationship(objectPropertyDescription,this);
+			AttributeRelationship attributeRelationship = new AttributeRelationship(objectPropertyDescription,this, propertyDescription.getObjectStore() );
 			sourceRelations.add(attributeRelationship);
 		} catch (Exception e) {
 			PluginLog.error(e);

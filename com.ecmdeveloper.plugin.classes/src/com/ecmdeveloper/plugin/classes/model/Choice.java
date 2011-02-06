@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import com.ecmdeveloper.plugin.classes.model.task.GetChoiceValuesTask;
 import com.ecmdeveloper.plugin.classes.util.PluginLog;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.constants.ChoiceType;
 
 /**
@@ -36,8 +37,10 @@ public class Choice {
 	private com.filenet.api.admin.Choice internalChoice;
 	private Choice parent;
 	private ArrayList<Choice> choices;
+	private final ObjectStore objectStore;
 	
-	public Choice(Object internalChoice, Choice parent) {
+	public Choice(Object internalChoice, Choice parent, ObjectStore objectStore) {
+		this.objectStore = objectStore;
 		if ( internalChoice != null ) {
 			this.internalChoice = (com.filenet.api.admin.Choice) internalChoice;
 			this.parent = parent;
@@ -48,7 +51,7 @@ public class Choice {
 		if ( isMidNode() ) {
 			
 			if ( choices == null ) {
-				GetChoiceValuesTask task = new GetChoiceValuesTask(this);
+				GetChoiceValuesTask task = new GetChoiceValuesTask(this, objectStore);
 				try {
 					choices = (ArrayList<Choice>) ClassesManager.getManager().executeTaskSync(task);
 				} catch (Exception e) {

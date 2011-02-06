@@ -152,7 +152,7 @@ public class ClassDescription implements IAdaptable {
 				
 				if (  ! internalPropertyDescription.get_IsHidden()) {
 //					System.out.println( "Adding " + internalPropertyDescription.get_Name() );
-					propertyDescriptions.add( new PropertyDescription(internalPropertyDescription) );
+					propertyDescriptions.add( new PropertyDescription(internalPropertyDescription, objectStore) );
 				} else {
 //					if ( internalPropertyDescription.get_IsHidden() ) {
 //						System.out.println( "Skipping hidden " + internalPropertyDescription.get_Name() );

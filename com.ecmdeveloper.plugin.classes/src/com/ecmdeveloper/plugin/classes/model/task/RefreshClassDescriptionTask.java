@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.classes.model.task;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.util.PluginLog;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 
@@ -42,7 +43,7 @@ public class RefreshClassDescriptionTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		for (ClassDescription classDescription: classDescriptions) {
 			try {
@@ -55,5 +56,13 @@ public class RefreshClassDescriptionTask extends BaseTask {
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 
 		return null;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		if ( classDescriptions.length == 0) {
+			throw new IllegalArgumentException();
+		}
+		return classDescriptions[0].getObjectStore().getConnection();
 	}
 }

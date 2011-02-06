@@ -24,6 +24,7 @@ import java.util.Collection;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.VirtualFolder;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.model.tasks.TaskResult;
@@ -66,7 +67,7 @@ public class GetClassDescriptionTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		com.filenet.api.core.ObjectStore objectStoreObject = 
 			(com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
@@ -103,5 +104,10 @@ public class GetClassDescriptionTask extends BaseTask {
 		childObjects.addAll(children);
 		((VirtualFolder)parent).setChildren( ( childObjects ) );
 		return oldChildren;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStore.getConnection();
 	}
 }
