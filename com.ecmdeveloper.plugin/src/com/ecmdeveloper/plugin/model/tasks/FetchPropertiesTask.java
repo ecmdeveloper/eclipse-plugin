@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.filenet.api.core.IndependentlyPersistableObject;
 
@@ -37,12 +38,17 @@ public class FetchPropertiesTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		IndependentlyPersistableObject objectStoreObject = objectStoreItem.getObjectStoreObject();
 		objectStoreObject.refresh(propertyNames);
 		//objectStoreObject.fetchProperties(propertyNames);
 
 		return null;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStoreItem.getObjectStore().getConnection();
 	}
 }

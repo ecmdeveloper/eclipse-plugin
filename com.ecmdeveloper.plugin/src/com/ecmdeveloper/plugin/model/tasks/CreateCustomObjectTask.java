@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
@@ -47,7 +48,7 @@ public class CreateCustomObjectTask extends CreateTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		createCustomObject();
 		setProperties(newCustomObject);

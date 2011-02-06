@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.collection.CodeModuleSet;
 import com.filenet.api.constants.PropertyNames;
@@ -56,7 +57,7 @@ public class GetCodeModulesTask extends BaseTask {
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		SearchScope scope = new SearchScope((com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject() );
 		String query = "Select This From CodeModule WHERE IsCurrentVersion = TRUE"; //$NON-NLS-1$
@@ -72,5 +73,10 @@ public class GetCodeModulesTask extends BaseTask {
 		}
 		
 		return codeModules;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStore.getConnection();
 	}
 }

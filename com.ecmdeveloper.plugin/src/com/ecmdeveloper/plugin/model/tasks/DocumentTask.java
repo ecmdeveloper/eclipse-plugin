@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.VersionSeries;
@@ -69,5 +70,10 @@ public abstract class DocumentTask extends BaseTask {
 		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
 		VersionSeries versionSeries = internalDocument.get_VersionSeries();
 		return versionSeries;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return document.getObjectStore().getConnection();
 	}
 }

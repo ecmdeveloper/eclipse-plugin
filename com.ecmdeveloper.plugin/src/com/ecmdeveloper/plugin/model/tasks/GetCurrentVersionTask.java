@@ -40,7 +40,7 @@ public class GetCurrentVersionTask extends DocumentTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		com.filenet.api.core.Document currentVersion = getCurrentVersion();
 		currentVersionDocument = ObjectStoreItemFactory.createDocument( currentVersion, null, getDocument().getObjectStore() );

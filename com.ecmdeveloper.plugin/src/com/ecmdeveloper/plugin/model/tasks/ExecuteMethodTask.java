@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.filenet.api.core.IndependentObject;
@@ -48,7 +49,7 @@ public class ExecuteMethodTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		ObjectStore objectStore = objectStoreItem.getObjectStore();
 		com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore
@@ -64,5 +65,10 @@ public class ExecuteMethodTask extends BaseTask {
 		}
 		
 		return null;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStoreItem.getObjectStore().getConnection();
 	}
 }

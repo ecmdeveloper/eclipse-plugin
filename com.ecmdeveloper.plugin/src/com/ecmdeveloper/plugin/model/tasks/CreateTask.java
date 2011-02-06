@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
@@ -91,5 +92,10 @@ public abstract class CreateTask extends BaseTask {
 
 	protected void setAddedToParent(boolean addedToParent) {
 		this.addedToParent = addedToParent;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return parent.getObjectStore().getConnection();
 	}
 }

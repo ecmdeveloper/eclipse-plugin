@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.ecmdeveloper.plugin.model.Action;
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.collection.ActionSet;
 import com.filenet.api.collection.VersionableSet;
@@ -47,7 +48,7 @@ public class GetCodeModuleActionsTask extends BaseTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		com.filenet.api.core.ObjectStore objectStoreObject = (com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
 		VersionSeries versionSeries = Factory.VersionSeries.getInstance(objectStoreObject, new Id( codeModuleId ) ); 
@@ -80,5 +81,10 @@ public class GetCodeModuleActionsTask extends BaseTask {
 		}
 		
 		return actions;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return objectStore.getConnection();
 	}
 }

@@ -48,6 +48,7 @@ public class ContentEngineConnection
 	
 	private Connection connection;
 	private Domain domain;
+	private Subject subject;
 	
 	public void setConnected(boolean connected) {
 		this.connected = connected;
@@ -98,6 +99,10 @@ public class ContentEngineConnection
 		return connected;
 	}
 
+	public Subject getSubject() {
+		return subject;
+	}
+
 	@SuppressWarnings("unchecked")
 	public ObjectStore[] getObjectStores(IObjectStoreItem parent )
 	{
@@ -123,7 +128,7 @@ public class ContentEngineConnection
 		if ( ! connected ) {
 			connection = Factory.Connection.getConnection(url);
 	
-			Subject subject = UserContext.createSubject(connection, username, password, null );
+			subject = UserContext.createSubject(connection, username, password, null );
 			UserContext uc = UserContext.get();
 			uc.pushSubject(subject);
 			

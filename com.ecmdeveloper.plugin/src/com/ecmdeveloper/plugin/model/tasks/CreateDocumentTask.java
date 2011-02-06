@@ -26,7 +26,7 @@ public class CreateDocumentTask extends CreateTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		createNewDocument();
 		setProperties(newDocument);

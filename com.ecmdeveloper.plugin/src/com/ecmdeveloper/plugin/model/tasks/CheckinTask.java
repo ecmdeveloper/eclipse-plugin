@@ -40,8 +40,7 @@ public class CheckinTask extends DocumentTask {
 		this.autoClassify = autoClassify;
 	}
 
-	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		com.filenet.api.core.Document reservation = getReservation();
 		CheckinType checkinType = majorVersion ? CheckinType.MAJOR_VERSION

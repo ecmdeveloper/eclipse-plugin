@@ -55,7 +55,7 @@ public class SaveTask extends DocumentTask {
 	}
 
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		reservation = getReservation();
 		reservation.set_ContentElements( createContent() );

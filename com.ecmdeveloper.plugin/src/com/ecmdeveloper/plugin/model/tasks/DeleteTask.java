@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
@@ -69,7 +70,7 @@ public class DeleteTask extends BaseTask {
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
 			deleteObjectStoreItem(objectStoreItem);
@@ -123,5 +124,13 @@ public class DeleteTask extends BaseTask {
 		documentObject.fetchProperties( new String[] { PropertyNames.VERSION_SERIES} );
 		VersionSeries versionSeries = documentObject.get_VersionSeries();
 		return versionSeries;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		if ( objectStoreItems.length == 0) {
+			throw new IllegalArgumentException();
+		}
+		return objectStoreItems[0].getObjectStore().getConnection();
 	}
 }

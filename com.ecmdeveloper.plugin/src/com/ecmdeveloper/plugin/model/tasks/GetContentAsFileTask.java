@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.constants.PropertyNames;
@@ -63,7 +64,7 @@ public class GetContentAsFileTask extends BaseTask {
 	}
 
 	@Override
-	public String call() throws Exception {
+	protected Object execute() throws Exception {
 		
 		com.filenet.api.core.Document internalDocument = (com.filenet.api.core.Document) document.getObjectStoreObject();
 	
@@ -127,5 +128,10 @@ public class GetContentAsFileTask extends BaseTask {
 			file.setWritable(true);
 		}
 		return file;
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return document.getObjectStore().getConnection();
 	}
 }

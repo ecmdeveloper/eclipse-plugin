@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -73,7 +74,7 @@ public class MoveTask extends BaseTask {
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
-	public Object call() throws Exception {
+	protected Object execute() throws Exception {
 
 		updateSet = new HashSet<IObjectStoreItem>();
 
@@ -166,5 +167,10 @@ public class MoveTask extends BaseTask {
 				return;
 			}
 		}
+	}
+
+	@Override
+	protected ContentEngineConnection getContentEngineConnection() {
+		return destination.getObjectStore().getConnection();
 	}
 }

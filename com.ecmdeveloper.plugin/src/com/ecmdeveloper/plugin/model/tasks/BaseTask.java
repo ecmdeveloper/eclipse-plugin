@@ -23,6 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.security.auth.Subject;
+
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.filenet.api.util.UserContext;
+
 
 public abstract class BaseTask implements Callable<Object>{
 
@@ -41,4 +46,24 @@ public abstract class BaseTask implements Callable<Object>{
 		}
 		listeners.clear();
 	}
+
+	@Override
+	public final Object call() throws Exception {
+		UserContext userContext = UserContext.get();
+		try {
+			ContentEngineConnection contentEngineConnection = getContentEngineConnection();
+			if ( contentEngineConnection == null ) {
+				throw new IllegalArgumentException("The content engine connection cannot be null");
+			}
+			Subject subject = contentEngineConnection.getSubject();
+			userContext.pushSubject(subject);
+			return execute();
+		} finally {
+			userContext.popSubject();
+		}
+	}
+	
+	protected abstract Object execute() throws Exception;
+	
+	protected abstract ContentEngineConnection getContentEngineConnection();
 }
