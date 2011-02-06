@@ -89,16 +89,16 @@ public class CloneCommand extends Command
 //			newPart = new LiveOutput();
 //		} else 
 		if (oldPart instanceof Comparison) {
-			newPart = new Comparison();
+			newPart = new Comparison( oldPart.getQuery() );
 			//((QueryCondition)newPart).setLabelContents(((QueryCondition)oldPart).getLabelContents());
 //		} else if (oldPart instanceof OrGate) {
 //			newPart = new OrGate();
 		} else 
 		if (oldPart instanceof OrContainer) {
-			newPart = new OrContainer();
+			newPart = new OrContainer( oldPart.getQuery() );
 		} else 
 		if (oldPart instanceof AndContainer) {
-			newPart = new AndContainer();
+			newPart = new AndContainer( oldPart.getQuery() );
 		} 
 //		else if (oldPart instanceof XORGate) {
 //			newPart = new XORGate();

@@ -20,21 +20,47 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import org.eclipse.swt.graphics.Image;
+
 /**
  * @author ricardo.belfor
  *
  */
-public class OrContainer extends QueryContainer {
+public class InFolderTest extends QueryComponent {
 
-	private static final String OR_LABEL = "or";
 	private static final long serialVersionUID = 1L;
 
-	public OrContainer(Query query) {
+	private static Image INFOLDER_TEST_ICON = createImage(InSubFolderTest.class, "icons/connection16.gif"); //$NON-NLS-1$
+	private String folder;
+	
+	public InFolderTest(Query query) {
 		super(query);
 	}
 	
 	@Override
+	public Image getIconImage() {
+		return INFOLDER_TEST_ICON;
+	}
+
+	public String getFolder() {
+		return folder;
+	}
+
+	public void setFolder(String folder) {
+		this.folder = folder;
+	}
+
+	@Override
 	public String toString() {
-		return OR_LABEL;
+		if ( getField() != null && folder != null ) { 
+			StringBuffer result = new StringBuffer();
+			result.append(getField());
+			result.append( " INFOLDER('");
+			result.append(folder);
+			result.append( "')");
+			return result.toString();
+		} else {
+			return "";
+		}
 	}
 }

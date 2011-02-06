@@ -34,8 +34,10 @@ import com.ecmdeveloper.plugin.search.commands.AddCommand;
 import com.ecmdeveloper.plugin.search.commands.CloneCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.ReorderPartCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
@@ -45,6 +47,12 @@ import com.ecmdeveloper.plugin.search.model.QuerySubpart;
  *
  */
 public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
+
+	private QueryCommandFactory queryCommandFactory;
+	
+	public QueryContainerEditPolicy(QueryCommandFactory queryCommandFactory) {
+		this.queryCommandFactory = queryCommandFactory;
+	}
 
 	protected Command getCloneCommand(ChangeBoundsRequest request) {
 		CloneCommand clone = new CloneCommand();
@@ -92,13 +100,7 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 
 	protected Command getCreateCommand(CreateRequest request) {
 
-		CreateCommand command;
-		if ( request.getNewObjectType() == Comparison.class ) {
-			command = new CreateComparisonCommand();
-		} else {
-			command = new CreateCommand();
-		}
-		
+		CreateCommand command = queryCommandFactory.getCreateCommand(request);
 		EditPart after = getInsertionReference(request);
 		command.setChild((QuerySubpart)request.getNewObject());
 		command.setParent((QueryContainer)getHost().getModel());

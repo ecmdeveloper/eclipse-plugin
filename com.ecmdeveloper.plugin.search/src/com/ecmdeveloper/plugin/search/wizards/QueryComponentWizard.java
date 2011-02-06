@@ -18,16 +18,36 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.figures;
+package com.ecmdeveloper.plugin.search.wizards;
+
+import java.util.Collection;
+
+import org.eclipse.jface.wizard.Wizard;
+
+import com.ecmdeveloper.plugin.search.model.IQueryField;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RoundedCornerFeedbackFigure extends RoundedCornerFigure {
+public abstract class QueryComponentWizard extends Wizard {
 
-	public RoundedCornerFeedbackFigure() {
-		super();
-		setFill(false);
+	protected QueryFieldWizardPage queryConditionFieldPage;
+	protected Collection<IQueryField> fields;
+	
+	public QueryComponentWizard(Collection<IQueryField> fields) {
+		this.fields = fields;
+	}	
+
+	public void addPages() {
+
+		queryConditionFieldPage = new QueryFieldWizardPage();
+		queryConditionFieldPage.setContent(fields);
+		addPage(queryConditionFieldPage);
+	}	
+
+	public IQueryField getField() {
+		return queryConditionFieldPage.getField();
 	}
+
 }

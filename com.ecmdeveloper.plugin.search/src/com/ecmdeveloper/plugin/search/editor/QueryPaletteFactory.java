@@ -38,9 +38,14 @@ import org.eclipse.gef.tools.MarqueeSelectionTool;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.search.model.AndContainer;
+import com.ecmdeveloper.plugin.search.model.InFolderTest;
+import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 
 /**
  * 
@@ -75,28 +80,33 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 				ImageDescriptor.createFromFile(Comparison.class, "icons/halfadder16.gif"), //$NON-NLS-1$
 				ImageDescriptor.createFromFile(Comparison.class, "icons/halfadder24.gif")//$NON-NLS-1$
 		);
+
 		entries.add(combined);
 
-		//
-		// CombinedTemplateCreationEntry combined = new
-		// CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_HalfAdder_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_HalfAdder_Description,
-		// LogicDiagramFactory.getHalfAdderFactory(),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/halfadder16.gif"), //$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/halfadder24.gif") //$NON-NLS-1$
-		// );
-		// entries.add(combined);
-		//
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_FullAdder_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_FullAdder_Description,
-		// LogicDiagramFactory.getFullAdderFactory(),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/fulladder16.gif"), //$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/fulladder24.gif") //$NON-NLS-1$
-		// );
-		// entries.add(combined);
+		combined = new CombinedTemplateCreationEntry("Null Test", "Query Field Null Test",
+				new SimpleFactory(NullTest.class), 
+				ImageDescriptor.createFromFile(NullTest.class, "icons/ledicon16.gif"), //$NON-NLS-1$
+				ImageDescriptor.createFromFile(NullTest.class, "icons/ledicon24.gif")//$NON-NLS-1$
+		);
 
+		entries.add(combined);
+
+		combined = new CombinedTemplateCreationEntry("In Folder Test", "Query Field In Folder Test",
+				new SimpleFactory(InFolderTest.class), 
+				ImageDescriptor.createFromFile(InFolderTest.class, "icons/connection16.gif"), //$NON-NLS-1$
+				ImageDescriptor.createFromFile(InFolderTest.class, "icons/connection24.gif")//$NON-NLS-1$
+		);
+
+		entries.add(combined);
+
+		combined = new CombinedTemplateCreationEntry("In Subfolder Test", "Query Field In Subfolder Test",
+				new SimpleFactory(InSubFolderTest.class), 
+				ImageDescriptor.createFromFile(InSubFolderTest.class, "icons/arrow16.gif"), //$NON-NLS-1$
+				ImageDescriptor.createFromFile(InSubFolderTest.class, "icons/arrow24.gif")//$NON-NLS-1$
+		);
+
+		entries.add(combined);
+		
 		drawer.addAll(entries);
 		return drawer;
 	}
@@ -109,11 +119,7 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 
 		List entries = new ArrayList();
 
-		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry("AND",
-				"Logical AND container", new SimpleFactory(AndContainer.class),
-						ImageDescriptor.createFromFile(AndContainer.class, "icons/and16.gif"),//$NON-NLS-1$
-						ImageDescriptor.createFromFile(AndContainer.class, "icons/and24.gif")//$NON-NLS-1$
-		);
+		CombinedTemplateCreationEntry combined = createEntry("AND", "Logical AND container", "and", AndContainer.class );
 		entries.add(combined);
 
 		combined = new CombinedTemplateCreationEntry("OR",
@@ -123,81 +129,18 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		);
 		entries.add(combined);
 		
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_Circuit_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_Circuit_Description,
-		// new SimpleFactory(Circuit.class),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/circuit16.gif"),//$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/circuit24.gif")//$NON-NLS-1$
-		// );
-		// entries.add(combined);
-		//	
-		// entries.add(new PaletteSeparator());
-		//
-		//
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_LED_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_LED_Description,
-		// new SimpleFactory(LED.class),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/ledicon16.gif"), //$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/ledicon24.gif")//$NON-NLS-1$
-		// );
-		// entries.add(combined);
-		//
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_ORGate_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_ORGate_Description,
-		// new SimpleFactory(OrGate.class),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/or16.gif"),//$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/or24.gif")//$NON-NLS-1$
-		// );
-		// entries.add(combined);
-		//
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_XORGate_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_XORGate_Description,
-		// new SimpleFactory(XORGate.class),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/xor16.gif"),//$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/xor24.gif")//$NON-NLS-1$
-		// );
-		// entries.add(combined);
-		//
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_ANDGate_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_ANDGate_Description,
-		// new SimpleFactory(AndGate.class),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/and16.gif"),//$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/and24.gif")//$NON-NLS-1$
-		// );
-		// entries.add(combined);
-		//
-		// PaletteStack liveGroundStack = new PaletteStack(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_LiveGroundStack_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_LiveGroundStack_Description,
-		// null);
-		//	
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_LiveOutput_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_LiveOutput_Description,
-		// new SimpleFactory(LiveOutput.class),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/live16.gif"),//$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/live24.gif")//$NON-NLS-1$
-		// );
-		// liveGroundStack.add(combined);
-		//
-		// combined = new CombinedTemplateCreationEntry(
-		// LogicMessages.LogicPlugin_Tool_CreationTool_Ground_Label,
-		// LogicMessages.LogicPlugin_Tool_CreationTool_Ground_Description,
-		// new SimpleFactory(GroundOutput.class),
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/ground16.gif"),//$NON-NLS-1$
-		//		ImageDescriptor.createFromFile(Circuit.class, "icons/ground24.gif")//$NON-NLS-1$
-		// );
-		// liveGroundStack.add(combined);
-		//
-		// entries.add(liveGroundStack);
-		//	
 		drawer.addAll(entries);
 		return drawer;
+	}
+
+	private static CombinedTemplateCreationEntry createEntry(String label, String description, String iconRoot, Class<? extends QueryElement> type ) {
+		Query query = null;
+		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(label,
+				description, new QueryCreationFactory( query, type),
+						ImageDescriptor.createFromFile(type, "icons/" + iconRoot + "16.gif"),//$NON-NLS-1$
+						ImageDescriptor.createFromFile(type, "icons/" + iconRoot + "24.gif")//$NON-NLS-1$
+		);
+		return combined;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -20,21 +20,48 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import org.eclipse.swt.graphics.Image;
+
 /**
  * @author ricardo.belfor
  *
  */
-public class OrContainer extends QueryContainer {
+public class NullTest extends QueryComponent {
 
-	private static final String OR_LABEL = "or";
 	private static final long serialVersionUID = 1L;
+	private static Image NULL_TEST_ICON = createImage(Comparison.class, "icons/ledicon16.gif"); //$NON-NLS-1$
 
-	public OrContainer(Query query) {
+	private boolean negated;
+	
+	public NullTest(Query query) {
 		super(query);
 	}
 	
 	@Override
+	public Image getIconImage() {
+		return NULL_TEST_ICON;
+	}
+
+	public void setNegated(boolean negated) {
+		this.negated = negated;
+	}
+
+	public boolean isNegated() {
+		return negated;
+	}
+
 	public String toString() {
-		return OR_LABEL;
+		if ( getField() != null ) {
+			StringBuffer result = new StringBuffer();
+			result.append(getField());
+			result.append( " IS ");
+			if ( negated ) {
+				result.append("NOT ");
+			}
+			result.append( "NULL");
+			return result.toString();
+		} else {
+			return "";
+		}
 	}
 }

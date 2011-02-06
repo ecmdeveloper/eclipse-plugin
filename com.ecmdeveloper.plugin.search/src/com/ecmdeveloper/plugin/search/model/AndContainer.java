@@ -29,6 +29,10 @@ public class AndContainer extends QueryContainer {
 	private static final String AND_LABEL = "and";
 	private static final long serialVersionUID = 1L;
 
+	public AndContainer(Query query) {
+		super(query);
+	}
+
 	@Override
 	public String toString() {
 		return AND_LABEL;

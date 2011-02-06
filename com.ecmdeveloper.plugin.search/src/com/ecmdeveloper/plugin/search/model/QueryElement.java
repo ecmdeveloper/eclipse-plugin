@@ -40,6 +40,15 @@ public abstract class QueryElement implements IPropertySource, Cloneable, Serial
 
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	static final long serialVersionUID = 1;
+	private final Query query;
+
+	public QueryElement(Query query) {
+		this.query = query;
+	}
+
+	public Query getQuery() {
+		return query;
+	}
 
 	public void addPropertyChangeListener(PropertyChangeListener l){
 		listeners.addPropertyChangeListener(l);

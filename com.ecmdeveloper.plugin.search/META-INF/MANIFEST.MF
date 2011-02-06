@@ -7,6 +7,7 @@ Bundle-Activator: com.ecmdeveloper.plugin.search.Activator
 Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
- org.eclipse.gef;bundle-version="3.4.1"
+ org.eclipse.gef;bundle-version="3.4.1",
+ org.eclipse.ui.views;bundle-version="3.3.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

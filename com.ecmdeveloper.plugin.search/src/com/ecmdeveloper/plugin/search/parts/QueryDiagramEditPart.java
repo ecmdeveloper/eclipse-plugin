@@ -49,6 +49,7 @@ import org.eclipse.gef.tools.DeselectAllTracker;
 import org.eclipse.gef.tools.MarqueeDragTracker;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 
+import com.ecmdeveloper.plugin.search.policies.QueryCommandFactory;
 import com.ecmdeveloper.plugin.search.policies.QueryLayoutEditPolicy;
 
 /**
@@ -77,7 +78,7 @@ public class QueryDiagramEditPart extends AbstractContainerEditPart implements L
 		installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, null);
 		installEditPolicy(EditPolicy.COMPONENT_ROLE, new RootComponentEditPolicy());
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, new QueryLayoutEditPolicy(
-				(XYLayout) getContentPane().getLayoutManager()));
+				(XYLayout) getContentPane().getLayoutManager(), new QueryCommandFactory()));
 
 		installEditPolicy("Snap Feedback", new SnapFeedbackPolicy()); //$NON-NLS-1$
 	}

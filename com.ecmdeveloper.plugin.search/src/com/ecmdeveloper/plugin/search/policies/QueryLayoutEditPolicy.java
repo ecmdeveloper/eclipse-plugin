@@ -44,10 +44,12 @@ import com.ecmdeveloper.plugin.search.commands.AddCommand;
 import com.ecmdeveloper.plugin.search.commands.CloneCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.SetConstraintCommand;
 import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.figures.QueryContainerFeedbackFigure;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
@@ -59,9 +61,12 @@ import com.ecmdeveloper.plugin.search.model.QuerySubpart;
  */
 public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayoutEditPolicy {
 
-	public QueryLayoutEditPolicy(XYLayout layout) {
+	private QueryCommandFactory queryCommandFactory;
+	
+	public QueryLayoutEditPolicy(XYLayout layout, QueryCommandFactory queryCommandFactory) {
 		super();
 		setXyLayout(layout);
+		this.queryCommandFactory = queryCommandFactory;
 	}
 
 	// protected Command chainGuideAttachmentCommand(
@@ -322,21 +327,15 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 
 	protected Command getCreateCommand(CreateRequest request) {
 
-		CreateCommand create;
-		if (request.getNewObjectType() == Comparison.class) {
-			create = new CreateComparisonCommand();
+		CreateCommand command = queryCommandFactory.getCreateCommand(request);
 
-		} else {
-			create = new CreateCommand();
-		}
-
-		create.setParent((QueryDiagram) getHost().getModel());
+		command.setParent((QueryDiagram) getHost().getModel());
 		QuerySubpart newPart = (QuerySubpart) request.getNewObject();
-		create.setChild(newPart);
+		command.setChild(newPart);
 		Rectangle constraint = (Rectangle) getConstraintFor(request);
-		create.setLocation(constraint);
-		create.setLabel("Create");
-		return create;
+		command.setLocation(constraint);
+		command.setLabel("Create");
+		return command;
 	}
 
 	/*

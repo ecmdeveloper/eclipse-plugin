@@ -55,7 +55,8 @@ public abstract class QuerySubpart extends QueryElement {
 		return image;
 	}
 
-	public QuerySubpart() {
+	public QuerySubpart(Query query) {
+		super(query);
 		setID(getNewID());
 	}
 

@@ -31,7 +31,6 @@ import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 
 import com.ecmdeveloper.plugin.search.figures.TextFigure;
-import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.policies.QueryTextEditPolicy;
 
 /**
@@ -39,12 +38,12 @@ import com.ecmdeveloper.plugin.search.policies.QueryTextEditPolicy;
  * @author ricardo.belfor
  *
  */
-public class QueryConditionEditPart extends LogicEditPart {
+public class QueryComponentEditPart extends LogicEditPart {
 
 	protected AccessibleEditPart createAccessible() {
 		return new AccessibleGraphicalEditPart() {
 			public void getValue(AccessibleControlEvent e) {
-				e.result = getLogicLabel().toString();
+				e.result = getModel().toString();
 			}
 
 			public void getName(AccessibleEvent e) {
@@ -66,10 +65,6 @@ public class QueryConditionEditPart extends LogicEditPart {
 		return label;
 	}
 
-	private Comparison getLogicLabel() {
-		return (Comparison) getModel();
-	}
-
 	private void performDirectEdit() {
 		// new LogicLabelEditManager(this,
 		// new LabelCellEditorLocator((StickyNoteFigure)getFigure())).show();
@@ -88,7 +83,7 @@ public class QueryConditionEditPart extends LogicEditPart {
 	}
 
 	protected void refreshVisuals() {
-		((TextFigure) getFigure()).setText(getLogicLabel().toString());
+		((TextFigure) getFigure()).setText(getModel().toString());
 		super.refreshVisuals();
 	}
 }

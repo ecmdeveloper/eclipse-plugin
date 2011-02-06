@@ -33,14 +33,13 @@ public class Comparison extends QueryComponent {
 
 	static final long serialVersionUID = 1;
 
-	private IQueryField field;
 	private ComparisonOperation comparisonOperation;
 	private Object value;
 	
 	private static Image COMPARISON_ICON = createImage(Comparison.class, "icons/label16.gif"); //$NON-NLS-1$
 
-	public Comparison() {
-		super();
+	public Comparison(Query query) {
+		super(query);
 		value = new Date();
 	}
 
@@ -49,19 +48,11 @@ public class Comparison extends QueryComponent {
 	}
 
 	public String toString() {
-		if ( field != null && comparisonOperation != null) {
-			return field + " " + comparisonOperation.getOperation() + " " + value;
+		if ( getField() != null && comparisonOperation != null) {
+			return getField() + " " + comparisonOperation.getOperation() + " " + value;
 		} else {
 			return "";
 		}
-	}
-
-	public void setField(IQueryField queryField) {
-		this.field = queryField;
-	}
-
-	public IQueryField getField() {
-		return field;
 	}
 
 	public ComparisonOperation getComparisonOperation() {

@@ -21,51 +21,36 @@
 package com.ecmdeveloper.plugin.search.wizards;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 
 /**
  * @author ricardo.belfor
- * 
+ *
  */
-public class ComparisonWizard extends QueryComponentWizard {
+public class NullTestWizard extends QueryComponentWizard {
 
-	private static final String TITLE = "Query Condition Wizard";
+	private NullTestWizardPage nullTestWizardPage;
 
-	private ComparisonOperationWizardPage comparisonOperationWizardPage;
-
-	public ComparisonWizard(Collection<IQueryField> fields) {
+	public NullTestWizard(ArrayList<IQueryField> fields) {
 		super(fields);
-		setWindowTitle(TITLE);
 	}
 
-	public void addPages() {
-
-		super.addPages();
-
-		comparisonOperationWizardPage = new ComparisonOperationWizardPage();
-		// TODO set this from creator
-		comparisonOperationWizardPage.setComparisonOperation(ComparisonOperation.EQUAL);
-		addPage(comparisonOperationWizardPage);
-	}
-
+	
 	@Override
-	public boolean canFinish() {
-		return getField() != null && getComparisonOperation() != null;
-	}
-
-	public ComparisonOperation getComparisonOperation() {
-		return comparisonOperationWizardPage.getComparisonOperation();
-	}
-
-	public void setComparisonOperation(ComparisonOperation comparisonOperation) {
-		comparisonOperationWizardPage.setComparisonOperation(comparisonOperation);
+	public void addPages() {
+		super.addPages();
+		
+		nullTestWizardPage = new NullTestWizardPage();
+		addPage( nullTestWizardPage );
 	}
 
 	@Override
 	public boolean performFinish() {
 		return true;
+	}
+	
+	public boolean isNegated() {
+		return nullTestWizardPage.isNegated();
 	}
 }
