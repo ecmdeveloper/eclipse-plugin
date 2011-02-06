@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <description>
+<site
+      url="http://downloads.sourceforge.net/project/ecmdeveloper/updatesite">
+   <description url="http://www.ecmdeveloper.com/update">
       ECM Developer is an Eclipse plug-in aimed at supporting the development
 of applications using FileNet P8 system. It approaches the system
 from a developers point of view and tries to find solutions for
@@ -9,12 +10,20 @@ browsing, a Code Module editor and Java code generation.
 This plug-in uses the great &apos;Silk icon set 1.3&apos; by Mark James
 at http://www.famfamfam.com/lab/icons/silk/
    </description>
-   <feature url="features/com.ecmdeveloper.plugin_1.3.0.jar" id="com.ecmdeveloper.plugin" version="1.3.0">
-      <category name="com.ecmdeveloper"/>
-   </feature>
-   <feature url="features/com.ecmdeveloper.plugin.45_1.3.0.jar" id="com.ecmdeveloper.plugin.45" version="1.3.0">
+   <feature url="features/com.ecmdeveloper.plugin.45_1.4.0.jar" id="com.ecmdeveloper.plugin.45" version="1.4.0">
       <category name="com.ecmdeveloper.45"/>
    </feature>
-   <category-def name="com.ecmdeveloper.45" label="ECM Developer Plug-in for CE 4.5"/>
-   <category-def name="com.ecmdeveloper" label="ECM Developer Plug-in"/>
+   <feature url="features/com.ecmdeveloper.plugin_1.4.0.jar" id="com.ecmdeveloper.plugin" version="1.4.0">
+      <category name="com.ecmdeveloper"/>
+   </feature>
+   <category-def name="com.ecmdeveloper.45" label="ECM Developer Plug-in for CE 4.5">
+      <description>
+         Make sure you select the correct version for your system. You cannot install both versions within the same eclipse instance.
+      </description>
+   </category-def>
+   <category-def name="com.ecmdeveloper" label="ECM Developer Plug-in for CE 4.5.1 and beyond">
+      <description>
+         Make sure you select the correct version for your system. You cannot install both versions within the same eclipse instance.
+      </description>
+   </category-def>
 </site>
