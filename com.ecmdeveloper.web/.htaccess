@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^install$ http://www.ecmdeveloper.com/installing.shtml

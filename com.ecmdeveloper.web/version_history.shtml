@@ -11,15 +11,16 @@
 <body>
 <!--#include virtual="/header.shtml" -->
 <div id="content">
-	<h3>Version 1.4.0.0 xx/xx/2010</h3>
+	<h3>Version 1.4.0.0 2/6/2011</h3>
 	<ul>
 	<li>Creation of new folders, documents and custom objects.</li>
 	<li>Tracking of files checked out into the workspace.</li>
 	<li>Favorites view.</li>
 	<li>Content Engine Perspective, modified Class Diagram editing perspective.</li>
 	<li>Double click also connects Object Stores and expands Folders.</li>
-	<li>In the code module editor Java projects, packages or files can be added as a whole</li>
+	<li>The code module editor is simplified, Java projects, packages or source files can be added as a whole</li>
 	<li>The delete function is improved, allowing bulk deletion of objects with children</li>
+	<li>Fixed bug accessing multiple Content Engines with different password.</li>
 	</ul>
 	<div id="left">
 	<h3>Version 1.3.0.0 7/26/2010</h3>

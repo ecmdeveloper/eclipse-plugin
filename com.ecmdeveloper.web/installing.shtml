@@ -17,16 +17,15 @@
 	
 	<h2>Installing ECM Developer</h2>
 	
-	The ECM Developer plug-in uses Java 6, so first make sure that your Eclipse is running
-	with this version. The plug-in is tested with the recent versions of Helios, Galileo and Ganymede.
+	The ECM Developer plugin uses Java 6, so first make sure that your Eclipse is running
+	with this version. The plugin is tested with the recent versions of Helios, Galileo and Ganymede.
 	<p> 
-	The plug-in uses the Java API based on the WSI protocol to access the FileNet P8 system. 
-	Because the Java API is not distributed with this plug-in, using this plug-in requires 
-	access to the Java API. Therefore installing this plug-in is a little bit more complicated
-	than a basic plug-in install.
-	<p>Before you install this plug-in you have to make sure that you
-	have the Content Engine Client files available on your local machine. There a two ways to 
-	obtain these files:
+	The plugin uses the Java API based on the WSI protocol to access the FileNet P8 system. 
+	Because the Java API is not distributed with this plugin, using this plug-in requires 
+	access to the Java API. Therefore installing this plugin is a little bit more complicated
+	than a basic plugin install.
+	<p>Before you install this plugin you have to make sure that you have the Content Engine Client 
+	files available on your local machine. There a two ways to obtain these files:
 	<ul>
 	<li>
 	The Content Engine Client files are located in a folder named <b>CE_API</b> in the FileNet 
@@ -36,24 +35,25 @@
 	<li>If you don't have access to this folder the Content Engine Client files can also be installed
 	using the Content Engine Client installer. 
 	</ul>
-	The ECM Developer plug-in can be downloaded from the <a href="http://sourceforge.net/projects/ecmdeveloper/files/">project download site</a>. 
-	The plug-in can be installed into your Eclipse environment in the dialog that appears if 
-	you select the <strong>Help &gt; Install new software... &gt; Add</strong> commands (Galileo) or 
-	<strong>Help &gt; Software Updates... &gt; Add Site</strong> commands (Ganymede) in the Eclipse IDE:
 	<p>
-	<img src='images/installing/add_site.jpg' alt='add site dialog'/>
-	</p>
-	In this dialog use the <strong>Archive</strong> command and select the downloaded file. After this dialog
-	is completed the ECM Developer plug-in should appear in the list of available software and can 
-	be installed using the <strong>Install</strong> command.
+	The ECM Developer plugin can be installed using the Eclipse update site <strong>http://www.ecmdeveloper.com/update</strong>	or 
+	downloaded from the <a href="http://sourceforge.net/projects/ecmdeveloper/files/">project download site</a>. Refer 
+	to documentation of your Eclipse version how to install plugins. Make sure that you select the correct version of
+	the plugin depending on the version of the FileNet Content Engine you are using. You can only select <strong>one</strong> version,
+	both versions within the same Eclipse instance will not work!
+	</p>   
 	<p>
-	After the plug-in is installed do not restart Eclipse inmediately. For the plug-in to work
+	After the plug-in is installed do <strong>not</strong> restart Eclipse immediately. For the plug-in to work
 	properly first the Content Engine Client files must be made available within the Eclipse 
 	environment. First navigate to the <strong>plugins</strong> folder of your eclipse installation. The
-	installation of the ECM Developer plug-in created a folder called <strong>com.ecmdeveloper.plugin.lib_1.2.0</strong>.
+	installation of the ECM Developer plug-in created a folder called <strong>com.ecmdeveloper.plugin.lib_1.2.0</strong> (for Content Engine 4.5.1 and beyond) or
+	<strong>com.ecmdeveloper.plugin.lib_1.1.0</strong> (For Content Engine 4.5).
 	This folder already contains some files. Now the <i>content</i> of the <strong>CE_API</strong> folder must
 	copied to this folder. After this the installation is completed and Eclipse must be restarted.
-	  
+	</p>
+	<p>
+	See the <a href='getting_started.shtml'>getting started</a> page for details about how to proceed from here.
+		  
 	</div>
 	<div id="right">
 		<!--#include virtual="/navigation.shtml" -->
