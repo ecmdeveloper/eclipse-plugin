@@ -95,13 +95,4 @@ public class CreateCommand extends Command {
 	public void undo() {
 		parent.removeChild(child);
 	}
-
-	protected ArrayList<IQueryField> createMockFields() {
-		ArrayList<IQueryField> fields = new ArrayList<IQueryField>();
-		for (int i = 0; i < 10; i++) {
-			QueryField queryField = new QueryField("Field " + i , QueryFieldType.STRING );
-			fields.add(queryField);
-		}
-		return fields;
-	}
 }

@@ -33,18 +33,17 @@ import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PaletteStack;
 import org.eclipse.gef.palette.PanningSelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
-import org.eclipse.gef.requests.SimpleFactory;
 import org.eclipse.gef.tools.MarqueeSelectionTool;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.search.model.AndContainer;
+import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
-import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
 
 /**
@@ -57,54 +56,36 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 	private static QueryPaletteFactory singleton;
 
 	@SuppressWarnings("unchecked")
-	static private List createCategories(PaletteRoot root) {
+	static private List createCategories(PaletteRoot root, Query query) {
 		List categories = new ArrayList();
 
 		categories.add(createControlGroup(root));
-		categories.add(createContainersDrawer());
-		categories.add(createQueryPartsDrawer());
+		categories.add(createContainersDrawer(query));
+		categories.add(createQueryPartsDrawer(query));
 
 		return categories;
 	}
 
 	@SuppressWarnings("unchecked")
-	static private PaletteContainer createQueryPartsDrawer() {
+	static private PaletteContainer createQueryPartsDrawer(Query query) {
 		
 		PaletteDrawer drawer = new PaletteDrawer(
 				"Query Parts", ImageDescriptor.createFromFile(QueryContainer.class, "icons/can.gif")); //$NON-NLS-1$
 
 		List<Object> entries = new ArrayList();
 
-		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry("Comparison", "Query Field Comparison",
-				new SimpleFactory(Comparison.class), 
-				ImageDescriptor.createFromFile(Comparison.class, "icons/halfadder16.gif"), //$NON-NLS-1$
-				ImageDescriptor.createFromFile(Comparison.class, "icons/halfadder24.gif")//$NON-NLS-1$
-		);
-
+		CombinedTemplateCreationEntry combined;
+		
+		combined = createEntry("Comparison", "Query Field Comparison", "halfadder", Comparison.class, query);
 		entries.add(combined);
 
-		combined = new CombinedTemplateCreationEntry("Null Test", "Query Field Null Test",
-				new SimpleFactory(NullTest.class), 
-				ImageDescriptor.createFromFile(NullTest.class, "icons/ledicon16.gif"), //$NON-NLS-1$
-				ImageDescriptor.createFromFile(NullTest.class, "icons/ledicon24.gif")//$NON-NLS-1$
-		);
-
+		combined = createEntry("Null Test", "Query Field Null Test", "ledicon", NullTest.class, query);
 		entries.add(combined);
 
-		combined = new CombinedTemplateCreationEntry("In Folder Test", "Query Field In Folder Test",
-				new SimpleFactory(InFolderTest.class), 
-				ImageDescriptor.createFromFile(InFolderTest.class, "icons/connection16.gif"), //$NON-NLS-1$
-				ImageDescriptor.createFromFile(InFolderTest.class, "icons/connection24.gif")//$NON-NLS-1$
-		);
-
+		combined = createEntry("In Folder Test", "Query Field In Folder Test", "connection", InFolderTest.class, query);
 		entries.add(combined);
 
-		combined = new CombinedTemplateCreationEntry("In Subfolder Test", "Query Field In Subfolder Test",
-				new SimpleFactory(InSubFolderTest.class), 
-				ImageDescriptor.createFromFile(InSubFolderTest.class, "icons/arrow16.gif"), //$NON-NLS-1$
-				ImageDescriptor.createFromFile(InSubFolderTest.class, "icons/arrow24.gif")//$NON-NLS-1$
-		);
-
+		combined = createEntry("In Subfolder Test", "Query Field In Subfolder Test", "arrow", InSubFolderTest.class, query);
 		entries.add(combined);
 		
 		drawer.addAll(entries);
@@ -112,29 +93,26 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 	}
 
 	@SuppressWarnings("unchecked")
-	static private PaletteContainer createContainersDrawer() {
+	static private PaletteContainer createContainersDrawer(Query query) {
 
 		PaletteDrawer drawer = new PaletteDrawer("Containers", ImageDescriptor.createFromFile(
 				QueryContainer.class, "icons/comp.gif"));//$NON-NLS-1$
 
 		List entries = new ArrayList();
 
-		CombinedTemplateCreationEntry combined = createEntry("AND", "Logical AND container", "and", AndContainer.class );
+		CombinedTemplateCreationEntry combined;
+		
+		combined = createEntry("AND", "Logical AND container", "and", AndContainer.class, query);
 		entries.add(combined);
 
-		combined = new CombinedTemplateCreationEntry("OR",
-				"Logical OR container", new SimpleFactory(OrContainer.class),
-						ImageDescriptor.createFromFile(OrContainer.class, "icons/or16.gif"),//$NON-NLS-1$
-						ImageDescriptor.createFromFile(OrContainer.class, "icons/or24.gif")//$NON-NLS-1$
-		);
+		combined = createEntry("OR", "Logical OR container", "or", OrContainer.class, query);
 		entries.add(combined);
 		
 		drawer.addAll(entries);
 		return drawer;
 	}
 
-	private static CombinedTemplateCreationEntry createEntry(String label, String description, String iconRoot, Class<? extends QueryElement> type ) {
-		Query query = null;
+	private static CombinedTemplateCreationEntry createEntry(String label, String description, String iconRoot, Class<? extends QueryElement> type, Query query ) {
 		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(label,
 				description, new QueryCreationFactory( query, type),
 						ImageDescriptor.createFromFile(type, "icons/" + iconRoot + "16.gif"),//$NON-NLS-1$
@@ -171,9 +149,9 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		return controlGroup;
 	}
 
-	static PaletteRoot createPalette() {
+	static PaletteRoot createPalette(Query query) {
 		PaletteRoot logicPalette = new PaletteRoot();
-		logicPalette.addAll(createCategories(logicPalette));
+		logicPalette.addAll(createCategories(logicPalette, query));
 		return logicPalette;
 	}
 

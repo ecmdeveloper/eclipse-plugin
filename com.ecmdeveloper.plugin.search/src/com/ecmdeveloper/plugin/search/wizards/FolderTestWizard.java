@@ -20,9 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.util.ArrayList;
-
-import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
@@ -32,8 +30,8 @@ public class FolderTestWizard extends QueryComponentWizard {
 
 	private String folder = "/Animals/Fish";
 	
-	public FolderTestWizard(ArrayList<IQueryField> fields) {
-		super(fields);
+	public FolderTestWizard(Query query) {
+		super(query);
 	}
 
 	@Override

@@ -39,17 +39,25 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -65,7 +73,7 @@ import com.ecmdeveloper.plugin.search.parts.GraphicalPartFactory;
 public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 
 	private Query query = new Query();
-	private TableViewer tableViewer;
+	private CheckboxTableViewer tableViewer;
 	private PaletteRoot root;
 
 	public GraphicalQueryEditor() {
@@ -78,10 +86,29 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 	}
 
 	public void createPartControl(Composite parent) {
-		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		
+		Composite composite = new Composite(parent, SWT.BORDER);
+		composite.setLayout(new GridLayout());
+		
+		CoolBar coolBar = new CoolBar(composite, SWT.NONE);
+		coolBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		CoolItem textItem = new CoolItem(coolBar, SWT.NONE);
+		Text text = new Text(coolBar, SWT.BORDER | SWT.DROP_DOWN);
+		text.setText("TEXT");
+		text.pack();
+		Point size = text.getSize();
+		textItem.setControl(text);
+		textItem.setSize(textItem.computeSize(size.x, size.y));
+		
+		SashForm sashForm = new SashForm(composite, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL ));
+//		Composite composite = new Composite(sashForm, SWT.NONE); 
+
+		
+		createTableViewer(sashForm);
 		super.createPartControl(sashForm);
 //		createLabel(sashForm, "Hello, Editor 2!");
-		createTableViewer( sashForm);
 	}	
 
 	private void createLabel(Composite container, String text) {
@@ -92,7 +119,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 	}
 
 	private void createTableViewer(Composite parent) {
-
+/*
 		tableViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
 				| SWT.FULL_SELECTION | SWT.BORDER);
 
@@ -112,20 +139,47 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette {
 		objectStoreColumn.setText("Object Store");
 		layout.setColumnData(objectStoreColumn, new ColumnWeightData(1));
 
+*/
+		tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER | SWT.FULL_SELECTION );
+		Table table = tableViewer.getTable();
+		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+//		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
+//		nameColumn.setText("Name");
+//;		layout.setColumnData(nameColumn, new ColumnWeightData(1));
+		
+		createTableViewerColumn("Bla", 100, 1 );
+		createTableViewerColumn("Field Type", 100, 2 );
+		TableViewerColumn column = createTableViewerColumn("Sort Type", 100, 3 );
+		column.setEditingSupport( new SortTypeEditingSupport( tableViewer) );
+
+		column = createTableViewerColumn("Sort Order", 100, 4 );
+		column.setEditingSupport( new SortOrderEditingSupport( tableViewer ) );
+		
 		table.setHeaderVisible(true);
-		table.setLinesVisible(false);
+		table.setLinesVisible(true);
+		tableViewer.setContentProvider( new ArrayContentProvider() );
+		tableViewer.setLabelProvider( new TableViewLabelProvider() );
+		tableViewer.setInput( query.getQueryFields() );
 
-		// viewer.setContentProvider( new CodeModulesViewContentProvider() );
-		// viewer.setLabelProvider( new CodeModulesViewLabelProvider() );
-		// viewer.setInput( CodeModulesManager.getManager() );
-
-		getSite().setSelectionProvider(tableViewer);
+		
+		//getSite().setSelectionProvider(tableViewer);
 	}
-	
+
+	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
+			final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer,
+			SWT.CHECK);
+			final TableColumn column = viewerColumn.getColumn();
+			column.setText(title);
+			column.setWidth(bound);
+			column.setResizable(true);
+			column.setMoveable(true);
+			return viewerColumn;
+	}	
 	@Override
 	protected PaletteRoot getPaletteRoot() {
 		if( root == null ){
-			root = QueryPaletteFactory.createPalette();
+			root = QueryPaletteFactory.createPalette( query );
 		}
 		return root;
 	}

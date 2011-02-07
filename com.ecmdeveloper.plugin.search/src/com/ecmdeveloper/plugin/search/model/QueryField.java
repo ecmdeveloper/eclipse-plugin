@@ -28,6 +28,8 @@ public class QueryField implements IQueryField {
 
 	private final String name;
 	private final QueryFieldType queryFieldType;
+	private SortType sortType = SortType.NONE;
+	private int sortOrder = 0;
 	
 	public QueryField(String name, QueryFieldType queryFieldType) {
 		this.name = name;
@@ -47,5 +49,25 @@ public class QueryField implements IQueryField {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	@Override
+	public SortType getSortType() {
+		return sortType;
+	}
+
+	@Override
+	public void setSortType(SortType sortType) {
+		this.sortType = sortType;
+	}
+
+	@Override
+	public int getSortOrder() {
+		return sortOrder;
+	}
+
+	@Override
+	public void setSortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 }

@@ -25,6 +25,8 @@ import java.util.Collection;
 import org.eclipse.jface.wizard.Wizard;
 
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.model.QueryTable;
 
 /**
  * @author ricardo.belfor
@@ -33,15 +35,19 @@ import com.ecmdeveloper.plugin.search.model.IQueryField;
 public abstract class QueryComponentWizard extends Wizard {
 
 	protected QueryFieldWizardPage queryConditionFieldPage;
-	protected Collection<IQueryField> fields;
+	private final Query query;
 	
-	public QueryComponentWizard(Collection<IQueryField> fields) {
-		this.fields = fields;
+	public QueryComponentWizard(Query query) {
+		this.query = query;
 	}	
 
 	public void addPages() {
 
 		queryConditionFieldPage = new QueryFieldWizardPage();
+		
+		// TODO fix this!!!
+		QueryTable queryTable = query.getQueryTables().iterator().next();
+		Collection<IQueryField> fields = queryTable.getQueryFields();		
 		queryConditionFieldPage.setContent(fields);
 		addPage(queryConditionFieldPage);
 	}	

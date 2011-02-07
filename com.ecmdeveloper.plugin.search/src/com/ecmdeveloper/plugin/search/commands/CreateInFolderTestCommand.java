@@ -40,7 +40,7 @@ public class CreateInFolderTestCommand extends CreateCommand {
 
 		Shell shell = Display.getCurrent().getActiveShell();
 		
-		FolderTestWizard wizard = new FolderTestWizard(createMockFields());
+		FolderTestWizard wizard = new FolderTestWizard( child.getQuery() );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {
