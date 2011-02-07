@@ -20,9 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.util.ArrayList;
-
-import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
@@ -32,10 +30,9 @@ public class NullTestWizard extends QueryComponentWizard {
 
 	private NullTestWizardPage nullTestWizardPage;
 
-	public NullTestWizard(ArrayList<IQueryField> fields) {
-		super(fields);
+	public NullTestWizard(Query query) {
+		super(query);
 	}
-
 	
 	@Override
 	public void addPages() {

@@ -33,6 +33,7 @@ import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.figures.QueryContainerFeedbackFigure;
 import com.ecmdeveloper.plugin.search.figures.RoundedCornerFeedbackFigure;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 
 /**
@@ -82,7 +83,7 @@ public class QueryResizableEditPolicy extends ResizableEditPolicy {
 
 		if (modelPart instanceof QueryContainer) {
 			figure = new QueryContainerFeedbackFigure();
-		} else if (modelPart instanceof Comparison) {
+		} else if (modelPart instanceof QueryComponent ) {
 			figure = new RoundedCornerFeedbackFigure();
 		}else {
 			figure = new RectangleFigure();

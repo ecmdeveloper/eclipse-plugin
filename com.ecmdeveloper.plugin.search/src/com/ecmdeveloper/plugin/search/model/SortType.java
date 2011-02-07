@@ -21,42 +21,41 @@
 package com.ecmdeveloper.plugin.search.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class Query {
-
-	private ArrayList<QueryTable> queryTables = new ArrayList<QueryTable>();
-	private QueryDiagram queryDiagram;
-	
-	public Query() {
-		queryDiagram = new QueryDiagram(this);
-		add( new QueryTable() );
-	}
-	public Collection<QueryTable> getQueryTables() {
-		return queryTables;
-	}
-	
-	public void add(QueryTable queryTable) {
-		queryTables.add(queryTable);
-	}
-	
-	public void remove(QueryTable queryTable) {
-		queryTables.remove(queryTable);
-	}
-	
-	public QueryDiagram getQueryDiagram() {
-		return queryDiagram;
-	}
-	
-	public Collection<IQueryField> getQueryFields() {
-		ArrayList<IQueryField> queryFields = new ArrayList<IQueryField>();
-		for ( QueryTable queryTable : queryTables ) {
-			queryFields.addAll( queryTable.getQueryFields() );
+public enum SortType {
+	NONE {	
+		@Override
+		public String toString() {
+			return "";
 		}
-		return queryFields;
+	},
+	ASC,
+	DESC;
+
+
+	public static String[] getNames() {
+
+		ArrayList<String> sortTypes = new ArrayList<String>();
+		for ( SortType sortType2 : SortType.values() ) {
+			sortTypes.add( sortType2.toString()  );
+		}
+		
+		return sortTypes.toArray( new String[0] );
+	}
+	
+	public static SortType valueOf( Integer ordinal ) {
+		
+		if ( ordinal != null ) {
+			for ( SortType sortType : values() ) {
+				if ( ordinal.intValue() == sortType.ordinal() ) {
+					return sortType;
+				}
+			}
+		}
+		return NONE;
 	}
 }

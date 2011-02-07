@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
@@ -36,8 +37,8 @@ public class ComparisonWizard extends QueryComponentWizard {
 
 	private ComparisonOperationWizardPage comparisonOperationWizardPage;
 
-	public ComparisonWizard(Collection<IQueryField> fields) {
-		super(fields);
+	public ComparisonWizard(Query query) {
+		super(query);
 		setWindowTitle(TITLE);
 	}
 

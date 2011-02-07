@@ -40,8 +40,7 @@ public class CreateComparisonCommand extends CreateCommand {
 
 		Shell shell = Display.getCurrent().getActiveShell();
 
-		QueryTable queryTable = child.getQuery().getQueryTables().iterator().next();
-		ComparisonWizard wizard = new ComparisonWizard( queryTable.getQueryFields() );
+		ComparisonWizard wizard = new ComparisonWizard( child.getQuery() );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {
