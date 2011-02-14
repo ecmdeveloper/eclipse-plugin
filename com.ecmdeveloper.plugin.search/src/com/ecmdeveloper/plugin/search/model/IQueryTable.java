@@ -27,7 +27,6 @@ import java.util.Collection;
  *
  */
 public interface IQueryTable {
-
+	public String getName();
 	public Collection<IQueryField> getQueryFields();
-	
 }

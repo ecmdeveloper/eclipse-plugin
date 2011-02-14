@@ -28,12 +28,16 @@ public class QueryField implements IQueryField {
 
 	private final String name;
 	private final QueryFieldType queryFieldType;
+	private final IQueryTable queryTable;
+
 	private SortType sortType = SortType.NONE;
 	private int sortOrder = 0;
+	private boolean selected;
 	
-	public QueryField(String name, QueryFieldType queryFieldType) {
+	public QueryField(String name, QueryFieldType queryFieldType, IQueryTable queryTable) {
 		this.name = name;
 		this.queryFieldType = queryFieldType;
+		this.queryTable = queryTable;
 	}
 
 	@Override
@@ -69,5 +73,19 @@ public class QueryField implements IQueryField {
 	@Override
 	public void setSortOrder(int sortOrder) {
 		this.sortOrder = sortOrder;
+	}
+
+	@Override
+	public boolean isSelected() {
+		return selected;
+	}
+
+	@Override
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	public IQueryTable getQueryTable() {
+		return queryTable;
 	}
 }

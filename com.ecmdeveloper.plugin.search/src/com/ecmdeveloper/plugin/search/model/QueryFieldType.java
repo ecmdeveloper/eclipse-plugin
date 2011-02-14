@@ -73,6 +73,12 @@ public enum QueryFieldType {
 		public String toString() {
 			return STRING_NAME;
 		}
+	},
+	NONE { 		
+		@Override
+		public String toString() {
+			return "";
+		}
 	};
 	
 	private static final String STRING_NAME = "String";

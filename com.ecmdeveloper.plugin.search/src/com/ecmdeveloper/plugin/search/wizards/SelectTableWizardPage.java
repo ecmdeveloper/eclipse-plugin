@@ -20,7 +20,6 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -38,31 +37,33 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.IQueryTable;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryFieldWizardPage extends WizardPage {
+public class SelectTableWizardPage extends WizardPage {
 
-	private static final String TITLE = "Select Field";
-	private static final String DESCRIPTION = "Select the desired query field.";
+	private static final String TITLE = "Select Table";
+	private static final String DESCRIPTION = "Select the query table.";
 
 	private TableViewer contentTable;
-	private Collection<IQueryField> content;
-	private IQueryField field;
-	private ISelection selection;
+	private final Query query;
+	private final StructuredSelection selection;
 	
-	protected QueryFieldWizardPage(StructuredSelection selection) {
+	protected SelectTableWizardPage(Query query, StructuredSelection selection) {
 		super(TITLE);
+		this.query = query;
 		this.selection = selection;
 		setTitle(TITLE);
-		setDescription(DESCRIPTION);
+		setDescription(DESCRIPTION );
 	}
 
 	@Override
 	public void createControl(Composite parent) {
-		
+
 		Composite container = new Composite(parent, SWT.NULL );
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
@@ -72,48 +73,35 @@ public class QueryFieldWizardPage extends WizardPage {
 		createContentTable(container);
 	}
 
-	public IQueryField getField() {
-		return field;
-	}
-
-	public void setField(IQueryField field) {
-		this.field = field;
-	}
-
 	private void createContentTable(Composite container) {
 
 		contentTable = new TableViewer(container, SWT.BORDER | SWT.SINGLE );
 		contentTable.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		contentTable.setLabelProvider( new LabelProvider() );
 		contentTable.setContentProvider( new ArrayContentProvider() );
+		contentTable.setInput( query.getQueryTables() );
 		contentTable.addSelectionChangedListener( new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				fieldSelectionChanged();
+				updatePageComplete();
 			}} );
-	}
 
-	public void setContent(Collection<IQueryField> fields) {
-		this.content = fields;
-	}
-
-	@Override
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		contentTable.setInput( content );
 		if ( selection != null ) {
-			contentTable.setSelection(selection);
+			contentTable.setSelection( selection );
 		}
 	}
 
-	private void fieldSelectionChanged() {
+	protected void updatePageComplete() {
+		setPageComplete( getQueryTable() != null );
+	}
+
+	public IQueryTable getQueryTable() {
 		IStructuredSelection selection = (IStructuredSelection) contentTable.getSelection();
 		Iterator<?> iterator = selection.iterator();
-		if (iterator.hasNext() ) {
-			field = (IQueryField) iterator.next();
+		if ( iterator.hasNext() ) {
+			return (IQueryTable) iterator.next();
 		}
-		
-		getWizard().getContainer().updateButtons();
+		return null;
 	}
 }

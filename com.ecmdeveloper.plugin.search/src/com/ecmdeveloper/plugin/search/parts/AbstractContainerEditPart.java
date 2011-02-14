@@ -33,7 +33,7 @@ import com.ecmdeveloper.plugin.search.policies.AbstractContainerEditPolicy;
  * @author ricardo.belfor
  *
  */
-public abstract class AbstractContainerEditPart extends LogicEditPart {
+public abstract class AbstractContainerEditPart extends QueryEditPart {
 
 	protected AccessibleEditPart createAccessible() {
 		return new AccessibleGraphicalEditPart(){

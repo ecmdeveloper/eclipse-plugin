@@ -22,10 +22,12 @@ package com.ecmdeveloper.plugin.search.editor;
 import java.util.Collection;
 
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 
+import com.ecmdeveloper.plugin.search.model.AllQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.SortOrderUtils;
 import com.ecmdeveloper.plugin.search.model.SortType;
@@ -38,15 +40,17 @@ import com.ecmdeveloper.plugin.search.model.SortType;
 public class SortTypeEditingSupport extends EditingSupport {
 
 	private final TableViewer viewer;
+	private final QueryFieldsTable queryFieldsTable;
 	
-	public SortTypeEditingSupport(TableViewer viewer) {
-		super(viewer);
-		this.viewer = viewer;
+	public SortTypeEditingSupport(QueryFieldsTable queryFieldsTable ) {
+		super( queryFieldsTable.getTableViewer() );
+		this.queryFieldsTable = queryFieldsTable;
+		this.viewer = queryFieldsTable.getTableViewer() ;
 	}
 	
 	@Override
 	protected boolean canEdit(Object element) {
-		return true;
+		return !(element instanceof AllQueryField);
 	}
 
 	@Override
@@ -76,12 +80,14 @@ public class SortTypeEditingSupport extends EditingSupport {
 				queryField.setSortOrder(maxQueryField+1);
 			}
 			queryField.setSortType( sortType );
+			queryFieldsTable.selectField(queryField);
 		} else {
 			if ( !queryField.getSortType().equals( SortType.NONE ) ) {
 				SortOrderUtils.remove( getQueryFields(), queryField.getSortOrder() );
 				queryField.setSortOrder(0);
 			} 				
 			queryField.setSortType( sortType );
+			
 		}
 		
 		viewer.refresh();

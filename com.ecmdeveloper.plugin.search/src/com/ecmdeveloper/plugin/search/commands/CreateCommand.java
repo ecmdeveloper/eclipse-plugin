@@ -20,16 +20,11 @@
 
 package com.ecmdeveloper.plugin.search.commands;
 
-import java.util.ArrayList;
-
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 
-import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
-import com.ecmdeveloper.plugin.search.model.QueryField;
-import com.ecmdeveloper.plugin.search.model.QueryFieldType;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 
 /**

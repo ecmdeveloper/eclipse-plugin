@@ -30,6 +30,15 @@ import java.util.Collection;
 public class QueryTable implements IQueryTable {
 
 	private ArrayList<IQueryField> fields;
+	private final String name;
+	
+	public QueryTable(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
 
 	@Override
 	public Collection<IQueryField> getQueryFields() {
@@ -42,10 +51,15 @@ public class QueryTable implements IQueryTable {
 	protected ArrayList<IQueryField> createMockFields() {
 		ArrayList<IQueryField> fields = new ArrayList<IQueryField>();
 		for (int i = 0; i < 10; i++) {
-			QueryField queryField = new QueryField("Field " + i , QueryFieldType.STRING );
+			QueryField queryField = new QueryField("Field " + i , QueryFieldType.STRING, this );
 			fields.add(queryField);
 		}
 		return fields;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }
 

@@ -43,7 +43,7 @@ import com.ecmdeveloper.plugin.search.policies.QueryElementEditPolicy;
  * @author ricardo.belfor
  *
  */
-public abstract class LogicEditPart extends AbstractGraphicalEditPart implements 
+public abstract class QueryEditPart extends AbstractGraphicalEditPart implements 
 		PropertyChangeListener {
 
 	private AccessibleEditPart acc;

@@ -59,7 +59,7 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 	static private List createCategories(PaletteRoot root, Query query) {
 		List categories = new ArrayList();
 
-		categories.add(createControlGroup(root));
+		//categories.add(createControlGroup(root));
 		categories.add(createContainersDrawer(query));
 		categories.add(createQueryPartsDrawer(query));
 
