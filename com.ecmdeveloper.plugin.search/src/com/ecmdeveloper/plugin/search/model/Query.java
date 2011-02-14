@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -29,23 +31,29 @@ import java.util.Collection;
  */
 public class Query {
 
-	private ArrayList<QueryTable> queryTables = new ArrayList<QueryTable>();
+	public static final String TABLE_ADDED = "TableAdded";
+	public static final String TABLE_REMOVED = "TableAdded";
+	
+	private ArrayList<IQueryTable> queryTables = new ArrayList<IQueryTable>();
 	private QueryDiagram queryDiagram;
+	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
 	public Query() {
 		queryDiagram = new QueryDiagram(this);
-		add( new QueryTable() );
+		add( new QueryTable("Query Table 1") );
 	}
-	public Collection<QueryTable> getQueryTables() {
+	public Collection<IQueryTable> getQueryTables() {
 		return queryTables;
 	}
 	
-	public void add(QueryTable queryTable) {
+	public void add(IQueryTable queryTable) {
 		queryTables.add(queryTable);
+		listeners.firePropertyChange(TABLE_ADDED, queryTable, null);
 	}
 	
 	public void remove(QueryTable queryTable) {
 		queryTables.remove(queryTable);
+		listeners.firePropertyChange(TABLE_REMOVED, queryTable, null);
 	}
 	
 	public QueryDiagram getQueryDiagram() {
@@ -54,9 +62,26 @@ public class Query {
 	
 	public Collection<IQueryField> getQueryFields() {
 		ArrayList<IQueryField> queryFields = new ArrayList<IQueryField>();
-		for ( QueryTable queryTable : queryTables ) {
-			queryFields.addAll( queryTable.getQueryFields() );
+		if ( !queryTables.isEmpty() ) {
+			queryFields.add( new AllQueryField() );
+			for ( IQueryTable queryTable : queryTables ) {
+				queryFields.addAll( queryTable.getQueryFields() );
+			}
 		}
 		return queryFields;
+	}
+	
+	public void setQueryFieldsSelection(boolean selected ) {
+		for ( IQueryField queryField : getQueryFields() ) {
+			queryField.setSelected(selected);
+		}
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener l){
+		listeners.addPropertyChangeListener(l);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener l){
+		listeners.removePropertyChangeListener(l);
 	}
 }

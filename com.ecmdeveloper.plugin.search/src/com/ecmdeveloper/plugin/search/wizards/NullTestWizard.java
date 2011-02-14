@@ -43,6 +43,11 @@ public class NullTestWizard extends QueryComponentWizard {
 	}
 
 	@Override
+	public boolean canFinish() {
+		return getField() != null;
+	}
+
+	@Override
 	public boolean performFinish() {
 		return true;
 	}

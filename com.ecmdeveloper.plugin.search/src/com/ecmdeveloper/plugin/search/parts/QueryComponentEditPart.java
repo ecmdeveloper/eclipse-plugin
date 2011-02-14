@@ -31,6 +31,7 @@ import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 
 import com.ecmdeveloper.plugin.search.figures.TextFigure;
+import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.policies.QueryTextEditPolicy;
 
 /**
@@ -38,7 +39,7 @@ import com.ecmdeveloper.plugin.search.policies.QueryTextEditPolicy;
  * @author ricardo.belfor
  *
  */
-public class QueryComponentEditPart extends LogicEditPart {
+public class QueryComponentEditPart extends QueryEditPart {
 
 	protected AccessibleEditPart createAccessible() {
 		return new AccessibleGraphicalEditPart() {
@@ -76,7 +77,7 @@ public class QueryComponentEditPart extends LogicEditPart {
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equalsIgnoreCase("labelContents"))//$NON-NLS-1$
+		if (evt.getPropertyName().equalsIgnoreCase(QueryComponent.FIELD_CHANGED))
 			refreshVisuals();
 		else
 			super.propertyChange(evt);

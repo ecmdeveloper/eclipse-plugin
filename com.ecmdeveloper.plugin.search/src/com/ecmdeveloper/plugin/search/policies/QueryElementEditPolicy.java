@@ -19,11 +19,17 @@
  */
 package com.ecmdeveloper.plugin.search.policies;
 
+import java.util.Map;
+
+import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
+import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.commands.DeleteCommand;
+import com.ecmdeveloper.plugin.search.commands.EditQueryComponentCommand;
+import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 
@@ -34,6 +40,27 @@ import com.ecmdeveloper.plugin.search.model.QuerySubpart;
  */
 public class QueryElementEditPolicy extends ComponentEditPolicy {
 
+	@Override
+	public Command getCommand(Request request) {
+		if ( EditQueryComponentAction.REQUEST_TYPE.equals(request.getType())) {
+			return createClassDiagramClassRefreshCommand(request);
+		}
+		return super.getCommand(request);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Command createClassDiagramClassRefreshCommand(Request request) {
+		QueryComponent classDiagramClass = getQueryComponent(request);
+		return new EditQueryComponentCommand(classDiagramClass);
+	}
+
+	@SuppressWarnings("unchecked")
+	private QueryComponent getQueryComponent(Request request) {
+		Map<String, Object> extendedData = request.getExtendedData();
+		return (QueryComponent) extendedData
+				.get(EditQueryComponentAction.QUERY_COMPONENT_KEY);
+	}
+	
 	protected Command createDeleteCommand(GroupRequest request) {
 		Object parent = getHost().getParent().getModel();
 		DeleteCommand deleteCmd = new DeleteCommand();

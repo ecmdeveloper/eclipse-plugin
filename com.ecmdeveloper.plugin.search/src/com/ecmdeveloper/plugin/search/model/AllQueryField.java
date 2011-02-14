@@ -20,53 +20,59 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
-import java.io.IOException;
-
-import org.eclipse.draw2d.geometry.Dimension;
-
-
 /**
  * @author ricardo.belfor
  *
  */
-public abstract class QueryComponent extends QuerySubpart{
+public class AllQueryField implements IQueryField {
 
-	public static final String FIELD_CHANGED = "fieldChanged";
-	
-	private static final long serialVersionUID = 1L;
+	private boolean selected;
 
-	private static int count;
-	private IQueryField field;
-
-	public QueryComponent(Query query) {
-		super(query);
-		size.width = 200;
+	@Override
+	public String getName() {
+		return "*";
 	}
 
-	public void setField(IQueryField queryField) {
-		IQueryField oldField = field;
-		this.field = queryField;
-		firePropertyChange(FIELD_CHANGED, oldField, queryField);
+	@Override
+	public int getSortOrder() {
+		return 0;
 	}
 
-	public IQueryField getField() {
-		return field;
-	}
-	
-	protected String getNewID() {
-		return Integer.toString(count++);
+	@Override
+	public SortType getSortType() {
+		return SortType.NONE;
 	}
 
-	private void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
-		s.defaultReadObject();
+	@Override
+	public QueryFieldType getType() {
+		return QueryFieldType.NONE;
 	}
 
-	public Dimension getSize() {
-		return new Dimension(size.width, -1);
+	@Override
+	public void setSortOrder(int sortOrder) {
 	}
 
-	public void setSize(Dimension d) {
-		d.height = -1;
-		super.setSize(d);
+	@Override
+	public void setSortType(SortType sortType) {
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
+	public boolean isSelected() {
+		return selected;
+	}
+
+	@Override
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	@Override
+	public IQueryTable getQueryTable() {
+		return null;
 	}
 }

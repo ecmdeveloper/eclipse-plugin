@@ -34,6 +34,14 @@ public class FolderTestWizard extends QueryComponentWizard {
 		super(query);
 	}
 
+	
+	@Override
+	public boolean canFinish() {
+		// TODO add folder selected check
+		return getField() != null;
+	}
+
+
 	@Override
 	public boolean performFinish() {
 		return true;

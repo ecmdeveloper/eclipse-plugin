@@ -5,12 +5,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.IQueryTable;
 
 public class TableViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -18,13 +18,20 @@ public class TableViewLabelProvider extends LabelProvider implements ITableLabel
 	public String getColumnText(Object element, int columnIndex) {
 
 		IQueryField queryField = (IQueryField) element;
-		if ( columnIndex == 0) {
+		if ( columnIndex == QueryFieldsTable.NAME_COLUMN_INDEX) {
 			return queryField.getName(); 
-		} else if ( columnIndex == 1 ) {
+		} else if ( columnIndex == QueryFieldsTable.TABLE_COLUMN_INDEX) {
+				IQueryTable queryTable = queryField.getQueryTable();
+				if ( queryTable != null ) {
+					return queryTable.getName();
+				} else {
+					return "";
+				}
+		} else if ( columnIndex == QueryFieldsTable.TYPE_COLUMN_INDEX ) {
 			return queryField.getType().toString();
-		} else if ( columnIndex == 2 ) {
+		} else if ( columnIndex == QueryFieldsTable.SORT_TYPE_COLUMN_INDEX ) {
 			return queryField.getSortType().toString();
-		} else if ( columnIndex == 3 ) {
+		} else if ( columnIndex == QueryFieldsTable.SORT_ORDER_COLUMN_INDEX ) {
 			if ( queryField.getSortOrder() != 0 ) {
 				return Integer.toString( queryField.getSortOrder() );
 			}

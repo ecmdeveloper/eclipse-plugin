@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.search.model.Comparison;
-import com.ecmdeveloper.plugin.search.model.QueryTable;
 import com.ecmdeveloper.plugin.search.wizards.ComparisonWizard;
 
 /**

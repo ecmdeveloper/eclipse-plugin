@@ -23,7 +23,12 @@ package com.ecmdeveloper.plugin.search.editor;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.actions.ActionFactory;
+
+import com.ecmdeveloper.plugin.search.actions.AddTableAction;
+import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
+import com.ecmdeveloper.plugin.search.actions.RemoveTableAction;
 
 /**
  * @author ricardo.belfor
@@ -39,6 +44,10 @@ public class QueryContextMenuManager  extends MenuManager {
 		add( getAction(ActionFactory.UNDO.getId() ) );
 		add( getAction(ActionFactory.REDO.getId() ) );
 		add( getAction(ActionFactory.DELETE.getId() ) );
+		add( getAction(EditQueryComponentAction.ID));
+		add(new Separator());
+		add( getAction( AddTableAction.ID) );
+		add( getAction( RemoveTableAction.ID) );
 	}
 
 	private IAction getAction(String actionId) {
