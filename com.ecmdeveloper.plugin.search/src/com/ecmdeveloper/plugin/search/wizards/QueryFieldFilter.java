@@ -20,49 +20,21 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
 import com.ecmdeveloper.plugin.search.model.IQueryField;
-import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class FolderTestWizard extends QueryComponentWizard {
-
-	private String folder = "/Animals/Fish";
-	
-	public FolderTestWizard(Query query) {
-		super(query);
-	}
+public abstract class QueryFieldFilter extends ViewerFilter {
 
 	@Override
-	protected QueryFieldFilter getQueryFieldFilter() {
-		return new QueryFieldFilter() {
-
-			@Override
-			protected boolean select(IQueryField queryField) {
-				return queryField.isContainable();
-			}
-		};
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		return select( (IQueryField) element);
 	}
 
-	@Override
-	public boolean canFinish() {
-		// TODO add folder selected check
-		return getField() != null;
-	}
-
-
-	@Override
-	public boolean performFinish() {
-		return true;
-	}
-
-	public void setFolder(String folder) {
-		this.folder = folder;
-	}
-
-	public String getFolder() {
-		return folder;
-	}
+	protected abstract boolean select(IQueryField queryField);
 }

@@ -32,6 +32,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 public abstract class QueryComponent extends QuerySubpart{
 
 	public static final String FIELD_CHANGED = "fieldChanged";
+	public static final String PROPERTY_CHANGED = "propertyChanged";
 	
 	private static final long serialVersionUID = 1L;
 

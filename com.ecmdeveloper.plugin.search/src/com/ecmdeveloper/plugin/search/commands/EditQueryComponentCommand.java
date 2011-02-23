@@ -21,80 +21,27 @@
 package com.ecmdeveloper.plugin.search.commands;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.Comparison;
-import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
-import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
-import com.ecmdeveloper.plugin.search.wizards.ComparisonWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class EditQueryComponentCommand extends Command {
+public abstract class EditQueryComponentCommand extends Command {
 
 	protected final QueryComponent queryComponent;
-	private IQueryField previousField;
-	private ComparisonOperation previousComparisonOperation;
-	private IQueryField newField;
-	private ComparisonOperation newComparisonOperation;
-	
+
 	public EditQueryComponentCommand(QueryComponent queryComponent) {
 		this.queryComponent = queryComponent;
+	}
+
+	protected QueryComponent getQueryComponent() {
+		return queryComponent;
 	}
 
 	@Override
 	public boolean canExecute() {
 		return queryComponent != null;
-	}
-
-	@Override
-	public void execute() {
-		Shell shell = Display.getCurrent().getActiveShell();
-		Comparison comparison = getComparison();
-
-		ComparisonWizard wizard = new ComparisonWizard( queryComponent.getQuery() );
-		wizard.setSelection( comparison.getField() );
-		wizard.setComparisonOperation(comparison.getComparisonOperation() );
-		
-		WizardDialog dialog = new WizardDialog(shell, wizard);
-		dialog.create();
-		if ( dialog.open() == Dialog.OK ) {
-
-			previousField = comparison.getField();
-			previousComparisonOperation = comparison.getComparisonOperation();
-
-			newField = wizard.getField();
-			newComparisonOperation = wizard.getComparisonOperation();
-			redo();
-		}
-	}
-
-	private Comparison getComparison() {
-		return (Comparison)queryComponent;
-	}
-
-	@Override
-	public void redo() {
-		Comparison comparison = getComparison();
-		comparison.setField( newField );
-		comparison.setComparisonOperation( newComparisonOperation );
-	}
-
-	@Override
-	public boolean canUndo() {
-		return previousField != null && previousComparisonOperation != null;
-	}
-
-	@Override
-	public void undo() {
-		Comparison comparison = getComparison();
-		comparison.setField( previousField );
-		comparison.setComparisonOperation( previousComparisonOperation );
 	}
 }

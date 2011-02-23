@@ -23,6 +23,8 @@ package com.ecmdeveloper.plugin.search.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
 import org.eclipse.gef.palette.MarqueeToolEntry;
 import org.eclipse.gef.palette.PaletteContainer;
@@ -36,6 +38,7 @@ import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.tools.MarqueeSelectionTool;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.model.AndContainer;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
@@ -45,6 +48,7 @@ import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
+import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
  * 
@@ -82,6 +86,11 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		combined = createEntry("Null Test", "Query Field Null Test", "ledicon", NullTest.class, query);
 		entries.add(combined);
 
+		combined = createEntry("Like Test", "Query Field Wildcard Test",
+				QueryIcons.WILDCARD_TEST_ICON, QueryIcons.WILDCARD_TEST_ICON_LARGE,
+				WildcardTest.class, query);
+		entries.add(combined);
+
 		combined = createEntry("In Folder Test", "Query Field In Folder Test", "connection", InFolderTest.class, query);
 		entries.add(combined);
 
@@ -112,7 +121,9 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		return drawer;
 	}
 
+	@Deprecated
 	private static CombinedTemplateCreationEntry createEntry(String label, String description, String iconRoot, Class<? extends QueryElement> type, Query query ) {
+		
 		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(label,
 				description, new QueryCreationFactory( query, type),
 						ImageDescriptor.createFromFile(type, "icons/" + iconRoot + "16.gif"),//$NON-NLS-1$
@@ -121,6 +132,15 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		return combined;
 	}
 
+	private static CombinedTemplateCreationEntry createEntry(String label, String description, String normalIcon, String largeIcon, Class<? extends QueryElement> type, Query query ) {
+		
+		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(label,
+				description, new QueryCreationFactory( query, type), Activator.getImageDescriptor(normalIcon),
+					Activator.getImageDescriptor(largeIcon)
+		);
+		return combined;
+	}
+	
 	@SuppressWarnings("unchecked")
 	static private PaletteContainer createControlGroup(PaletteRoot root) {
 		PaletteGroup controlGroup = new PaletteGroup("Control");

@@ -20,12 +20,14 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.UUID;
+
+import org.eclipse.jface.wizard.IWizardPage;
 
 import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.model.QueryFieldType;
 
 /**
  * @author ricardo.belfor
@@ -36,7 +38,10 @@ public class ComparisonWizard extends QueryComponentWizard {
 	private static final String TITLE = "Query Condition Wizard";
 
 	private ComparisonOperationWizardPage comparisonOperationWizardPage;
-
+	private ValueWizardPage valueWizardPage;
+	private ComparisonOperation comparisonOperation = ComparisonOperation.EQUAL;
+	private Object value;
+	
 	public ComparisonWizard(Query query) {
 		super(query);
 		setWindowTitle(TITLE);
@@ -47,14 +52,64 @@ public class ComparisonWizard extends QueryComponentWizard {
 		super.addPages();
 
 		comparisonOperationWizardPage = new ComparisonOperationWizardPage();
-		// TODO set this from creator
-		comparisonOperationWizardPage.setComparisonOperation(ComparisonOperation.EQUAL);
+		comparisonOperationWizardPage.setComparisonOperation(comparisonOperation);
 		addPage(comparisonOperationWizardPage);
 	}
 
 	@Override
+	public IWizardPage getNextPage(IWizardPage page) {
+		
+		if ( page instanceof ComparisonOperationWizardPage ) {
+			IQueryField field = getField();
+			valueWizardPage = getValueWizardPage(field);
+			if ( valueWizardPage != null ) {
+				addPage(valueWizardPage);
+				valueWizardPage.setValue(value);
+				
+				if ( field.getType().equals( QueryFieldType.GUID ) )
+				{
+					valueWizardPage.setValue(UUID.randomUUID().toString() );
+				}
+				return valueWizardPage;
+			}
+		}
+		if ( page instanceof QueryFieldWizardPage ) {
+			comparisonOperationWizardPage.setField(getQueryFieldWizardPage().getField() );
+		}
+		
+		return super.getNextPage(page);
+	}
+
+	private ValueWizardPage getValueWizardPage(IQueryField field) {
+		if ( field != null ) {
+			switch (field.getType() ) {
+			case STRING:
+				return new StringValueWizardPage();
+			case LONG:
+				return new IntegerValueWizardPage();
+			case DOUBLE:
+				return new DoubleValueWizardPage();
+			case GUID:
+				return new IdValueWizardPage();
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public boolean canFinish() {
-		return getField() != null && getComparisonOperation() != null;
+		return getField() != null && getComparisonOperation() != null && getValue() != null;
+	}
+
+	public Object getValue() {
+		if ( valueWizardPage == null) {
+			return null;
+		}
+		return valueWizardPage.getValue();
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
 	}
 
 	public ComparisonOperation getComparisonOperation() {
@@ -62,7 +117,7 @@ public class ComparisonWizard extends QueryComponentWizard {
 	}
 
 	public void setComparisonOperation(ComparisonOperation comparisonOperation) {
-		comparisonOperationWizardPage.setComparisonOperation(comparisonOperation);
+		this.comparisonOperation = comparisonOperation;
 	}
 
 	@Override

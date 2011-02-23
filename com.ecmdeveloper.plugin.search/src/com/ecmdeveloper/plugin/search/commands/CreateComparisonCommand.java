@@ -43,8 +43,10 @@ public class CreateComparisonCommand extends CreateCommand {
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {
-			((Comparison)child).setField( wizard.getField() );
-			((Comparison)child).setComparisonOperation( wizard.getComparisonOperation() );
+			Comparison comparison = (Comparison)child;
+			comparison.setField( wizard.getField() );
+			comparison.setComparisonOperation( wizard.getComparisonOperation() );
+			comparison.setValue( wizard.getValue() );
 			super.execute();
 		}
 	}

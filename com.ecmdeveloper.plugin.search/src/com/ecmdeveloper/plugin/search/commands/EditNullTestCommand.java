@@ -25,6 +25,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.wizards.NullTestWizard;
@@ -33,20 +34,60 @@ import com.ecmdeveloper.plugin.search.wizards.NullTestWizard;
  * @author ricardo.belfor
  *
  */
-public class CreateNullTestCommand extends CreateCommand {
+public class EditNullTestCommand extends EditQueryComponentCommand {
+
+	private IQueryField previousField;
+	private IQueryField newField;
+	private boolean previousNegated;
+	private boolean newNegated;
+	
+	public EditNullTestCommand(QueryComponent queryComponent) {
+		super(queryComponent);
+		setLabel( "Edit Null Test" );
+	}
 
 	@Override
 	public void execute() {
-
-		Shell shell = Display.getCurrent().getActiveShell();
 		
-		NullTestWizard wizard = new NullTestWizard( child.getQuery(), false );
+		Shell shell = Display.getCurrent().getActiveShell();
+		NullTest nullTest = getNullTest();
+
+		NullTestWizard wizard = new NullTestWizard( nullTest.getQuery(), nullTest.isNegated() );
+		wizard.setSelection( nullTest.getField() );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
+
 		if ( dialog.open() == Dialog.OK ) {
-			((QueryComponent)child).setField( wizard.getField() );
-			((NullTest)child).setNegated( wizard.isNegated() );
-			super.execute();
+
+			previousField = nullTest.getField();
+			previousNegated = nullTest.isNegated();
+
+			newField = wizard.getField();
+			newNegated = wizard.isNegated();
+			redo();
 		}
-	}	
+	}
+
+	private NullTest getNullTest() {
+		return (NullTest)queryComponent;
+	}
+
+	@Override
+	public void redo() {
+		NullTest nullTest = getNullTest();
+		nullTest.setField( newField );
+		nullTest.setNegated( newNegated );
+	}
+
+	@Override
+	public boolean canUndo() {
+		return previousField != null;
+	}
+
+	@Override
+	public void undo() {
+		NullTest nullTest = getNullTest();
+		nullTest.setField( previousField );
+		nullTest.setNegated( previousNegated );
+	}
 }

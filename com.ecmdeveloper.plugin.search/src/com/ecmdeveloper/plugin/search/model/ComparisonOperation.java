@@ -26,52 +26,57 @@ package com.ecmdeveloper.plugin.search.model;
  */
 public enum ComparisonOperation {
 
-	EQUAL("=") { 		
+	EQUAL("=", false) { 		
 		@Override
 		public String toString() {
 			return "Equals";
 		}
 		
 	},
-	NOT_EQUAL("<>") { 		
+	NOT_EQUAL("<>", false) { 		
 		@Override
 		public String toString() {
 			return "Not Equals";
 		}
 	},
-	LESS("<") { 		
+	LESS("<", true) { 		
 		@Override
 		public String toString() {
 			return "Less";
 		}
 	},
-	LESS_OR_EQUAL("<=") { 		
+	LESS_OR_EQUAL("<=", true) { 		
 		@Override
 		public String toString() {
 			return "Less or Equal";
 		}
 	},
-	GREATER(">") { 		
+	GREATER(">", true) { 		
 		@Override
 		public String toString() {
 			return "Greater";
 		}
 	},
-	GREATER_OR_EQUAL(">=") { 		
+	GREATER_OR_EQUAL(">=", true) { 		
 		@Override
 		public String toString() {
 			return "Greater or Equal";
 		}
 	};
 
-	private String operation;
-
-	private ComparisonOperation(String operation) {
+	private final String operation;
+	private final boolean requiresOrderable;
+	
+	private ComparisonOperation(String operation, boolean requiresOrderable) {
 		this.operation = operation;
+		this.requiresOrderable = requiresOrderable;
 	}
 	
 	public String getOperation() {
 		return operation;
 	}
-	
+
+	public boolean isRequiresOrderable() {
+		return requiresOrderable;
+	}
 }

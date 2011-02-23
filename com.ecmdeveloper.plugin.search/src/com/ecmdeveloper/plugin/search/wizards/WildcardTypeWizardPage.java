@@ -32,22 +32,22 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.constants.WildcardType;
 
 /**
  * @author ricardo.belfor
- * 
+ *
  */
-public class ComparisonOperationWizardPage extends WizardPage {
+public class WildcardTypeWizardPage extends WizardPage {
 
-	private static final String TITLE = "Comparison Operation";
-	private static final String DESCRIPTION = "Select the comparison operator.";
-	private Map<Button, ComparisonOperation> buttonComparisonOperationMap = new HashMap<Button, ComparisonOperation>();
-	private ComparisonOperation comparisonOperation;
+	private static final String TITLE = "Wildcard Type";
+	private static final String DESCRIPTION = "Select the wildcard type.";
+	private Map<Button, WildcardType> buttonWildcardTypeMap = new HashMap<Button, WildcardType>();
+	private WildcardType wildcardType;
 	private IQueryField field;
 
-	protected ComparisonOperationWizardPage() {
+	protected WildcardTypeWizardPage() {
 		super(TITLE);
 		setTitle(TITLE);
 		setDescription(DESCRIPTION);
@@ -55,28 +55,27 @@ public class ComparisonOperationWizardPage extends WizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
-
 		Composite container = new Composite(parent, SWT.NULL);
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
 		container.setLayout(gridLayout);
 		setControl(container);
-		createComparisonOperationButtons(container);
+		createWildcardTypeButtons(container);
 	}
 
-	private void createComparisonOperationButtons(Composite container) {
-		for (ComparisonOperation comparisonOperation : ComparisonOperation.values()) {
-			Button button = createButton(container, comparisonOperation, comparisonOperation
-					.equals(this.comparisonOperation));
-			buttonComparisonOperationMap.put(button, comparisonOperation);
+	private void createWildcardTypeButtons(Composite container) {
+		for (WildcardType wildcardType : WildcardType.values()) {
+			Button button = createButton(container, wildcardType, wildcardType
+					.equals(this.wildcardType));
+			buttonWildcardTypeMap.put(button, wildcardType);
 		}
 	}
 
-	private Button createButton(Composite container, ComparisonOperation comparisonOperation,
+	private Button createButton(Composite container, WildcardType wildcardType,
 			boolean selection) {
 
 		Button button = new Button(container, SWT.RADIO);
-		button.setText(comparisonOperation.toString());
+		button.setText(wildcardType.toString());
 		button.setLayoutData(getFullRowGridData());
 		button.setSelection(selection);
 		button.addSelectionListener(new SelectionAdapter() {
@@ -91,42 +90,23 @@ public class ComparisonOperationWizardPage extends WizardPage {
 		return button;
 	}
 
-	public void setComparisonOperation(ComparisonOperation comparisonOperation) {
-		this.comparisonOperation = comparisonOperation;
-	}
-
-	public ComparisonOperation getComparisonOperation() {
-		return comparisonOperation;
-	}
-
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if ( visible ) {
-			
-			for ( Button button : buttonComparisonOperationMap.keySet() ) {
-				if ( field == null ) {
-					button.setEnabled(false);
-				} else {
-					ComparisonOperation comparisonOperation = buttonComparisonOperationMap.get(button);
-					button.setEnabled( !comparisonOperation.isRequiresOrderable() || field.isOrderable() );
-				}
-			}
-		}
-	}
-	
 	protected void updateSelection(Object source) {
-		comparisonOperation = buttonComparisonOperationMap.get(source);
-		System.out.println(comparisonOperation.toString());
+		wildcardType = buttonWildcardTypeMap.get(source);
+		System.out.println(wildcardType.toString());
 		getWizard().getContainer().updateButtons();
 	}
-
+	
 	private GridData getFullRowGridData() {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		return gd;
 	}
 
-	public void setField(IQueryField field) {
-		this.field = field;
+	public WildcardType getWildcardType() {
+		return wildcardType;
+	}
+
+	public void setWildcardType(WildcardType wildcardType) {
+		this.wildcardType = wildcardType;
 	}
 }

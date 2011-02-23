@@ -75,4 +75,19 @@ public class AllQueryField implements IQueryField {
 	public IQueryTable getQueryTable() {
 		return null;
 	}
+
+	@Override
+	public boolean isOrderable() {
+		return false;
+	}
+
+	@Override
+	public boolean isSupportsWildcards() {
+		return false;
+	}
+
+	@Override
+	public boolean isContainable() {
+		return false;
+	}
 }

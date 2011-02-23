@@ -34,4 +34,7 @@ public interface IQueryField {
 	public boolean isSelected();
 	public void setSelected(boolean selected);
 	public IQueryTable getQueryTable();
+	public boolean isOrderable();
+	public boolean isSupportsWildcards();
+	public boolean isContainable(); 
 }

@@ -22,12 +22,10 @@ package com.ecmdeveloper.plugin.search.editor;
 import java.util.Collection;
 
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 
-import com.ecmdeveloper.plugin.search.model.AllQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.SortOrderUtils;
 import com.ecmdeveloper.plugin.search.model.SortType;
@@ -50,7 +48,8 @@ public class SortTypeEditingSupport extends EditingSupport {
 	
 	@Override
 	protected boolean canEdit(Object element) {
-		return !(element instanceof AllQueryField);
+		IQueryField queryField = (IQueryField) element;
+		return queryField.isOrderable();
 	}
 
 	@Override

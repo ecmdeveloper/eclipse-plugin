@@ -28,10 +28,19 @@ import org.eclipse.gef.requests.GroupRequest;
 
 import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.commands.DeleteCommand;
-import com.ecmdeveloper.plugin.search.commands.EditQueryComponentCommand;
+import com.ecmdeveloper.plugin.search.commands.EditComparisonCommand;
+import com.ecmdeveloper.plugin.search.commands.EditInFolderTestCommand;
+import com.ecmdeveloper.plugin.search.commands.EditInSubFolderTestCommand;
+import com.ecmdeveloper.plugin.search.commands.EditNullTestCommand;
+import com.ecmdeveloper.plugin.search.commands.EditWildcardTestCommand;
+import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.InFolderTest;
+import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
+import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
  * 
@@ -43,15 +52,26 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 	@Override
 	public Command getCommand(Request request) {
 		if ( EditQueryComponentAction.REQUEST_TYPE.equals(request.getType())) {
-			return createClassDiagramClassRefreshCommand(request);
+			return createEditQueryComponentCommand(request);
 		}
 		return super.getCommand(request);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Command createClassDiagramClassRefreshCommand(Request request) {
-		QueryComponent classDiagramClass = getQueryComponent(request);
-		return new EditQueryComponentCommand(classDiagramClass);
+	private Command createEditQueryComponentCommand(Request request) {
+		QueryComponent queryComponent = getQueryComponent(request);
+		if ( queryComponent instanceof Comparison ) {
+			return new EditComparisonCommand(queryComponent);
+		} if ( queryComponent instanceof NullTest ) {
+			return new EditNullTestCommand(queryComponent);
+		} if ( queryComponent instanceof WildcardTest ) {
+			return new EditWildcardTestCommand(queryComponent);
+		} if ( queryComponent instanceof InFolderTest ) {
+			return new EditInFolderTestCommand(queryComponent);
+		} if ( queryComponent instanceof InSubFolderTest ) {
+			return new EditInSubFolderTestCommand(queryComponent);
+		}
+	
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

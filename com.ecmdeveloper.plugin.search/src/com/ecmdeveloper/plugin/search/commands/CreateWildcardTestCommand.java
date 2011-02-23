@@ -25,28 +25,37 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
-import com.ecmdeveloper.plugin.search.wizards.NullTestWizard;
+import com.ecmdeveloper.plugin.search.model.WildcardTest;
+import com.ecmdeveloper.plugin.search.wizards.WildcardTestWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class CreateNullTestCommand extends CreateCommand {
+public class CreateWildcardTestCommand extends CreateCommand {
 
 	@Override
 	public void execute() {
 
 		Shell shell = Display.getCurrent().getActiveShell();
 		
-		NullTestWizard wizard = new NullTestWizard( child.getQuery(), false );
+		WildcardTestWizard wizard = new WildcardTestWizard( child.getQuery() );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {
-			((QueryComponent)child).setField( wizard.getField() );
-			((NullTest)child).setNegated( wizard.isNegated() );
+
+			WildcardTest wildcardTest = getWildcardTest();
+			
+			wildcardTest.setField( wizard.getField() );
+			wildcardTest.setWildcardType( wizard.getWildcardType() );
+			wildcardTest.setValue( wizard.getValue() );
+
 			super.execute();
 		}
+	}
+
+	private WildcardTest getWildcardTest() {
+		return ((WildcardTest)child);
 	}	
 }

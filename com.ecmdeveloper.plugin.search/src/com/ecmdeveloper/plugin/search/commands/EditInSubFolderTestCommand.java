@@ -25,28 +25,61 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
-import com.ecmdeveloper.plugin.search.wizards.NullTestWizard;
+import com.ecmdeveloper.plugin.search.wizards.FolderTestWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class CreateNullTestCommand extends CreateCommand {
+public class EditInSubFolderTestCommand extends EditQueryComponentCommand {
+
+	private IQueryField previousField;
+	private IQueryField newField;
+	
+	public EditInSubFolderTestCommand(QueryComponent queryComponent) {
+		super(queryComponent);
+		setLabel("Edit In Subfolder Test");
+	}
 
 	@Override
 	public void execute() {
-
-		Shell shell = Display.getCurrent().getActiveShell();
 		
-		NullTestWizard wizard = new NullTestWizard( child.getQuery(), false );
+		Shell shell = Display.getCurrent().getActiveShell();
+		InSubFolderTest inSubFolderTest = getInSubFolderTest();
+
+		FolderTestWizard wizard = new FolderTestWizard( inSubFolderTest.getQuery() );
+		wizard.setSelection( inSubFolderTest.getField() );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
+
 		if ( dialog.open() == Dialog.OK ) {
-			((QueryComponent)child).setField( wizard.getField() );
-			((NullTest)child).setNegated( wizard.isNegated() );
-			super.execute();
+			previousField = inSubFolderTest.getField();
+			newField = wizard.getField();
+			redo();
 		}
-	}	
+	}
+
+	private InSubFolderTest getInSubFolderTest() {
+		return (InSubFolderTest)queryComponent;
+	}
+
+	@Override
+	public void redo() {
+		InSubFolderTest inSubFolderTest = getInSubFolderTest();
+		inSubFolderTest.setField( newField );
+	}
+
+	@Override
+	public boolean canUndo() {
+		return previousField != null;
+	}
+
+	@Override
+	public void undo() {
+		InSubFolderTest inSubFolderTest = getInSubFolderTest();
+		inSubFolderTest.setField( previousField );
+	}
 }
