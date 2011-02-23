@@ -76,11 +76,13 @@ public class QueryComponentEditPart extends QueryEditPart {
 			performDirectEdit();
 	}
 
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equalsIgnoreCase(QueryComponent.FIELD_CHANGED))
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getPropertyName().equals(QueryComponent.FIELD_CHANGED)
+				|| event.getPropertyName().equals(QueryComponent.PROPERTY_CHANGED)) {
 			refreshVisuals();
-		else
-			super.propertyChange(evt);
+		} else {
+			super.propertyChange(event);
+		}
 	}
 
 	protected void refreshVisuals() {

@@ -45,6 +45,15 @@ public abstract class QueryComponentWizard extends Wizard {
 		this.query = query;
 	}	
 
+	protected QueryFieldFilter getQueryFieldFilter() {
+		return new QueryFieldFilter() {
+			@Override
+			protected boolean select(IQueryField queryField) {
+				return true;
+			}
+		};
+	}
+	
 	public void addPages() {
 
 		queryFieldWizardPage = new QueryFieldWizardPage( getFieldSelection() );
@@ -57,9 +66,18 @@ public abstract class QueryComponentWizard extends Wizard {
 			IQueryTable queryTable = query.getQueryTables().iterator().next();
 			Collection<IQueryField> fields = queryTable.getQueryFields();		
 			queryFieldWizardPage.setContent(fields);
+			queryFieldWizardPage.setFilter( getQueryFieldFilter() );
 		}
 		
 		addPage(queryFieldWizardPage);
+	}
+
+	public QueryFieldWizardPage getQueryFieldWizardPage() {
+		return queryFieldWizardPage;
+	}
+
+	public SelectTableWizardPage getSelectTableWizardPage() {
+		return selectTableWizardPage;
 	}
 
 	private StructuredSelection getFieldSelection() {

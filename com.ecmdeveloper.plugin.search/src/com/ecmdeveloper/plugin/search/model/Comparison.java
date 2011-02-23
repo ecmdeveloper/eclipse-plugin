@@ -20,8 +20,6 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
-import java.util.Date;
-
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -40,7 +38,6 @@ public class Comparison extends QueryComponent {
 
 	public Comparison(Query query) {
 		super(query);
-		value = new Date();
 	}
 
 	public Image getIconImage() {
@@ -60,6 +57,18 @@ public class Comparison extends QueryComponent {
 	}
 
 	public void setComparisonOperation(ComparisonOperation comparisonOperation) {
+		ComparisonOperation  oldField = this.comparisonOperation;
 		this.comparisonOperation = comparisonOperation;
+		firePropertyChange(PROPERTY_CHANGED, oldField, comparisonOperation);
+	}
+
+	public void setValue(Object value) {
+		Object oldField = this.value;
+		this.value = value;
+		firePropertyChange(PROPERTY_CHANGED, oldField, value);
+	}
+
+	public Object getValue() {
+		return value;
 	}
 }

@@ -27,10 +27,12 @@ import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
  * @author ricardo.belfor
@@ -45,6 +47,8 @@ public class QueryCommandFactory {
 			command = new CreateComparisonCommand();
 		} else if ( request.getNewObjectType() == NullTest.class ) {
 			command = new CreateNullTestCommand();
+		} else if ( request.getNewObjectType() == WildcardTest.class ) {
+			command = new CreateWildcardTestCommand();
 		} else if ( request.getNewObjectType() == InFolderTest.class ) {
 			command = new CreateInFolderTestCommand();
 		} else if ( request.getNewObjectType() == InSubFolderTest.class ) {

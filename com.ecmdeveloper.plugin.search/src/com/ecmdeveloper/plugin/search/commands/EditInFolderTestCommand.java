@@ -25,28 +25,61 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
-import com.ecmdeveloper.plugin.search.wizards.NullTestWizard;
+import com.ecmdeveloper.plugin.search.wizards.FolderTestWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class CreateNullTestCommand extends CreateCommand {
+public class EditInFolderTestCommand extends EditQueryComponentCommand {
+
+	private IQueryField previousField;
+	private IQueryField newField;
+	
+	public EditInFolderTestCommand(QueryComponent queryComponent) {
+		super(queryComponent);
+		setLabel("Edit In Folder Test");
+	}
 
 	@Override
 	public void execute() {
-
-		Shell shell = Display.getCurrent().getActiveShell();
 		
-		NullTestWizard wizard = new NullTestWizard( child.getQuery(), false );
+		Shell shell = Display.getCurrent().getActiveShell();
+		InFolderTest inFolderTest = getInFolderTest();
+
+		FolderTestWizard wizard = new FolderTestWizard( inFolderTest.getQuery() );
+		wizard.setSelection( inFolderTest.getField() );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
+
 		if ( dialog.open() == Dialog.OK ) {
-			((QueryComponent)child).setField( wizard.getField() );
-			((NullTest)child).setNegated( wizard.isNegated() );
-			super.execute();
+			previousField = inFolderTest.getField();
+			newField = wizard.getField();
+			redo();
 		}
-	}	
+	}
+
+	private InFolderTest getInFolderTest() {
+		return (InFolderTest)queryComponent;
+	}
+
+	@Override
+	public void redo() {
+		InFolderTest inFolderTest = getInFolderTest();
+		inFolderTest.setField( newField );
+	}
+
+	@Override
+	public boolean canUndo() {
+		return previousField != null;
+	}
+
+	@Override
+	public void undo() {
+		InFolderTest inFolderTest = getInFolderTest();
+		inFolderTest.setField( previousField );
+	}
 }

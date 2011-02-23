@@ -29,9 +29,11 @@ import com.ecmdeveloper.plugin.search.model.Query;
 public class NullTestWizard extends QueryComponentWizard {
 
 	private NullTestWizardPage nullTestWizardPage;
+	private final boolean negated;
 
-	public NullTestWizard(Query query) {
+	public NullTestWizard(Query query, boolean negated) {
 		super(query);
+		this.negated = negated;
 	}
 	
 	@Override
@@ -39,6 +41,7 @@ public class NullTestWizard extends QueryComponentWizard {
 		super.addPages();
 		
 		nullTestWizardPage = new NullTestWizardPage();
+		nullTestWizardPage.setNegated(negated);
 		addPage( nullTestWizardPage );
 	}
 

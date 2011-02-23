@@ -88,4 +88,25 @@ public class QueryField implements IQueryField {
 	public IQueryTable getQueryTable() {
 		return queryTable;
 	}
+
+	@Override
+	public boolean isOrderable() {
+		if ( queryFieldType.equals(QueryFieldType.BINARY ) || queryFieldType.equals(QueryFieldType.STRING ) ) {
+			// TODO check for long strings
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean isSupportsWildcards() {
+		return QueryFieldType.STRING.equals( queryFieldType );
+	}
+
+	@Override
+	public boolean isContainable() {
+		// TODO check if field is folder, document or custom object 
+		return QueryFieldType.OBJECT.equals(queryFieldType);
+	}
 }

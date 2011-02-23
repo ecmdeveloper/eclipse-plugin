@@ -18,51 +18,30 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.wizards;
-
-import com.ecmdeveloper.plugin.search.model.IQueryField;
-import com.ecmdeveloper.plugin.search.model.Query;
+package com.ecmdeveloper.plugin.search.model.constants;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class FolderTestWizard extends QueryComponentWizard {
+public enum WildcardType {
 
-	private String folder = "/Animals/Fish";
-	
-	public FolderTestWizard(Query query) {
-		super(query);
-	}
-
-	@Override
-	protected QueryFieldFilter getQueryFieldFilter() {
-		return new QueryFieldFilter() {
-
-			@Override
-			protected boolean select(IQueryField queryField) {
-				return queryField.isContainable();
-			}
-		};
-	}
-
-	@Override
-	public boolean canFinish() {
-		// TODO add folder selected check
-		return getField() != null;
-	}
-
-
-	@Override
-	public boolean performFinish() {
-		return true;
-	}
-
-	public void setFolder(String folder) {
-		this.folder = folder;
-	}
-
-	public String getFolder() {
-		return folder;
-	}
+	CONTAINS{		
+		@Override
+		public String toString() {
+			return "Contains";
+		}
+	},
+	STARTS_WITH {		
+		@Override
+		public String toString() {
+			return "Starts With";
+		}
+	},
+	ENDS_WITH{		
+		@Override
+		public String toString() {
+			return "Ends With";
+		}
+	},
 }

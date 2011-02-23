@@ -18,51 +18,14 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.wizards;
-
-import com.ecmdeveloper.plugin.search.model.IQueryField;
-import com.ecmdeveloper.plugin.search.model.Query;
+package com.ecmdeveloper.plugin.search.editor;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class FolderTestWizard extends QueryComponentWizard {
+public interface QueryIcons {
 
-	private String folder = "/Animals/Fish";
-	
-	public FolderTestWizard(Query query) {
-		super(query);
-	}
-
-	@Override
-	protected QueryFieldFilter getQueryFieldFilter() {
-		return new QueryFieldFilter() {
-
-			@Override
-			protected boolean select(IQueryField queryField) {
-				return queryField.isContainable();
-			}
-		};
-	}
-
-	@Override
-	public boolean canFinish() {
-		// TODO add folder selected check
-		return getField() != null;
-	}
-
-
-	@Override
-	public boolean performFinish() {
-		return true;
-	}
-
-	public void setFolder(String folder) {
-		this.folder = folder;
-	}
-
-	public String getFolder() {
-		return folder;
-	}
+	public static final String WILDCARD_TEST_ICON = "icons/old/ground16.gif";
+	public static final String WILDCARD_TEST_ICON_LARGE = "icons/old/ground24.gif";
 }

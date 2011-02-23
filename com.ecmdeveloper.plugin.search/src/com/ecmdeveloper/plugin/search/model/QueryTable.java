@@ -50,8 +50,10 @@ public class QueryTable implements IQueryTable {
 	
 	protected ArrayList<IQueryField> createMockFields() {
 		ArrayList<IQueryField> fields = new ArrayList<IQueryField>();
+		QueryFieldType[] values = QueryFieldType.values();
+		
 		for (int i = 0; i < 10; i++) {
-			QueryField queryField = new QueryField("Field " + i , QueryFieldType.STRING, this );
+			QueryField queryField = new QueryField("Field " + i , values[i % (values.length-1)], this );
 			fields.add(queryField);
 		}
 		return fields;

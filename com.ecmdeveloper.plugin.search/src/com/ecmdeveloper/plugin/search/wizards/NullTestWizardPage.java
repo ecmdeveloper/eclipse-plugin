@@ -87,4 +87,8 @@ public class NullTestWizardPage extends WizardPage {
 	public boolean isNegated() {
 		return negated;
 	}
+
+	public void setNegated(boolean negated) {
+		this.negated = negated;
+	}
 }

@@ -43,7 +43,10 @@ public class NullTest extends QueryComponent {
 	}
 
 	public void setNegated(boolean negated) {
-		this.negated = negated;
+		if ( this.negated != negated ) {
+			this.negated = negated;
+			firePropertyChange(PROPERTY_CHANGED, null, negated);
+		}
 	}
 
 	public boolean isNegated() {

@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -52,12 +53,17 @@ public class QueryFieldWizardPage extends WizardPage {
 	private Collection<IQueryField> content;
 	private IQueryField field;
 	private ISelection selection;
+	private QueryFieldFilter filter;
 	
 	protected QueryFieldWizardPage(StructuredSelection selection) {
 		super(TITLE);
 		this.selection = selection;
 		setTitle(TITLE);
 		setDescription(DESCRIPTION);
+	}
+	
+	public void setFilter(QueryFieldFilter filter) {
+		this.filter = filter;
 	}
 
 	@Override
@@ -92,6 +98,7 @@ public class QueryFieldWizardPage extends WizardPage {
 			public void selectionChanged(SelectionChangedEvent event) {
 				fieldSelectionChanged();
 			}} );
+		contentTable.addFilter(filter);
 	}
 
 	public void setContent(Collection<IQueryField> fields) {
@@ -101,9 +108,11 @@ public class QueryFieldWizardPage extends WizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		contentTable.setInput( content );
-		if ( selection != null ) {
-			contentTable.setSelection(selection);
+		if ( visible ) {
+			contentTable.setInput( content );
+			if ( selection != null && contentTable.getSelection().isEmpty()) {
+				contentTable.setSelection(selection);
+			}
 		}
 	}
 

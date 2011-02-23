@@ -20,49 +20,42 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import com.ecmdeveloper.plugin.search.model.IQueryField;
-import com.ecmdeveloper.plugin.search.model.Query;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class FolderTestWizard extends QueryComponentWizard {
+public abstract class SimpleValueWizardPage extends ValueWizardPage {
 
-	private String folder = "/Animals/Fish";
-	
-	public FolderTestWizard(Query query) {
-		super(query);
+	protected SimpleValueWizardPage(String pageName) {
+		super(pageName);
 	}
 
-	@Override
-	protected QueryFieldFilter getQueryFieldFilter() {
-		return new QueryFieldFilter() {
+	protected Text text;
 
+	@Override
+	protected void createInput(Composite container) {
+
+		text = new Text(container, SWT.BORDER ); 
+		text.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+		Object value = getValue();
+		if ( value != null ) {
+			text.setText( value.toString() );
+		}
+		text.addModifyListener(new ModifyListener() {
 			@Override
-			protected boolean select(IQueryField queryField) {
-				return queryField.isContainable();
+			public void modifyText(ModifyEvent e) {
+				String textValue = text.getText().trim();
+				textModified(textValue);
 			}
-		};
+		} );
 	}
 
-	@Override
-	public boolean canFinish() {
-		// TODO add folder selected check
-		return getField() != null;
-	}
-
-
-	@Override
-	public boolean performFinish() {
-		return true;
-	}
-
-	public void setFolder(String folder) {
-		this.folder = folder;
-	}
-
-	public String getFolder() {
-		return folder;
-	}
+	protected abstract void textModified(String textValue);
 }
