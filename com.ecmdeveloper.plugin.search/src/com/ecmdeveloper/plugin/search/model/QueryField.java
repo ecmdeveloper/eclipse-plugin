@@ -91,7 +91,10 @@ public class QueryField implements IQueryField {
 
 	@Override
 	public boolean isOrderable() {
-		if ( queryFieldType.equals(QueryFieldType.BINARY ) || queryFieldType.equals(QueryFieldType.STRING ) ) {
+		if ( queryFieldType.equals(QueryFieldType.BINARY ) ||
+				queryFieldType.equals(QueryFieldType.BOOLEAN ) ||
+				queryFieldType.equals(QueryFieldType.BINARY ) ||
+				queryFieldType.equals(QueryFieldType.STRING ) ) {
 			// TODO check for long strings
 			return false;
 		} else {
@@ -108,5 +111,13 @@ public class QueryField implements IQueryField {
 	public boolean isContainable() {
 		// TODO check if field is folder, document or custom object 
 		return QueryFieldType.OBJECT.equals(queryFieldType);
+	}
+
+	@Override
+	public boolean isQueryField() {
+		if ( queryFieldType.equals(QueryFieldType.BINARY ) ) {
+			return false;
+		}
+		return true;
 	}
 }

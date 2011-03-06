@@ -37,7 +37,6 @@ import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.swt.SWT;
@@ -45,14 +44,11 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
@@ -67,6 +63,7 @@ import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.actions.AddTableAction;
 import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.actions.RemoveTableAction;
+import com.ecmdeveloper.plugin.search.actions.ToggleIncludeSubclassesAction;
 import com.ecmdeveloper.plugin.search.dnd.TextTransferDropTargetListener;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
@@ -130,43 +127,6 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		super.createPartControl(sashForm);
 	}
 
-	private void createCoolbar(Composite composite) {
-		
-		
-		CoolBar coolBar = new CoolBar(composite, SWT.NONE);
-		coolBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		final CoolItem item = new CoolItem(coolBar, SWT.NONE);
-		item.setControl(createToolBar(coolBar));
-		calcSize(item);
-		
-		CoolItem textItem = new CoolItem(coolBar, SWT.NONE);
-
-		Composite c = new Composite(coolBar, SWT.NONE);
-		c.setLayout(new FillLayout());
-
-		Label l = new Label(c, SWT.NONE);
-		l.setText("Max Count:");
-//		ToolBar tb = new ToolBar(textItem, SWT.FLAT);
-//		ToolItem ti = new ToolItem(tb, SWT.NONE);
-//		ti.setText("Max Count:");	
-
-		Text text = new Text(c, SWT.BORDER | SWT.DROP_DOWN);
-		text.setText("200");
-		text.pack();
-//		Point size = text.getSize();
-//		textItem.setControl(text);
-//		textItem.setSize(textItem.computeSize(size.x, size.y));
-		textItem.setControl(c);	
-		calcSize(textItem);
-	}	
-	private void calcSize(CoolItem item) {
-		Control control = item.getControl();
-		Point pt = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		pt = item.computeSize(pt.x, pt.y);
-		item.setSize(pt);
-	}
-	
 	private Control createToolBar(Composite composite) {
 		ToolBar toolBar = new ToolBar(composite, SWT.NONE);
 		createExecuteButton(toolBar);
@@ -176,14 +136,14 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		
 		new ToolItem(toolBar, SWT.SEPARATOR );
 
-		Label l = new Label( toolBar, SWT.BOTTOM );
-		l.setText("Hallo:");
-
-		ToolItem ti1 = new ToolItem(toolBar, SWT.SEPARATOR);
-		l.pack();
-		
-		ti1.setWidth(l.getBounds().width);
-		ti1.setControl(l);
+//		Label l = new Label( toolBar, SWT.BOTTOM );
+//		l.setText("Hallo:");
+//
+//		ToolItem ti1 = new ToolItem(toolBar, SWT.SEPARATOR);
+//		l.pack();
+//		
+//		ti1.setWidth(l.getBounds().width);
+//		ti1.setControl(l);
 		
 		ToolBar tb = new ToolBar(composite, SWT.FLAT);
 		ToolItem ti = new ToolItem(tb, SWT.NONE);
@@ -197,9 +157,6 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		ti2.setWidth(text.getBounds().width);
 		ti2.setControl(text);
 		
-//		ToolItem ti = new ToolItem(toolBar, SWT.NONE);
-//		ti.setText("Max Count:");	
-
 		return toolBar;
 	}
 
@@ -238,16 +195,17 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	}
 	
 	private void createIncludeSubClassesButton(ToolBar toolBar) {
-		ToolItem includeSubClassesItem = new ToolItem(toolBar, SWT.CHECK);
-		includeSubClassesItem.setImage( Activator.getImage("icons/table_multiple.png") );
-		includeSubClassesItem.setToolTipText("Include Subclasses");
-	}
-
-	private void createLabel(Composite container, String text) {
-		final Label label = new Label(container, SWT.BORDER);
-		final GridData gridData = new GridData(GridData.BEGINNING);
-		label.setLayoutData(gridData);
-		label.setText(text);
+		ToolItem toolItem = new ToolItem(toolBar, SWT.CHECK);
+		toolItem.setImage( Activator.getImage("icons/table_multiple.png") );
+		toolItem.setToolTipText("Include Subclasses");
+		toolItem.setSelection( query.isIncludeSubclasses() );
+		toolItem.addSelectionListener( new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IAction action = getActionRegistry().getAction( ToggleIncludeSubclassesAction.ID );
+				action.run();
+			}} 
+		);
 	}
 
 	@Override
@@ -280,10 +238,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	@Override
 	protected void initializeGraphicalViewer() {
 		GraphicalViewer viewer = getGraphicalViewer();
-		viewer.setContents(/*createMockModel()*/ getQueryDiagram() );
-//		viewer.addDropTargetListener(createTransferDropTargetListener());
-//		viewer.addDropTargetListener((TransferDropTargetListener)
-//				new TemplateTransferDropTargetListener(getGraphicalViewer()));
+		viewer.setContents( getQueryDiagram() );
 
 		getGraphicalViewer().addDropTargetListener((TransferDropTargetListener)
 				new TemplateTransferDropTargetListener(getGraphicalViewer()));
@@ -300,18 +255,10 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	}
 
 	protected PaletteViewerProvider createPaletteViewerProvider() {
-//		return new PaletteViewerProvider(getEditDomain()) {
-//			protected void configurePaletteViewer(PaletteViewer viewer) {
-//				super.configurePaletteViewer(viewer);
-//				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
-//			}
-//		};
-		
+
 		return new PaletteViewerProvider(getEditDomain()) {
-			private IMenuListener menuListener;
 			protected void configurePaletteViewer(PaletteViewer viewer) {
 				super.configurePaletteViewer(viewer);
-//				viewer.setCustomizer(new LogicPaletteCustomizer());
 				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
 			}
 			protected void hookPaletteViewer(PaletteViewer viewer) {
@@ -319,24 +266,9 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 				final CopyTemplateAction copy = (CopyTemplateAction)getActionRegistry()
 						.getAction(ActionFactory.COPY.getId());
 				viewer.addSelectionChangedListener(copy);
-//				if (menuListener == null)
-//					menuListener = new IMenuListener() {
-//						public void menuAboutToShow(IMenuManager manager) {
-//							manager.appendToGroup(GEFActionConstants.GROUP_COPY, copy);
-//						}
-//					};
-//				viewer.getContextMenu().addMenuListener(menuListener);
 			}
 		};
 	}
-
-//	private TransferDropTargetListener createTransferDropTargetListener() {
-//		return new TemplateTransferDropTargetListener(getGraphicalViewer()) {
-//			protected CreationFactory getFactory(Object template) {
-//				return new SimpleFactory((Class) template);
-//			}
-//		};
-//	}
 
 	protected QueryDiagram getQueryDiagram() {
 		return query.getQueryDiagram();
@@ -352,6 +284,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		registerAddTableAction();
 		registerRemoveTableAction();
 		registerEditQueryComponentAction();
+		registerToggleIncludeSubclassesAction();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -371,6 +304,13 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	@SuppressWarnings("unchecked")
 	private void registerEditQueryComponentAction() {
 		IAction action = new EditQueryComponentAction(this);
+		getActionRegistry().registerAction(action);
+		getSelectionActions().add( action.getId() );
+	}
+
+	@SuppressWarnings("unchecked")
+	private void registerToggleIncludeSubclassesAction() {
+		IAction action = new ToggleIncludeSubclassesAction(this);
 		getActionRegistry().registerAction(action);
 		getSelectionActions().add( action.getId() );
 	}

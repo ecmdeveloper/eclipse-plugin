@@ -43,6 +43,7 @@ import com.ecmdeveloper.plugin.search.model.AndContainer;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -115,6 +116,9 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		entries.add(combined);
 
 		combined = createEntry("OR", "Logical OR container", "or", OrContainer.class, query);
+		entries.add(combined);
+
+		combined = createEntry("NOT", "Logical NOT container", "xor", NotContainer.class, query);
 		entries.add(combined);
 		
 		drawer.addAll(entries);

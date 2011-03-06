@@ -33,9 +33,12 @@ public class Query {
 
 	public static final String TABLE_ADDED = "TableAdded";
 	public static final String TABLE_REMOVED = "TableAdded";
+	public static final String TOGGLE_INCLUDE_SUBCLASSES = "ToggleIncludeSubclasses";
 	
 	private ArrayList<IQueryTable> queryTables = new ArrayList<IQueryTable>();
 	private QueryDiagram queryDiagram;
+	private boolean includeSubclasses;
+	
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
 	public Query() {
@@ -54,6 +57,14 @@ public class Query {
 	public void remove(QueryTable queryTable) {
 		queryTables.remove(queryTable);
 		listeners.firePropertyChange(TABLE_REMOVED, queryTable, null);
+	}
+	
+	public void setIncludeSubclasses(boolean includeSubclasses) {
+		this.includeSubclasses = includeSubclasses;
+		listeners.firePropertyChange(TOGGLE_INCLUDE_SUBCLASSES, includeSubclasses,  null);
+	}
+	public boolean isIncludeSubclasses() {
+		return includeSubclasses;
 	}
 	
 	public QueryDiagram getQueryDiagram() {

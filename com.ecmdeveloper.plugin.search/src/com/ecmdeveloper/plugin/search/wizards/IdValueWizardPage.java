@@ -21,6 +21,8 @@
 package com.ecmdeveloper.plugin.search.wizards;
 
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author ricardo.belfor
@@ -51,13 +53,21 @@ public class IdValueWizardPage extends SimpleValueWizardPage {
 	
 	private String parseInput( String textValue ) {
 		if ( textValue.length() != 0 ) {
-			if ( !textValue.startsWith("{") || !textValue.endsWith("}") ) {
+//			if ( !textValue.startsWith("{") || !textValue.endsWith("}") ) {
+//				throw new IllegalArgumentException();
+//			}
+
+			
+			String regexp = "\\{){0,1}[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}(\\}){0,1}$";
+			//Pattern p = Pattern.compile(regexp);
+			if ( !textValue.matches(regexp) ) {
 				throw new IllegalArgumentException();
 			}
 			
+			
 			// TODO parse guid better...
-			System.out.println( textValue.substring(1, textValue.length() - 1 ) );
-			UUID.fromString( textValue.substring(1, textValue.length() - 1 ) );
+//			System.out.println( textValue.substring(1, textValue.length() - 1 ) );
+//			UUID.fromString( textValue.substring(1, textValue.length() - 1 ) );
 			return textValue;
 		} else {
 			return null;

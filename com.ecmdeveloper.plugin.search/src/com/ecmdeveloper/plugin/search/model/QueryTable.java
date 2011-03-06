@@ -63,5 +63,16 @@ public class QueryTable implements IQueryTable {
 	public String toString() {
 		return getName();
 	}
+
+	@Override
+	public Collection<IQueryTable> getChildQueryTables() {
+		
+		Collection<IQueryTable> childQueryTables = new ArrayList<IQueryTable>();
+		if ( getName().equals("Query Table 1") ) {
+			childQueryTables.add( new QueryTable("Query Sub Table 1") );
+			childQueryTables.add( new QueryTable("Query Sub Table 2") );
+		}
+		return childQueryTables;
+	}
 }
 

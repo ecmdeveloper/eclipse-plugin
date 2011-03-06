@@ -20,52 +20,49 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Shell;
+
 
 /**
  * @author ricardo.belfor
  *
  */
-public class StringValueWizardPage extends ValueWizardPage {
+public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
-	private static final String TITLE = "String value";
-	private static final String DESCRIPTION = "Enter a string value.";
-	private Text text;
-	
-	protected StringValueWizardPage() {
+	private static final String TITLE = "Object value";
+	private static final String DESCRIPTION = "Enter an id or path or select an object.";
+
+	protected ObjectValueWizardPage() {
 		super(TITLE);
 		setTitle(TITLE);
 		setDescription(DESCRIPTION);
 	}
 
-	protected void createInput(Composite container) {
-		
-		text = new Text(container, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.WRAP );
-		Object value = getValue();
-		if ( value != null && value instanceof String) {
-			text.setText((String) value);
-		}
-		text.setLayoutData( new GridData(GridData.FILL_BOTH) );
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setValue( text.getText() );
-				setDirty();
-			}
-		});
+	@Override
+	protected void textModified(String textValue) {
+		setValue( textValue );
+		setDirty();
 	}
 
 	@Override
-	public void setVisible(boolean visible) {
-		if ( visible ) {
-			text.setFocus();
-		}
-		super.setVisible(visible);
+	protected void createInput(Composite container) {
+		super.createInput(container);
+		Button button = new Button(container, SWT.PUSH );
+		button.setText( "Browse" );
+		button.addSelectionListener( new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO add real browse dialog
+				Shell shell = getWizard().getContainer().getShell();
+				MessageDialog.openQuestion(shell, "Select Object", "TODO: select object dialog");
+			}} 
+		);
 	}
 }
