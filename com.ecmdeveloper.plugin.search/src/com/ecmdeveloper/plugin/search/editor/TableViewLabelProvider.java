@@ -4,29 +4,43 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
+import com.ecmdeveloper.plugin.search.util.IconFiles;
 
 public class TableViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
+		if ( columnIndex == QueryFieldsTable.NAME_COLUMN_INDEX && element instanceof IQueryTable ) {
+			return Activator.getImage( IconFiles.TABLE_FOLDER );
+		}
 		return null;
 	}
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
+		
+		if (element instanceof IQueryTable ) {
+			return getQueryTableColumnText( (IQueryTable) element, columnIndex);
+		} else if ( element instanceof IQueryField ) {
+			return getQueryFieldColumnText( (IQueryField) element, columnIndex);
+		}
+		return "";
+	}
 
-		IQueryField queryField = (IQueryField) element;
+	private String getQueryTableColumnText(IQueryTable queryTable, int columnIndex) {
+		if ( columnIndex == QueryFieldsTable.NAME_COLUMN_INDEX) {
+			return queryTable.getName(); 
+		}
+		return "";
+	}
+
+	private String getQueryFieldColumnText(IQueryField queryField, int columnIndex) {
+		
 		if ( columnIndex == QueryFieldsTable.NAME_COLUMN_INDEX) {
 			return queryField.getName(); 
-		} else if ( columnIndex == QueryFieldsTable.TABLE_COLUMN_INDEX) {
-				IQueryTable queryTable = queryField.getQueryTable();
-				if ( queryTable != null ) {
-					return queryTable.getName();
-				} else {
-					return "";
-				}
 		} else if ( columnIndex == QueryFieldsTable.TYPE_COLUMN_INDEX ) {
 			return queryField.getType().toString();
 		} else if ( columnIndex == QueryFieldsTable.SORT_TYPE_COLUMN_INDEX ) {

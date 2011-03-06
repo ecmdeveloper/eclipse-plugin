@@ -90,4 +90,9 @@ public class AllQueryField implements IQueryField {
 	public boolean isContainable() {
 		return false;
 	}
+
+	@Override
+	public boolean isQueryField() {
+		return false;
+	}
 }

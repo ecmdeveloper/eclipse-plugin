@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
 /**
  * 
  * @author ricardo.belfor
- *
+ * 
  */
 public class Comparison extends QueryComponent {
 
@@ -33,7 +33,7 @@ public class Comparison extends QueryComponent {
 
 	private ComparisonOperation comparisonOperation;
 	private Object value;
-	
+
 	private static Image COMPARISON_ICON = createImage(Comparison.class, "icons/label16.gif"); //$NON-NLS-1$
 
 	public Comparison(Query query) {
@@ -45,8 +45,9 @@ public class Comparison extends QueryComponent {
 	}
 
 	public String toString() {
-		if ( getField() != null && comparisonOperation != null) {
-			return getField() + " " + comparisonOperation.getOperation() + " " + value;
+		if (getField() != null && comparisonOperation != null) {
+			return getField() + " " + comparisonOperation.getOperation() + " "
+					+ QueryFieldValueFormatter.format(getField(), value);
 		} else {
 			return "";
 		}
@@ -57,7 +58,7 @@ public class Comparison extends QueryComponent {
 	}
 
 	public void setComparisonOperation(ComparisonOperation comparisonOperation) {
-		ComparisonOperation  oldField = this.comparisonOperation;
+		ComparisonOperation oldField = this.comparisonOperation;
 		this.comparisonOperation = comparisonOperation;
 		firePropertyChange(PROPERTY_CHANGED, oldField, comparisonOperation);
 	}

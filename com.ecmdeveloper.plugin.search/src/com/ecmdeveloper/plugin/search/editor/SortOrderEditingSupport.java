@@ -27,9 +27,10 @@ import java.util.Collections;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.SortOrderUtils;
 import com.ecmdeveloper.plugin.search.model.SortType;
 
@@ -39,24 +40,26 @@ import com.ecmdeveloper.plugin.search.model.SortType;
  */
 public class SortOrderEditingSupport extends EditingSupport {
 
-	private final TableViewer viewer;
+	private final TreeViewer viewer;
 	
-	public SortOrderEditingSupport(TableViewer viewer) {
-		super(viewer);
-		this.viewer = viewer;
+	public SortOrderEditingSupport(TreeViewer tableViewer) {
+		super(tableViewer);
+		this.viewer = tableViewer;
 	}
 
 	@Override
 	protected boolean canEdit(Object element) {
-		IQueryField queryField = (IQueryField) element;
-		return !SortType.NONE.equals( queryField.getSortType() );
+		if ( element instanceof IQueryField) {
+			IQueryField queryField = (IQueryField) element;
+			return !SortType.NONE.equals( queryField.getSortType() );
+		}
+		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected CellEditor getCellEditor(Object element) {
 		
-		Collection<IQueryField> fields = (Collection<IQueryField>) viewer.getInput();
+		Collection<IQueryField> fields = getQuery().getQueryFields();
 		ArrayList<String> valuesList = new ArrayList<String>(); 
 		for ( IQueryField field : fields) {
 			if ( !SortType.NONE.equals( field.getSortType() ) ) {
@@ -66,7 +69,11 @@ public class SortOrderEditingSupport extends EditingSupport {
 
 		Collections.sort(valuesList);
 		String values[] = valuesList.toArray( new String[ valuesList.size()] );
-		return new ComboBoxCellEditor( viewer.getTable(), values );
+		return new ComboBoxCellEditor( viewer.getTree(), values );
+	}
+
+	private Query getQuery() {
+		return (Query) viewer.getInput();
 	}
 
 	@Override
@@ -79,7 +86,6 @@ public class SortOrderEditingSupport extends EditingSupport {
 		return -1;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void setValue(Object element, Object value) {
 
@@ -89,7 +95,7 @@ public class SortOrderEditingSupport extends EditingSupport {
 		}
 		
 		IQueryField queryField = (IQueryField) element;
-		SortOrderUtils.swap((Collection<IQueryField>) viewer.getInput(), intValue + 1,
+		SortOrderUtils.swap( getQuery().getQueryFields(), intValue + 1,
 				queryField.getSortOrder());
 		viewer.refresh();
 	}

@@ -23,20 +23,20 @@ package com.ecmdeveloper.plugin.search.editor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 import com.ecmdeveloper.plugin.search.model.AllQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
@@ -46,18 +46,16 @@ import com.ecmdeveloper.plugin.search.model.Query;
 public class QueryFieldsTable implements PropertyChangeListener  {
 
 	public static final int NAME_COLUMN_INDEX = 0;
-	public static final int TABLE_COLUMN_INDEX = 1;
-	public static final int TYPE_COLUMN_INDEX = 2;
-	public static final int SORT_TYPE_COLUMN_INDEX = 3;
-	public static final int SORT_ORDER_COLUMN_INDEX = 4;
+	public static final int TYPE_COLUMN_INDEX = 1;
+	public static final int SORT_TYPE_COLUMN_INDEX = 2;
+	public static final int SORT_ORDER_COLUMN_INDEX = 3;
 	
 	private static final String NAME_COLUMN_NAME = "Name";
-	private static final String TABLE_COLUMN_NAME = "Table";
 	private static final String TYPE_COLUMN_NAME = "Field Type";
 	private static final String SORT_TYPE_COLUMN_NAME = "Sort Type";
 	private static final String SORT_ORDER_COLUMN_NAME = "Sort Order";
 	
-	private CheckboxTableViewer tableViewer;
+	private CheckboxTreeViewer tableViewer;
 	private final Query query;
 
 	public QueryFieldsTable(Query query, Composite parent) {
@@ -66,7 +64,7 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 		query.addPropertyChangeListener(this);
 	}
 
-	public TableViewer getTableViewer() {
+	public TreeViewer getTableViewer() {
 		return tableViewer;
 	}
 	
@@ -81,39 +79,13 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 	
 	private void createTableViewer(Composite parent) {
 		
-/*
-		tableViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
-				| SWT.FULL_SELECTION | SWT.BORDER);
-
-		final Table table = tableViewer.getTable();
-		TableColumnLayout layout = new TableColumnLayout();
-		parent.setLayout(layout);
-
-		TableColumn typeColumn = new TableColumn(table, SWT.LEFT);
-		typeColumn.setText("");
-		layout.setColumnData(typeColumn, new ColumnPixelData(18));
-
-		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
-		nameColumn.setText("Name");
-		layout.setColumnData(nameColumn, new ColumnWeightData(1));
-
-		TableColumn objectStoreColumn = new TableColumn(table, SWT.LEFT);
-		objectStoreColumn.setText("Object Store");
-		layout.setColumnData(objectStoreColumn, new ColumnWeightData(1));
-
- */
-		tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER | SWT.FULL_SELECTION );
-		Table table = tableViewer.getTable();
+		tableViewer = new CheckboxTreeViewer( parent, SWT.BORDER | SWT.FULL_SELECTION );
+		Tree table = tableViewer.getTree();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		//				TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
-		//				nameColumn.setText("Name");
-		//;		layout.setColumnData(nameColumn, new ColumnWeightData(1));
-
 		createTableViewerColumn(NAME_COLUMN_NAME, 200, NAME_COLUMN_INDEX );
-		createTableViewerColumn(TABLE_COLUMN_NAME, 100, TABLE_COLUMN_INDEX );
 		createTableViewerColumn(TYPE_COLUMN_NAME, 100, TYPE_COLUMN_INDEX );
-		TableViewerColumn column = createTableViewerColumn(SORT_TYPE_COLUMN_NAME, 100, SORT_TYPE_COLUMN_INDEX );
+		TreeViewerColumn column = createTableViewerColumn(SORT_TYPE_COLUMN_NAME, 100, SORT_TYPE_COLUMN_INDEX );
 		column.setEditingSupport( new SortTypeEditingSupport( this) );
 
 		column = createTableViewerColumn(SORT_ORDER_COLUMN_NAME, 100, SORT_ORDER_COLUMN_INDEX );
@@ -121,9 +93,8 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		tableViewer.setContentProvider( new ArrayContentProvider() );
+		tableViewer.setContentProvider( new QueryContentProvider() );
 		tableViewer.setLabelProvider( new TableViewLabelProvider() );
-		tableViewer.setInput( query.getQueryFields() );
 
 		tableViewer.addCheckStateListener( new ICheckStateListener() {
 
@@ -134,28 +105,34 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 				if ( element instanceof AllQueryField) {
 					if ( event.getChecked() ) {
 						tableViewer.setAllChecked(true);
-						tableViewer.setAllGrayed(true);
+//						tableViewer.setAllGrayed(true);
 						tableViewer.setGrayed(element, false);
 						query.setQueryFieldsSelection(true);
 					} else {
-						tableViewer.setAllGrayed(false);
+//						tableViewer.setAllGrayed(false);
 					}
 				} else {
 					if ( tableViewer.getGrayed(element ) ) {
 						tableViewer.setChecked(element, true);
 					} else {
-						((IQueryField) element).setSelected( event.getChecked() );
+						if ( element instanceof IQueryField ) {
+							((IQueryField) element).setSelected( event.getChecked() );
+						} else if ( element instanceof IQueryTable ) {
+							// TODO
+						}
 					}
 				}
 			}} );
 
+		tableViewer.setInput( query );
+		tableViewer.expandToLevel(2);
 //			getSite().setSelectionProvider(tableViewer);
 	}
 
-	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer,
+	private TreeViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
+		final TreeViewerColumn viewerColumn = new TreeViewerColumn(tableViewer,
 				SWT.CHECK);
-		final TableColumn column = viewerColumn.getColumn();
+		final TreeColumn column = viewerColumn.getColumn();
 		column.setText(title);
 		column.setWidth(bound);
 		column.setResizable(true);
@@ -166,10 +143,12 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 	@Override
 	public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 		if ( propertyChangeEvent.getPropertyName().equals( Query.TABLE_ADDED ) ||
-				propertyChangeEvent.getPropertyName().equals( Query.TABLE_REMOVED ) )
-		{
-			tableViewer.setInput( query.getQueryFields() );
+				propertyChangeEvent.getPropertyName().equals( Query.TABLE_REMOVED ) ) {
 			tableViewer.refresh();
+		}
+		else if ( propertyChangeEvent.getPropertyName().equals( Query.TOGGLE_INCLUDE_SUBCLASSES ) ) {
+			tableViewer.refresh();
+			tableViewer.expandToLevel(2);
 		}
 	}
 }

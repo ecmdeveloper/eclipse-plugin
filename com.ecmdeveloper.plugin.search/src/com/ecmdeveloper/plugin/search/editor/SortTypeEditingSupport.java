@@ -24,9 +24,10 @@ import java.util.Collection;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.SortOrderUtils;
 import com.ecmdeveloper.plugin.search.model.SortType;
 
@@ -37,7 +38,7 @@ import com.ecmdeveloper.plugin.search.model.SortType;
  */
 public class SortTypeEditingSupport extends EditingSupport {
 
-	private final TableViewer viewer;
+	private final TreeViewer viewer;
 	private final QueryFieldsTable queryFieldsTable;
 	
 	public SortTypeEditingSupport(QueryFieldsTable queryFieldsTable ) {
@@ -48,13 +49,16 @@ public class SortTypeEditingSupport extends EditingSupport {
 	
 	@Override
 	protected boolean canEdit(Object element) {
-		IQueryField queryField = (IQueryField) element;
-		return queryField.isOrderable();
+		if ( element instanceof IQueryField ) {
+			IQueryField queryField = (IQueryField) element;
+			return queryField.isOrderable();
+		}
+		return false;
 	}
 
 	@Override
 	protected CellEditor getCellEditor(Object element) {
-		return new ComboBoxCellEditor( viewer.getTable(), SortType.getNames() );	
+		return new ComboBoxCellEditor( viewer.getTree(), SortType.getNames() );	
 	}
 
 	@Override
@@ -89,11 +93,10 @@ public class SortTypeEditingSupport extends EditingSupport {
 			
 		}
 		
-		viewer.refresh();
+		viewer.refresh(queryField);
 	}
 
-	@SuppressWarnings("unchecked")
 	private Collection<IQueryField> getQueryFields() {
-		return (Collection<IQueryField>) viewer.getInput();
+		return ((Query) viewer.getInput()).getQueryFields();
 	}
 }

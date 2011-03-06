@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Color;
 import com.ecmdeveloper.plugin.search.figures.ContainerBorder;
 import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.model.AndContainer;
+import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.policies.ContainerHighlightEditPolicy;
 import com.ecmdeveloper.plugin.search.policies.QueryCommandFactory;
@@ -64,6 +65,8 @@ public class QueryContainerEditPart extends AbstractContainerEditPart {
 			return QueryColorConstants.orContainer;
 		} else if ( getModel() instanceof AndContainer) {
 			return QueryColorConstants.andContainer;
+		} else if ( getModel() instanceof NotContainer ) {
+			return QueryColorConstants.notContainer;
 		}
 		return QueryColorConstants.logicGreen;
 	}

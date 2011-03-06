@@ -23,9 +23,8 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
-import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
-import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 
 /**
  * 

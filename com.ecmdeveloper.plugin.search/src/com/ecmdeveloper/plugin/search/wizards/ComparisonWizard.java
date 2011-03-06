@@ -47,6 +47,17 @@ public class ComparisonWizard extends QueryComponentWizard {
 		setWindowTitle(TITLE);
 	}
 
+	@Override
+	protected QueryFieldFilter getQueryFieldFilter() {
+		return new QueryFieldFilter() {
+
+			@Override
+			protected boolean select(IQueryField queryField) {
+				return queryField.isQueryField();
+			}
+		};
+	}
+
 	public void addPages() {
 
 		super.addPages();
@@ -91,6 +102,12 @@ public class ComparisonWizard extends QueryComponentWizard {
 				return new DoubleValueWizardPage();
 			case GUID:
 				return new IdValueWizardPage();
+			case BOOLEAN:
+				return new BooleanValueWizardPage();
+			case DATE:
+				return new DateValueWizardPage();
+			case OBJECT:
+				return new ObjectValueWizardPage();
 			}
 		}
 		return null;

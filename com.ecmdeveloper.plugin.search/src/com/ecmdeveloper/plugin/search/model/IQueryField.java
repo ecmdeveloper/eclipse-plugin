@@ -36,5 +36,6 @@ public interface IQueryField {
 	public IQueryTable getQueryTable();
 	public boolean isOrderable();
 	public boolean isSupportsWildcards();
-	public boolean isContainable(); 
+	public boolean isContainable();
+	public boolean isQueryField();
 }

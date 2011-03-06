@@ -20,14 +20,21 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
-import java.util.Collection;
-
 /**
  * @author ricardo.belfor
  *
  */
-public interface IQueryTable {
-	public String getName();
-	public Collection<IQueryField> getQueryFields();
-	public Collection<IQueryTable> getChildQueryTables();
+public class NotContainer extends QueryContainer {
+
+	private static final String NOT_LABEL = "not";
+	private static final long serialVersionUID = 1L;
+
+	public NotContainer(Query query) {
+		super(query);
+	}
+
+	@Override
+	public String toString() {
+		return NOT_LABEL;
+	}
 }

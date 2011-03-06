@@ -20,6 +20,10 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
@@ -29,8 +33,8 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class BooleanValueWizardPage extends ValueWizardPage {
 
-	private static final String TITLE = "Double value";
-	private static final String DESCRIPTION = "Enter a double value.";
+	private static final String TITLE = "Boolean value";
+	private static final String DESCRIPTION = "Select a boolean value.";
 	
 	private Button trueButton;
 	private Button falseButton;
@@ -43,48 +47,42 @@ public class BooleanValueWizardPage extends ValueWizardPage {
 
 	@Override
 	protected void createInput(Composite container) {
-		
-		// TODO Auto-generated method stub
-		
+		createTrueButton(container);
+		createFalseButton(container);
 	}
 
-//	private void createTrueButton(Composite client, FormToolkit toolkit) {
-//		trueButton = toolkit.createButton(client, "True", SWT.RADIO );
-//		trueButton.addSelectionListener( new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				setDirty(true);
-//			}
-//		} );
-//	}
-//
-//	private void createFalseButton(Composite client, FormToolkit toolkit) {
-//		falseButton = toolkit.createButton(client, "False", SWT.RADIO );
-//		falseButton.addSelectionListener( new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				setDirty(true);
-//			}
-//		} );
-//	}
-//
-//	private Button createButton(Composite container, String value, boolean selection) {
-//
-//		Button button = new Button(container, SWT.RADIO);
-//		button.setText(value);
-////		button.setLayoutData(getFullRowGridData());
-//		button.setSelection(selection);
-//		button.addSelectionListener(new SelectionAdapter() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				setValue( text.getText() );
-//				setDirty();
-//				updateSelection(e.getSource());
-//			}
-//
-//		});
-//
-//		return button;
-//	}
+	private void createTrueButton(Composite client) {
+		trueButton = new Button(client, SWT.RADIO);
+		trueButton.setLayoutData( getFullRowGridData() );
+		trueButton.setText("True");
+		Object value = getValue();
+		if ( value != null && value instanceof Boolean ) {
+			trueButton.setSelection( (Boolean) value );
+		}
+		trueButton.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setValue( Boolean.TRUE );
+				setDirty();
+			}
+		} );
+	}
+
+	private void createFalseButton(Composite client) {
+		
+		falseButton = new Button(client, SWT.RADIO);
+		falseButton.setText("False");
+		falseButton.setLayoutData( getFullRowGridData() );
+		Object value = getValue();
+		if ( value != null && value instanceof Boolean ) {
+			falseButton.setSelection( !(Boolean) value );
+		}
+		falseButton.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setValue( Boolean.FALSE );
+				setDirty();
+			}
+		} );
+	}
 }

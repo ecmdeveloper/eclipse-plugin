@@ -18,16 +18,16 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model;
-
-import java.util.Collection;
+package com.ecmdeveloper.plugin.search.util;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IQueryTable {
-	public String getName();
-	public Collection<IQueryField> getQueryFields();
-	public Collection<IQueryTable> getChildQueryTables();
+public class IconFiles {
+
+	public static String TABLE_FOLDER = "icons/folder_table.png";
+	
+	private IconFiles() {
+	}
 }
