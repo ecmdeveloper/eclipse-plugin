@@ -84,8 +84,8 @@ public class ComparisonWizard extends QueryComponentWizard {
 				return valueWizardPage;
 			}
 		}
-		if ( page instanceof QueryFieldWizardPage ) {
-			comparisonOperationWizardPage.setField(getQueryFieldWizardPage().getField() );
+		if ( page instanceof SelectFieldWizardPage ) {
+			comparisonOperationWizardPage.setField( getField() );
 		}
 		
 		return super.getNextPage(page);

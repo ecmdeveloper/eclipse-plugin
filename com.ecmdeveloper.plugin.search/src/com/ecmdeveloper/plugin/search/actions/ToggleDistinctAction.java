@@ -18,14 +18,38 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.editor;
+package com.ecmdeveloper.plugin.search.actions;
 
-import org.eclipse.gef.palette.PaletteRoot;
+import org.eclipse.gef.ui.actions.SelectionAction;
+import org.eclipse.ui.IWorkbenchPart;
+
+import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryPaletteRoot extends PaletteRoot {
+public class ToggleDistinctAction extends SelectionAction {
 
+	public static final String ID = "com.ecmdeveloper.plugin.search.actions.toggleDistinctAction";
+	private static final String ACTION_NAME = "Toggle distinct";
+
+	public ToggleDistinctAction(IWorkbenchPart part) {
+		super(part);
+		setId( ID );
+		setText( ACTION_NAME );
+	}
+
+	@Override
+	protected boolean calculateEnabled() {
+		return true;
+	}
+
+	@Override
+	public void run() {
+		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
+		Query query = editor.getQuery();
+		query.setDistinct( !query.isDistinct() );
+	}
 }

@@ -52,9 +52,18 @@ public class InFolderTest extends QueryComponent {
 
 	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toSQL() {
+		return toString(true);
+	}
+
+	private String toString(boolean strict) {
 		if ( getField() != null && folder != null ) { 
 			StringBuffer result = new StringBuffer();
-			result.append(getField());
+			appendField(result, strict);
 			result.append( " INFOLDER('");
 			result.append(folder);
 			result.append( "')");

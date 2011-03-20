@@ -42,7 +42,7 @@ import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
- *
+ * @deprecated
  */
 public class SelectTableWizardPage extends WizardPage {
 

@@ -38,11 +38,14 @@ import org.eclipse.swt.graphics.Font;
 public class ContainerBorder extends org.eclipse.draw2d.LineBorder {
 
 	private static final int HEIGHT = 180;
+	private static final int ALPHA_VALUE = 150;
+
 	protected int grabBarWidth = 30;
 	protected Dimension grabBarSize = new Dimension(grabBarWidth, HEIGHT);
 	private final String label;
 	private final Color grabBarColor;
-
+	private boolean enabled = true;
+	
 	public ContainerBorder(String label, Color grabBarColor) {
 		this.label = label;
 		this.grabBarColor = grabBarColor;
@@ -55,6 +58,10 @@ public class ContainerBorder extends org.eclipse.draw2d.LineBorder {
 		grabBarColor = QueryColorConstants.logicGreen;
 	}
 
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	public Insets getInsets(IFigure figure) {
 		return new Insets(getWidth() + 2, grabBarWidth + 2, getWidth() + 2, getWidth() + 2);
 	}
@@ -64,6 +71,10 @@ public class ContainerBorder extends org.eclipse.draw2d.LineBorder {
 	}
 
 	public void paint(IFigure figure, Graphics graphics, Insets insets) {
+		
+		if ( !enabled ) {
+			graphics.setAlpha(ALPHA_VALUE);
+		}
 		
 		Rectangle bounds = figure.getBounds();
 		paintLeftBar(graphics, bounds);

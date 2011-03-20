@@ -20,78 +20,51 @@
 
 package com.ecmdeveloper.plugin.search.layout;
 
-import org.eclipse.draw2d.AbstractLayout;
-import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
-
-import com.ecmdeveloper.plugin.search.figures.QueryConditionFigure;
-import com.ecmdeveloper.plugin.search.figures.QueryOperationFigure;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryLayoutManager extends AbstractLayout {
-
-	
-	@Override
-	protected Dimension calculatePreferredSize(IFigure figure, int arg1, int arg2) {
-		System.out.println( "calculatePreferredSize : "+ figure.toString() );
-		return null;
-	}
+public class QueryLayoutManager extends ToolbarLayout {
 
 	@Override
-	public void layout(IFigure figure) {
-		System.out.println( "layout: " + figure.toString() );
-		layoutFigure(figure, 0, 5 );
-		
-//		for ( Object childFigure : figure.getChildren() )
-//		{
-//			System.out.println( childFigure.toString() );
-//			if ( childFigure instanceof QueryOperationFigure ) {
-
-//				QueryOperationFigure queryOperationFigure = (QueryOperationFigure) childFigure;
-//				queryOperationFigure.setBounds( new Rectangle(10,10, 400, 400) );
-//				
-//				int i = 0;
-//				for ( Object childFigure2 : queryOperationFigure.getChildren() ) {
-//					IFigure childFigure22 = (IFigure)childFigure2;
-//					childFigure22.setBounds( new Rectangle( new Point(10, (i++)*40), childFigure22.getSize() ) );
-//				}
-//			}
-			
-//		}
+	protected Dimension calculateMinimumSize(IFigure container, int hint, int hint2) {
+		// TODO Auto-generated method stub
+		return super.calculateMinimumSize(container, hint, hint2);
 	}
+
+	@Override
+	protected Dimension getChildMinimumSize(IFigure child, int hint, int hint2) {
+		// TODO Auto-generated method stub
+		return super.getChildMinimumSize(child, hint, hint2);
+	}
+
+	@Override
+	protected Dimension getChildPreferredSize(IFigure child, int hint, int hint2) {
+		// TODO Auto-generated method stub
+		return super.getChildPreferredSize(child, hint, hint2);
+	}
+
+	@Override
+	protected Dimension calculatePreferredSize(IFigure container, int hint, int hint2) {
+		Dimension calculatePreferredSize = super.calculatePreferredSize(container, hint, hint2);
+		return calculatePreferredSize;
+	}
+
 	
-	private Rectangle layoutFigure(IFigure parentFigure, int left, int top ) {
-
-		int bottom = top;
-		
-		System.out.println( "bottomY 1: " + bottom );
-		for ( Object childFigure : parentFigure.getChildren() ) {
-			
-			if (childFigure instanceof QueryOperationFigure) {
-				Rectangle rectangle = layoutFigure( (QueryOperationFigure) childFigure, left + QueryOperationFigure.OPERATION_OFFSET,  bottom );
-				bottom = rectangle.bottom();
-				System.out.println( "bottomY 2: " + bottom );
-			} else if ( childFigure instanceof QueryConditionFigure ) { 
-				IFigure childFigure2 = (IFigure)childFigure;
-				Point position = new Point(left + QueryOperationFigure.OPERATION_OFFSET, bottom);
-				Rectangle bounds = new Rectangle( position, childFigure2.getSize() );
-				childFigure2.setBounds( bounds );
-				bottom += childFigure2.getSize().height;
-				System.out.println( "bottomY 3: " + bottom );
-			}
-		}
-
-		Rectangle parentBounds = new Rectangle(left,top, 400, bottom - top);
-		parentFigure.setBounds( parentBounds );
-		System.out.println( "parentBounds: " + parentBounds.toString() );
-		
-		return parentBounds;
-	}
+//	@Override
+//	protected Dimension calculatePreferredSize(IFigure arg0, int arg1, int arg2) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public void layout(IFigure arg0) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 }

@@ -45,9 +45,23 @@ public class Comparison extends QueryComponent {
 	}
 
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toSQL() {
+		return toString(true);
+	}
+
+	private String toString(boolean strict) {
 		if (getField() != null && comparisonOperation != null) {
-			return getField() + " " + comparisonOperation.getOperation() + " "
-					+ QueryFieldValueFormatter.format(getField(), value);
+			StringBuffer result = new StringBuffer();
+			appendField(result, strict);
+			result.append( " ");
+			result.append( comparisonOperation.getOperation() );
+			result.append( " " );
+			result.append( QueryFieldValueFormatter.format(getField(), value) );
+			return result.toString();
 		} else {
 			return "";
 		}

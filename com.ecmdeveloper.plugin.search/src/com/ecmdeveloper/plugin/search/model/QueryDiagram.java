@@ -24,9 +24,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+
+import com.ecmdeveloper.plugin.search.parts.QueryEditPart;
 
 /**
  * 
@@ -39,14 +40,8 @@ public class QueryDiagram extends QuerySubpart {
 
 	private static int count;
 	private static Image LOGIC_ICON = createImage(QueryDiagram.class, "icons/circuit16.gif"); //$NON-NLS-1$
-
-	protected List children = new ArrayList();
-	// protected LogicRuler leftRuler, topRuler;
-	protected Integer connectionRouter = null;
-	private boolean rulersVisibility = false;
-	private boolean snapToGeometry = false;
-	private boolean gridEnabled = false;
-	private double zoom = 1.0;
+	
+	private List<QueryElement> children = new ArrayList<QueryElement>();
 
 	public QueryDiagram(Query query) {
 		super(query);
@@ -55,7 +50,6 @@ public class QueryDiagram extends QuerySubpart {
 		size.height = 100;
 		location.x = 20;
 		location.y = 20;
-		// createRulers();
 	}
 
 	public void addChild(QueryElement child) {
@@ -63,19 +57,62 @@ public class QueryDiagram extends QuerySubpart {
 	}
 
 	public void addChild(QueryElement child, int index) {
-		if (index >= 0)
+
+//		boolean stealMainQueryFromChild = child.getParent().isRootDiagram() && child.isMainQuery();
+
+		child.setParent(this);
+
+		if ( child.isMainQuery() ) {
+			setMainQuery(true, true);
+			child.setMainQuery(false, false);
+//			
+//			if ( isRootDiagram(this) ) {
+//				setMainQuery(true);
+//			} else {			
+//
+//				QueryElement rootChild = this;
+//				while ( !isRootDiagram(rootChild.getParent() ) ) {
+//					rootChild = rootChild.getParent();
+//				}
+//				rootChild.setMainQuery(true);
+//			}
+		} else if ( isRootDiagram() ) {
+			if (children.size() == 0) {
+				child.setMainQuery(true, false );
+			}
+		}
+		
+		if (index >= 0) {
 			children.add(index, child);
-		else
+		} else {
 			children.add(child);
+		}
+		
 		fireChildAdded(CHILDREN, child, new Integer(index));
 	}
 
-	// protected void createRulers() {
-	// leftRuler = new LogicRuler(false);
-	// topRuler = new LogicRuler(true);
-	// }
+	private boolean isRootDiagram(QueryElement queryElement) {
+		return queryElement instanceof QueryDiagram && ((QueryDiagram)queryElement).isRootDiagram();
+	}
 
-	public List getChildren() {
+	public void removeChild(QueryElement child) {
+		child.setParent(null);
+		children.remove(child);
+		
+		if ( isRootDiagram() && child.isMainQuery() ) {
+			updateMainQuery();
+		}
+		fireChildRemoved(CHILDREN, child);
+	}
+
+	private void updateMainQuery() {
+		if ( children.size() > 0 ) {
+			QueryElement firstChild = children.get(0);
+			firstChild.setMainQuery(true, false);
+		}
+	}
+
+	public List<QueryElement> getChildren() {
 		return children;
 	}
 
@@ -87,28 +124,7 @@ public class QueryDiagram extends QuerySubpart {
 		return Integer.toString(count++);
 	}
 
-	public double getZoom() {
-		return zoom;
-	}
-
-	/**
-	 * Returns <code>null</code> for this model. Returns normal descriptors for
-	 * all subclasses.
-	 * 
-	 * @return Array of property descriptors.
-	 */
 	public IPropertyDescriptor[] getPropertyDescriptors() {
-		// if(getClass().equals(LogicDiagram.class)){
-		// ComboBoxPropertyDescriptor cbd = new ComboBoxPropertyDescriptor(
-		// ID_ROUTER,
-		// LogicMessages.PropertyDescriptor_LogicDiagram_ConnectionRouter,
-		// new String[]{
-		// LogicMessages.PropertyDescriptor_LogicDiagram_Manual,
-		// LogicMessages.PropertyDescriptor_LogicDiagram_Manhattan,
-		// LogicMessages.PropertyDescriptor_LogicDiagram_ShortestPath});
-		// cbd.setLabelProvider(new ConnectionRouterLabelProvider());
-		// return new IPropertyDescriptor[]{cbd};
-		// }
 		return super.getPropertyDescriptors();
 	}
 
@@ -116,57 +132,30 @@ public class QueryDiagram extends QuerySubpart {
 		return super.getPropertyValue(propName);
 	}
 
-	// public LogicRuler getRuler(int orientation) {
-	// LogicRuler result = null;
-	// switch (orientation) {
-	// case PositionConstants.NORTH :
-	// result = topRuler;
-	// break;
-	// case PositionConstants.WEST :
-	// result = leftRuler;
-	// break;
-	// }
-	// return result;
-	// }
-
-	public boolean getRulerVisibility() {
-		return rulersVisibility;
-	}
-
-	public boolean isGridEnabled() {
-		return gridEnabled;
-	}
-
-	public boolean isSnapToGeometryEnabled() {
-		return snapToGeometry;
-	}
-
 	private void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
 		s.defaultReadObject();
-	}
-
-	public void removeChild(QueryElement child) {
-		children.remove(child);
-		fireChildRemoved(CHILDREN, child);
 	}
 
 	public void setPropertyValue(Object id, Object value) {
 		super.setPropertyValue(id, value);
 	}
 
-	public void setRulerVisibility(boolean newValue) {
-		rulersVisibility = newValue;
-	}
-
-	public void setGridEnabled(boolean isEnabled) {
-		gridEnabled = isEnabled;
-	}
-
-	public void setSnapToGeometry(boolean isEnabled) {
-		snapToGeometry = isEnabled;
-	}
-
-	public void setZoom(double zoom) {
-		this.zoom = zoom;
+	@Override
+	public String toSQL() {
+		
+		List<QueryElement> children = getChildren();
+		if ( !children.isEmpty() ) {
+			
+			if ( children.size() == 1 ) {
+				return children.iterator().next().toSQL();
+			} else {
+				for ( QueryElement child : children ) {
+					if ( child.isMainQuery() ) {
+						return child.toSQL();
+					}
+				}
+			}
+		}
+		return "";
 	}
 }

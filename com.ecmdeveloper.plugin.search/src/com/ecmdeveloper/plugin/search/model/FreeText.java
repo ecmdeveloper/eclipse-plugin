@@ -20,31 +20,46 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import org.eclipse.swt.graphics.Image;
+
 /**
  * @author ricardo.belfor
  *
  */
-public class AndContainer extends QueryContainer {
+public class FreeText extends QueryComponent {
 
-	private static final String AND_LABEL = "and";
 	private static final long serialVersionUID = 1L;
+	private String text;
+	
+	public String getText() {
+		return text;
+	}
 
-	public AndContainer(Query query) {
+	public void setText(String text) {
+		String oldField = this.text;
+		this.text = text;
+		firePropertyChange(FIELD_CHANGED, oldField, text);
+	}
+
+	public FreeText(Query query) {
 		super(query);
+	}
+	
+	@Override
+	public Image getIconImage() {
+		return null;
 	}
 
 	@Override
 	public String toString() {
-		return AND_LABEL;
+		if ( text != null ) {
+			return text;
+		}
+		return "";
 	}
 
 	@Override
-	protected String getConcatOperation() {
-		return AND_LABEL;
-	}
-
-	@Override
-	protected String getOperationPrefix() {
-		return null;
+	public String toSQL() {
+		return toString();
 	}
 }

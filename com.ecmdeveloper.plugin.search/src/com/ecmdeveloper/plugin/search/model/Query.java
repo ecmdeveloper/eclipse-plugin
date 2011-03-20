@@ -24,6 +24,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author ricardo.belfor
@@ -38,11 +39,14 @@ public class Query {
 	private ArrayList<IQueryTable> queryTables = new ArrayList<IQueryTable>();
 	private QueryDiagram queryDiagram;
 	private boolean includeSubclasses;
+	private boolean distinct;
+	private Integer maxCount;
 	
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
 	public Query() {
 		queryDiagram = new QueryDiagram(this);
+		queryDiagram.setRootDiagram(true);
 		add( new QueryTable("Query Table 1") );
 	}
 	public Collection<IQueryTable> getQueryTables() {
@@ -67,6 +71,20 @@ public class Query {
 		return includeSubclasses;
 	}
 	
+	public boolean isDistinct() {
+		return distinct;
+	}
+	
+	public void setDistinct(boolean distinct) {
+		this.distinct = distinct;
+	}
+	
+	public void setMaxCount(Integer maxCount) {
+		this.maxCount = maxCount;
+	}
+	public Integer getMaxCount() {
+		return maxCount;
+	}
 	public QueryDiagram getQueryDiagram() {
 		return queryDiagram;
 	}
@@ -94,5 +112,50 @@ public class Query {
 
 	public void removePropertyChangeListener(PropertyChangeListener l){
 		listeners.removePropertyChangeListener(l);
+	}
+	
+	public String toSQL() {
+		
+		StringBuffer sql = new StringBuffer();
+		
+		appendSelectPart(sql);
+		appendFromPart(sql);
+		appendWherePart(sql);
+		
+		return sql.toString();
+	}
+
+	private void appendSelectPart(StringBuffer sql) {
+		sql.append( "SELECT " );
+		if ( isDistinct() ) {
+			sql.append("DISTINCT ");
+		}
+		
+		if ( maxCount != null) {
+			sql.append("TOP ");
+			sql.append( maxCount );
+			sql.append(" ");
+		}
+	
+		// TODO figure out the fields
+		sql.append("* ");
+	}
+	private void appendFromPart(StringBuffer sql) {
+		sql.append("FROM ");
+		if ( getQueryTables().size() == 1) {
+			sql.append("[");
+			sql.append( getQueryTables().iterator().next() );
+			sql.append( "] ");
+		} else {
+			// TODO something with joins
+		}
+	}
+	private void appendWherePart(StringBuffer sql) {
+
+		String whereClause = getQueryDiagram().toSQL();
+		if ( whereClause != null && !whereClause.isEmpty() ) {
+			sql.append( "WHERE " );
+			sql.append( whereClause );
+		}
 	}
 }

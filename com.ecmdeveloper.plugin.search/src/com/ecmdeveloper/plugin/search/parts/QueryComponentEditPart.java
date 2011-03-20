@@ -32,6 +32,7 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 
 import com.ecmdeveloper.plugin.search.figures.TextFigure;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.policies.QueryTextEditPolicy;
 
 /**
@@ -86,7 +87,9 @@ public class QueryComponentEditPart extends QueryEditPart {
 	}
 
 	protected void refreshVisuals() {
-		((TextFigure) getFigure()).setText(getModel().toString());
+		TextFigure textFigure = (TextFigure) getFigure();
+		textFigure.setText(getModel().toString());
+		textFigure.setEnabled( ((QueryElement)getModel()).isMainQueryChild() );
 		super.refreshVisuals();
 	}
 }

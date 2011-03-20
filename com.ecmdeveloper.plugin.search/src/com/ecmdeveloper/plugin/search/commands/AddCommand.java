@@ -41,6 +41,7 @@ public class AddCommand extends Command {
 	}
 
 	public void execute() {
+		
 		if (index < 0)
 			parent.addChild(child);
 		else

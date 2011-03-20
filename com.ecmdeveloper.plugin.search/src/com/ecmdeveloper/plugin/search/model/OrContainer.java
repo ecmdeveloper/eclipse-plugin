@@ -37,4 +37,14 @@ public class OrContainer extends QueryContainer {
 	public String toString() {
 		return OR_LABEL;
 	}
+
+	@Override
+	protected String getConcatOperation() {
+		return OR_LABEL;
+	}
+
+	@Override
+	protected String getOperationPrefix() {
+		return null;
+	}
 }

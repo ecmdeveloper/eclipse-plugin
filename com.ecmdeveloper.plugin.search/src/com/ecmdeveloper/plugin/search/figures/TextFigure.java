@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.figures;
 
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.text.FlowPage;
@@ -33,10 +34,17 @@ import org.eclipse.draw2d.text.TextFlow;
  */
 public class TextFigure extends RoundedCornerFigure {
 
+	private static final int ALPHA_VALUE = 150;
+	
 	private TextFlow textFlow;
-
+	private boolean enabled = true;
+	
 	public TextFigure() {
 		this(RoundedCornerFigure.DEFAULT_CORNER_SIZE - 3);
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public TextFigure(int borderSize) {
@@ -44,7 +52,17 @@ public class TextFigure extends RoundedCornerFigure {
 		setBorder(new MarginBorder(borderSize));
 		FlowPage flowPage = new FlowPage();
 
-		textFlow = new TextFlow();
+		textFlow = new TextFlow() {
+
+			@Override
+			protected void paintFigure(Graphics g) {
+				if ( !enabled) {
+					g.setAlpha(ALPHA_VALUE);
+				}
+				super.paintFigure(g);
+			}
+			
+		};
 
 		textFlow.setLayoutManager(new ParagraphTextLayout(textFlow,
 				ParagraphTextLayout.WORD_WRAP_SOFT));
@@ -61,5 +79,13 @@ public class TextFigure extends RoundedCornerFigure {
 
 	public void setText(String newText) {
 		textFlow.setText(newText);
+	}
+
+	@Override
+	protected void paintFigure(Graphics graphics) {
+		if ( !enabled ) {
+			graphics.setAlpha(ALPHA_VALUE);
+		}
+		super.paintFigure(graphics);
 	}
 }

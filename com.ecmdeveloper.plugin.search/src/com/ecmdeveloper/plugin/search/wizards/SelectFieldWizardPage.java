@@ -22,20 +22,29 @@ package com.ecmdeveloper.plugin.search.wizards;
 
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
 
+import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryContentProvider;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.util.IconFiles;
 
 /**
  * @author ricardo.belfor
@@ -49,10 +58,13 @@ public class SelectFieldWizardPage extends WizardPage {
 	private TreeViewer fieldsTree;
 	private IQueryField field;
 	private QueryFieldFilter filter;
-	private Query query;
+	private final Query query;
+	private ISelection selection;
 	
-	protected SelectFieldWizardPage() {
+	protected SelectFieldWizardPage(Query query, StructuredSelection selection) {
 		super(TITLE);
+		this.query = query;
+		this.selection = selection;
 		setTitle(TITLE);
 		setDescription(DESCRIPTION);
 	}
@@ -74,24 +86,44 @@ public class SelectFieldWizardPage extends WizardPage {
 
 	private void createFieldsTree(Composite container) {
 
-		fieldsTree = new TreeViewer(container, SWT.BORDER | SWT.SINGLE );
+		fieldsTree = new TreeViewer(container, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL );
 		fieldsTree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		fieldsTree.setLabelProvider( new LabelProvider() );
+		fieldsTree.setLabelProvider( new LabelProvider() {
+
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof IQueryTable ) {
+					return Activator.getImage( IconFiles.TABLE_FOLDER );
+				}
+				return null;
+			}
+		});
+
 		fieldsTree.setContentProvider( new QueryContentProvider() );
 		fieldsTree.addSelectionChangedListener( new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				fieldSelectionChanged();
-			}} );
-		fieldsTree.addFilter(filter);
+			}} 
+		);
+		
+		if ( filter != null) {
+			fieldsTree.addFilter(filter);
+		}
+		fieldsTree.setInput(query);
 	}
 
 	private void fieldSelectionChanged() {
 		IStructuredSelection selection = (IStructuredSelection) fieldsTree.getSelection();
 		Iterator<?> iterator = selection.iterator();
 		if (iterator.hasNext() ) {
-			field = (IQueryField) iterator.next();
+			Object selectedObject = iterator.next();
+			if ( selectedObject instanceof IQueryField ) {
+				field = (IQueryField) selectedObject;
+			} else {
+				field = null;
+			}
 		}
 		
 		getWizard().getContainer().updateButtons();
@@ -109,18 +141,23 @@ public class SelectFieldWizardPage extends WizardPage {
 		this.filter = filter;
 	}
 
-	public void setInput(Query query) {
-		this.query = query;
-	}
-
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if ( visible ) {
-			fieldsTree.setInput( query );
-//			if ( selection != null && contentTable.getSelection().isEmpty()) {
-//				contentTable.setSelection(selection);
-//			}
+			if ( selection != null /*&& fieldsTree.getSelection().isEmpty()*/) {
+
+				fieldsTree.expandToLevel(2);
+//				fieldsTree.expandAll();
+//				Iterator<?> iterator = ((IStructuredSelection)selection).iterator();
+//				if (iterator.hasNext() ) {
+//					Object selectedObject = iterator.next();
+//					if ( selectedObject instanceof IQueryField ) {
+//						fieldsTree.expandToLevel(((IQueryField) selectedObject).getQueryTable(), 4 );
+//					}
+//				}
+				fieldsTree.setSelection(selection, true);			
+			}
 		}
 	}
 }

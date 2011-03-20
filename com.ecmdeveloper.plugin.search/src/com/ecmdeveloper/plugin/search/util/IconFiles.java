@@ -27,6 +27,8 @@ package com.ecmdeveloper.plugin.search.util;
 public class IconFiles {
 
 	public static String TABLE_FOLDER = "icons/folder_table.png";
+	public static String DISTINCT = "icons/table_sort.png";
+	public static String SHOW_SQL = "icons/table_lightning.png";
 	
 	private IconFiles() {
 	}

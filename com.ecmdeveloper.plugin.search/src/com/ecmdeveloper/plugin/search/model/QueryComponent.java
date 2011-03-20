@@ -70,4 +70,14 @@ public abstract class QueryComponent extends QuerySubpart{
 		d.height = -1;
 		super.setSize(d);
 	}
+
+	protected void appendField(StringBuffer result, boolean strict) {
+		if ( strict ) {
+			result.append("[");
+		}
+		result.append(getField());
+		if ( strict ) {
+			result.append("]");
+		}
+	}
 }

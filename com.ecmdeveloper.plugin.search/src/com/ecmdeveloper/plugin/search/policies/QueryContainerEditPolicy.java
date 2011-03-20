@@ -22,11 +22,16 @@ package com.ecmdeveloper.plugin.search.policies;
 
 import java.util.Iterator;
 
+import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.FlowLayoutEditPolicy;
+import org.eclipse.gef.editpolicies.LayoutEditPolicy;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.requests.CreateRequest;
 
@@ -41,12 +46,14 @@ import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
+import com.ecmdeveloper.plugin.search.parts.QueryContainerEditPart;
 
 /**
  * @author ricardo.belfor
  *
  */
 public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
+//public class QueryContainerEditPolicy extends LayoutEditPolicy {
 
 	private QueryCommandFactory queryCommandFactory;
 	
@@ -54,11 +61,17 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 		this.queryCommandFactory = queryCommandFactory;
 	}
 
+	protected boolean isHorizontal() {
+//		IFigure figure = ((GraphicalEditPart)getHost()).getContentPane();
+//		return ((ToolbarLayout)figure.getLayoutManager()).isHorizontal();
+		return false;
+	}
+	
 	protected Command getCloneCommand(ChangeBoundsRequest request) {
 		CloneCommand clone = new CloneCommand();
 		clone.setParent((QueryDiagram)getHost().getModel());
 		
-		EditPart after = getInsertionReference(request);
+	 	EditPart after = getInsertionReference(request);
 		int index = getHost().getChildren().indexOf(after);
 		
 		Iterator<?> iterator = request.getEditParts().iterator();
@@ -74,8 +87,11 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 		
 	protected Command createAddCommand(EditPart child, EditPart after) {
 		AddCommand command = new AddCommand();
+		
+		QueryContainer modelParent = (QueryContainer)getHost().getModel();
 		command.setChild((QuerySubpart)child.getModel());
-		command.setParent((QueryContainer)getHost().getModel());
+		command.setParent(modelParent);
+		
 		int index = getHost().getChildren().indexOf(after);
 		command.setIndex(index);
 		return command;

@@ -86,22 +86,20 @@ public abstract class QueryEditPart extends AbstractGraphicalEditPart implements
 	public void propertyChange(PropertyChangeEvent evt){
 		String prop = evt.getPropertyName();
 		if (QuerySubpart.CHILDREN.equals(prop)) {
-			if (evt.getOldValue() instanceof Integer)
+			if (evt.getOldValue() instanceof Integer) {
 				// new child
-				addChild(createChild(evt.getNewValue()), ((Integer)evt
-						.getOldValue()).intValue());
-			else
+				addChild(createChild(evt.getNewValue()), ((Integer) evt.getOldValue()).intValue());
+			} else {
 				// remove child
-				removeChild((EditPart)getViewer().getEditPartRegistry().get(
-						evt.getOldValue()));
-		}
-		else if (prop.equals(QuerySubpart.ID_SIZE) || prop.equals(QuerySubpart.ID_LOCATION))
+				removeChild((EditPart) getViewer().getEditPartRegistry().get(evt.getOldValue()));
+			}
 			refreshVisuals();
+		} else if (prop.equals(QuerySubpart.ID_SIZE) || prop.equals(QuerySubpart.ID_LOCATION)
+				|| prop.equals(QuerySubpart.ID_ENABLEMENT)) {
+			refreshVisuals();
+		}
 	}
 
-	/**
-	 * Updates the visual aspect of this. 
-	 */
 	protected void refreshVisuals() {
 		Point loc = getLogicSubpart().getLocation();
 		Dimension size= getLogicSubpart().getSize();

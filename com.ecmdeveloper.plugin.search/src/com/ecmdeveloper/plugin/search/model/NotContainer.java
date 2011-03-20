@@ -37,4 +37,14 @@ public class NotContainer extends QueryContainer {
 	public String toString() {
 		return NOT_LABEL;
 	}
+
+	@Override
+	protected String getConcatOperation() {
+		return "";
+	}
+
+	@Override
+	protected String getOperationPrefix() {
+		return NOT_LABEL;
+	}
 }
