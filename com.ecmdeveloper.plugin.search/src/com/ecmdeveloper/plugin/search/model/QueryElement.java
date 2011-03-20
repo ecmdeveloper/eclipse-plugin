@@ -41,6 +41,51 @@ public abstract class QueryElement implements IPropertySource, Cloneable, Serial
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	static final long serialVersionUID = 1;
 	private final Query query;
+	private QueryElement parent;
+	private boolean mainQuery;
+	private boolean rootDiagram = false;
+
+	public boolean isRootDiagram() {
+		return rootDiagram;
+	}
+
+	void setRootDiagram(boolean rootDiagram) {
+		this.rootDiagram = rootDiagram;
+	}
+	
+	public boolean isMainQuery() {
+		return mainQuery;
+	}
+
+	public boolean isMainQueryChild() {
+		if ( mainQuery ) {
+			return true;
+		} else if (parent == null){
+			return false;
+		} else { 
+			if ( parent.isRootDiagram() ) {
+				return mainQuery;
+			} else {
+				return parent.isMainQueryChild();
+			}
+		}
+	}
+	
+//	private boolean isParentRootDiagram() {
+//		return parent instanceof QueryDiagram &&  ((QueryDiagram)parent).isRootDiagram();
+//	}
+
+	void setMainQuery(boolean mainQuery, boolean propogateToTop) {
+		
+		if ( propogateToTop &&  mainQuery && ! parent.isRootDiagram() ) {
+			mainQuery = false;
+			parent.setMainQuery(mainQuery,  propogateToTop );
+			fireStructureChange(QuerySubpart.ID_ENABLEMENT, this);
+		} else {
+			this.mainQuery = mainQuery;
+			fireStructureChange(QuerySubpart.ID_ENABLEMENT, this);
+		}
+	}
 
 	public QueryElement(Query query) {
 		this.query = query;
@@ -48,6 +93,14 @@ public abstract class QueryElement implements IPropertySource, Cloneable, Serial
 
 	public Query getQuery() {
 		return query;
+	}
+	
+	public QueryElement getParent() {
+		return parent;
+	}
+
+	protected void setParent(QueryElement parent) {
+		this.parent = parent;
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener l){
@@ -114,4 +167,6 @@ public abstract class QueryElement implements IPropertySource, Cloneable, Serial
 
 	public void update(){
 	}
+	
+	public abstract String toSQL();
 }

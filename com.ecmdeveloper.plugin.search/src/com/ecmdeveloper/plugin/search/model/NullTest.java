@@ -54,9 +54,18 @@ public class NullTest extends QueryComponent {
 	}
 
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toSQL() {
+		return toString(true);
+	}
+
+	private String toString(boolean strict) {
 		if ( getField() != null ) {
 			StringBuffer result = new StringBuffer();
-			result.append(getField());
+			appendField(result, strict);
 			result.append( " IS ");
 			if ( negated ) {
 				result.append("NOT ");

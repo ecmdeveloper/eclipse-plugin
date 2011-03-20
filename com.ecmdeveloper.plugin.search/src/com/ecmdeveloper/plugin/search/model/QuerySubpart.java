@@ -39,6 +39,7 @@ public abstract class QuerySubpart extends QueryElement {
 	protected static IPropertyDescriptor[] descriptors = null;
 	public static String ID_SIZE = "size"; //$NON-NLS-1$
 	public static String ID_LOCATION = "location"; //$NON-NLS-1$
+	public static String ID_ENABLEMENT = "enablement"; //$NON-NLS-1$
 
 	static {
 		descriptors = new IPropertyDescriptor[] { new PropertyDescriptor(ID_SIZE, "Size"),
@@ -128,6 +129,6 @@ public abstract class QuerySubpart extends QueryElement {
 		if (size.equals(d))
 			return;
 		size = d;
-		firePropertyChange("size", null, size); //$NON-NLS-1$
+		firePropertyChange(ID_SIZE, null, size); //$NON-NLS-1$
 	}
 }

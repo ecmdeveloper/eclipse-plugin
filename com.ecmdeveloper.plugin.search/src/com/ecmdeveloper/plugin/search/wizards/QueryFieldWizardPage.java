@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -42,7 +41,7 @@ import com.ecmdeveloper.plugin.search.model.IQueryField;
 
 /**
  * @author ricardo.belfor
- *
+ * @deprecated
  */
 public class QueryFieldWizardPage extends WizardPage {
 

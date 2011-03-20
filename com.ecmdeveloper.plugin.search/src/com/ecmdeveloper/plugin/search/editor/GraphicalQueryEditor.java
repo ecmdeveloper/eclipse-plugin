@@ -49,7 +49,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -63,11 +62,14 @@ import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.actions.AddTableAction;
 import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.actions.RemoveTableAction;
+import com.ecmdeveloper.plugin.search.actions.ShowSqlAction;
+import com.ecmdeveloper.plugin.search.actions.ToggleDistinctAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleIncludeSubclassesAction;
 import com.ecmdeveloper.plugin.search.dnd.TextTransferDropTargetListener;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.parts.GraphicalPartFactory;
+import com.ecmdeveloper.plugin.search.util.IconFiles;
 
 /**
  * @author ricardo.belfor
@@ -79,6 +81,9 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	private PaletteRoot root;
 	private QueryFieldsTable queryFieldsTable;
 	private ToolItem removeTableItem;
+	private IAction actions[] = { new AddTableAction(this), new RemoveTableAction(this),
+			new EditQueryComponentAction(this), new ToggleIncludeSubclassesAction(this),
+			new ToggleDistinctAction(this), new ShowSqlAction(this) };
 	
 	public GraphicalQueryEditor() {
 		setEditDomain(new DefaultEditDomain(this));
@@ -133,6 +138,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		createAddTableButton(toolBar);
 		removeTableItem = createDeleteTableButton(toolBar);
 		createIncludeSubClassesButton(toolBar);
+		createDistinctButton(toolBar);
+		createShowSQLButton(toolBar);
 		
 		new ToolItem(toolBar, SWT.SEPARATOR );
 
@@ -208,6 +215,33 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		);
 	}
 
+	private void createDistinctButton(ToolBar toolBar) {
+		ToolItem toolItem = new ToolItem(toolBar, SWT.CHECK);
+		toolItem.setImage( Activator.getImage( IconFiles.DISTINCT ) );
+		toolItem.setToolTipText("Distinct");
+		toolItem.setSelection( query.isDistinct() );
+		toolItem.addSelectionListener( new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IAction action = getActionRegistry().getAction( ToggleDistinctAction.ID );
+				action.run();
+			}} 
+		);
+	}
+
+	private void createShowSQLButton(ToolBar toolBar) {
+		ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH );
+		toolItem.setImage( Activator.getImage( IconFiles.SHOW_SQL ) );
+		toolItem.setToolTipText("Show SQL");
+		toolItem.addSelectionListener( new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IAction action = getActionRegistry().getAction( ShowSqlAction.ID );
+				action.run();
+			}} 
+		);
+	}
+	
 	@Override
 	protected PaletteRoot getPaletteRoot() {
 		if( root == null ){
@@ -274,47 +308,20 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		return query.getQueryDiagram();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void createActions() {
 		super.createActions();
 		ActionRegistry registry = getActionRegistry();
 		IAction action = new CopyTemplateAction(this);
 		registry.registerAction(action);
-		
-		registerAddTableAction();
-		registerRemoveTableAction();
-		registerEditQueryComponentAction();
-		registerToggleIncludeSubclassesAction();
+
+		for ( IAction action2 : actions ) {
+			getActionRegistry().registerAction( action2 );
+			getSelectionActions().add( action2.getId() );
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void registerAddTableAction() {
-		IAction addTableAction = new AddTableAction(this);
-		getActionRegistry().registerAction(addTableAction);
-		getSelectionActions().add( addTableAction.getId() );
-	}
-
-	@SuppressWarnings("unchecked")
-	private void registerRemoveTableAction() {
-		IAction removeTableAction = new RemoveTableAction(this);
-		getActionRegistry().registerAction(removeTableAction);
-		getSelectionActions().add( removeTableAction.getId() );
-	}
-
-	@SuppressWarnings("unchecked")
-	private void registerEditQueryComponentAction() {
-		IAction action = new EditQueryComponentAction(this);
-		getActionRegistry().registerAction(action);
-		getSelectionActions().add( action.getId() );
-	}
-
-	@SuppressWarnings("unchecked")
-	private void registerToggleIncludeSubclassesAction() {
-		IAction action = new ToggleIncludeSubclassesAction(this);
-		getActionRegistry().registerAction(action);
-		getSelectionActions().add( action.getId() );
-	}
-	
 	public Query getQuery() {
 		return query;
 	}

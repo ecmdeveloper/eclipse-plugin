@@ -41,6 +41,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.model.AndContainer;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
@@ -98,6 +99,9 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		combined = createEntry("In Subfolder Test", "Query Field In Subfolder Test", "arrow", InSubFolderTest.class, query);
 		entries.add(combined);
 		
+		combined = createEntry("Free Text", "Free Text condition", "label", FreeText.class, query);
+		entries.add(combined);
+
 		drawer.addAll(entries);
 		return drawer;
 	}

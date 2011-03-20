@@ -33,7 +33,10 @@ public abstract class QueryFieldFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		return select( (IQueryField) element);
+		if ( element instanceof IQueryField ) {
+			return select( (IQueryField) element);
+		}
+		return true;
 	}
 
 	protected abstract boolean select(IQueryField queryField);

@@ -31,6 +31,7 @@ public class QueryTable implements IQueryTable {
 
 	private ArrayList<IQueryField> fields;
 	private final String name;
+	private Collection<IQueryTable> childQueryTables;
 	
 	public QueryTable(String name) {
 		this.name = name;
@@ -66,11 +67,13 @@ public class QueryTable implements IQueryTable {
 
 	@Override
 	public Collection<IQueryTable> getChildQueryTables() {
-		
-		Collection<IQueryTable> childQueryTables = new ArrayList<IQueryTable>();
-		if ( getName().equals("Query Table 1") ) {
-			childQueryTables.add( new QueryTable("Query Sub Table 1") );
-			childQueryTables.add( new QueryTable("Query Sub Table 2") );
+
+		if (childQueryTables == null ) { 
+			childQueryTables = new ArrayList<IQueryTable>();
+			if ( getName().equals("Query Table 1") ) {
+				childQueryTables.add( new QueryTable("Query Sub Table 1") );
+				childQueryTables.add( new QueryTable("Query Sub Table 2") );
+			}
 		}
 		return childQueryTables;
 	}

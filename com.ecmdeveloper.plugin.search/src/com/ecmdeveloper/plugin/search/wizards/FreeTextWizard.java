@@ -18,33 +18,38 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model;
+package com.ecmdeveloper.plugin.search.wizards;
+
+import org.eclipse.jface.wizard.Wizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class AndContainer extends QueryContainer {
+public class FreeTextWizard extends Wizard {
 
-	private static final String AND_LABEL = "and";
-	private static final long serialVersionUID = 1L;
-
-	public AndContainer(Query query) {
-		super(query);
-	}
+	private StringValueWizardPage stringValueWizardPage;
+	private String text;
 
 	@Override
-	public String toString() {
-		return AND_LABEL;
+	public void addPages() {
+		stringValueWizardPage = new StringValueWizardPage();
+		if ( text != null ) {
+			stringValueWizardPage.setValue(text);
+		}
+		addPage(stringValueWizardPage);
+	}
+	
+	@Override
+	public boolean performFinish() {
+		return true;
+	}
+	public String getText() {
+		return (String) stringValueWizardPage.getValue();
 	}
 
-	@Override
-	protected String getConcatOperation() {
-		return AND_LABEL;
-	}
-
-	@Override
-	protected String getOperationPrefix() {
-		return null;
+	public void setText(String text) {
+		this.text = text;
+		
 	}
 }

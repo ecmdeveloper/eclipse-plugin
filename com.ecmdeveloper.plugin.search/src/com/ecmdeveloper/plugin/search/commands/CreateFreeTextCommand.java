@@ -18,33 +18,34 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model;
+package com.ecmdeveloper.plugin.search.commands;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import com.ecmdeveloper.plugin.search.model.FreeText;
+import com.ecmdeveloper.plugin.search.wizards.FreeTextWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class AndContainer extends QueryContainer {
-
-	private static final String AND_LABEL = "and";
-	private static final long serialVersionUID = 1L;
-
-	public AndContainer(Query query) {
-		super(query);
-	}
+public class CreateFreeTextCommand extends CreateCommand {
 
 	@Override
-	public String toString() {
-		return AND_LABEL;
-	}
+	public void execute() {
 
-	@Override
-	protected String getConcatOperation() {
-		return AND_LABEL;
-	}
+		Shell shell = Display.getCurrent().getActiveShell();
 
-	@Override
-	protected String getOperationPrefix() {
-		return null;
+		FreeTextWizard wizard = new FreeTextWizard();
+		WizardDialog dialog = new WizardDialog(shell, wizard);
+		dialog.create();
+		if ( dialog.open() == Dialog.OK ) {
+			FreeText comparison = (FreeText)child;
+			comparison.setText( wizard.getText() );
+			super.execute();
+		}
 	}
 }

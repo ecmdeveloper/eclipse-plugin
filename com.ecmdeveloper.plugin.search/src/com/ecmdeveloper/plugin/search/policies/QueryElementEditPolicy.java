@@ -29,11 +29,13 @@ import org.eclipse.gef.requests.GroupRequest;
 import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.commands.DeleteCommand;
 import com.ecmdeveloper.plugin.search.commands.EditComparisonCommand;
+import com.ecmdeveloper.plugin.search.commands.EditFreeTextCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
@@ -69,6 +71,8 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 			return new EditInFolderTestCommand(queryComponent);
 		} if ( queryComponent instanceof InSubFolderTest ) {
 			return new EditInSubFolderTestCommand(queryComponent);
+		} if ( queryComponent instanceof FreeText ) {
+			return new EditFreeTextCommand(queryComponent);
 		}
 	
 		return null;

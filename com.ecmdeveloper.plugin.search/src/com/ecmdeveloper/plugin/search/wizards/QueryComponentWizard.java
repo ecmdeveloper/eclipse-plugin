@@ -36,8 +36,9 @@ import com.ecmdeveloper.plugin.search.model.Query;
  */
 public abstract class QueryComponentWizard extends Wizard {
 
-	protected QueryFieldWizardPage queryFieldWizardPage;
-	private SelectTableWizardPage selectTableWizardPage;
+//	protected QueryFieldWizardPage queryFieldWizardPage;
+//	private SelectTableWizardPage selectTableWizardPage;
+	private SelectFieldWizardPage selectFieldWizardPage;
 	private final Query query;
 	private IQueryField selection;
 	
@@ -56,29 +57,33 @@ public abstract class QueryComponentWizard extends Wizard {
 	
 	public void addPages() {
 
-		queryFieldWizardPage = new QueryFieldWizardPage( getFieldSelection() );
+//		queryFieldWizardPage = new QueryFieldWizardPage( getFieldSelection() );
+//
+//		if ( query.getQueryTables().size() > 1 ) {
+//			StructuredSelection tableSelection = getTableSelection();
+//			selectTableWizardPage = new SelectTableWizardPage( query, tableSelection );
+//			addPage( selectTableWizardPage );
+//		} else {
+//			IQueryTable queryTable = query.getQueryTables().iterator().next();
+//			Collection<IQueryField> fields = queryTable.getQueryFields();		
+//			queryFieldWizardPage.setContent(fields);
+//			queryFieldWizardPage.setFilter( getQueryFieldFilter() );
+//		}
+//
+//		addPage(queryFieldWizardPage);
 
-		if ( query.getQueryTables().size() > 1 ) {
-			StructuredSelection tableSelection = getTableSelection();
-			selectTableWizardPage = new SelectTableWizardPage( query, tableSelection );
-			addPage( selectTableWizardPage );
-		} else {
-			IQueryTable queryTable = query.getQueryTables().iterator().next();
-			Collection<IQueryField> fields = queryTable.getQueryFields();		
-			queryFieldWizardPage.setContent(fields);
-			queryFieldWizardPage.setFilter( getQueryFieldFilter() );
-		}
-		
-		addPage(queryFieldWizardPage);
+		selectFieldWizardPage = new SelectFieldWizardPage(query, getFieldSelection());
+		selectFieldWizardPage.setFilter(getQueryFieldFilter() );
+		addPage(selectFieldWizardPage);
 	}
 
-	public QueryFieldWizardPage getQueryFieldWizardPage() {
-		return queryFieldWizardPage;
-	}
+//	public QueryFieldWizardPage getQueryFieldWizardPage() {
+//		return queryFieldWizardPage;
+//	}
 
-	public SelectTableWizardPage getSelectTableWizardPage() {
-		return selectTableWizardPage;
-	}
+//	public SelectTableWizardPage getSelectTableWizardPage() {
+//		return selectTableWizardPage;
+//	}
 
 	private StructuredSelection getFieldSelection() {
 		StructuredSelection fieldSelection = null;
@@ -96,22 +101,23 @@ public abstract class QueryComponentWizard extends Wizard {
 		return tableSelection;
 	}	
 
-	@Override
-	public IWizardPage getNextPage(IWizardPage page) {
-		if ( page instanceof SelectTableWizardPage ) {
-			IQueryTable queryTable = selectTableWizardPage.getQueryTable();
-			if ( queryTable != null ) {
-				Collection<IQueryField> fields = queryTable.getQueryFields();		
-				queryFieldWizardPage.setContent(fields);
-			} else {
-				return null;
-			}
-		}
-		return super.getNextPage(page);
-	}
+//	@Override
+//	public IWizardPage getNextPage(IWizardPage page) {
+//		if ( page instanceof SelectTableWizardPage ) {
+//			IQueryTable queryTable = selectTableWizardPage.getQueryTable();
+//			if ( queryTable != null ) {
+//				Collection<IQueryField> fields = queryTable.getQueryFields();		
+//				queryFieldWizardPage.setContent(fields);
+//			} else {
+//				return null;
+//			}
+//		}
+//		return super.getNextPage(page);
+//	}
 
 	public IQueryField getField() {
-		return queryFieldWizardPage.getField();
+//		return queryFieldWizardPage.getField();
+		return selectFieldWizardPage.getField();
 	}
 
 	public void setSelection(IQueryField field) {

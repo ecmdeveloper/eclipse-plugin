@@ -67,9 +67,23 @@ public class WildcardTest extends QueryComponent {
 		firePropertyChange(PROPERTY_CHANGED, oldField, value);
 	}
 
+	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toSQL() {
+		return toString(true);
+	}
+
+	public String toString(boolean strict) {
 		if ( getField() != null && value != null && wildcardType != null) {
-			return getField() + " LIKE " + getFormatedValue();
+			StringBuffer result = new StringBuffer();
+			appendField(result, strict);
+			result.append(" LIKE ");
+			result.append(getFormatedValue());
+			return result.toString();
 		} else {
 			return "";
 		}

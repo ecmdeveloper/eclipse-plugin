@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.search.figures;
 
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.XYLayout;
@@ -32,7 +33,15 @@ import org.eclipse.draw2d.geometry.Rectangle;
  */
 public class QueryConditionFigure extends Figure {
 	
-	private Label labelName = new Label();
+	private Label labelName = new Label() {
+
+		@Override
+		protected void paintFigure(Graphics graphics) {
+			graphics.setAlpha(60);
+			super.paintFigure(graphics);
+		}
+		
+	};
 
 	public QueryConditionFigure() {
 		XYLayout layout = new XYLayout();

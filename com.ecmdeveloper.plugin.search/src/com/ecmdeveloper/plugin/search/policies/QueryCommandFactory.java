@@ -24,11 +24,13 @@ import org.eclipse.gef.requests.CreateRequest;
 
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateFreeTextCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
@@ -53,10 +55,12 @@ public class QueryCommandFactory {
 			command = new CreateInFolderTestCommand();
 		} else if ( request.getNewObjectType() == InSubFolderTest.class ) {
 			command = new CreateInSubFolderTestCommand();
+		} else if ( request.getNewObjectType() == FreeText.class ) {
+			command = new CreateFreeTextCommand();
 		} else {			
 			command = new CreateCommand();
 		}
-		
+				
 		return command;
 	}
 }

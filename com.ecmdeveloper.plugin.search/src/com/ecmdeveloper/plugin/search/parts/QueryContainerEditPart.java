@@ -21,16 +21,17 @@
 package com.ecmdeveloper.plugin.search.parts;
 
 import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.swt.graphics.Color;
 
 import com.ecmdeveloper.plugin.search.figures.ContainerBorder;
 import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
+import com.ecmdeveloper.plugin.search.layout.QueryContainerLayout;
 import com.ecmdeveloper.plugin.search.model.AndContainer;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
+import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.policies.ContainerHighlightEditPolicy;
 import com.ecmdeveloper.plugin.search.policies.QueryCommandFactory;
 import com.ecmdeveloper.plugin.search.policies.QueryContainerEditPolicy;
@@ -52,10 +53,13 @@ public class QueryContainerEditPart extends AbstractContainerEditPart {
 
 	protected IFigure createFigure() {
 		Figure figure = new Figure();
-		figure.setLayoutManager(new FlowLayout());
+		
+		QueryContainerLayout layout = new QueryContainerLayout();
+		layout.setSpacing(10);	
+		figure.setLayoutManager(layout);
 		figure.setBorder(new ContainerBorder( getModel().toString(), getContainerColor() ));
 		figure.setOpaque(true);
-		figure.setPreferredSize(400, 50);
+		figure.setPreferredSize(-1, 50);
 
 		return figure;
 	}
@@ -69,5 +73,14 @@ public class QueryContainerEditPart extends AbstractContainerEditPart {
 			return QueryColorConstants.notContainer;
 		}
 		return QueryColorConstants.logicGreen;
+	}
+
+	
+	@Override
+	protected void refreshVisuals() {
+		QueryContainer queryContainer = (QueryContainer) getModel();
+		IFigure figure2 = getFigure();
+		((ContainerBorder) figure2.getBorder()).setEnabled( queryContainer.isMainQueryChild() );
+		super.refreshVisuals();
 	}
 }
