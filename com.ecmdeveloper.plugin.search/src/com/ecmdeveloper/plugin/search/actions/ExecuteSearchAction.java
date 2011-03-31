@@ -20,24 +20,32 @@
 
 package com.ecmdeveloper.plugin.search.actions;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.ui.SearchQuery;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class ShowSqlAction extends SelectionAction {
+public class ExecuteSearchAction extends SelectionAction {
 
-	public static final String ID = "com.ecmdeveloper.plugin.search.actions.showSqlAction";
-	private static final String ACTION_NAME = "Show SQL";
+	public static final String ID = "com.ecmdeveloper.plugin.search.actions.executeSearchAction";
+	private static final String ACTION_NAME = "Execute Search";
 
-	public ShowSqlAction(IWorkbenchPart part) {
+	public ExecuteSearchAction(IWorkbenchPart part) {
 		super(part);
 		setId( ID );
 		setText( ACTION_NAME );
@@ -50,12 +58,14 @@ public class ShowSqlAction extends SelectionAction {
 
 	@Override
 	public void run() {
-		
-		Shell shell = getWorkbenchPart().getSite().getShell();
-		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
-		Query query = editor.getQuery();
-		
-		String message = query.toSQL();
-		MessageDialog.openInformation(shell, getText(), message);
+	
+		ISearchQuery query = new SearchQuery();
+		NewSearchUI.runQueryInBackground(query );
+//		Shell shell = getWorkbenchPart().getSite().getShell();
+//		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
+//		Query query = editor.getQuery();
+//
+//		String message = query.toSQL();
+//		MessageDialog.openInformation(shell, getText(), message);
 	}
 }

@@ -78,9 +78,18 @@ public class QueryContainerEditPart extends AbstractContainerEditPart {
 	
 	@Override
 	protected void refreshVisuals() {
-		QueryContainer queryContainer = (QueryContainer) getModel();
-		IFigure figure2 = getFigure();
-		((ContainerBorder) figure2.getBorder()).setEnabled( queryContainer.isMainQueryChild() );
 		super.refreshVisuals();
+		updateEnablement();
+	}
+
+	private void updateEnablement() {
+		QueryContainer queryContainer = (QueryContainer) getModel();
+		IFigure figure = getFigure();
+		ContainerBorder containerBorder = (ContainerBorder) figure.getBorder();
+		boolean mainQueryChild = queryContainer.isMainQueryChild();
+		if ( containerBorder.isEnabled() != mainQueryChild ) {
+			containerBorder.setEnabled( mainQueryChild );
+			figure.repaint();
+		}
 	}
 }

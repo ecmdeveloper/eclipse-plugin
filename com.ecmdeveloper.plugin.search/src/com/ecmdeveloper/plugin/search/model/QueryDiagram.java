@@ -27,8 +27,6 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-import com.ecmdeveloper.plugin.search.parts.QueryEditPart;
-
 /**
  * 
  * @author ricardo.belfor
@@ -58,30 +56,8 @@ public class QueryDiagram extends QuerySubpart {
 
 	public void addChild(QueryElement child, int index) {
 
-//		boolean stealMainQueryFromChild = child.getParent().isRootDiagram() && child.isMainQuery();
-
 		child.setParent(this);
 
-		if ( child.isMainQuery() ) {
-			setMainQuery(true, true);
-			child.setMainQuery(false, false);
-//			
-//			if ( isRootDiagram(this) ) {
-//				setMainQuery(true);
-//			} else {			
-//
-//				QueryElement rootChild = this;
-//				while ( !isRootDiagram(rootChild.getParent() ) ) {
-//					rootChild = rootChild.getParent();
-//				}
-//				rootChild.setMainQuery(true);
-//			}
-		} else if ( isRootDiagram() ) {
-			if (children.size() == 0) {
-				child.setMainQuery(true, false );
-			}
-		}
-		
 		if (index >= 0) {
 			children.add(index, child);
 		} else {
@@ -91,25 +67,16 @@ public class QueryDiagram extends QuerySubpart {
 		fireChildAdded(CHILDREN, child, new Integer(index));
 	}
 
-	private boolean isRootDiagram(QueryElement queryElement) {
-		return queryElement instanceof QueryDiagram && ((QueryDiagram)queryElement).isRootDiagram();
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
 	}
 
 	public void removeChild(QueryElement child) {
 		child.setParent(null);
 		children.remove(child);
-		
-		if ( isRootDiagram() && child.isMainQuery() ) {
-			updateMainQuery();
-		}
 		fireChildRemoved(CHILDREN, child);
-	}
-
-	private void updateMainQuery() {
-		if ( children.size() > 0 ) {
-			QueryElement firstChild = children.get(0);
-			firstChild.setMainQuery(true, false);
-		}
 	}
 
 	public List<QueryElement> getChildren() {
@@ -157,5 +124,12 @@ public class QueryDiagram extends QuerySubpart {
 			}
 		}
 		return "";
+	}
+
+	public void refresh() {
+		super.refresh();
+		for ( QueryElement child : children ) {
+			child.refresh();
+		}
 	}
 }

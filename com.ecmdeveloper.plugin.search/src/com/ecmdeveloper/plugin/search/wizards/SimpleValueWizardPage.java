@@ -37,7 +37,7 @@ public abstract class SimpleValueWizardPage extends ValueWizardPage {
 		super(pageName);
 	}
 
-	protected Text text;
+	private Text text;
 
 	@Override
 	protected void createInput(Composite container) {
@@ -57,5 +57,9 @@ public abstract class SimpleValueWizardPage extends ValueWizardPage {
 		} );
 	}
 
+	protected void setText(String value) {
+		text.setText(value);
+	}
+	
 	protected abstract void textModified(String textValue);
 }

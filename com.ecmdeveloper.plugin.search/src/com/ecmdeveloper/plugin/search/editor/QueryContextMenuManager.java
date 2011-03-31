@@ -27,8 +27,10 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.actions.ActionFactory;
 
 import com.ecmdeveloper.plugin.search.actions.AddTableAction;
+import com.ecmdeveloper.plugin.search.actions.ConvertToTextAction;
 import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.actions.RemoveTableAction;
+import com.ecmdeveloper.plugin.search.actions.SetMainQueryAction;
 
 /**
  * @author ricardo.belfor
@@ -45,6 +47,9 @@ public class QueryContextMenuManager  extends MenuManager {
 		add( getAction(ActionFactory.REDO.getId() ) );
 		add( getAction(ActionFactory.DELETE.getId() ) );
 		add( getAction(EditQueryComponentAction.ID));
+		add(new Separator());
+		add( getAction(SetMainQueryAction.ID) );
+		add( getAction(ConvertToTextAction.ID) );
 		add(new Separator());
 		add( getAction( AddTableAction.ID) );
 		add( getAction( RemoveTableAction.ID) );

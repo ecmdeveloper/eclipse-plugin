@@ -62,6 +62,10 @@ public class ContainerBorder extends org.eclipse.draw2d.LineBorder {
 		this.enabled = enabled;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 	public Insets getInsets(IFigure figure) {
 		return new Insets(getWidth() + 2, grabBarWidth + 2, getWidth() + 2, getWidth() + 2);
 	}

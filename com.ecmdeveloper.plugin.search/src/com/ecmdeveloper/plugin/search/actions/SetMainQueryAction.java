@@ -28,21 +28,23 @@ import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.parts.QueryComponentEditPart;
+import com.ecmdeveloper.plugin.search.parts.QueryEditPart;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class EditQueryComponentAction extends SelectionAction {
+public class SetMainQueryAction extends SelectionAction {
 
+	public static final String ID = "com.ecmdeveloper.plugin.search.actions.setMainQueryAction";
+	public static final String REQUEST_TYPE = "setMainQuery";
 	public static final String QUERY_COMPONENT_KEY = "queryComponent";
-	public static final String ID = "com.ecmdeveloper.plugin.search.actions.editAction";
-	public static final String REQUEST_TYPE = "editQueryComponent";
 
-	private static final String ACTION_NAME = "Edit";
+	private static final String ACTION_NAME = "Set Main Query";
 
-	public EditQueryComponentAction(IWorkbenchPart part) {
+	public SetMainQueryAction(IWorkbenchPart part) {
 		super(part);
 		setId( ID );
 		setText( ACTION_NAME );
@@ -50,15 +52,25 @@ public class EditQueryComponentAction extends SelectionAction {
 
 	@Override
 	protected boolean calculateEnabled() {
-		return isSingleItemSelected() && isQueryComponentSelected();
-	}
 
-	private boolean isSingleItemSelected() {
-		return getSelectedObjects().size() == 1;
-	}
-
-	private boolean isQueryComponentSelected() {
-		return (getSelectedObjects().get(0) instanceof QueryComponentEditPart );
+		if ( !isSingleItemSelected() ) {
+			return false;
+		}
+		
+		Object firstObject = getSelectedObjects().get(0);
+		if ( firstObject instanceof QueryEditPart ) {
+			QueryEditPart part = (QueryEditPart) firstObject;
+			QueryElement queryElement = (QueryElement) part.getModel();
+			if ( queryElement.isMainQuery() ) {
+				return false;
+			}
+			
+			QueryElement parent = queryElement.getParent();
+			if ( parent != null && parent.isRootDiagram() ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -72,11 +84,15 @@ public class EditQueryComponentAction extends SelectionAction {
 		}
 		
 		Request request = new Request( REQUEST_TYPE );
-		QueryComponentEditPart part = (QueryComponentEditPart) getSelectedObjects().get(0);
-		QueryComponent queryComponent = (QueryComponent) part.getModel();
+		QueryEditPart part = (QueryEditPart) getSelectedObjects().get(0);
+		QueryElement queryComponent = (QueryElement) part.getModel();
 		HashMap<String,Object> map = new HashMap<String, Object>();
 		map.put(QUERY_COMPONENT_KEY, queryComponent );
 		request.setExtendedData(map );
 		return part.getCommand(request);
+	}
+
+	private boolean isSingleItemSelected() {
+		return getSelectedObjects().size() == 1;
 	}
 }

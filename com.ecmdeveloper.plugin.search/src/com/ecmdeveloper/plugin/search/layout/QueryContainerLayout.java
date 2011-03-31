@@ -22,13 +22,11 @@ package com.ecmdeveloper.plugin.search.layout;
 
 import java.util.List;
 
-import org.eclipse.draw2d.AbstractHintLayout;
 import org.eclipse.draw2d.AbstractLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.draw2d.geometry.Transposer;
 
 /**
  * @author ricardo.belfor
@@ -44,6 +42,7 @@ public class QueryContainerLayout extends AbstractLayout {
 		spacing = 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Dimension calculateChildrenSize(List children, int wHint, int hHint, boolean preferred) {
 		int height = 0;
 		int width = 0;
@@ -73,6 +72,7 @@ public class QueryContainerLayout extends AbstractLayout {
 	 * @see #getMinimumSize(IFigure, int, int)
 	 * @since 2.1
 	 */
+	@SuppressWarnings("unchecked")
 	protected Dimension calculateMinimumSize(IFigure container, int wHint, int hHint) {
 		Insets insets = container.getInsets();
 //		if (isHorizontal()) {
@@ -114,6 +114,7 @@ public class QueryContainerLayout extends AbstractLayout {
 	 * @see #getPreferredSize(IFigure, int, int)
 	 * @since 2.0
 	 */
+	@SuppressWarnings("unchecked")
 	protected Dimension calculatePreferredSize(IFigure container, int wHint, int hHint) {
 		Insets insets = container.getInsets();
 //		if (isHorizontal()) {

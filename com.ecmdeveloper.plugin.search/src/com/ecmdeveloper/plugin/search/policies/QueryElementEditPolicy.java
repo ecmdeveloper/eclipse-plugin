@@ -26,7 +26,10 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
+import com.ecmdeveloper.plugin.search.actions.ConvertToTextAction;
 import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
+import com.ecmdeveloper.plugin.search.actions.SetMainQueryAction;
+import com.ecmdeveloper.plugin.search.commands.ConvertToTextCommand;
 import com.ecmdeveloper.plugin.search.commands.DeleteCommand;
 import com.ecmdeveloper.plugin.search.commands.EditComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.EditFreeTextCommand;
@@ -34,13 +37,16 @@ import com.ecmdeveloper.plugin.search.commands.EditInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditWildcardTestCommand;
+import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
@@ -55,10 +61,32 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 	public Command getCommand(Request request) {
 		if ( EditQueryComponentAction.REQUEST_TYPE.equals(request.getType())) {
 			return createEditQueryComponentCommand(request);
+		} else if ( SetMainQueryAction.REQUEST_TYPE.equals(request.getType())) {
+			return createSetMainQueryCommand(request);
+		} else if ( ConvertToTextAction.REQUEST_TYPE.equals(request.getType())) {
+			return createConvertToTextCommand(request);
 		}
 		return super.getCommand(request);
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Command createSetMainQueryCommand(Request request) {
+		Map<String, Object> extendedData = request.getExtendedData();
+		QueryElement queryElement = (QueryElement) extendedData.get(SetMainQueryAction.QUERY_COMPONENT_KEY);
+		return new SetMainQueryCommand(queryElement, queryElement.getQuery() );
+	}
+
+	@SuppressWarnings("unchecked")
+	private Command createConvertToTextCommand(Request request) {
+		Map<String, Object> extendedData = request.getExtendedData();
+		QuerySubpart querySubpart = (QuerySubpart) extendedData.get(SetMainQueryAction.QUERY_COMPONENT_KEY);
+		ConvertToTextCommand command = new ConvertToTextCommand(querySubpart, querySubpart.getQuery() );
+		if ( querySubpart.isMainQuery() ) {
+			return command.chain( new SetMainQueryCommand(command.getFreeText(), querySubpart.getQuery() ) );
+		}
+		return command;
+	}
+
 	private Command createEditQueryComponentCommand(Request request) {
 		QueryComponent queryComponent = getQueryComponent(request);
 		if ( queryComponent instanceof Comparison ) {
@@ -86,10 +114,27 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 	}
 	
 	protected Command createDeleteCommand(GroupRequest request) {
-		Object parent = getHost().getParent().getModel();
+		QueryDiagram parent = (QueryDiagram) getHost().getParent().getModel();
+		QuerySubpart querySubpart = (QuerySubpart) getHost().getModel();
+		
 		DeleteCommand deleteCmd = new DeleteCommand();
-		deleteCmd.setParent((QueryDiagram) parent);
-		deleteCmd.setChild((QuerySubpart) getHost().getModel());
-		return deleteCmd;
+		deleteCmd.setParent(parent);
+		deleteCmd.setChild(querySubpart);
+
+		return chainSetMainQueryCommand(parent, querySubpart, deleteCmd);
+	}
+
+	private Command chainSetMainQueryCommand(QueryDiagram parent, QuerySubpart querySubpart, Command command) {
+		Query query = parent.getQuery();
+		if ( parent.isRootDiagram() && querySubpart.equals( query.getMainQuery() ) ) {
+			for (QueryElement child : parent.getChildren() )
+			{
+				if ( !child.equals(querySubpart) ) {
+					return command.chain( new SetMainQueryCommand(child, query) );
+				}
+			}
+			return command.chain( new SetMainQueryCommand(null, query) );
+		}
+		return command;
 	}
 }
