@@ -21,12 +21,20 @@
 package com.ecmdeveloper.plugin.search.wizards;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
 
 
 /**
@@ -59,10 +67,55 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO add real browse dialog
-				Shell shell = getWizard().getContainer().getShell();
-				MessageDialog.openQuestion(shell, "Select Object", "TODO: select object dialog");
+				selectValue();
 			}} 
 		);
+
+		createButton(container, "Use ID value", true);
+		createButton(container, "Use path name value", false);
+	}
+	
+	private void selectValue() {
+	
+		ElementTreeSelectionDialog dialog = createSelectionDialog();
+		
+		int answer = dialog.open();
+	
+		if ( answer != ElementTreeSelectionDialog.OK ) {
+			return;
+		}
+		
+		IObjectStoreItem destination = (IObjectStoreItem) dialog.getFirstResult();
+		if ( destination == null ) {
+			return;
+		}
+
+		setText(destination.getId());
+		setValue( destination.getId() );
+		setDirty();
+	}
+
+	private ElementTreeSelectionDialog createSelectionDialog() {
+
+		ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
+		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
+		Shell shell = getWizard().getContainer().getShell();
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, labelProvider, contentProvider );
+		dialog.setInput( ObjectStoresManager.getManager() );
+		
+		contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
+		dialog.setTitle(TITLE);
+		dialog.setMessage( "Select an object" );
+		return dialog;
+	}
+
+	private Button createButton(Composite container, String label, boolean selection) {
+
+		Button button = new Button(container, SWT.RADIO);
+		button.setText(label);
+		button.setLayoutData(getFullRowGridData());
+		button.setSelection(selection);
+
+		return button;
 	}
 }

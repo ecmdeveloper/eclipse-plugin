@@ -36,6 +36,7 @@ import org.eclipse.gef.ui.actions.CopyTemplateAction;
 import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
+import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.TransferDropTargetListener;
@@ -60,8 +61,11 @@ import org.eclipse.ui.actions.ActionFactory;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.actions.AddTableAction;
+import com.ecmdeveloper.plugin.search.actions.ConvertToTextAction;
 import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
+import com.ecmdeveloper.plugin.search.actions.ExecuteSearchAction;
 import com.ecmdeveloper.plugin.search.actions.RemoveTableAction;
+import com.ecmdeveloper.plugin.search.actions.SetMainQueryAction;
 import com.ecmdeveloper.plugin.search.actions.ShowSqlAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleDistinctAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleIncludeSubclassesAction;
@@ -83,7 +87,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	private ToolItem removeTableItem;
 	private IAction actions[] = { new AddTableAction(this), new RemoveTableAction(this),
 			new EditQueryComponentAction(this), new ToggleIncludeSubclassesAction(this),
-			new ToggleDistinctAction(this), new ShowSqlAction(this) };
+			new ToggleDistinctAction(this), new ShowSqlAction(this), new SetMainQueryAction(this),
+			new ConvertToTextAction(this), new ExecuteSearchAction(this) };
 	
 	public GraphicalQueryEditor() {
 		setEditDomain(new DefaultEditDomain(this));
@@ -168,9 +173,16 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	}
 
 	private void createExecuteButton(ToolBar toolBar) {
-		ToolItem executeItem = new ToolItem(toolBar, SWT.PUSH);
-		executeItem.setImage( Activator.getImage("icons/find.png") );
-		executeItem.setToolTipText("Execute Search");
+		ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
+		toolItem.setImage( Activator.getImage("icons/find.png") );
+		toolItem.setToolTipText("Execute Search");
+		toolItem.addSelectionListener( new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IAction action = getActionRegistry().getAction( ExecuteSearchAction.ID );
+				action.run();
+			}} 
+		);
 	}
 
 	private void createAddTableButton(ToolBar toolBar) {
@@ -261,6 +273,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		GraphicalViewer viewer = getGraphicalViewer();
 		viewer.setEditPartFactory(new GraphicalPartFactory());
 	    viewer.setRootEditPart(new ScalableFreeformRootEditPart());
+		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer) );
 		return viewer;
 	}
 

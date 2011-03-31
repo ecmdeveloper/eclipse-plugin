@@ -24,7 +24,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author ricardo.belfor
@@ -38,6 +37,7 @@ public class Query {
 	
 	private ArrayList<IQueryTable> queryTables = new ArrayList<IQueryTable>();
 	private QueryDiagram queryDiagram;
+	private QueryElement mainQuery;
 	private boolean includeSubclasses;
 	private boolean distinct;
 	private Integer maxCount;
@@ -89,6 +89,15 @@ public class Query {
 		return queryDiagram;
 	}
 	
+	public QueryElement getMainQuery() {
+		return mainQuery;
+	}
+	
+	public void setMainQuery(QueryElement mainQuery) {
+		this.mainQuery = mainQuery;
+		queryDiagram.refresh();
+	}
+
 	public Collection<IQueryField> getQueryFields() {
 		ArrayList<IQueryField> queryFields = new ArrayList<IQueryField>();
 		if ( !queryTables.isEmpty() ) {

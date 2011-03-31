@@ -116,13 +116,13 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 
 		CombinedTemplateCreationEntry combined;
 		
-		combined = createEntry("AND", "Logical AND container", "and", AndContainer.class, query);
+		combined = createEntry("AND", "Logical AND container", "icons/and_container16.png", "icons/or_container24.png", AndContainer.class, query);
 		entries.add(combined);
 
-		combined = createEntry("OR", "Logical OR container", "or", OrContainer.class, query);
+		combined = createEntry("OR", "Logical OR container", "icons/or_container16.png","icons/or_container16.png" , OrContainer.class, query);
 		entries.add(combined);
 
-		combined = createEntry("NOT", "Logical NOT container", "xor", NotContainer.class, query);
+		combined = createEntry("NOT", "Logical NOT container", "icons/not_container16.png", "icons/not_container24.png", NotContainer.class, query);
 		entries.add(combined);
 		
 		drawer.addAll(entries);

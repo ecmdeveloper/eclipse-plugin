@@ -43,13 +43,11 @@ import org.eclipse.gef.requests.CreateRequest;
 import com.ecmdeveloper.plugin.search.commands.AddCommand;
 import com.ecmdeveloper.plugin.search.commands.CloneCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
-import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
-import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.SetConstraintCommand;
+import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.figures.QueryContainerFeedbackFigure;
-import com.ecmdeveloper.plugin.search.model.Comparison;
-import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
@@ -69,41 +67,6 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 		this.queryCommandFactory = queryCommandFactory;
 	}
 
-	// protected Command chainGuideAttachmentCommand(
-	// Request request, LogicSubpart part, Command cmd, boolean horizontal) {
-	// Command result = cmd;
-	//	
-	// // Attach to guide, if one is given
-	// Integer guidePos = (Integer)request.getExtendedData()
-	// .get(horizontal ? SnapToGuides.KEY_HORIZONTAL_GUIDE
-	// : SnapToGuides.KEY_VERTICAL_GUIDE);
-	// if (guidePos != null) {
-	// int alignment = ((Integer)request.getExtendedData()
-	// .get(horizontal ? SnapToGuides.KEY_HORIZONTAL_ANCHOR
-	// : SnapToGuides.KEY_VERTICAL_ANCHOR)).intValue();
-	// ChangeGuideCommand cgm = new ChangeGuideCommand(part, horizontal);
-	// cgm.setNewGuide(findGuideAt(guidePos.intValue(), horizontal), alignment);
-	// result = result.chain(cgm);
-	// }
-	//
-	// return result;
-	// }
-	//
-	// protected Command chainGuideDetachmentCommand(Request request,
-	// LogicSubpart part,
-	// Command cmd, boolean horizontal) {
-	// Command result = cmd;
-	//	
-	// // Detach from guide, if none is given
-	// Integer guidePos = (Integer)request.getExtendedData()
-	// .get(horizontal ? SnapToGuides.KEY_HORIZONTAL_GUIDE
-	// : SnapToGuides.KEY_VERTICAL_GUIDE);
-	// if (guidePos == null)
-	// result = result.chain(new ChangeGuideCommand(part, horizontal));
-	//
-	// return result;
-	// }
-
 	protected Command createAddCommand(Request request, EditPart childEditPart, Object constraint) {
 		QuerySubpart part = (QuerySubpart) childEditPart.getModel();
 		Rectangle rect = (Rectangle) constraint;
@@ -121,17 +84,9 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 		setConstraint.setDebugLabel("LogicXYEP setConstraint");//$NON-NLS-1$
 
 		Command cmd = add.chain(setConstraint);
-		// cmd = chainGuideAttachmentCommand(request, part, cmd, true);
-		// cmd = chainGuideAttachmentCommand(request, part, cmd, false);
-		// cmd = chainGuideDetachmentCommand(request, part, cmd, true);
-		// return chainGuideDetachmentCommand(request, part, cmd, false);
 		return cmd;
 	}
 
-	/**
-	 * @see org.eclipse.gef.editpolicies.ConstrainedLayoutEditPolicy#createChangeConstraintCommand(org.eclipse.gef.EditPart,
-	 *      java.lang.Object)
-	 */
 	protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
 		return null;
 	}
@@ -144,56 +99,6 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 		cmd.setLocation((Rectangle) constraint);
 		Command result = cmd;
 
-		// if ((request.getResizeDirection() & PositionConstants.NORTH_SOUTH) !=
-		// 0) {
-		// Integer guidePos = (Integer)request.getExtendedData()
-		// .get(SnapToGuides.KEY_HORIZONTAL_GUIDE);
-		// if (guidePos != null) {
-		// result = chainGuideAttachmentCommand(request, part, result, true);
-		// } else if (part.getHorizontalGuide() != null) {
-		// // SnapToGuides didn't provide a horizontal guide, but this part is
-		// attached
-		// // to a horizontal guide. Now we check to see if the part is attached
-		// to
-		// // the guide along the edge being resized. If that is the case, we
-		// need to
-		// // detach the part from the guide; otherwise, we leave it alone.
-		// int alignment = part.getHorizontalGuide().getAlignment(part);
-		// int edgeBeingResized = 0;
-		// if ((request.getResizeDirection() & PositionConstants.NORTH) != 0)
-		// edgeBeingResized = -1;
-		// else
-		// edgeBeingResized = 1;
-		// if (alignment == edgeBeingResized)
-		// result = result.chain(new ChangeGuideCommand(part, true));
-		// }
-		// }
-		//	
-		// if ((request.getResizeDirection() & PositionConstants.EAST_WEST) !=
-		// 0) {
-		// Integer guidePos = (Integer)request.getExtendedData()
-		// .get(SnapToGuides.KEY_VERTICAL_GUIDE);
-		// if (guidePos != null) {
-		// result = chainGuideAttachmentCommand(request, part, result, false);
-		// } else if (part.getVerticalGuide() != null) {
-		// int alignment = part.getVerticalGuide().getAlignment(part);
-		// int edgeBeingResized = 0;
-		// if ((request.getResizeDirection() & PositionConstants.WEST) != 0)
-		// edgeBeingResized = -1;
-		// else
-		// edgeBeingResized = 1;
-		// if (alignment == edgeBeingResized)
-		// result = result.chain(new ChangeGuideCommand(part, false));
-		// }
-		// }
-		//	
-		// if (request.getType().equals(REQ_MOVE_CHILDREN)
-		// || request.getType().equals(REQ_ALIGN_CHILDREN)) {
-		// result = chainGuideAttachmentCommand(request, part, result, true);
-		// result = chainGuideAttachmentCommand(request, part, result, false);
-		// result = chainGuideDetachmentCommand(request, part, result, true);
-		// result = chainGuideDetachmentCommand(request, part, result, false);
-		// }
 
 		return result;
 	}
@@ -329,36 +234,30 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 
 		CreateCommand command = queryCommandFactory.getCreateCommand(request);
 
-		command.setParent((QueryDiagram) getHost().getModel());
+		QueryDiagram parent = (QueryDiagram) getHost().getModel();
+		command.setParent(parent);
 		QuerySubpart newPart = (QuerySubpart) request.getNewObject();
 		command.setChild(newPart);
 		Rectangle constraint = (Rectangle) getConstraintFor(request);
 		command.setLocation(constraint);
 		command.setLabel("Create");
+		
+		if (parent.isRootDiagram() ) {
+			Query query = parent.getQuery();
+			System.out.println("Root!!");
+			if ( query.getMainQuery() == null ) {
+				return command.chain( new SetMainQueryCommand(newPart, query) );
+			}
+		}
 		return command;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.editpolicies.LayoutEditPolicy#getCreationFeedbackOffset
-	 * (org.eclipse.gef.requests.CreateRequest)
-	 */
+
 	protected Insets getCreationFeedbackOffset(CreateRequest request) {
-		// if (request.getNewObject() instanceof LED
-		// || request.getNewObject() instanceof Circuit)
-		// return new Insets(2, 0, 2, 0);
 		return new Insets();
 	}
 
-	/**
-	 * Returns the layer used for displaying feedback.
-	 * 
-	 * @return the feedback layer
-	 */
 	protected IFigure getFeedbackLayer() {
 		return getLayer(LayerConstants.SCALED_FEEDBACK_LAYER);
 	}
-
 }

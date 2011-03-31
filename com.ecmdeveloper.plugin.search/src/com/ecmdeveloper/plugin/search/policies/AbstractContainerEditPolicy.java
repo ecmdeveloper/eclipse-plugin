@@ -20,7 +20,10 @@ import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gef.requests.GroupRequest;
 
 import com.ecmdeveloper.plugin.search.commands.OrphanChildCommand;
+import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 
 public class AbstractContainerEditPolicy extends ContainerEditPolicy {
@@ -34,8 +37,10 @@ public class AbstractContainerEditPolicy extends ContainerEditPolicy {
 		CompoundCommand result = new CompoundCommand("Orphan");
 		for (int i = 0; i < parts.size(); i++) {
 			OrphanChildCommand orphan = new OrphanChildCommand();
-			orphan.setChild((QuerySubpart) ((EditPart) parts.get(i)).getModel());
-			orphan.setParent((QueryDiagram) getHost().getModel());
+			QuerySubpart childModel = (QuerySubpart) ((EditPart) parts.get(i)).getModel();
+			QueryDiagram parentModel = (QueryDiagram) getHost().getModel();
+			orphan.setChild(childModel);
+			orphan.setParent(parentModel);
 			orphan.setLabel("Orphan");
 			result.add(orphan);
 		}

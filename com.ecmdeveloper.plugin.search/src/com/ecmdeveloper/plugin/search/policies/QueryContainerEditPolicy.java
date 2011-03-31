@@ -41,10 +41,13 @@ import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.ReorderPartCommand;
+import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 import com.ecmdeveloper.plugin.search.parts.QueryContainerEditPart;
 
@@ -88,12 +91,30 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 	protected Command createAddCommand(EditPart child, EditPart after) {
 		AddCommand command = new AddCommand();
 		
-		QueryContainer modelParent = (QueryContainer)getHost().getModel();
-		command.setChild((QuerySubpart)child.getModel());
-		command.setParent(modelParent);
+		QueryContainer parentModel = (QueryContainer)getHost().getModel();
+		QuerySubpart childModel = (QuerySubpart)child.getModel();
+		command.setChild(childModel);
+		command.setParent(parentModel);
 		
 		int index = getHost().getChildren().indexOf(after);
 		command.setIndex(index);
+		
+		return chainSetMainQueryCommand(command, parentModel, childModel);
+	}
+
+	private Command chainSetMainQueryCommand(AddCommand command, QueryContainer parentModel, QuerySubpart childModel) {
+		
+		Query query = childModel.getQuery();
+		if ( childModel.equals( query.getMainQuery() ) ) {
+			QueryElement rootParent = parentModel;
+			if ( ! rootParent.isRootDiagram() ) {
+				while ( !rootParent.getParent().isRootDiagram() ) {
+					rootParent = rootParent.getParent();
+				}
+				return command.chain( new SetMainQueryCommand(rootParent, query ) );
+			}
+		} 
+		
 		return command;
 	}
 
@@ -106,20 +127,22 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 	protected Command createMoveChildCommand(EditPart child, EditPart after) {
 		QuerySubpart childModel = (QuerySubpart)child.getModel();
 		QueryDiagram parentModel = (QueryDiagram)getHost().getModel();
+		
 		int oldIndex = getHost().getChildren().indexOf(child);
 		int newIndex = getHost().getChildren().indexOf(after);
 		if (newIndex > oldIndex)
 			newIndex--;
 		ReorderPartCommand command = new ReorderPartCommand(childModel, parentModel, newIndex);
+
 		return command;
 	}
 
 	protected Command getCreateCommand(CreateRequest request) {
-
 		CreateCommand command = queryCommandFactory.getCreateCommand(request);
 		EditPart after = getInsertionReference(request);
 		command.setChild((QuerySubpart)request.getNewObject());
-		command.setParent((QueryContainer)getHost().getModel());
+		QueryContainer parent = (QueryContainer)getHost().getModel();
+		command.setParent(parent);
 		int index = getHost().getChildren().indexOf(after);
 		command.setIndex(index);
 		return command;

@@ -52,14 +52,14 @@ public abstract class QueryEditPart extends AbstractGraphicalEditPart implements
 		if (isActive())
 			return;
 		super.activate();
-		getLogicSubpart().addPropertyChangeListener(this);
+		getQuerySubpart().addPropertyChangeListener(this);
 	}
 
 	public void deactivate(){
 		if (!isActive())
 			return;
 		super.deactivate();
-		getLogicSubpart().removePropertyChangeListener(this);
+		getQuerySubpart().removePropertyChangeListener(this);
 	}
 
 	protected AccessibleEditPart getAccessibleEditPart() {
@@ -75,7 +75,7 @@ public abstract class QueryEditPart extends AbstractGraphicalEditPart implements
 
 	abstract protected AccessibleEditPart createAccessible();
 
-	protected QuerySubpart getLogicSubpart(){
+	protected QuerySubpart getQuerySubpart(){
 		return (QuerySubpart)getModel();
 	}
 
@@ -94,15 +94,17 @@ public abstract class QueryEditPart extends AbstractGraphicalEditPart implements
 				removeChild((EditPart) getViewer().getEditPartRegistry().get(evt.getOldValue()));
 			}
 			refreshVisuals();
-		} else if (prop.equals(QuerySubpart.ID_SIZE) || prop.equals(QuerySubpart.ID_LOCATION)
-				|| prop.equals(QuerySubpart.ID_ENABLEMENT)) {
+		} else if (prop.equals(QuerySubpart.ID_SIZE) || prop.equals(QuerySubpart.ID_LOCATION) ) {
+			refreshVisuals();
+		} else if (prop.equals(QuerySubpart.ID_ENABLEMENT)) {
+			System.out.println( prop + ": " + this.toString() );
 			refreshVisuals();
 		}
 	}
 
 	protected void refreshVisuals() {
-		Point loc = getLogicSubpart().getLocation();
-		Dimension size= getLogicSubpart().getSize();
+		Point loc = getQuerySubpart().getLocation();
+		Dimension size= getQuerySubpart().getSize();
 		Rectangle r = new Rectangle(loc ,size);
 
 		((GraphicalEditPart) getParent()).setLayoutConstraint(

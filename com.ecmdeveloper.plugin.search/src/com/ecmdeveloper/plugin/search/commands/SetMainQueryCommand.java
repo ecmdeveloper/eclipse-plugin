@@ -18,44 +18,42 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.actions;
+package com.ecmdeveloper.plugin.search.commands;
 
-import org.eclipse.gef.ui.actions.SelectionAction;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.gef.commands.Command;
 
-import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.model.QueryElement;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class ShowSqlAction extends SelectionAction {
+public class SetMainQueryCommand extends Command {
 
-	public static final String ID = "com.ecmdeveloper.plugin.search.actions.showSqlAction";
-	private static final String ACTION_NAME = "Show SQL";
+	private final QueryElement mainQuery;
+	private QueryElement previousMainQuery;
+	private final Query query;
 
-	public ShowSqlAction(IWorkbenchPart part) {
-		super(part);
-		setId( ID );
-		setText( ACTION_NAME );
+	public SetMainQueryCommand(QueryElement mainQuery, Query query) {
+		super("Set Main Query");
+		this.mainQuery = mainQuery;
+		this.query = query;
+		this.previousMainQuery = query.getMainQuery();
 	}
 
 	@Override
-	protected boolean calculateEnabled() {
-		return true;
+	public void execute() {
+		redo();
 	}
 
 	@Override
-	public void run() {
-		
-		Shell shell = getWorkbenchPart().getSite().getShell();
-		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
-		Query query = editor.getQuery();
-		
-		String message = query.toSQL();
-		MessageDialog.openInformation(shell, getText(), message);
+	public void redo() {
+		query.setMainQuery(mainQuery);
+	}
+
+	@Override
+	public void undo() {
+		query.setMainQuery(previousMainQuery);
 	}
 }
