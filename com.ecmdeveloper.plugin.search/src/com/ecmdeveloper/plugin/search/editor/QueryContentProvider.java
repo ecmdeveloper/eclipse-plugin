@@ -22,6 +22,8 @@ package com.ecmdeveloper.plugin.search.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -81,11 +83,12 @@ public class QueryContentProvider implements IStructuredContentProvider,
 	private Object[] getQueryTableChildren(Object parentElement) {
 		
 		IQueryTable queryTable = (IQueryTable)parentElement;
-		Collection<Object> children = new ArrayList<Object>();
+		List<Object> children = new ArrayList<Object>();
+		children.addAll( queryTable.getQueryFields() );
+		//Collections.sort(children, new Comparable<Object>());
 		if ( query.isIncludeSubclasses() ) {
 			children.addAll( queryTable.getChildQueryTables() );
 		}
-		children.addAll( queryTable.getQueryFields() );
 		return children.toArray();
 	}
 

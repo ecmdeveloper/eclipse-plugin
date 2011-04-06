@@ -5,11 +5,20 @@
          point="org.eclipse.ui.editors">
       <editor
             class="com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor"
+            contributorClass="com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditorContributor"
             default="false"
             extensions="search"
             id="com.ecmdeveloper.plugin.search.searchEditor"
             name="Search Editor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchResultViewPages">
+      <viewPage
+            class="com.ecmdeveloper.plugin.search.ui.SearchResultPage"
+            id="com.ecmdeveloper.plugin.search.searchResultsPage"
+            searchResultClass="com.ecmdeveloper.plugin.search.ui.QuerySearchResult">
+      </viewPage>
    </extension>
 
 </plugin>

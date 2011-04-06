@@ -27,13 +27,13 @@ import java.util.Collection;
  * @author ricardo.belfor
  *
  */
-public class QueryTable implements IQueryTable {
+public class MockQueryTable implements IQueryTable {
 
 	private ArrayList<IQueryField> fields;
 	private final String name;
 	private Collection<IQueryTable> childQueryTables;
 	
-	public QueryTable(String name) {
+	public MockQueryTable(String name) {
 		this.name = name;
 	}
 
@@ -54,7 +54,7 @@ public class QueryTable implements IQueryTable {
 		QueryFieldType[] values = QueryFieldType.values();
 		
 		for (int i = 0; i < 10; i++) {
-			QueryField queryField = new QueryField("Field " + i , values[i % (values.length-1)], this );
+			MockQueryField queryField = new MockQueryField("Field " + i , values[i % (values.length-1)], this );
 			fields.add(queryField);
 		}
 		return fields;
@@ -71,11 +71,23 @@ public class QueryTable implements IQueryTable {
 		if (childQueryTables == null ) { 
 			childQueryTables = new ArrayList<IQueryTable>();
 			if ( getName().equals("Query Table 1") ) {
-				childQueryTables.add( new QueryTable("Query Sub Table 1") );
-				childQueryTables.add( new QueryTable("Query Sub Table 2") );
+				childQueryTables.add( new MockQueryTable("Query Sub Table 1") );
+				childQueryTables.add( new MockQueryTable("Query Sub Table 2") );
 			}
 		}
 		return childQueryTables;
+	}
+
+	@Override
+	public void addChildQueryTable(IQueryTable childTable) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mergeQueryFields(Collection<IQueryField> queryFields) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

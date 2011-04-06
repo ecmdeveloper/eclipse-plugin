@@ -20,19 +20,18 @@
 
 package com.ecmdeveloper.plugin.search.actions;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
-import com.ecmdeveloper.plugin.search.model.QueryTable;
+import com.ecmdeveloper.plugin.search.model.QueryTable2;
+import com.ecmdeveloper.plugin.search.wizards.TableSelectionWizard;
 
 /**
  * @author ricardo.belfor
@@ -53,24 +52,16 @@ public class AddTableAction extends SelectionAction {
 	public void run() {
 		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
 		Query query = editor.getQuery();
-		
-		Shell shell = getWorkbenchPart().getSite().getShell();
-		ElementTreeSelectionDialog dialog = createTableSelectionDialog(shell);
-		if ( dialog.open() == Window.OK ) {
-			for ( Object result : dialog.getResult() ) {
-				IQueryTable queryTable = new QueryTable( result.toString() );
-				query.add(queryTable);
-			}
-		}
-	}
 
-	private ElementTreeSelectionDialog createTableSelectionDialog(Shell shell) {
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
-				new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
-		dialog.setTitle("Table Selection");
-		dialog.setMessage("Select the table from the tree:");
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		return dialog;
+		Shell shell = getWorkbenchPart().getSite().getShell();
+		TableSelectionWizard wizard = new TableSelectionWizard();
+		WizardDialog dialog = new WizardDialog(shell, wizard);
+		dialog.create();
+		
+		if ( dialog.open() == Window.OK ) {
+			IQueryTable queryTable = wizard.getQueryTable();
+			query.add(queryTable);
+		}
 	}
 
 	@Override

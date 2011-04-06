@@ -33,17 +33,27 @@ import org.eclipse.swt.widgets.Text;
  */
 public abstract class SimpleValueWizardPage extends ValueWizardPage {
 
+	private Text text;
+	private boolean multiLine = false	;
+	
 	protected SimpleValueWizardPage(String pageName) {
 		super(pageName);
 	}
 
-	private Text text;
+	public boolean isMultiLine() {
+		return multiLine;
+	}
+
+	public void setMultiLine(boolean multiLine) {
+		this.multiLine = multiLine;
+	}
 
 	@Override
 	protected void createInput(Composite container) {
 
-		text = new Text(container, SWT.BORDER ); 
-		text.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+		int style = SWT.BORDER + (multiLine? SWT.MULTI | SWT.V_SCROLL | SWT.WRAP : 0 );
+		text = new Text(container, style ); 
+		text.setLayoutData( new GridData(multiLine? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL) );
 		Object value = getValue();
 		if ( value != null ) {
 			text.setText( value.toString() );

@@ -24,7 +24,7 @@ package com.ecmdeveloper.plugin.search.model;
  * @author ricardo.belfor
  *
  */
-public class QueryField implements IQueryField {
+public class MockQueryField implements IQueryField {
 
 	private final String name;
 	private final QueryFieldType queryFieldType;
@@ -34,7 +34,7 @@ public class QueryField implements IQueryField {
 	private int sortOrder = 0;
 	private boolean selected;
 	
-	public QueryField(String name, QueryFieldType queryFieldType, IQueryTable queryTable) {
+	public MockQueryField(String name, QueryFieldType queryFieldType, IQueryTable queryTable) {
 		this.name = name;
 		this.queryFieldType = queryFieldType;
 		this.queryTable = queryTable;

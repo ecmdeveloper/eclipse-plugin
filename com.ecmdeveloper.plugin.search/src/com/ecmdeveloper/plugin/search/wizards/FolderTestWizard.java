@@ -29,12 +29,22 @@ import com.ecmdeveloper.plugin.search.model.Query;
  */
 public class FolderTestWizard extends QueryComponentWizard {
 
-	private String folder = "/Animals/Fish";
+	private String folder;
+	private ObjectValueWizardPage objectValueWizardPage;
 	
 	public FolderTestWizard(Query query) {
 		super(query);
 	}
 
+	public void addPages() {
+
+		super.addPages();
+		objectValueWizardPage = new ObjectValueWizardPage();
+		objectValueWizardPage.setShowOnlyFolders(true);
+		objectValueWizardPage.setValue(folder);
+		
+		addPage(objectValueWizardPage);
+	}
 	@Override
 	protected QueryFieldFilter getQueryFieldFilter() {
 		return new QueryFieldFilter() {
@@ -48,10 +58,8 @@ public class FolderTestWizard extends QueryComponentWizard {
 
 	@Override
 	public boolean canFinish() {
-		// TODO add folder selected check
-		return getField() != null;
+		return getField() != null && getFolder() != null;
 	}
-
 
 	@Override
 	public boolean performFinish() {
@@ -63,6 +71,9 @@ public class FolderTestWizard extends QueryComponentWizard {
 	}
 
 	public String getFolder() {
-		return folder;
+		if ( objectValueWizardPage == null ) {
+			return null;
+		}
+		return (String) objectValueWizardPage.getValue();
 	}
 }

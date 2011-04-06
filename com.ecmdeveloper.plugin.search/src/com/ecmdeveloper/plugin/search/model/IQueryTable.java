@@ -30,4 +30,8 @@ public interface IQueryTable {
 	public String getName();
 	public Collection<IQueryField> getQueryFields();
 	public Collection<IQueryTable> getChildQueryTables();
+	
+	// TODO: add these to a different interface?
+	public void addChildQueryTable(IQueryTable childTable);
+	public void mergeQueryFields(Collection<IQueryField> queryFields);
 }
