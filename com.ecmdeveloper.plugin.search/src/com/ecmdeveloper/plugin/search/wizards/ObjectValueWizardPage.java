@@ -20,9 +20,12 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,9 +33,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
+import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
 
@@ -45,11 +52,26 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
 	private static final String TITLE = "Object value";
 	private static final String DESCRIPTION = "Enter an id or path or select an object.";
-
+	
+	private Button useIdButton;
+	private Button usePathButton;
+	private String selectedPath;
+	private String selectedId;
+	private boolean showOnlyFolders = false;
+	
 	protected ObjectValueWizardPage() {
 		super(TITLE);
 		setTitle(TITLE);
 		setDescription(DESCRIPTION);
+		setMultiLine(true);
+	}
+
+	public boolean isShowOnlyFolders() {
+		return showOnlyFolders;
+	}
+
+	public void setShowOnlyFolders(boolean showOnlyFolders) {
+		this.showOnlyFolders = showOnlyFolders;
 	}
 
 	@Override
@@ -71,8 +93,9 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 			}} 
 		);
 
-		createButton(container, "Use ID value", true);
-		createButton(container, "Use path name value", false);
+		useIdButton = createButton(container, "Use Id value", true);
+		usePathButton = createButton(container, "Use Path value", false);
+		updateButtonState();
 	}
 	
 	private void selectValue() {
@@ -90,8 +113,30 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 			return;
 		}
 
-		setText(destination.getId());
-		setValue( destination.getId() );
+		setSelectedValues(destination);
+		updateButtonState();
+		updateValue();
+	}
+
+	private void setSelectedValues(IObjectStoreItem destination) {
+		if ( destination instanceof Folder ) {
+			selectedPath = ((Folder)destination).getPathName();
+		} else {
+			selectedPath = null;
+			useIdButton.setSelection(true);
+			usePathButton.setSelection(false);
+		}
+		selectedId = destination.getId();
+	}
+
+	private void updateValue() {
+		if (useIdButton.getSelection() ) {
+			setText( selectedId );
+			setValue( selectedId );
+		} else {
+			setText( selectedPath );
+			setValue( selectedPath );
+		}
 		setDirty();
 	}
 
@@ -101,12 +146,39 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
 		Shell shell = getWizard().getContainer().getShell();
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, labelProvider, contentProvider );
+		dialog.setValidator( new ISelectionStatusValidator() {
+
+			private Status errorStatus = new Status( IStatus.ERROR, Activator.PLUGIN_ID, "");
+
+			@Override
+			public IStatus validate(Object[] selection) {
+				if ( selection != null && selection.length == 1 && !(selection[0] instanceof ObjectStore ) ) {
+					return Status.OK_STATUS;
+				}
+				return errorStatus;
+			}
+		});
 		dialog.setInput( ObjectStoresManager.getManager() );
 		
 		contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
 		dialog.setTitle(TITLE);
 		dialog.setMessage( "Select an object" );
+		addFolderFilter(dialog);
 		return dialog;
+	}
+
+	private void addFolderFilter(ElementTreeSelectionDialog dialog) {
+		if ( showOnlyFolders ) {
+			dialog.addFilter( new ViewerFilter() {
+
+				@Override
+				public boolean select(Viewer viewer, Object parentElement, Object element) {
+					if ( element instanceof ObjectStore || element instanceof Folder ) {
+						return true;
+					}
+					return false;
+				} } );
+		}
 	}
 
 	private Button createButton(Composite container, String label, boolean selection) {
@@ -115,7 +187,18 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 		button.setText(label);
 		button.setLayoutData(getFullRowGridData());
 		button.setSelection(selection);
-
+		button.addSelectionListener( new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateValue();
+			}}
+		);
 		return button;
+	}
+	
+	private void updateButtonState() {
+		useIdButton.setEnabled( selectedId != null );
+		usePathButton.setEnabled( selectedPath != null );
+	
 	}
 }

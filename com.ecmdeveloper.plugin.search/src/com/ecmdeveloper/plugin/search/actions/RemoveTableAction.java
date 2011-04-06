@@ -20,8 +20,6 @@
 
 package com.ecmdeveloper.plugin.search.actions;
 
-import java.awt.Dialog;
-
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -31,8 +29,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
+import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
-import com.ecmdeveloper.plugin.search.model.QueryTable;
 
 /**
  * @author ricardo.belfor
@@ -62,7 +60,9 @@ public class RemoveTableAction extends SelectionAction {
 			Object[] result = dlg.getResult();
 			if ( result != null ) {
 				for (Object queryTable : result) { 
-					query.remove((QueryTable) queryTable);
+					query.remove((IQueryTable) queryTable);
+					
+					// TODO remove conditions from query
 				}
 			}
 		}

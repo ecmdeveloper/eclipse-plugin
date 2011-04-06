@@ -47,7 +47,7 @@ public class Query {
 	public Query() {
 		queryDiagram = new QueryDiagram(this);
 		queryDiagram.setRootDiagram(true);
-		add( new QueryTable("Query Table 1") );
+		add( new MockQueryTable("Query Table 1") );
 	}
 	public Collection<IQueryTable> getQueryTables() {
 		return queryTables;
@@ -58,7 +58,7 @@ public class Query {
 		listeners.firePropertyChange(TABLE_ADDED, queryTable, null);
 	}
 	
-	public void remove(QueryTable queryTable) {
+	public void remove(IQueryTable queryTable) {
 		queryTables.remove(queryTable);
 		listeners.firePropertyChange(TABLE_REMOVED, queryTable, null);
 	}
