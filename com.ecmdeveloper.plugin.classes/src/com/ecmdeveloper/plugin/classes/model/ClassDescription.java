@@ -97,6 +97,21 @@ public class ClassDescription implements IAdaptable {
 		return children;
 	}
 
+	public Collection<Object> getChildren( boolean synchronous) throws Exception {
+
+		if ( synchronous ) {
+			if ( children == null ) {
+				children = new ArrayList<Object>();
+				GetChildClassDescriptionsTask task = new GetChildClassDescriptionsTask( this, null );
+				ClassesManager.getManager().executeTaskSync(task);
+			}
+			
+			return children;
+		} else {
+			return getChildren();
+		}
+	}
+	
 	public String getDisplayName() {
 		return displayName;
 	}

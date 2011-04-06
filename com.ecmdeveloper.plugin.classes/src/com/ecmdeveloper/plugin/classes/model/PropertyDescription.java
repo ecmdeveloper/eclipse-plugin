@@ -31,7 +31,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 
 import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.classes.model.task.CheckContainableClass;
 import com.ecmdeveloper.plugin.classes.model.task.GetChoiceValuesTask;
+import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
+import com.ecmdeveloper.plugin.classes.util.PluginLog;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.model.tasks.TaskListener;
@@ -42,6 +45,7 @@ import com.filenet.api.meta.PropertyDescriptionBoolean;
 import com.filenet.api.meta.PropertyDescriptionDateTime;
 import com.filenet.api.meta.PropertyDescriptionFloat64;
 import com.filenet.api.meta.PropertyDescriptionInteger32;
+import com.filenet.api.meta.PropertyDescriptionObject;
 import com.filenet.api.meta.PropertyDescriptionString;
 
 
@@ -68,18 +72,20 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
 	private com.filenet.api.meta.PropertyDescription propertyDescription;
 	private PropertyType propertyType;
-	private String name;
-	private String displayName;
+	private final String name;
+	private final String displayName;
 	private ChoiceList choiceList;
 	private ArrayList<Choice> choices;
-	private boolean required;
-	private boolean multivalue;
+	private final boolean required;
+	private final boolean multivalue;
 	private String descriptiveText;
 	private boolean readOnly;
 	private boolean settableOnCreate;
 	private boolean settableOnCheckIn;
 	private boolean settableOnEdit;
-	private Boolean systemOwned;
+	private final boolean orderable;
+	private Boolean containable;
+	private final Boolean systemOwned;
 	private final ObjectStore objectStore;
 	
 	public PropertyDescription(Object internalPropertyDescription, ObjectStore objectStore ) {
@@ -92,9 +98,25 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 		required = propertyDescription.get_IsValueRequired();
 		multivalue = !Cardinality.SINGLE.equals( propertyDescription.get_Cardinality() );
 		systemOwned = propertyDescription.get_IsSystemOwned();
-	
+		orderable = initializeOrderable();
+		containable = null;
+			
+		initializeOrderable();
 		initializeSettability();
 		initializeDescriptiveText();
+	}
+
+	private boolean initializeOrderable() {
+		if ( propertyType.equals(PropertyType.BINARY ) ||
+				propertyType.equals(PropertyType.BOOLEAN ) ||
+				propertyType.equals(PropertyType.BINARY ) ) {
+			return false;
+		} else if (	propertyType.equals(PropertyType.STRING ) ) {
+			Boolean usesLongColumn = ((PropertyDescriptionString) propertyDescription).get_UsesLongColumn();
+			return usesLongColumn != null && usesLongColumn.booleanValue();
+		} else {
+			return true;
+		}
 	}
 
 	private void initializeSettability() {
@@ -133,10 +155,6 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 		return multivalue;
 	}
 
-	protected void setMultivalue(boolean multivalue) {
-		this.multivalue = multivalue;
-	}
-
 	public String getType() {
 		// TODO look for the real type in case of an object type
 		return propertyType.toString();
@@ -161,6 +179,42 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 	public Boolean getSystemOwned() {
 		return systemOwned;
 	}
+
+	public boolean isOrderable() {
+		return orderable;
+	}
+
+	public boolean isContainable() {
+		if (containable == null) {
+			containable = initializeContainable();
+		}
+		return containable;
+	}
+
+	private boolean initializeContainable() {
+		if ( propertyType.equals(PropertyType.OBJECT) ) {
+			try {
+				// TODO: make this asynchronous?
+				PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) propertyDescription;
+//				System.out.println(objectPropertyDescription.get_RequiredClass().get_Name() );
+				CheckContainableClass task = new CheckContainableClass(objectPropertyDescription,
+						objectStore);
+				ClassesManager.getManager().executeTaskSync( task );
+				return task.isContainable();
+			} catch (Exception e) {
+				PluginLog.error(e);
+				return false;
+			}
+		}
+		return false;
+	}
+
+	private com.filenet.api.meta.ClassDescription getRequiredClassDescription(
+		Object internalPropertyDescription, ObjectStore objectStore) {
+	com.filenet.api.meta.ClassDescription requiredClass = null;
+	PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
+	return requiredClass;
+}
 
 	public boolean hasChoices() {
 		return choiceList != null;
