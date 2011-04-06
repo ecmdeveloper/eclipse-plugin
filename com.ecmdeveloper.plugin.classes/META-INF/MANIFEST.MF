@@ -12,7 +12,22 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: com.ecmdeveloper.plugin.classes.model,
- com.ecmdeveloper.plugin.classes.model.constants,
- com.ecmdeveloper.plugin.classes.model.task,
- com.ecmdeveloper.plugin.classes.wizard
+Export-Package: com.ecmdeveloper.plugin.classes.model;
+  uses:="com.ecmdeveloper.plugin.model.tasks,
+   org.eclipse.core.runtime,
+   com.ecmdeveloper.plugin.classes.model.constants,
+   com.ecmdeveloper.plugin.model",
+ com.ecmdeveloper.plugin.classes.model.constants;uses:="com.filenet.api.constants",
+ com.ecmdeveloper.plugin.classes.model.task;
+  uses:="com.ecmdeveloper.plugin.model.tasks,
+   com.filenet.api.meta,
+   com.filenet.api.admin,
+   com.ecmdeveloper.plugin.classes.model,
+   com.ecmdeveloper.plugin.model",
+ com.ecmdeveloper.plugin.classes.views,
+ com.ecmdeveloper.plugin.classes.wizard;
+  uses:="org.eclipse.jface.wizard,
+   com.ecmdeveloper.plugin.classes.model.constants,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.widgets,
+   com.ecmdeveloper.plugin.classes.model"
