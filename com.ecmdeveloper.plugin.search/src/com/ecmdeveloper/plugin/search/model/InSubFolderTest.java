@@ -20,7 +20,11 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+
+import com.ecmdeveloper.plugin.search.Activator;
+import com.ecmdeveloper.plugin.search.editor.QueryIcons;
 
 /**
  * @author ricardo.belfor
@@ -29,17 +33,22 @@ import org.eclipse.swt.graphics.Image;
 public class InSubFolderTest extends QueryComponent {
 
 	private static final long serialVersionUID = 1L;
+	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
+			"In Subfolder Test", "Query Field In Subfolder Test", QueryIcons.INSUBFOLDER_TEST_ICON,
+			QueryIcons.INSUBFOLDER_TEST_ICON_LARGE);	
 
-	private static Image INSUBFOLDER_TEST_ICON = createImage(InSubFolderTest.class, "icons/arrow16.gif"); //$NON-NLS-1$
 	private String folder;
 	
 	public InSubFolderTest(Query query) {
 		super(query);
 	}
 	
-	@Override
-	public Image getIconImage() {
-		return INSUBFOLDER_TEST_ICON;
+	public static ImageDescriptor getIcon() {
+		return Activator.getImageDescriptor(QueryIcons.INSUBFOLDER_TEST_ICON);
+	}
+
+	public static ImageDescriptor getLargeIcon() {
+		return Activator.getImageDescriptor(QueryIcons.INSUBFOLDER_TEST_ICON_LARGE);
 	}
 
 	public String getFolder() {

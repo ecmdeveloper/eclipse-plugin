@@ -20,8 +20,11 @@
 
 package com.ecmdeveloper.plugin.search.policies;
 
+import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.CreateRequest;
+import org.eclipse.search.internal.core.text.TextSearchVisitor.ReusableMatchAccess;
 
+import com.ecmdeveloper.plugin.search.commands.AddQueryFieldCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateFreeTextCommand;
@@ -31,6 +34,7 @@ import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
+import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
@@ -45,7 +49,9 @@ public class QueryCommandFactory {
 	public CreateCommand getCreateCommand(CreateRequest request) {
 		
 		CreateCommand command;
-		if ( request.getNewObjectType() == Comparison.class ) {
+		if ( request.getNewObjectType() == IQueryField.class ) {
+			command = new AddQueryFieldCommand((IQueryField) request.getNewObject() );
+		} else	if ( request.getNewObjectType() == Comparison.class ) {
 			command = new CreateComparisonCommand();
 		} else if ( request.getNewObjectType() == NullTest.class ) {
 			command = new CreateNullTestCommand();

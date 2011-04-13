@@ -52,7 +52,7 @@ public class MockQueryTable implements IQueryTable {
 	protected ArrayList<IQueryField> createMockFields() {
 		ArrayList<IQueryField> fields = new ArrayList<IQueryField>();
 		QueryFieldType[] values = QueryFieldType.values();
-		
+		fields.add(new ThisQueryField(this) );
 		for (int i = 0; i < 10; i++) {
 			MockQueryField queryField = new MockQueryField("Field " + i , values[i % (values.length-1)], this );
 			fields.add(queryField);
@@ -88,6 +88,17 @@ public class MockQueryTable implements IQueryTable {
 	public void mergeQueryFields(Collection<IQueryField> queryFields) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Collection<IQueryField> getSelectedQueryFields() {
+		Collection<IQueryField> selectedQueryFields = new ArrayList<IQueryField>();
+		for (IQueryField queryField : fields ) {
+			if ( queryField.isSelected() ) {
+				selectedQueryFields.add(queryField);
+			}
+		}
+		return selectedQueryFields;
 	}
 }
 

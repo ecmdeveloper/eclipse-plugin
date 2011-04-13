@@ -41,4 +41,8 @@ public class Activator extends AbstractUIPlugin {
 	public static Image getImage( String path ) {
 		return imageCache.getImage( getImageDescriptor( path ) );		
 	}
+
+	public static Image getImage( ImageDescriptor imageDescriptor) {
+		return imageCache.getImage( imageDescriptor );		
+	}
 }

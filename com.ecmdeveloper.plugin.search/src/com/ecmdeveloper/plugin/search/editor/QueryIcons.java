@@ -28,4 +28,14 @@ public interface QueryIcons {
 
 	public static final String WILDCARD_TEST_ICON = "icons/old/ground16.gif";
 	public static final String WILDCARD_TEST_ICON_LARGE = "icons/old/ground24.gif";
+	public static final String NULL_TEST_ICON = "icons/old/ledicon16.gif";
+	public static final String NULL_TEST_ICON_LARGE = "icons/old/ledicon24.gif";
+	public static final String COMPARISON_ICON = "icons/old/label16.gif";
+	public static final String COMPARISON_ICON_LARGE = "icons/old/label24.gif";
+	public static final String FREE_TEXT_ICON = "icons/old/label16.gif";
+	public static final String FREE_TEXT_ICON_LARGE = "icons/old/label24.gif";
+	public static final String INFOLDER_TEST_ICON = "icons/old/connection16.gif";
+	public static final String INFOLDER_TEST_ICON_LARGE = "icons/old/connection24.gif";
+	public static final String INSUBFOLDER_TEST_ICON = "icons/old/arrow16.gif";
+	public static final String INSUBFOLDER_TEST_ICON_LARGE = "icons/old/arrow24.gif";
 }

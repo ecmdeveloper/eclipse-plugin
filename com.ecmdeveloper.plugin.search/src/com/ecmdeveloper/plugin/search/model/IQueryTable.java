@@ -34,4 +34,5 @@ public interface IQueryTable {
 	// TODO: add these to a different interface?
 	public void addChildQueryTable(IQueryTable childTable);
 	public void mergeQueryFields(Collection<IQueryField> queryFields);
+	public Collection<IQueryField> getSelectedQueryFields();
 }

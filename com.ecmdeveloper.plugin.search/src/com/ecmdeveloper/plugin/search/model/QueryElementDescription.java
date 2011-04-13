@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.search.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
@@ -30,47 +29,38 @@ import com.ecmdeveloper.plugin.search.editor.QueryIcons;
  * @author ricardo.belfor
  *
  */
-public class FreeText extends QueryComponent {
+public class QueryElementDescription {
 
-	private static final long serialVersionUID = 1L;
-	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
-			"Free Text", "Free Text condition", QueryIcons.FREE_TEXT_ICON,
-			QueryIcons.FREE_TEXT_ICON_LARGE);	
-	
-	private String text;
-	
-	public String getText() {
-		return text;
+	private final String label;
+	private final String description;
+	private ImageDescriptor icon;
+	private ImageDescriptor largeIcon;
+
+	public QueryElementDescription(String label, String description, String iconPath, String largeIconPath ) {
+		this.label = label;
+		this.description = description;
+		icon = Activator.getImageDescriptor(iconPath);
+		largeIcon = Activator.getImageDescriptor(largeIconPath);
 	}
 
-	public void setText(String text) {
-		String oldField = this.text;
-		this.text = text;
-		firePropertyChange(FIELD_CHANGED, oldField, text);
-	}
-
-	public FreeText(Query query) {
-		super(query);
+	public String getLabel() {
+		return label;
 	}
 	
-	public static ImageDescriptor getIcon() {
-		return Activator.getImageDescriptor(QueryIcons.FREE_TEXT_ICON);
+	public String getDescription() {
+		return description;
+	}
+	
+	public ImageDescriptor getIcon() {
+		return icon;
 	}
 
-	public static ImageDescriptor getLargeIcon() {
-		return Activator.getImageDescriptor(QueryIcons.FREE_TEXT_ICON_LARGE);
+	public ImageDescriptor getLargeIcon() {
+		return largeIcon;
 	}
 
 	@Override
 	public String toString() {
-		if ( text != null ) {
-			return text;
-		}
-		return "";
-	}
-
-	@Override
-	public String toSQL() {
-		return toString();
+		return getLabel();
 	}
 }

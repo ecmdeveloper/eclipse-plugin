@@ -83,7 +83,7 @@ public class QueryDiagram extends QuerySubpart {
 		return children;
 	}
 
-	public Image getIconImage() {
+	public static Image getIconImage() {
 		return LOGIC_ICON;
 	}
 

@@ -23,18 +23,22 @@ package com.ecmdeveloper.plugin.search.editor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.gef.dnd.TemplateTransfer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-import com.ecmdeveloper.plugin.search.model.AllQueryField;
+import com.ecmdeveloper.plugin.classes.views.ClassesViewDragSource;
+import com.ecmdeveloper.plugin.search.model.ThisQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -61,6 +65,7 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 	public QueryFieldsTable(Query query, Composite parent) {
 		this.query = query;
 		createTableViewer(parent);
+		addDragSupport();
 		query.addPropertyChangeListener(this);
 	}
 
@@ -101,54 +106,54 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
-
-				if ( element instanceof AllQueryField) {
-					if ( event.getChecked() ) {
-						tableViewer.setAllChecked(true);
-//						tableViewer.setAllGrayed(true);
-						tableViewer.setGrayed(element, false);
-						query.setQueryFieldsSelection(true);
-					} else {
-//						tableViewer.setAllGrayed(false);
+				if ( element instanceof IQueryTable ) {
+					IQueryTable queryTable = (IQueryTable) element;
+					for (IQueryField queryField: queryTable.getQueryFields() ) {
+						queryField.setSelected( event.getChecked() );
+						tableViewer.setChecked(queryField, queryField.isSelected() );
 					}
-				} else {
-					if ( tableViewer.getGrayed(element ) ) {
-						tableViewer.setChecked(element, true);
-					} else {
-						if ( element instanceof IQueryField ) {
-							((IQueryField) element).setSelected( event.getChecked() );
-						} else if ( element instanceof IQueryTable ) {
-							// TODO
-						}
-					}
+				} else if ( element instanceof IQueryField ) {
+					((IQueryField) element).setSelected( event.getChecked() );
 				}
 			}} );
 
 		tableViewer.setInput( query );
-		tableViewer.expandToLevel(2);
+		refreshTableViewer();
 //			getSite().setSelectionProvider(tableViewer);
 	}
 
 	private TreeViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
-		final TreeViewerColumn viewerColumn = new TreeViewerColumn(tableViewer,
-				SWT.CHECK);
+		
+		final TreeViewerColumn viewerColumn = new TreeViewerColumn(tableViewer, SWT.CHECK);
 		final TreeColumn column = viewerColumn.getColumn();
+		
 		column.setText(title);
 		column.setWidth(bound);
 		column.setResizable(true);
 		column.setMoveable(true);
+		
 		return viewerColumn;
+	}
+
+	private void addDragSupport() {
+		tableViewer.addDragSupport(DND.DROP_COPY, new Transfer[] { TemplateTransfer.getInstance() },
+				new QueryFieldsTableDragSource(tableViewer));
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 		if ( propertyChangeEvent.getPropertyName().equals( Query.TABLE_ADDED ) ||
 				propertyChangeEvent.getPropertyName().equals( Query.TABLE_REMOVED ) ) {
-			tableViewer.refresh();
+			refreshTableViewer();
 		}
 		else if ( propertyChangeEvent.getPropertyName().equals( Query.TOGGLE_INCLUDE_SUBCLASSES ) ) {
-			tableViewer.refresh();
-			tableViewer.expandToLevel(2);
+			refreshTableViewer();
 		}
+	}
+
+	private void refreshTableViewer() {
+		tableViewer.refresh();
+		tableViewer.expandToLevel(2);
+		tableViewer.setCheckedElements( query.getSelectedQueryFields().toArray() );
 	}
 }

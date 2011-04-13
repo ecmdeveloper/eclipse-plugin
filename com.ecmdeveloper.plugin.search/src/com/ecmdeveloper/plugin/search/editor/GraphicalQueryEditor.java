@@ -69,6 +69,7 @@ import com.ecmdeveloper.plugin.search.actions.SetMainQueryAction;
 import com.ecmdeveloper.plugin.search.actions.ShowSqlAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleDistinctAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleIncludeSubclassesAction;
+import com.ecmdeveloper.plugin.search.dnd.QueryDropTargetListener;
 import com.ecmdeveloper.plugin.search.dnd.TextTransferDropTargetListener;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
@@ -288,7 +289,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		viewer.setContents( getQueryDiagram() );
 
 		getGraphicalViewer().addDropTargetListener((TransferDropTargetListener)
-				new TemplateTransferDropTargetListener(getGraphicalViewer()));
+				new QueryDropTargetListener(getGraphicalViewer()));
 
 		getGraphicalViewer().addDropTargetListener((TransferDropTargetListener)
 				new TextTransferDropTargetListener(

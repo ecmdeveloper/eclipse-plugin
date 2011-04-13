@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.search.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.search.Activator;
@@ -35,6 +36,10 @@ import com.ecmdeveloper.plugin.search.model.constants.WildcardType;
 public class WildcardTest extends QueryComponent {
 
 	private static final long serialVersionUID = 1L;
+	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
+			"Like Test", "Query Field Wildcard Test", QueryIcons.WILDCARD_TEST_ICON,
+			QueryIcons.WILDCARD_TEST_ICON_LARGE);	
+
 	private WildcardType wildcardType; 
 	private String value;
 	
@@ -42,9 +47,12 @@ public class WildcardTest extends QueryComponent {
 		super(query);
 	}
 
-	@Override
-	public Image getIconImage() {
-		return Activator.getImage(QueryIcons.WILDCARD_TEST_ICON);
+	public static ImageDescriptor getIcon() {
+		return Activator.getImageDescriptor(QueryIcons.WILDCARD_TEST_ICON);
+	}
+
+	public static ImageDescriptor getLargeIcon() {
+		return Activator.getImageDescriptor(QueryIcons.WILDCARD_TEST_ICON_LARGE);
 	}
 
 	public WildcardType getWildcardType() {
