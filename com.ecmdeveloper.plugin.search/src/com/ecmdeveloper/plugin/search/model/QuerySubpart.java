@@ -25,9 +25,13 @@ import java.io.InputStream;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
+import com.ecmdeveloper.plugin.search.Activator;
+import com.ecmdeveloper.plugin.search.editor.QueryIcons;
 
 public abstract class QuerySubpart extends QueryElement {
 
@@ -61,12 +65,14 @@ public abstract class QuerySubpart extends QueryElement {
 		setID(getNewID());
 	}
 
-	public Image getIcon() {
-		return getIconImage();
+	public static ImageDescriptor getIcon() { 
+		return null;
 	}
 
-	abstract public Image getIconImage();
-
+	public static ImageDescriptor getLargeIcon() {
+		return null;
+	}
+	
 	public String getID() {
 		return id;
 	}

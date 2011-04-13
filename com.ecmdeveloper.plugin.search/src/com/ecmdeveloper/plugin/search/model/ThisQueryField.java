@@ -24,13 +24,19 @@ package com.ecmdeveloper.plugin.search.model;
  * @author ricardo.belfor
  *
  */
-public class AllQueryField implements IQueryField {
+public class ThisQueryField implements IQueryField {
 
+	private final IQueryTable queryTable;
 	private boolean selected;
+
+	public ThisQueryField(IQueryTable queryTable) {
+		this.queryTable = queryTable;
+		this.selected = true;
+	}
 
 	@Override
 	public String getName() {
-		return "*";
+		return "This";
 	}
 
 	@Override
@@ -45,7 +51,7 @@ public class AllQueryField implements IQueryField {
 
 	@Override
 	public QueryFieldType getType() {
-		return QueryFieldType.NONE;
+		return QueryFieldType.OBJECT;
 	}
 
 	@Override
@@ -73,7 +79,7 @@ public class AllQueryField implements IQueryField {
 
 	@Override
 	public IQueryTable getQueryTable() {
-		return null;
+		return queryTable;
 	}
 
 	@Override
@@ -88,11 +94,11 @@ public class AllQueryField implements IQueryField {
 
 	@Override
 	public boolean isContainable() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isQueryField() {
-		return false;
+		return true;
 	}
 }

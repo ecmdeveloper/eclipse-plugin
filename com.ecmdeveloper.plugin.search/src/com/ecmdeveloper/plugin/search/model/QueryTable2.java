@@ -22,6 +22,8 @@ package com.ecmdeveloper.plugin.search.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
@@ -32,7 +34,7 @@ import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
  */
 public class QueryTable2 implements IQueryTable {
 
-	private Collection<IQueryTable> childQueryTables;
+	private ArrayList<IQueryTable> childQueryTables;
 	private ArrayList<IQueryField> fields = new ArrayList<IQueryField>();
 	private ClassDescription classDescription;
 	
@@ -42,9 +44,16 @@ public class QueryTable2 implements IQueryTable {
 		
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
 			IQueryField queryField = new QueryField2(propertyDescription, this );
-			
 			fields.add(queryField);
 		}
+		
+		Collections.sort(fields, new Comparator<IQueryField>(){
+			@Override
+			public int compare(IQueryField arg0, IQueryField arg1) {
+				return arg0.getName().compareTo(arg1.getName());
+			}
+		});
+		fields.add(0, new ThisQueryField(this) );
 	}
 
 	@Override
@@ -71,6 +80,14 @@ public class QueryTable2 implements IQueryTable {
 	public void addChildQueryTable(IQueryTable childTable) {
 		childQueryTables.add(childTable);
 		childTable.mergeQueryFields(getQueryFields());
+
+		Collections.sort(childQueryTables, new Comparator<IQueryTable>(){
+
+			@Override
+			public int compare(IQueryTable arg0, IQueryTable arg1) {
+				return arg0.getName().compareTo( arg1.getName() );
+			}
+		});
 	}
 
 	@Override
@@ -90,5 +107,20 @@ public class QueryTable2 implements IQueryTable {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public Collection<IQueryField> getSelectedQueryFields() {
+		Collection<IQueryField> selectedQueryFields = new ArrayList<IQueryField>();
+		for (IQueryField queryField : fields ) {
+			if ( queryField.isSelected() ) {
+				selectedQueryFields.add(queryField);
+			}
+		}
+		
+		for ( IQueryTable queryTable : childQueryTables ) {
+			selectedQueryFields.addAll( queryTable.getSelectedQueryFields() );
+		}
+		return selectedQueryFields;
 	}
 }

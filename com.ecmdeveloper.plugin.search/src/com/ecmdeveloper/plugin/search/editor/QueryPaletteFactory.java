@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.editor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +52,7 @@ import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
+import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
@@ -82,24 +85,22 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 
 		CombinedTemplateCreationEntry combined;
 		
-		combined = createEntry("Comparison", "Query Field Comparison", "halfadder", Comparison.class, query);
+		combined = createEntry(Comparison.class, Comparison.DESCRIPTION, query);
 		entries.add(combined);
 
-		combined = createEntry("Null Test", "Query Field Null Test", "ledicon", NullTest.class, query);
+		combined = createEntry(NullTest.class, NullTest.DESCRIPTION, query);
 		entries.add(combined);
 
-		combined = createEntry("Like Test", "Query Field Wildcard Test",
-				QueryIcons.WILDCARD_TEST_ICON, QueryIcons.WILDCARD_TEST_ICON_LARGE,
-				WildcardTest.class, query);
+		combined = createEntry(WildcardTest.class, WildcardTest.DESCRIPTION, query);
 		entries.add(combined);
 
-		combined = createEntry("In Folder Test", "Query Field In Folder Test", "connection", InFolderTest.class, query);
+		combined = createEntry( InFolderTest.class, InFolderTest.DESCRIPTION, query);
 		entries.add(combined);
 
-		combined = createEntry("In Subfolder Test", "Query Field In Subfolder Test", "arrow", InSubFolderTest.class, query);
+		combined = createEntry(InSubFolderTest.class, InSubFolderTest.DESCRIPTION, query);
 		entries.add(combined);
 		
-		combined = createEntry("Free Text", "Free Text condition", "label", FreeText.class, query);
+		combined = createEntry(FreeText.class, FreeText.DESCRIPTION, query);
 		entries.add(combined);
 
 		drawer.addAll(entries);
@@ -146,6 +147,16 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 				description, new QueryCreationFactory( query, type), Activator.getImageDescriptor(normalIcon),
 					Activator.getImageDescriptor(largeIcon)
 		);
+		return combined;
+	}
+
+	private static CombinedTemplateCreationEntry createEntry(Class<? extends QueryElement> type,
+			QueryElementDescription description, Query query) {
+
+		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(description
+				.getLabel(), description.getDescription(), new QueryCreationFactory(query, type),
+				description.getIcon(), description.getLargeIcon());
+
 		return combined;
 	}
 	

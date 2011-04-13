@@ -20,7 +20,11 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+
+import com.ecmdeveloper.plugin.search.Activator;
+import com.ecmdeveloper.plugin.search.editor.QueryIcons;
 
 /**
  * @author ricardo.belfor
@@ -29,7 +33,9 @@ import org.eclipse.swt.graphics.Image;
 public class NullTest extends QueryComponent {
 
 	private static final long serialVersionUID = 1L;
-	private static Image NULL_TEST_ICON = createImage(Comparison.class, "icons/ledicon16.gif"); //$NON-NLS-1$
+	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
+			"Null Test", "Query Field Null Test", QueryIcons.NULL_TEST_ICON,
+			QueryIcons.NULL_TEST_ICON_LARGE);	
 
 	private boolean negated;
 	
@@ -37,9 +43,12 @@ public class NullTest extends QueryComponent {
 		super(query);
 	}
 	
-	@Override
-	public Image getIconImage() {
-		return NULL_TEST_ICON;
+	public static ImageDescriptor getIcon() {
+		return Activator.getImageDescriptor(QueryIcons.NULL_TEST_ICON);
+	}
+
+	public static ImageDescriptor getLargeIcon() {
+		return Activator.getImageDescriptor(QueryIcons.NULL_TEST_ICON_LARGE);
 	}
 
 	public void setNegated(boolean negated) {

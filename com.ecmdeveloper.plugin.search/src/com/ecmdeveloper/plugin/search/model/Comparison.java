@@ -20,7 +20,11 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+
+import com.ecmdeveloper.plugin.search.Activator;
+import com.ecmdeveloper.plugin.search.editor.QueryIcons;
 
 /**
  * 
@@ -30,18 +34,16 @@ import org.eclipse.swt.graphics.Image;
 public class Comparison extends QueryComponent {
 
 	static final long serialVersionUID = 1;
-
+	
+	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
+			"Comparison", "Query Field Comparison", QueryIcons.COMPARISON_ICON,
+			QueryIcons.COMPARISON_ICON_LARGE);	
+	
 	private ComparisonOperation comparisonOperation;
 	private Object value;
 
-	private static Image COMPARISON_ICON = createImage(Comparison.class, "icons/label16.gif"); //$NON-NLS-1$
-
 	public Comparison(Query query) {
 		super(query);
-	}
-
-	public Image getIconImage() {
-		return COMPARISON_ICON;
 	}
 
 	public String toString() {

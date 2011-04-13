@@ -101,9 +101,18 @@ public class Query {
 	public Collection<IQueryField> getQueryFields() {
 		ArrayList<IQueryField> queryFields = new ArrayList<IQueryField>();
 		if ( !queryTables.isEmpty() ) {
-			queryFields.add( new AllQueryField() );
 			for ( IQueryTable queryTable : queryTables ) {
 				queryFields.addAll( queryTable.getQueryFields() );
+			}
+		}
+		return queryFields;
+	}
+
+	public Collection<IQueryField> getSelectedQueryFields() {
+		ArrayList<IQueryField> queryFields = new ArrayList<IQueryField>();
+		if ( !queryTables.isEmpty() ) {
+			for ( IQueryTable queryTable : queryTables ) {
+				queryFields.addAll( queryTable.getSelectedQueryFields() );
 			}
 		}
 		return queryFields;
@@ -145,10 +154,21 @@ public class Query {
 			sql.append( maxCount );
 			sql.append(" ");
 		}
-	
-		// TODO figure out the fields
-		sql.append("* ");
+
+		String concat = "";
+		Collection<IQueryField> selectedQueryFields = getSelectedQueryFields();
+		if ( !selectedQueryFields.isEmpty() ) {
+			for (IQueryField queryField : selectedQueryFields ) {
+				sql.append(concat);
+				sql.append( queryField.getName() );
+				concat = ", ";
+			}
+			sql.append(" ");
+		} else {
+			sql.append("This ");
+		}
 	}
+
 	private void appendFromPart(StringBuffer sql) {
 		sql.append("FROM ");
 		if ( getQueryTables().size() == 1) {

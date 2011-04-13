@@ -43,6 +43,7 @@ import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.ReorderPartCommand;
 import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
@@ -92,6 +93,9 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 		AddCommand command = new AddCommand();
 		
 		QueryContainer parentModel = (QueryContainer)getHost().getModel();
+		if ( parentModel instanceof NotContainer && parentModel.getChildren().size() == 1 ) {
+			return null;
+		}
 		QuerySubpart childModel = (QuerySubpart)child.getModel();
 		command.setChild(childModel);
 		command.setParent(parentModel);
@@ -138,13 +142,13 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 	}
 
 	protected Command getCreateCommand(CreateRequest request) {
-		CreateCommand command = queryCommandFactory.getCreateCommand(request);
+		CreateCommand createCommand = queryCommandFactory.getCreateCommand(request);
 		EditPart after = getInsertionReference(request);
-		command.setChild((QuerySubpart)request.getNewObject());
+		createCommand.setChild((QuerySubpart)request.getNewObject());
 		QueryContainer parent = (QueryContainer)getHost().getModel();
-		command.setParent(parent);
+		createCommand.setParent(parent);
 		int index = getHost().getChildren().indexOf(after);
-		command.setIndex(index);
-		return command;
+		createCommand.setIndex(index);
+		return createCommand;
 	}
 }

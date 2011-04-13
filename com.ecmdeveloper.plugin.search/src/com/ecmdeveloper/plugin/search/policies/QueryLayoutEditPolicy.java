@@ -232,24 +232,22 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 
 	protected Command getCreateCommand(CreateRequest request) {
 
-		CreateCommand command = queryCommandFactory.getCreateCommand(request);
-
+		CreateCommand createCommand = queryCommandFactory.getCreateCommand(request);
 		QueryDiagram parent = (QueryDiagram) getHost().getModel();
-		command.setParent(parent);
+		createCommand.setParent(parent);
 		QuerySubpart newPart = (QuerySubpart) request.getNewObject();
-		command.setChild(newPart);
+		createCommand.setChild(newPart);
 		Rectangle constraint = (Rectangle) getConstraintFor(request);
-		command.setLocation(constraint);
-		command.setLabel("Create");
+		createCommand.setLocation(constraint);
+		createCommand.setLabel("Create");
 		
 		if (parent.isRootDiagram() ) {
 			Query query = parent.getQuery();
-			System.out.println("Root!!");
 			if ( query.getMainQuery() == null ) {
-				return command.chain( new SetMainQueryCommand(newPart, query) );
+				return createCommand.chain( new SetMainQueryCommand(newPart, query) );
 			}
 		}
-		return command;
+		return createCommand;
 	}
 
 
