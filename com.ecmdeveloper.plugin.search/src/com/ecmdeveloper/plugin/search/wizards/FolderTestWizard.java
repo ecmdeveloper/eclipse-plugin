@@ -20,7 +20,10 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
@@ -45,13 +48,23 @@ public class FolderTestWizard extends QueryComponentWizard {
 		
 		addPage(objectValueWizardPage);
 	}
+
+	@Override
+	public IWizardPage getStartingPage() {
+		if ( isSkipFieldSelection() ) {
+			return objectValueWizardPage;
+		}
+		return super.getStartingPage();
+	}
+
+	
 	@Override
 	protected QueryFieldFilter getQueryFieldFilter() {
 		return new QueryFieldFilter() {
 
 			@Override
 			protected boolean select(IQueryField queryField) {
-				return queryField.isContainable();
+				return InFolderTest.DESCRIPTION.isValidFor(queryField);
 			}
 		};
 	}

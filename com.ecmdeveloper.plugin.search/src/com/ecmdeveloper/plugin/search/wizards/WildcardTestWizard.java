@@ -20,8 +20,11 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.model.WildcardTest;
 import com.ecmdeveloper.plugin.search.model.constants.WildcardType;
 
 /**
@@ -45,7 +48,7 @@ public class WildcardTestWizard extends QueryComponentWizard {
 
 			@Override
 			protected boolean select(IQueryField queryField) {
-				return queryField.isSupportsWildcards();
+				return WildcardTest.DESCRIPTION.isValidFor(queryField);
 			}
 			
 		};
@@ -64,6 +67,14 @@ public class WildcardTestWizard extends QueryComponentWizard {
 		addPage(stringValueWizardPage);
 	}
 	
+	@Override
+	public IWizardPage getStartingPage() {
+		if ( isSkipFieldSelection() ) {
+			return wildcardTypeWizardPage;
+		}
+		return super.getStartingPage();
+	}
+
 	public WildcardType getWildcardType() {
 		return wildcardTypeWizardPage.getWildcardType();
 	}

@@ -40,6 +40,9 @@ public class CreateFreeTextCommand extends CreateCommand {
 		Shell shell = Display.getCurrent().getActiveShell();
 
 		FreeTextWizard wizard = new FreeTextWizard();
+		if ( getQueryField() != null ) {
+			wizard.setText( getQueryField().getName() );
+		}
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {

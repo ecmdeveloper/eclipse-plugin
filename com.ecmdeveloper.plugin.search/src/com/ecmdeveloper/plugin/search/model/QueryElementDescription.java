@@ -23,20 +23,23 @@ package com.ecmdeveloper.plugin.search.model;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.search.Activator;
-import com.ecmdeveloper.plugin.search.editor.QueryIcons;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class QueryElementDescription {
+public abstract class QueryElementDescription {
 
 	private final String label;
 	private final String description;
-	private ImageDescriptor icon;
-	private ImageDescriptor largeIcon;
+	private final ImageDescriptor icon;
+	private final ImageDescriptor largeIcon;
+	@SuppressWarnings("unchecked")
+	private final Class objectType;
 
-	public QueryElementDescription(String label, String description, String iconPath, String largeIconPath ) {
+	@SuppressWarnings("unchecked")
+	public QueryElementDescription(Class objectType, String label, String description, String iconPath, String largeIconPath ) {
+		this.objectType = objectType;
 		this.label = label;
 		this.description = description;
 		icon = Activator.getImageDescriptor(iconPath);
@@ -47,6 +50,11 @@ public class QueryElementDescription {
 		return label;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Class getObjectType() {
+		return objectType;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -63,4 +71,6 @@ public class QueryElementDescription {
 	public String toString() {
 		return getLabel();
 	}
+	
+	public abstract boolean isValidFor(IQueryField queryField );
 }

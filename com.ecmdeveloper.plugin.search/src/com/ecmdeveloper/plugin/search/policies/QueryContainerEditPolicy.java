@@ -30,6 +30,7 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.UnexecutableCommand;
 import org.eclipse.gef.editpolicies.FlowLayoutEditPolicy;
 import org.eclipse.gef.editpolicies.LayoutEditPolicy;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
@@ -43,6 +44,7 @@ import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.ReorderPartCommand;
 import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -90,12 +92,13 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 	}
 		
 	protected Command createAddCommand(EditPart child, EditPart after) {
-		AddCommand command = new AddCommand();
 		
-		QueryContainer parentModel = (QueryContainer)getHost().getModel();
-		if ( parentModel instanceof NotContainer && parentModel.getChildren().size() == 1 ) {
+		if ( ! isAddAllowed() ) {
 			return null;
 		}
+
+		AddCommand command = new AddCommand();
+		QueryContainer parentModel = (QueryContainer)getHost().getModel();
 		QuerySubpart childModel = (QuerySubpart)child.getModel();
 		command.setChild(childModel);
 		command.setParent(parentModel);
@@ -104,6 +107,14 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 		command.setIndex(index);
 		
 		return chainSetMainQueryCommand(command, parentModel, childModel);
+	}
+
+	private boolean isAddAllowed() {
+		QueryContainer parentModel = (QueryContainer)getHost().getModel();
+		if ( parentModel instanceof NotContainer && parentModel.getChildren().size() == 1 ) {
+			return false;
+		}
+		return true;
 	}
 
 	private Command chainSetMainQueryCommand(AddCommand command, QueryContainer parentModel, QuerySubpart childModel) {
@@ -142,10 +153,29 @@ public class QueryContainerEditPolicy extends FlowLayoutEditPolicy {
 	}
 
 	protected Command getCreateCommand(CreateRequest request) {
-		CreateCommand createCommand = queryCommandFactory.getCreateCommand(request);
-		EditPart after = getInsertionReference(request);
-		createCommand.setChild((QuerySubpart)request.getNewObject());
+		
+		if ( ! isAddAllowed() ) {
+			return UnexecutableCommand.INSTANCE;
+		}
+
+		Object newObject = request.getNewObject();
+		CreateCommand createCommand;
 		QueryContainer parent = (QueryContainer)getHost().getModel();
+		QuerySubpart newPart;
+
+		if ( newObject instanceof IQueryField ) {
+			createCommand = queryCommandFactory.getCreateCommand((IQueryField) newObject, parent.getQuery() );
+			if ( createCommand == null ) {
+				return null;
+			}
+			newPart = createCommand.getChild();
+		} else {
+			createCommand = queryCommandFactory.getCreateCommand(request);
+			newPart = (QuerySubpart) newObject;
+			createCommand.setChild(newPart);
+		}
+		
+		EditPart after = getInsertionReference(request);
 		createCommand.setParent(parent);
 		int index = getHost().getChildren().indexOf(after);
 		createCommand.setIndex(index);

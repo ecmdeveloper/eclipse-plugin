@@ -26,7 +26,6 @@ import java.util.Date;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
@@ -59,8 +58,13 @@ public class DateValueWizardPage extends ValueWizardPage {
 		createLabel(container, "Time:" );
 		createTime(container);
 		createOmitTimeButton(container);
-
-		setCalendarValue((Date) getValue());
+		
+		if ( getValue() instanceof Date ) {
+			setCalendarValue((Date) getValue());
+		} else {
+			setValue(getCalendarValue());
+			setDirty();
+		}
 	}
 
 	private void createOmitTimeButton(Composite container) {
@@ -118,17 +122,15 @@ public class DateValueWizardPage extends ValueWizardPage {
 			int seconds = calendarValue.get(Calendar.SECOND);
 			omitTimeButton.setSelection( hourOfDay == 0 && minutes == 0 && seconds == 0 );
 			time.setTime(hourOfDay, minutes,seconds );
-		} else {
-//			emptyValueButton.setSelection(true);
 		}
 	}
 
 	private boolean isOmitTime() {
 		
-		Date value = (Date) getValue();
-		if ( value != null ) {
+		Object value = getValue();
+		if ( value != null && value instanceof Date) {
 			Calendar calendarValue = Calendar.getInstance();
-			calendarValue.setTime(value);
+			calendarValue.setTime((Date) value);
 			int hourOfDay = calendarValue.get(Calendar.HOUR_OF_DAY);
 			int minutes = calendarValue.get(Calendar.MINUTE);
 			int seconds = calendarValue.get(Calendar.SECOND);

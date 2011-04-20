@@ -20,6 +20,10 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
@@ -43,6 +47,26 @@ public class NullTestWizard extends QueryComponentWizard {
 		nullTestWizardPage = new NullTestWizardPage();
 		nullTestWizardPage.setNegated(negated);
 		addPage( nullTestWizardPage );
+	}
+
+	@Override
+	public IWizardPage getStartingPage() {
+		if ( isSkipFieldSelection() ) {
+			return nullTestWizardPage;
+		}
+		return super.getStartingPage();
+	}
+	
+	@Override
+	protected QueryFieldFilter getQueryFieldFilter() {
+		return new QueryFieldFilter() {
+	
+			@Override
+			protected boolean select(IQueryField queryField) {
+				return NullTest.DESCRIPTION.isValidFor(queryField);
+			}
+			
+		};
 	}
 
 	@Override

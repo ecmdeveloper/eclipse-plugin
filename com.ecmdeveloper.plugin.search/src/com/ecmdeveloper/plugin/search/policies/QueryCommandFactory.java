@@ -20,11 +20,17 @@
 
 package com.ecmdeveloper.plugin.search.policies;
 
-import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.requests.CreateRequest;
-import org.eclipse.search.internal.core.text.TextSearchVisitor.ReusableMatchAccess;
+import java.util.ArrayList;
 
-import com.ecmdeveloper.plugin.search.commands.AddQueryFieldCommand;
+import org.eclipse.gef.requests.CreateRequest;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+
+import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateFreeTextCommand;
@@ -32,12 +38,16 @@ import com.ecmdeveloper.plugin.search.commands.CreateInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateWildcardTestCommand;
+import com.ecmdeveloper.plugin.search.editor.QueryCreationFactory;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
+import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
@@ -47,26 +57,91 @@ import com.ecmdeveloper.plugin.search.model.WildcardTest;
 public class QueryCommandFactory {
 
 	public CreateCommand getCreateCommand(CreateRequest request) {
+		Object objectType = request.getNewObjectType();
+		return getCreateCommand(objectType);
+	}
+
+	public CreateCommand getCreateCommand(Object objectType) {
 		
 		CreateCommand command;
-		if ( request.getNewObjectType() == IQueryField.class ) {
-			command = new AddQueryFieldCommand((IQueryField) request.getNewObject() );
-		} else	if ( request.getNewObjectType() == Comparison.class ) {
+		if ( objectType == Comparison.class ) {
 			command = new CreateComparisonCommand();
-		} else if ( request.getNewObjectType() == NullTest.class ) {
+		} else if ( objectType == NullTest.class ) {
 			command = new CreateNullTestCommand();
-		} else if ( request.getNewObjectType() == WildcardTest.class ) {
+		} else if ( objectType == WildcardTest.class ) {
 			command = new CreateWildcardTestCommand();
-		} else if ( request.getNewObjectType() == InFolderTest.class ) {
+		} else if ( objectType == InFolderTest.class ) {
 			command = new CreateInFolderTestCommand();
-		} else if ( request.getNewObjectType() == InSubFolderTest.class ) {
+		} else if ( objectType == InSubFolderTest.class ) {
 			command = new CreateInSubFolderTestCommand();
-		} else if ( request.getNewObjectType() == FreeText.class ) {
+		} else if ( objectType == FreeText.class ) {
 			command = new CreateFreeTextCommand();
 		} else {			
 			command = new CreateCommand();
 		}
 				
 		return command;
+	}
+
+	@SuppressWarnings("unchecked")
+	public CreateCommand getCreateCommand(IQueryField queryField, Query query) {
+		
+		CreateCommand createCommand;
+		Shell shell = Display.getCurrent().getActiveShell();
+		ElementListSelectionDialog dialog = createSelectionDialog(shell, queryField);
+		if ( dialog.open() == Dialog.OK ) {
+			QueryElementDescription description = (QueryElementDescription) dialog.getFirstResult();
+			QueryCreationFactory q = new QueryCreationFactory(query, description.getObjectType() );
+			createCommand = getCreateCommand(description.getObjectType() );
+			createCommand.setQueryField( queryField );
+			QuerySubpart newPart = (QuerySubpart) q.getNewObject();
+			createCommand.setChild(newPart);
+		} else {
+			return null;
+		}
+		return createCommand;
+	}
+
+	private ElementListSelectionDialog createSelectionDialog(Shell shell, IQueryField queryField) {
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell,new LabelProvider() {
+	
+			@Override
+			public Image getImage(Object element) {
+				return Activator.getImage( ((QueryElementDescription)element).getIcon() );
+			}
+			
+		});
+	
+		dialog.setMultipleSelection(false);
+		dialog.setTitle("Query component selection");
+		dialog.setMessage("Select the query component for this field.");
+		ArrayList<Object> operations = new ArrayList<Object>();
+		
+		if ( Comparison.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(Comparison.DESCRIPTION);
+		}
+		
+		if ( NullTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(NullTest.DESCRIPTION);
+		}
+
+		if ( WildcardTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(WildcardTest.DESCRIPTION);
+		}
+
+		if ( InFolderTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(InFolderTest.DESCRIPTION);
+		}
+
+		if ( InSubFolderTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(InSubFolderTest.DESCRIPTION);
+		}
+
+		if ( FreeText.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(FreeText.DESCRIPTION);
+		}
+
+		dialog.setElements(operations.toArray());
+		return dialog;
 	}
 }

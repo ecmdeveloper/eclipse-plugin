@@ -23,7 +23,6 @@ package com.ecmdeveloper.plugin.search.model;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
@@ -37,8 +36,13 @@ public class WildcardTest extends QueryComponent {
 
 	private static final long serialVersionUID = 1L;
 	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
-			"Like Test", "Query Field Wildcard Test", QueryIcons.WILDCARD_TEST_ICON,
-			QueryIcons.WILDCARD_TEST_ICON_LARGE);	
+			WildcardTest.class, "Like Test", "Query Field Wildcard Test",
+			QueryIcons.WILDCARD_TEST_ICON, QueryIcons.WILDCARD_TEST_ICON_LARGE) {
+
+				@Override
+				public boolean isValidFor(IQueryField queryField) {
+					return queryField.isSupportsWildcards();
+				}};	
 
 	private WildcardType wildcardType; 
 	private String value;

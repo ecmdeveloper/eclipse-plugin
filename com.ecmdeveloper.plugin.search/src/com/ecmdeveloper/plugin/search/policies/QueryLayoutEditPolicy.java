@@ -47,6 +47,7 @@ import com.ecmdeveloper.plugin.search.commands.SetConstraintCommand;
 import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.figures.QueryContainerFeedbackFigure;
+import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
@@ -75,13 +76,11 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 		add.setParent((QueryDiagram) getHost().getModel());
 		add.setChild(part);
 		add.setLabel("Add");
-		add.setDebugLabel("LogicXYEP add subpart");//$NON-NLS-1$
 
 		SetConstraintCommand setConstraint = new SetConstraintCommand();
 		setConstraint.setLocation(rect);
 		setConstraint.setPart(part);
 		setConstraint.setLabel("Add");
-		setConstraint.setDebugLabel("LogicXYEP setConstraint");//$NON-NLS-1$
 
 		Command cmd = add.chain(setConstraint);
 		return cmd;
@@ -119,23 +118,11 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 		return new QueryResizableEditPolicy();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.editpolicies.LayoutEditPolicy#createSizeOnDropFeedback
-	 * (org.eclipse.gef.requests.CreateRequest)
-	 */
 	protected IFigure createSizeOnDropFeedback(CreateRequest createRequest) {
 		IFigure figure;
 
-		// if (createRequest.getNewObject() instanceof Circuit)
-		// figure = new CircuitFeedbackFigure();
-		// else
 		if (createRequest.getNewObject() instanceof QueryContainer)
 			figure = new QueryContainerFeedbackFigure();
-		// else if (createRequest.getNewObject() instanceof LogicLabel)
-		// figure = new LabelFeedbackFigure();
 		else {
 			figure = new RectangleFigure();
 			((RectangleFigure) figure).setXOR(true);
@@ -149,19 +136,11 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 		return figure;
 	}
 
-	// protected LogicGuide findGuideAt(int pos, boolean horizontal) {
-	// RulerProvider provider =
-	// ((RulerProvider)getHost().getViewer().getProperty(
-	// horizontal ? RulerProvider.PROPERTY_VERTICAL_RULER
-	// : RulerProvider.PROPERTY_HORIZONTAL_RULER));
-	// return (LogicGuide)provider.getGuideAt(pos);
-	// }
-
+	@SuppressWarnings("unchecked")
 	protected Command getAddCommand(Request generic) {
 		ChangeBoundsRequest request = (ChangeBoundsRequest) generic;
 		List editParts = request.getEditParts();
 		CompoundCommand command = new CompoundCommand();
-		command.setDebugLabel("Add in ConstrainedLayoutEditPolicy");//$NON-NLS-1$
 		GraphicalEditPart childPart;
 		Rectangle r;
 		Object constraint;
@@ -207,36 +186,28 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 					currPart, request));
 		}
 
-		// // Attach to horizontal guide, if one is given
-		// Integer guidePos = (Integer)request.getExtendedData()
-		// .get(SnapToGuides.KEY_HORIZONTAL_GUIDE);
-		// if (guidePos != null) {
-		// int hAlignment = ((Integer)request.getExtendedData()
-		// .get(SnapToGuides.KEY_HORIZONTAL_ANCHOR)).intValue();
-		// clone.setGuide(findGuideAt(guidePos.intValue(), true), hAlignment,
-		// true);
-		// }
-		//	
-		// // Attach to vertical guide, if one is given
-		// guidePos = (Integer)request.getExtendedData()
-		// .get(SnapToGuides.KEY_VERTICAL_GUIDE);
-		// if (guidePos != null) {
-		// int vAlignment = ((Integer)request.getExtendedData()
-		// .get(SnapToGuides.KEY_VERTICAL_ANCHOR)).intValue();
-		// clone.setGuide(findGuideAt(guidePos.intValue(), false), vAlignment,
-		// false);
-		// }
-
 		return clone;
 	}
 
 	protected Command getCreateCommand(CreateRequest request) {
 
-		CreateCommand createCommand = queryCommandFactory.getCreateCommand(request);
+		CreateCommand createCommand;
 		QueryDiagram parent = (QueryDiagram) getHost().getModel();
+		Object newObject = request.getNewObject();
+		QuerySubpart newPart;
+		if ( newObject instanceof IQueryField ) {
+			createCommand = queryCommandFactory.getCreateCommand((IQueryField) newObject, parent.getQuery() );
+			if ( createCommand == null ) {
+				return null;
+			}
+			newPart = createCommand.getChild();
+		} else {
+			createCommand = queryCommandFactory.getCreateCommand(request);
+			newPart = (QuerySubpart) newObject;
+			createCommand.setChild(newPart);
+		}
 		createCommand.setParent(parent);
-		QuerySubpart newPart = (QuerySubpart) request.getNewObject();
-		createCommand.setChild(newPart);
+
 		Rectangle constraint = (Rectangle) getConstraintFor(request);
 		createCommand.setLocation(constraint);
 		createCommand.setLabel("Create");
@@ -246,7 +217,7 @@ public class QueryLayoutEditPolicy extends org.eclipse.gef.editpolicies.XYLayout
 			if ( query.getMainQuery() == null ) {
 				return createCommand.chain( new SetMainQueryCommand(newPart, query) );
 			}
-		}
+		}		
 		return createCommand;
 	}
 
