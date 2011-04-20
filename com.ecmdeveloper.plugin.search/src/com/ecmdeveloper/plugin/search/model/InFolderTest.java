@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.search.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
@@ -33,9 +32,15 @@ import com.ecmdeveloper.plugin.search.editor.QueryIcons;
 public class InFolderTest extends QueryComponent {
 
 	private static final long serialVersionUID = 1L;
+	
 	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
-			"In Folder Test", "Query Field In Folder Test", QueryIcons.INFOLDER_TEST_ICON,
-			QueryIcons.INFOLDER_TEST_ICON_LARGE);	
+			InFolderTest.class, "In Folder Test", "Query Field In Folder Test",
+			QueryIcons.INFOLDER_TEST_ICON, QueryIcons.INFOLDER_TEST_ICON_LARGE){
+
+				@Override
+				public boolean isValidFor(IQueryField queryField) {
+					return queryField.isContainable();
+				}};	
 
 	private String folder;
 	

@@ -24,6 +24,7 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 
+import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 
@@ -38,6 +39,7 @@ public class CreateCommand extends Command {
 	private Rectangle rect;
 	private QueryDiagram parent;
 	private int index = -1;
+	private IQueryField queryField;
 
 	public CreateCommand() {
 		super("Create");
@@ -83,11 +85,31 @@ public class CreateCommand extends Command {
 		rect = r;
 	}
 
+	protected Rectangle getLocation() {
+		return rect;
+	}
+
 	public void setParent(QueryDiagram newParent) {
 		parent = newParent;
 	}
 
+	protected QueryDiagram getParent() {
+		return parent;
+	}
+
 	public void undo() {
 		parent.removeChild(child);
+	}
+
+	public void setQueryField(IQueryField queryField) {
+		this.queryField = queryField;
+	}
+
+	protected IQueryField getQueryField() {
+		return queryField;
+	}
+
+	public QuerySubpart getChild() {
+		return child;
 	}
 }

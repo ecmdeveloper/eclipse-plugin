@@ -41,6 +41,8 @@ public class CreateNullTestCommand extends CreateCommand {
 		Shell shell = Display.getCurrent().getActiveShell();
 		
 		NullTestWizard wizard = new NullTestWizard( child.getQuery(), false );
+		wizard.setSelection( getQueryField() );
+		wizard.setSkipFieldSelection( getQueryField() != null );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {

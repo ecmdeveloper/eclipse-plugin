@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.search.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
@@ -34,8 +33,13 @@ public class NullTest extends QueryComponent {
 
 	private static final long serialVersionUID = 1L;
 	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
-			"Null Test", "Query Field Null Test", QueryIcons.NULL_TEST_ICON,
-			QueryIcons.NULL_TEST_ICON_LARGE);	
+			NullTest.class, "Null Test", "Query Field Null Test", QueryIcons.NULL_TEST_ICON,
+			QueryIcons.NULL_TEST_ICON_LARGE){
+
+				@Override
+				public boolean isValidFor(IQueryField queryField) {
+					return true;
+				}};	
 
 	private boolean negated;
 	

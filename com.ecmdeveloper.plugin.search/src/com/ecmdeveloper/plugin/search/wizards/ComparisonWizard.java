@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import org.eclipse.jface.wizard.IWizardPage;
 
+import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -53,7 +54,7 @@ public class ComparisonWizard extends QueryComponentWizard {
 
 			@Override
 			protected boolean select(IQueryField queryField) {
-				return queryField.isQueryField();
+				return Comparison.DESCRIPTION.isValidFor(queryField);
 			}
 		};
 	}
@@ -64,7 +65,16 @@ public class ComparisonWizard extends QueryComponentWizard {
 
 		comparisonOperationWizardPage = new ComparisonOperationWizardPage();
 		comparisonOperationWizardPage.setComparisonOperation(comparisonOperation);
+		comparisonOperationWizardPage.setField( getSelection() );
 		addPage(comparisonOperationWizardPage);
+	}
+
+	@Override
+	public IWizardPage getStartingPage() {
+		if ( isSkipFieldSelection() ) {
+			return comparisonOperationWizardPage;
+		}
+		return super.getStartingPage();
 	}
 
 	@Override
