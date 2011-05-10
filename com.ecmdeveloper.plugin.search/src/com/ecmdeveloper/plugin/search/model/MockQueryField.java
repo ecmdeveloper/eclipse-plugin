@@ -46,6 +46,11 @@ public class MockQueryField implements IQueryField {
 	}
 
 	@Override
+	public String getDisplayName() {
+		return getName();
+	}
+
+	@Override
 	public QueryFieldType getType() {
 		return queryFieldType;
 	}

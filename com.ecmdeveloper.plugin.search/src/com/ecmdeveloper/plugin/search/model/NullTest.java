@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
+import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
 
 /**
  * @author ricardo.belfor
@@ -88,5 +89,10 @@ public class NullTest extends QueryComponent {
 		} else {
 			return "";
 		}
+	}
+
+	@Override
+	public QueryComponentType getType() {
+		return QueryComponentType.NULL_TEST;
 	}
 }

@@ -28,11 +28,17 @@ import java.util.Collection;
  */
 public interface IQueryTable {
 	public String getName();
+	public String getDisplayName();
 	public Collection<IQueryField> getQueryFields();
 	public Collection<IQueryTable> getChildQueryTables();
+	public String getConnectionName();
+	public String getConnectionDisplayName();
+	public String getObjectStoreName();
+	public String getObjectStoreDisplayName();
 	
 	// TODO: add these to a different interface?
 	public void addChildQueryTable(IQueryTable childTable);
 	public void mergeQueryFields(Collection<IQueryField> queryFields);
 	public Collection<IQueryField> getSelectedQueryFields();
+	public void addQueryField(IQueryField queryField );
 }

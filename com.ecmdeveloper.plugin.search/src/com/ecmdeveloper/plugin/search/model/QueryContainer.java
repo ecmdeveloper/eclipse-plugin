@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
+
 /**
  * 
  * @author ricardo.belfor
@@ -65,4 +67,5 @@ public abstract class QueryContainer extends QueryDiagram {
 
 	protected abstract String getOperationPrefix();
 	protected abstract String getConcatOperation();
+	public abstract QueryContainerType getType();
 }

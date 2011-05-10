@@ -18,40 +18,40 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model;
+package com.ecmdeveloper.plugin.search.editor;
 
-import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
+import java.util.Date;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class OrContainer extends QueryContainer {
+public class QueryFileInfo {
 
-	private static final String OR_LABEL = "or";
-	private static final long serialVersionUID = 1L;
-
-	public OrContainer(Query query) {
-		super(query);
-	}
+	private final String name;
+	private final String sql;
+	private final Date lastModified;
 	
+	public QueryFileInfo(String name, String sql, Date lastModified) {
+		this.name = name;
+		this.sql = sql;
+		this.lastModified = lastModified;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getSql() {
+		return sql;
+	}
+
+	public Date getLastModified() {
+		return lastModified;
+	}
+
 	@Override
 	public String toString() {
-		return OR_LABEL;
-	}
-
-	@Override
-	protected String getConcatOperation() {
-		return OR_LABEL;
-	}
-
-	@Override
-	protected String getOperationPrefix() {
-		return null;
-	}
-
-	@Override
-	public QueryContainerType getType() {
-		return QueryContainerType.OR_CONTAINER;
+		return getName();
 	}
 }

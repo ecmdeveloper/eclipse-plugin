@@ -8,6 +8,7 @@
             contributorClass="com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditorContributor"
             default="false"
             extensions="search"
+            icon="icons/find.png"
             id="com.ecmdeveloper.plugin.search.searchEditor"
             name="Search Editor">
       </editor>
@@ -19,6 +20,15 @@
             id="com.ecmdeveloper.plugin.search.searchResultsPage"
             searchResultClass="com.ecmdeveloper.plugin.search.ui.QuerySearchResult">
       </viewPage>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            class="com.ecmdeveloper.plugin.search.ui.SearchPage"
+            icon="icons/find.png"
+            id="com.ecmdeveloper.plugin.search.searchPage"
+            label="Content Engine Search">
+      </page>
    </extension>
 
 </plugin>

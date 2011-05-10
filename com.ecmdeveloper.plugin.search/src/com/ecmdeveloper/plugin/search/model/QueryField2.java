@@ -29,6 +29,7 @@ import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 public class QueryField2 implements IQueryField {
 
 	private final String name;
+	private final String displayName;
 	private final QueryFieldType queryFieldType;
 	private final IQueryTable queryTable;
 	private final boolean orderable;
@@ -40,12 +41,23 @@ public class QueryField2 implements IQueryField {
 
 	public QueryField2(PropertyDescription propertyDescription, IQueryTable queryTable) {
 		this.queryTable = queryTable;
-		this.name = propertyDescription.getName(); 
+		this.name = propertyDescription.getName();
+		this.displayName = propertyDescription.getDisplayName();
 		this.queryFieldType = getQueryFieldType(propertyDescription);
 		this.orderable = propertyDescription.isOrderable();
 		this.containable = propertyDescription.isContainable();
 	}
 	
+	public QueryField2(String name, String displayName, QueryFieldType queryFieldType,
+			boolean orderable, boolean containable, IQueryTable queryTable) {
+		this.name = name;
+		this.displayName = displayName;
+		this.queryFieldType = queryFieldType;
+		this.orderable = orderable;
+		this.containable = containable;
+		this.queryTable = queryTable;
+	}
+
 	private QueryFieldType getQueryFieldType(PropertyDescription propertyDescription) {
 		switch ( propertyDescription.getPropertyType() ) {
 		case BINARY: return QueryFieldType.BINARY;
@@ -61,17 +73,14 @@ public class QueryField2 implements IQueryField {
 		return null;
 	}
 
-	public QueryField2(String name, QueryFieldType queryFieldType, IQueryTable queryTable, boolean orderable, boolean containable) {
-		this.name = name;
-		this.queryFieldType = queryFieldType;
-		this.queryTable = queryTable;
-		this.orderable = orderable;
-		this.containable = containable;
-	}
-
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return displayName;
 	}
 
 	@Override

@@ -20,12 +20,21 @@
 
 package com.ecmdeveloper.plugin.search.ui;
 
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.tasks.ExecuteSearchTask;
+import com.ecmdeveloper.plugin.search.model.IQueryTable;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
@@ -34,9 +43,11 @@ import org.eclipse.search.ui.ISearchResult;
 public class SearchQuery implements ISearchQuery {
 
 	QuerySearchResult searchResult;
+	private final Query query;
 
-	public SearchQuery() {
-		searchResult = new QuerySearchResult(this);
+	public SearchQuery(Query query) {
+		this.query = query;
+		searchResult = new QuerySearchResult(query,this);
 	}
 	
 	@Override
@@ -51,7 +62,7 @@ public class SearchQuery implements ISearchQuery {
 
 	@Override
 	public String getLabel() {
-		return "My First Query";
+		return query.toString();
 	}
 
 	@Override
@@ -61,7 +72,29 @@ public class SearchQuery implements ISearchQuery {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		searchResult.doit();
+		monitor.beginTask("Executing Search", IProgressMonitor.UNKNOWN );
+				
+		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
+		ObjectStore objectStore = getObjectStore(objectStoresManager);
+		ExecuteSearchTask task = new ExecuteSearchTask(query.toSQL(), objectStore);
+		try {
+			objectStoresManager.executeTaskSync(task);
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		searchResult.setSearchResult(task.getSearchResult());
+		monitor.done();
 		return Status.OK_STATUS;
+	}
+
+	private ObjectStore getObjectStore(ObjectStoresManager objectStoresManager) {
+		Collection<IQueryTable> queryTables = query.getQueryTables();
+		IQueryTable queryTable = queryTables.iterator().next();
+		String connectionName = queryTable.getConnectionName();
+		String objectStoreName = queryTable.getObjectStoreName();
+		ObjectStore objectStore = objectStoresManager.getObjectStore(connectionName, objectStoreName);
+		return objectStore;
 	}
 }
