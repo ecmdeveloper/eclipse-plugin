@@ -57,5 +57,15 @@
          </enabledWhen>
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="com.ecmdeveloper.plugin.ui.views.ContentView"
+            id="com.ecmdeveloper.plugin.ui.contentView"
+            name="Content View"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>
