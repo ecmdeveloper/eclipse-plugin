@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.search.model;
 
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
+import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
 
 /**
  * 
@@ -88,5 +89,10 @@ public class Comparison extends QueryComponent {
 
 	public Object getValue() {
 		return value;
+	}
+
+	@Override
+	public QueryComponentType getType() {
+		return QueryComponentType.COMPARISON;
 	}
 }

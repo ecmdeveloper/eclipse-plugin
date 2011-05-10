@@ -26,6 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
+import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
 import com.ecmdeveloper.plugin.search.model.constants.WildcardType;
 
 /**
@@ -116,5 +117,10 @@ public class WildcardTest extends QueryComponent {
 			return MessageFormat.format("{0}%", value);
 		}
 		return value;
+	}
+
+	@Override
+	public QueryComponentType getType() {
+		return QueryComponentType.WILDCARD_TEST;
 	}
 }

@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
+
 /**
  * @author ricardo.belfor
  *
@@ -46,5 +48,10 @@ public class AndContainer extends QueryContainer {
 	@Override
 	protected String getOperationPrefix() {
 		return null;
+	}
+
+	@Override
+	public QueryContainerType getType() {
+		return QueryContainerType.AND_CONTAINER;
 	}
 }

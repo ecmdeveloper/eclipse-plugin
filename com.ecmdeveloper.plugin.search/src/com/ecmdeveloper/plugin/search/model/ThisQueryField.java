@@ -26,6 +26,7 @@ package com.ecmdeveloper.plugin.search.model;
  */
 public class ThisQueryField implements IQueryField {
 
+	private static final String NAME = "This";
 	private final IQueryTable queryTable;
 	private boolean selected;
 
@@ -36,7 +37,12 @@ public class ThisQueryField implements IQueryField {
 
 	@Override
 	public String getName() {
-		return "This";
+		return NAME;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return NAME;
 	}
 
 	@Override

@@ -26,6 +26,7 @@ package com.ecmdeveloper.plugin.search.model;
  */
 public interface IQueryField {
 	public String getName();
+	public String getDisplayName();
 	public QueryFieldType getType();
 	public void setSortType(SortType sortType);
 	public SortType getSortType();

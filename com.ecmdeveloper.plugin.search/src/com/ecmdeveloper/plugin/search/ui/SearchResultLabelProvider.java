@@ -20,9 +20,13 @@
 
 package com.ecmdeveloper.plugin.search.ui;
 
+import java.util.HashMap;
+
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import com.ecmdeveloper.plugin.model.SearchResultRow;
 
 /**
  * @author ricardo.belfor
@@ -30,13 +34,29 @@ import org.eclipse.swt.graphics.Image;
  */
 public class SearchResultLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+	private HashMap<Integer,String> indexToNameMap = new HashMap<Integer, String>();
+	
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
 
+	public void connectIndexToName(Integer index, String name) {
+		indexToNameMap.put(index, name);
+	}
+	
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		return element.toString() + " " + columnIndex;
+		if (element instanceof SearchResultRow) {
+			SearchResultRow searchResultRow = (SearchResultRow)element;
+			String name = indexToNameMap.get(Integer.valueOf(columnIndex) );
+			if ( name != null ) {
+				Object value = searchResultRow.getValue(name);
+				if ( value != null ) {
+					return value.toString();
+				}
+			} 
+		}
+		return "";
 	}
 }

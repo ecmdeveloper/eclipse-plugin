@@ -24,6 +24,8 @@ import java.io.IOException;
 
 import org.eclipse.draw2d.geometry.Dimension;
 
+import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
+
 
 /**
  * @author ricardo.belfor
@@ -80,4 +82,6 @@ public abstract class QueryComponent extends QuerySubpart{
 			result.append("]");
 		}
 	}
+	
+	public abstract QueryComponentType getType();
 }

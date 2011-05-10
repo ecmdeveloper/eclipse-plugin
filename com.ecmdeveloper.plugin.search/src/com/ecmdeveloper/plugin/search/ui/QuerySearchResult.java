@@ -30,6 +30,10 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 
+import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.Query;
+
 /**
  * @author ricardo.belfor
  *
@@ -37,19 +41,19 @@ import org.eclipse.search.ui.SearchResultEvent;
 public class QuerySearchResult implements ISearchResult {
 
 	private final SearchQuery searchQuery;
-	private Collection<String> result;
 	private Collection<String> columnNames;
 	private HashSet<ISearchResultListener> searchListeners = new HashSet<ISearchResultListener>();
+	private final Query query;
+	private ArrayList<SearchResultRow> searchResult;
 	
-	public QuerySearchResult(SearchQuery searchQuery) {
+	public QuerySearchResult(Query query, SearchQuery searchQuery) {
+		this.query = query;
 		this.searchQuery = searchQuery;
-		result = new ArrayList<String>();
-		result.add("Hello");
-		result.add("World");
 		
 		columnNames = new ArrayList<String>();
-		for ( int i = 0; i < 4; ++i) {
-			columnNames.add("Column " + i );
+		Collection<IQueryField> selectedQueryFields = query.getSelectedQueryFields();
+		for (IQueryField queryField : selectedQueryFields ) {
+			columnNames.add( queryField.getName() );
 		}
 	}
 
@@ -65,7 +69,7 @@ public class QuerySearchResult implements ISearchResult {
 
 	@Override
 	public String getLabel() {
-		return "My Query";
+		return query.toString();
 	}
 
 	@Override
@@ -75,7 +79,7 @@ public class QuerySearchResult implements ISearchResult {
 
 	@Override
 	public String getTooltip() {
-		return "My Query Tooltip";
+		return query.toString();
 	}
 
 	@Override
@@ -83,18 +87,26 @@ public class QuerySearchResult implements ISearchResult {
 		searchListeners.remove(listeners);
 	}
 	
-	@SuppressWarnings("serial")
-	public void doit() {
-		for (ISearchResultListener listener: searchListeners) {
-            listener.searchResultChanged(new SearchResultEvent(this) { });
+	public Collection<SearchResultRow> getResult() {
+		if ( searchResult != null ) {
+			return searchResult;
 		}
-	}
-	
-	public Collection<String> getResult() {
-		return result;
+		return new ArrayList<SearchResultRow>();
 	}
 	
 	public Collection<String> getColumnNames() {
 		return columnNames;
+	}
+
+	public void setSearchResult(ArrayList<SearchResultRow> searchResult) {
+		this.searchResult = searchResult;
+		fireSearchResultChanged();
+	}
+
+	@SuppressWarnings("serial")
+	private void fireSearchResultChanged() {
+		for (ISearchResultListener listener: searchListeners) {
+            listener.searchResultChanged(new SearchResultEvent(this) { });
+		}
 	}
 }

@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.QueryIcons;
+import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
 
 /**
  * @author ricardo.belfor
@@ -76,5 +77,10 @@ public class FreeText extends QueryComponent {
 	@Override
 	public String toSQL() {
 		return toString();
+	}
+
+	@Override
+	public QueryComponentType getType() {
+		return QueryComponentType.FREE_TEXT;
 	}
 }

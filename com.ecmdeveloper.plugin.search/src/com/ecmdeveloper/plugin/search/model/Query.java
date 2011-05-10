@@ -41,6 +41,7 @@ public class Query {
 	private boolean includeSubclasses;
 	private boolean distinct;
 	private Integer maxCount;
+	private String name;
 	
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
@@ -49,6 +50,15 @@ public class Query {
 		queryDiagram.setRootDiagram(true);
 		add( new MockQueryTable("Query Table 1") );
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public Collection<IQueryTable> getQueryTables() {
 		return queryTables;
 	}
@@ -144,7 +154,7 @@ public class Query {
 	}
 
 	private void appendSelectPart(StringBuffer sql) {
-		sql.append( "SELECT " );
+		sql.append( "\nSELECT " );
 		if ( isDistinct() ) {
 			sql.append("DISTINCT ");
 		}
@@ -170,7 +180,7 @@ public class Query {
 	}
 
 	private void appendFromPart(StringBuffer sql) {
-		sql.append("FROM ");
+		sql.append("\nFROM ");
 		if ( getQueryTables().size() == 1) {
 			sql.append("[");
 			sql.append( getQueryTables().iterator().next() );
@@ -183,8 +193,14 @@ public class Query {
 
 		String whereClause = getQueryDiagram().toSQL();
 		if ( whereClause != null && !whereClause.isEmpty() ) {
-			sql.append( "WHERE " );
+			sql.append( "\nWHERE " );
 			sql.append( whereClause );
 		}
 	}
+
+	@Override
+	public String toString() {
+		return toSQL();
+	}
+
 }

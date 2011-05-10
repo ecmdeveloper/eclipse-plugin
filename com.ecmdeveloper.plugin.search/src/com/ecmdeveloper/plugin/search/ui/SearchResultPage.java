@@ -56,6 +56,7 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 	private PageBook pagebook;
 	private ISearchResultViewPart viewPart;
 	private IQueryListener fQueryListener;
+	private SearchResultLabelProvider labelProvider;
 
 	@Override
 	public void createControl(Composite parent) {
@@ -75,7 +76,8 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 
 	private void createViewer(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setLabelProvider( new SearchResultLabelProvider() );
+		labelProvider = new SearchResultLabelProvider();
+		viewer.setLabelProvider( labelProvider );
 		viewer.setContentProvider( new SearchResultContentProvider() );
 		Table table = viewer.getTable();
 		table.setHeaderVisible(true);
@@ -151,26 +153,32 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 	}
 
 	private void connectViewer(QuerySearchResult search) {
-		viewer.setInput(search);
 		
 		if ( search != null ) {
+			removeTableColumns();
 			Table table = viewer.getTable();
+			int index = 0;
 			for ( String columnName : search.getColumnNames() ) {
 		        TableColumn column= new TableColumn(table, SWT.LEFT);
 		        column.setText( columnName );
 		        column.setWidth(200);
+		        labelProvider.connectIndexToName(index++, columnName);
 			}
 		}
+
+		viewer.setInput(search);
 	}
 
 	private void disconnectViewer() {
-		
+		removeTableColumns();
+		viewer.setInput(null);
+	}
+
+	private void removeTableColumns() {
 		Table table = viewer.getTable();
 		for ( TableColumn column : table.getColumns() ) {
 			column.dispose();
 		}
-
-		viewer.setInput(null);
 	}
 	
 	@Override

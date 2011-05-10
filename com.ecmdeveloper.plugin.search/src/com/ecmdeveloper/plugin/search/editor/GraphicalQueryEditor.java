@@ -22,13 +22,13 @@ package com.ecmdeveloper.plugin.search.editor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.EventObject;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
-import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.ActionRegistry;
@@ -75,6 +75,7 @@ import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.parts.GraphicalPartFactory;
 import com.ecmdeveloper.plugin.search.util.IconFiles;
+import com.ecmdeveloper.plugin.search.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -82,6 +83,8 @@ import com.ecmdeveloper.plugin.search.util.IconFiles;
  */
 public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette implements PropertyChangeListener {
 
+	public static final String ID = "com.ecmdeveloper.plugin.search.searchEditor";
+	
 	private Query query = new Query();
 	private PaletteRoot root;
 	private QueryFieldsTable queryFieldsTable;
@@ -99,6 +102,13 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
 		query.addPropertyChangeListener(this);
+	}
+
+	@Override
+	protected void setInput(IEditorInput input) {
+		super.setInput(input);
+		setPartName(input.getName());
+		query.setName( input.getName() );
 	}
 
 	@Override
@@ -298,8 +308,13 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		
+		try {
+			QueryFileStore queryFileStore = new QueryFileStore();
+			queryFileStore.save(query);
+			getCommandStack().markSaveLocation();
+		} catch (IOException e) {
+			PluginMessage.openError(getSite().getShell(), "Save", e.getLocalizedMessage(), e );
+		}
 	}
 
 	protected PaletteViewerProvider createPaletteViewerProvider() {

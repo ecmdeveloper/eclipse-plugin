@@ -100,5 +100,35 @@ public class MockQueryTable implements IQueryTable {
 		}
 		return selectedQueryFields;
 	}
+
+	@Override
+	public String getConnectionName() {
+		return null;
+	}
+
+	@Override
+	public String getObjectStoreName() {
+		return null;
+	}
+
+	@Override
+	public String getConnectionDisplayName() {
+		return getConnectionName();
+	}
+
+	@Override
+	public String getObjectStoreDisplayName() {
+		return getObjectStoreName();
+	}
+
+	@Override
+	public void addQueryField(IQueryField queryField) {
+		fields.add(queryField);
+	}
+
+	@Override
+	public String getDisplayName() {
+		return getName();
+	}
 }
 

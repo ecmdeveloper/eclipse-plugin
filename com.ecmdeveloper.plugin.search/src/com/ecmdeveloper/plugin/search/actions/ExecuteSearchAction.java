@@ -58,14 +58,16 @@ public class ExecuteSearchAction extends SelectionAction {
 
 	@Override
 	public void run() {
-	
-		ISearchQuery query = new SearchQuery();
-		NewSearchUI.runQueryInBackground(query );
-//		Shell shell = getWorkbenchPart().getSite().getShell();
-//		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
-//		Query query = editor.getQuery();
-//
-//		String message = query.toSQL();
-//		MessageDialog.openInformation(shell, getText(), message);
+
+		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
+		Query query = editor.getQuery();
+
+		if ( query.getQueryTables().isEmpty() ) {
+			// TODO message
+			return;
+		}
+
+		ISearchQuery searchQuery = new SearchQuery(query);
+		NewSearchUI.runQueryInBackground(searchQuery );
 	}
 }

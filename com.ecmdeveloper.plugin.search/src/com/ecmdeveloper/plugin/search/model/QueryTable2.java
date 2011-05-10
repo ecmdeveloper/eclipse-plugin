@@ -27,6 +27,7 @@ import java.util.Comparator;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
  * @author ricardo.belfor
@@ -36,10 +37,32 @@ public class QueryTable2 implements IQueryTable {
 
 	private ArrayList<IQueryTable> childQueryTables;
 	private ArrayList<IQueryField> fields = new ArrayList<IQueryField>();
-	private ClassDescription classDescription;
+	private final String objectStoreName;
+	private final String objectStoreDisplayName;
+	private final String connectionName;
+	private final String connectionDisplayName;
+	private final String name;
+	private final String displayName;
 	
+	public QueryTable2(String name, String displayName, String objectStoreName, String objectStoreDisplayName,
+			String connectionName, String connectionDisplayName) {
+		this.name = name;
+		this.displayName = displayName;
+		this.objectStoreName = objectStoreName;
+		this.objectStoreDisplayName = objectStoreDisplayName;
+		this.connectionName = connectionName;
+		this.connectionDisplayName = connectionDisplayName;
+	}
+
 	public QueryTable2(ClassDescription classDescription) {
-		this.classDescription = classDescription;
+		
+		ObjectStore objectStore = classDescription.getObjectStore();
+		objectStoreName = objectStore.getName();
+		objectStoreDisplayName = objectStore.getDisplayName();
+		connectionName = objectStore.getConnection().getName();
+		connectionDisplayName = objectStore.getConnection().getDisplayName();
+		name = classDescription.getName();
+		displayName = classDescription.getDisplayName();
 		childQueryTables = new ArrayList<IQueryTable>();
 		
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
@@ -63,7 +86,12 @@ public class QueryTable2 implements IQueryTable {
 
 	@Override
 	public String getName() {
-		return classDescription.getName();
+		return name;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return displayName;
 	}
 
 	@Override
@@ -122,5 +150,30 @@ public class QueryTable2 implements IQueryTable {
 			selectedQueryFields.addAll( queryTable.getSelectedQueryFields() );
 		}
 		return selectedQueryFields;
+	}
+
+	@Override
+	public String getObjectStoreName() {
+		return objectStoreName;
+	}
+
+	@Override
+	public String getObjectStoreDisplayName() {
+		return objectStoreDisplayName;
+	}
+
+	@Override
+	public String getConnectionName() {
+		return connectionName;
+	}
+
+	@Override
+	public String getConnectionDisplayName() {
+		return connectionDisplayName;
+	}
+
+	@Override
+	public void addQueryField(IQueryField queryField) {
+		fields.add(queryField);
 	}
 }
