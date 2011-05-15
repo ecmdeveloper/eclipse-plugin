@@ -18,7 +18,7 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.editor;
+package com.ecmdeveloper.plugin.search.store;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,13 +35,17 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
+import com.ecmdeveloper.plugin.search.model.AndContainer;
 import com.ecmdeveloper.plugin.search.model.Comparison;
+import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
+import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
@@ -53,6 +57,9 @@ import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 import com.ecmdeveloper.plugin.search.model.QueryTable2;
 import com.ecmdeveloper.plugin.search.model.SortType;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
+import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
+import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
+import com.ecmdeveloper.plugin.search.model.constants.WildcardType;
 import com.ecmdeveloper.plugin.search.util.PluginTagNames;
 
 /**
@@ -106,6 +113,7 @@ public class QueryFile {
 	private void initializeDiagramChild(Query query, XMLMemento memento) {
 		IMemento diagramChild = memento.createChild(PluginTagNames.DIAGRAM); 
 		QueryDiagram queryDiagram = query.getQueryDiagram();
+		
 		initializeQueryDiagramChildren(diagramChild, queryDiagram.getChildren() );
 	}
 
@@ -129,6 +137,7 @@ public class QueryFile {
 		addLocation(queryContainer, queryContainerChild);
 		addSize(queryContainer, queryContainerChild);
 		queryContainerChild.putString(PluginTagNames.TYPE,  queryContainer.getType().name() );
+		queryContainerChild.putBoolean(PluginTagNames.MAIN_QUERY,  queryContainer.isMainQuery() );
 		initializeQueryDiagramChildren(queryContainerChild, queryContainer.getChildren() );
 	}
 
@@ -136,6 +145,7 @@ public class QueryFile {
 		addLocation(queryComponent, queryComponentChild);
 		addSize(queryComponent, queryComponentChild);
 		queryComponentChild.putString(PluginTagNames.TYPE,  queryComponent.getType().name() );
+		queryComponentChild.putBoolean(PluginTagNames.MAIN_QUERY,  queryComponent.isMainQuery() );
 		
 		IQueryField field = queryComponent.getField();
 		if ( field != null ) {
@@ -246,8 +256,8 @@ public class QueryFile {
 	private void initializeQueryField(IQueryField queryField, IMemento queryFieldChild) {
 		queryFieldChild.putString( PluginTagNames.NAME, queryField.getName() );
 		queryFieldChild.putString( PluginTagNames.DISPLAY_NAME, queryField.getName() );
-		queryFieldChild.putString( PluginTagNames.TYPE, queryField.getType().toString() );
-		queryFieldChild.putString( PluginTagNames.SORT_TYPE, queryField.getSortType().toString() );
+		queryFieldChild.putString( PluginTagNames.TYPE, queryField.getType().name() );
+		queryFieldChild.putString( PluginTagNames.SORT_TYPE, queryField.getSortType().name() );
 		queryFieldChild.putInteger( PluginTagNames.SORT_ORDER, queryField.getSortOrder() );
 		queryFieldChild.putBoolean( PluginTagNames.SELECTED, queryField.isSelected() );
 		queryFieldChild.putBoolean( PluginTagNames.ORDERABLE, queryField.isOrderable() );
@@ -277,10 +287,170 @@ public class QueryFile {
 		for ( IMemento queryTableChild : tablesChild.getChildren(PluginTagNames.TABLE) ) {
 			getQueryTable(query, queryTableChild);
 		}
-		
+
+		IMemento diagramChild = memento.getChild(PluginTagNames.DIAGRAM);
+
+		QueryDiagram queryDiagram = query.getQueryDiagram();
+		getQueryDiagramChildren(diagramChild, queryDiagram, query);
+
 		return query;
 	}
 
+	private void getQueryDiagramChildren(IMemento diagramChild, QueryDiagram queryDiagram, Query query) {
+		
+		IMemento diagramChildChildren = diagramChild.getChild(PluginTagNames.CHILDREN); 
+		
+		for (IMemento m : diagramChildChildren.getChildren(PluginTagNames.QUERY_CONTAINER) ) {
+			QueryElement queryElement = getQueryContainerChild(m, query);
+			queryDiagram.addChild(queryElement);
+		}
+
+		for (IMemento m : diagramChildChildren.getChildren(PluginTagNames.QUERY_COMPONENT) ) {
+			QueryElement q = getQueryComponentChild(m, query);
+			queryDiagram.addChild(q);
+		}
+	}
+
+	private QueryElement getQueryComponentChild(IMemento m, Query query) {
+		
+		QueryComponentType type = QueryComponentType.valueOf( m.getString(PluginTagNames.TYPE) );
+		QueryComponent queryComponent;
+		switch ( type ) {
+
+		case COMPARISON:
+			Comparison comparison = new Comparison(query);
+			ComparisonOperation comparisonOperation = ComparisonOperation.valueOf( m.getString(PluginTagNames.COMPARISON_OPERATION) );
+			comparison.setComparisonOperation(comparisonOperation);
+			comparison.setValue( getValue(m) );
+			queryComponent = comparison;
+			break;
+			
+		case FREE_TEXT:
+			FreeText freeText = new FreeText(query);
+			freeText.setText( m.getString(PluginTagNames.TEXT ) );
+			queryComponent = freeText;
+			break;
+
+		case IN_FOLDER_TEST:
+			InFolderTest inFolderTest = new InFolderTest(query);
+			inFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+			queryComponent = inFolderTest;
+			break;
+		
+		case IN_SUBFOLDER_TEST:
+			InSubFolderTest inSubFolderTest = new InSubFolderTest(query);
+			inSubFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+			queryComponent = inSubFolderTest;
+			break;
+		
+		case NULL_TEST:
+			NullTest nullTest = new NullTest(query);
+			nullTest.setNegated( m.getBoolean(PluginTagNames.NEGATED) );
+			queryComponent = nullTest;
+			break;
+			
+		case WILDCARD_TEST:
+			WildcardTest wildcardTest = new WildcardTest(query);
+			WildcardType wildcardType = WildcardType.valueOf( m.getString(PluginTagNames.WILDCARD_TYPE) );
+			wildcardTest.setWildcardType(wildcardType);
+			wildcardTest.setValue( m.getString(PluginTagNames.STRING_VALUE) );
+			queryComponent = wildcardTest;
+			break;
+
+		default:
+			throw new IllegalArgumentException();
+		}
+
+		String fieldName = m.getString(PluginTagNames.FIELD_NAME );
+		String tableName = m.getString(PluginTagNames.TABLE_NAME );
+		IQueryField field = query.getField( fieldName, tableName );
+		queryComponent.setField( field );
+		
+		getLocation(m, queryComponent );
+		getSize(m, queryComponent );
+
+		Boolean mainQuery = m.getBoolean(PluginTagNames.MAIN_QUERY );
+		if ( mainQuery != null && mainQuery.booleanValue() ) {
+			query.setMainQuery(queryComponent);
+		}
+		
+		return queryComponent;
+	}
+
+	private Object getValue(IMemento m ) {
+		
+		Boolean booleanValue = m.getBoolean( PluginTagNames.BOOLEAN_VALUE );
+		if ( booleanValue != null ) {
+			return booleanValue;
+		}
+		
+		String stringValue = m.getString(PluginTagNames.STRING_VALUE );
+		if ( stringValue != null ) {
+			return stringValue;
+		}
+		
+		String dateStringValue = m.getString(PluginTagNames.DATE_VALUE);
+		if ( dateStringValue != null ) {
+			// TODO fix me
+			return new Date();
+		}
+		
+		String intStringValue = m.getString(PluginTagNames.INTEGER_VALUE );
+		if ( intStringValue != null ) {
+			return new Integer( intStringValue );
+		}
+		
+		String doubleStringValue = m.getString(PluginTagNames.DOUBLE_VALUE );
+		if ( doubleStringValue != null ) {
+			return new Double(doubleStringValue);
+		}
+
+		throw new IllegalArgumentException();
+	}
+	
+	private QueryContainer getQueryContainerChild(IMemento queryContainerChild, Query query ) {
+
+		QueryContainerType containerType = QueryContainerType.valueOf( queryContainerChild.getString(PluginTagNames.TYPE ) );
+		QueryContainer queryContainer;
+		switch ( containerType ) {
+		case AND_CONTAINER:
+			queryContainer = new AndContainer( query );
+			break;
+		case NOT_CONTAINER:
+			queryContainer = new NotContainer( query );
+			break;
+		case OR_CONTAINER:
+			queryContainer = new OrContainer( query );
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+		
+		getLocation(queryContainerChild, queryContainer );
+		getSize(queryContainerChild, queryContainer);
+		
+		Boolean mainQuery = queryContainerChild.getBoolean(PluginTagNames.MAIN_QUERY );
+		if ( mainQuery != null && mainQuery.booleanValue() ) {
+			query.setMainQuery(queryContainer);
+		}
+
+		getQueryDiagramChildren(queryContainerChild, queryContainer, query);
+		
+		return queryContainer;
+	}
+	
+	private void getSize(IMemento elementChild, QuerySubpart querySubpart) {
+		Dimension size = new Dimension(elementChild.getInteger(PluginTagNames.WIDTH), elementChild
+				.getInteger(PluginTagNames.HEIGHT));
+		querySubpart.setSize(size);
+	}
+
+	private void getLocation(IMemento elementChild, QuerySubpart querySubpart) {
+		Point location = new Point(elementChild.getInteger(PluginTagNames.XPOS), elementChild
+				.getInteger(PluginTagNames.YPOS));
+		querySubpart.setLocation(location);
+	}
+	
 	private void getQueryTable(Query query, IMemento queryTableChild) {
 		
 		IQueryTable queryTable = getTable(queryTableChild);
@@ -317,12 +487,17 @@ public class QueryFile {
 		
 		String name = queryFieldChild.getString( PluginTagNames.NAME );
 		String displayName = queryFieldChild.getString( PluginTagNames.DISPLAY_NAME );
-		QueryFieldType type = QueryFieldType.valueOf(queryFieldChild.getString( PluginTagNames.TYPE ) );
+		String upperCase = queryFieldChild.getString( PluginTagNames.TYPE ).toUpperCase();
+		
+		// FIXME
+		if ( upperCase.equals("ID") ) upperCase = "GUID";
+		QueryFieldType type = QueryFieldType.valueOf(upperCase );
+		
 		Boolean orderable = queryFieldChild.getBoolean( PluginTagNames.ORDERABLE );
 		Boolean containable = queryFieldChild.getBoolean( PluginTagNames.CONTAINABLE );
 		IQueryField queryField = new QueryField2(name, displayName, type, orderable, containable, queryTable );
 		
-		SortType sortType = SortType.valueOf( queryFieldChild.getString( PluginTagNames.SORT_TYPE ) );
+		SortType sortType = SortType.NONE /*.valueOf( queryFieldChild.getString( PluginTagNames.SORT_TYPE ) )*/;
 		queryField.setSortType(sortType);
 		queryField.setSortOrder( queryFieldChild.getInteger( PluginTagNames.SORT_ORDER ) );
 		queryField.setSelected( queryFieldChild.getBoolean( PluginTagNames.SELECTED ) );

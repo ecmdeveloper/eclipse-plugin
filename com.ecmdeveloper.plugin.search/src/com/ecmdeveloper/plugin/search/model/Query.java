@@ -48,7 +48,7 @@ public class Query {
 	public Query() {
 		queryDiagram = new QueryDiagram(this);
 		queryDiagram.setRootDiagram(true);
-		add( new MockQueryTable("Query Table 1") );
+		//add( new MockQueryTable("Query Table 1") );
 	}
 	
 	public String getName() {
@@ -201,6 +201,29 @@ public class Query {
 	@Override
 	public String toString() {
 		return toSQL();
+	}
+
+	public IQueryField getField(String fieldName, String tableName) {
+		Collection<IQueryTable> queryTables2 = getQueryTables();
+		return getQueryField(fieldName, tableName, queryTables2);
+	}
+
+	private IQueryField getQueryField(String fieldName, String tableName, Collection<IQueryTable> queryTables2) {
+		
+		for ( IQueryTable queryTable : queryTables2 ) {
+			if ( queryTable.getName().equals(tableName) ) {
+				IQueryField queryField = queryTable.getQueryField( fieldName) ;
+				if ( queryField != null ) {
+					return queryField;
+				}
+			}
+			
+			IQueryField queryField = getQueryField(fieldName, tableName, queryTable.getChildQueryTables() );
+			if ( queryField != null ) {
+				return queryField;
+			}
+		}
+		return null;
 	}
 
 }

@@ -18,28 +18,23 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model;
+package com.ecmdeveloper.plugin.search.editor;
 
-import java.util.Collection;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IQueryTable {
-	public String getName();
-	public String getDisplayName();
-	public Collection<IQueryField> getQueryFields();
-	public Collection<IQueryTable> getChildQueryTables();
-	public String getConnectionName();
-	public String getConnectionDisplayName();
-	public String getObjectStoreName();
-	public String getObjectStoreDisplayName();
+public class QueryProxy {
 	
-	// TODO: add these to a different interface?
-	public void addChildQueryTable(IQueryTable childTable);
-	public void mergeQueryFields(Collection<IQueryField> queryFields);
-	public Collection<IQueryField> getSelectedQueryFields();
-	public void addQueryField(IQueryField queryField );
-	public IQueryField getQueryField(String fieldName);
+	private Query query;
+
+	public void setQuery(Query query) {
+		this.query = query;
+	}
+
+	public Query getQuery() {
+		return query;
+	}
 }

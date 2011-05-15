@@ -27,6 +27,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 import com.ecmdeveloper.plugin.search.Activator;
+import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.util.IconFiles;
 
 /**
@@ -36,18 +37,24 @@ import com.ecmdeveloper.plugin.search.util.IconFiles;
 public class QueryEditorInput implements IEditorInput {
 
 	private static final String DEFAULT_SEARCH_NAME = "Search {0}";
-
 	private static int newSearchIndex = 0;
 
-	private String name;
+	private final Query query;
+	private boolean exists;
 
-	public QueryEditorInput() {
-		name = MessageFormat.format(DEFAULT_SEARCH_NAME, ++newSearchIndex);
+	public QueryEditorInput(Query query) {
+		if ( query.getName() == null) {
+			query.setName( MessageFormat.format(DEFAULT_SEARCH_NAME, ++newSearchIndex) );
+			exists = false;
+		} else {
+			exists = true;
+		}
+		this.query = query;
 	}
 	
 	@Override
 	public String getName() {
-		return name;
+		return query.getName();
 	}
 
 	@Override
@@ -62,7 +69,7 @@ public class QueryEditorInput implements IEditorInput {
 
 	@Override
 	public boolean exists() {
-		return false;
+		return exists;
 	}
 
 	@Override
@@ -72,7 +79,9 @@ public class QueryEditorInput implements IEditorInput {
 
 	@Override
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
+		if ( adapter.equals(Query.class) ) {
+			return query;
+		}
 		return null;
 	}
 }

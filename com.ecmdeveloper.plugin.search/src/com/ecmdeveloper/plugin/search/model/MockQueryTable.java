@@ -130,5 +130,11 @@ public class MockQueryTable implements IQueryTable {
 	public String getDisplayName() {
 		return getName();
 	}
+
+	@Override
+	public IQueryField getQueryField(String fieldName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 

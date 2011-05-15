@@ -18,7 +18,7 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.editor;
+package com.ecmdeveloper.plugin.search.store;
 
 import java.io.File;
 import java.io.FileNotFoundException;
