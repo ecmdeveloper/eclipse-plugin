@@ -74,6 +74,7 @@ import com.ecmdeveloper.plugin.search.dnd.TextTransferDropTargetListener;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.parts.GraphicalPartFactory;
+import com.ecmdeveloper.plugin.search.store.QueryFileStore;
 import com.ecmdeveloper.plugin.search.util.IconFiles;
 import com.ecmdeveloper.plugin.search.util.PluginMessage;
 
@@ -85,7 +86,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 
 	public static final String ID = "com.ecmdeveloper.plugin.search.searchEditor";
 	
-	private Query query = new Query();
+	private Query query;
+	private QueryProxy queryProxy = new QueryProxy();
 	private PaletteRoot root;
 	private QueryFieldsTable queryFieldsTable;
 	private ToolItem removeTableItem;
@@ -101,14 +103,15 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
+		query = (Query) getEditorInput().getAdapter(Query.class);
 		query.addPropertyChangeListener(this);
+		queryProxy.setQuery(query);
 	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
 		super.setInput(input);
 		setPartName(input.getName());
-		query.setName( input.getName() );
 	}
 
 	@Override
@@ -268,7 +271,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	@Override
 	protected PaletteRoot getPaletteRoot() {
 		if( root == null ){
-			root = QueryPaletteFactory.createPalette( query );
+			root = QueryPaletteFactory.createPalette(queryProxy );
 		}
 		return root;
 	}

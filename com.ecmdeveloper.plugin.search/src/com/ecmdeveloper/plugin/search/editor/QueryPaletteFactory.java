@@ -20,12 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.editor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.text.StyleContext.SmallAttributeSet;
 
 import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
 import org.eclipse.gef.palette.MarqueeToolEntry;
@@ -49,7 +45,6 @@ import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
-import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
@@ -65,18 +60,18 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 	private static QueryPaletteFactory singleton;
 
 	@SuppressWarnings("unchecked")
-	static private List createCategories(PaletteRoot root, Query query) {
+	static private List createCategories(PaletteRoot root, QueryProxy queryProxy) {
 		List categories = new ArrayList();
 
 		//categories.add(createControlGroup(root));
-		categories.add(createContainersDrawer(query));
-		categories.add(createQueryPartsDrawer(query));
+		categories.add(createContainersDrawer(queryProxy));
+		categories.add(createQueryPartsDrawer(queryProxy));
 
 		return categories;
 	}
 
 	@SuppressWarnings("unchecked")
-	static private PaletteContainer createQueryPartsDrawer(Query query) {
+	static private PaletteContainer createQueryPartsDrawer(QueryProxy queryProxy) {
 		
 		PaletteDrawer drawer = new PaletteDrawer(
 				"Query Parts", ImageDescriptor.createFromFile(QueryContainer.class, "icons/can.gif")); //$NON-NLS-1$
@@ -85,22 +80,22 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 
 		CombinedTemplateCreationEntry combined;
 		
-		combined = createEntry(Comparison.class, Comparison.DESCRIPTION, query);
+		combined = createEntry(Comparison.class, Comparison.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry(NullTest.class, NullTest.DESCRIPTION, query);
+		combined = createEntry(NullTest.class, NullTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry(WildcardTest.class, WildcardTest.DESCRIPTION, query);
+		combined = createEntry(WildcardTest.class, WildcardTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry( InFolderTest.class, InFolderTest.DESCRIPTION, query);
+		combined = createEntry( InFolderTest.class, InFolderTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry(InSubFolderTest.class, InSubFolderTest.DESCRIPTION, query);
+		combined = createEntry(InSubFolderTest.class, InSubFolderTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 		
-		combined = createEntry(FreeText.class, FreeText.DESCRIPTION, query);
+		combined = createEntry(FreeText.class, FreeText.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
 		drawer.addAll(entries);
@@ -108,7 +103,7 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 	}
 
 	@SuppressWarnings("unchecked")
-	static private PaletteContainer createContainersDrawer(Query query) {
+	static private PaletteContainer createContainersDrawer(QueryProxy queryProxy) {
 
 		PaletteDrawer drawer = new PaletteDrawer("Containers", ImageDescriptor.createFromFile(
 				QueryContainer.class, "icons/comp.gif"));//$NON-NLS-1$
@@ -117,44 +112,33 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 
 		CombinedTemplateCreationEntry combined;
 		
-		combined = createEntry("AND", "Logical AND container", "icons/and_container16.png", "icons/or_container24.png", AndContainer.class, query);
+		combined = createEntry("AND", "Logical AND container", "icons/and_container16.png", "icons/or_container24.png", AndContainer.class, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry("OR", "Logical OR container", "icons/or_container16.png","icons/or_container16.png" , OrContainer.class, query);
+		combined = createEntry("OR", "Logical OR container", "icons/or_container16.png","icons/or_container16.png" , OrContainer.class, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry("NOT", "Logical NOT container", "icons/not_container16.png", "icons/not_container24.png", NotContainer.class, query);
+		combined = createEntry("NOT", "Logical NOT container", "icons/not_container16.png", "icons/not_container24.png", NotContainer.class, queryProxy);
 		entries.add(combined);
 		
 		drawer.addAll(entries);
 		return drawer;
 	}
 
-	@Deprecated
-	private static CombinedTemplateCreationEntry createEntry(String label, String description, String iconRoot, Class<? extends QueryElement> type, Query query ) {
+	private static CombinedTemplateCreationEntry createEntry(String label, String description, String normalIcon, String largeIcon, Class<? extends QueryElement> type, QueryProxy queryProxy ) {
 		
 		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(label,
-				description, new QueryCreationFactory( query, type),
-						ImageDescriptor.createFromFile(type, "icons/" + iconRoot + "16.gif"),//$NON-NLS-1$
-						ImageDescriptor.createFromFile(type, "icons/" + iconRoot + "24.gif")//$NON-NLS-1$
-		);
-		return combined;
-	}
-
-	private static CombinedTemplateCreationEntry createEntry(String label, String description, String normalIcon, String largeIcon, Class<? extends QueryElement> type, Query query ) {
-		
-		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(label,
-				description, new QueryCreationFactory( query, type), Activator.getImageDescriptor(normalIcon),
+				description, new QueryCreationFactory( queryProxy, type), Activator.getImageDescriptor(normalIcon),
 					Activator.getImageDescriptor(largeIcon)
 		);
 		return combined;
 	}
 
 	private static CombinedTemplateCreationEntry createEntry(Class<? extends QueryElement> type,
-			QueryElementDescription description, Query query) {
+			QueryElementDescription description, QueryProxy queryProxy) {
 
 		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(description
-				.getLabel(), description.getDescription(), new QueryCreationFactory(query, type),
+				.getLabel(), description.getDescription(), new QueryCreationFactory(queryProxy, type),
 				description.getIcon(), description.getLargeIcon());
 
 		return combined;
@@ -188,9 +172,9 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		return controlGroup;
 	}
 
-	static PaletteRoot createPalette(Query query) {
+	static PaletteRoot createPalette(QueryProxy queryProxy) {
 		PaletteRoot logicPalette = new PaletteRoot();
-		logicPalette.addAll(createCategories(logicPalette, query));
+		logicPalette.addAll(createCategories(logicPalette, queryProxy));
 		return logicPalette;
 	}
 

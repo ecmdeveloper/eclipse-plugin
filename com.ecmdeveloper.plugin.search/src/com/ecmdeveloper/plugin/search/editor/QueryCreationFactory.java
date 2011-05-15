@@ -34,7 +34,13 @@ import com.ecmdeveloper.plugin.search.model.QueryElement;
 public class QueryCreationFactory implements CreationFactory {
 
 	private Class<? extends QueryElement> type;
-	private final Query query;
+	private QueryProxy queryProxy;
+	private Query query;
+
+	public QueryCreationFactory(QueryProxy queryProxy, Class<? extends QueryElement> type) {
+		this.queryProxy = queryProxy;
+		this.type = type;
+	}
 
 	public QueryCreationFactory(Query query, Class<? extends QueryElement> type) {
 		this.query = query;
@@ -45,6 +51,9 @@ public class QueryCreationFactory implements CreationFactory {
 	public Object getNewObject() {
 		try {
 			Constructor<? extends QueryElement> constructor = type.getConstructor( Query.class );
+			if ( query == null ) {
+				query = queryProxy.getQuery();
+			}
 			return constructor.newInstance(query);
 		} catch (Exception exc) {
 			return null;

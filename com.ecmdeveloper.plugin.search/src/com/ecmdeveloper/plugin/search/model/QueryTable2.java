@@ -52,6 +52,7 @@ public class QueryTable2 implements IQueryTable {
 		this.objectStoreDisplayName = objectStoreDisplayName;
 		this.connectionName = connectionName;
 		this.connectionDisplayName = connectionDisplayName;
+		childQueryTables = new ArrayList<IQueryTable>();
 	}
 
 	public QueryTable2(ClassDescription classDescription) {
@@ -128,7 +129,8 @@ public class QueryTable2 implements IQueryTable {
 		}
 	}
 
-	private IQueryField getQueryField(String name) {
+	@Override
+	public IQueryField getQueryField(String name) {
 		for ( IQueryField queryField : fields ) {
 			if ( queryField.getName().equals(name) ) {
 				return queryField;
