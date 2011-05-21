@@ -32,4 +32,5 @@ public enum QueryComponentType {
 	IN_SUBFOLDER_TEST,
 	NULL_TEST,
 	WILDCARD_TEST,
+	CLASS_TEST
 }

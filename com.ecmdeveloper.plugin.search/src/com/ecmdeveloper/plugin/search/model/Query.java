@@ -34,11 +34,13 @@ public class Query {
 	public static final String TABLE_ADDED = "TableAdded";
 	public static final String TABLE_REMOVED = "TableAdded";
 	public static final String TOGGLE_INCLUDE_SUBCLASSES = "ToggleIncludeSubclasses";
+	private static final String TOGGLE_DISTINCT = "ToggleDistinct";
+	private static final String MAX_COUNT = "MaxCount";
 	
 	private ArrayList<IQueryTable> queryTables = new ArrayList<IQueryTable>();
 	private QueryDiagram queryDiagram;
 	private QueryElement mainQuery;
-	private boolean includeSubclasses;
+	private boolean includeSubclasses = true;
 	private boolean distinct;
 	private Integer maxCount;
 	private String name;
@@ -48,7 +50,7 @@ public class Query {
 	public Query() {
 		queryDiagram = new QueryDiagram(this);
 		queryDiagram.setRootDiagram(true);
-		//add( new MockQueryTable("Query Table 1") );
+//		add( new MockQueryTable("Query Table 1") );
 	}
 	
 	public String getName() {
@@ -87,10 +89,12 @@ public class Query {
 	
 	public void setDistinct(boolean distinct) {
 		this.distinct = distinct;
+		listeners.firePropertyChange(TOGGLE_DISTINCT, distinct,  null);
 	}
 	
 	public void setMaxCount(Integer maxCount) {
 		this.maxCount = maxCount;
+		listeners.firePropertyChange(MAX_COUNT, maxCount,  null);
 	}
 	public Integer getMaxCount() {
 		return maxCount;
@@ -158,7 +162,7 @@ public class Query {
 		if ( isDistinct() ) {
 			sql.append("DISTINCT ");
 		}
-		
+
 		if ( maxCount != null) {
 			sql.append("TOP ");
 			sql.append( maxCount );
@@ -185,6 +189,9 @@ public class Query {
 			sql.append("[");
 			sql.append( getQueryTables().iterator().next() );
 			sql.append( "] ");
+			if ( !includeSubclasses ) {
+				sql.append( " WITH EXCLUDESUBCLASSES ");
+			}
 		} else {
 			// TODO something with joins
 		}

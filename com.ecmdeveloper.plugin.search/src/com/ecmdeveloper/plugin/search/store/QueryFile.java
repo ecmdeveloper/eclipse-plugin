@@ -25,6 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +38,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.search.model.AndContainer;
+import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.FreeText;
@@ -56,6 +59,7 @@ import com.ecmdeveloper.plugin.search.model.QueryFieldType;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 import com.ecmdeveloper.plugin.search.model.QueryTable2;
 import com.ecmdeveloper.plugin.search.model.SortType;
+import com.ecmdeveloper.plugin.search.model.ThisQueryField;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
 import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
@@ -67,6 +71,8 @@ import com.ecmdeveloper.plugin.search.util.PluginTagNames;
  *
  */
 public class QueryFile {
+
+	private static final String DATE_FORMAT = "yyyyMMdd HH:mm:ss";
 
 	public static final int CURRENT_FILE_VERSION = 1;
 
@@ -186,7 +192,12 @@ public class QueryFile {
 			queryComponentChild.putString(PluginTagNames.WILDCARD_TYPE,  wildcardTest.getWildcardType().name() );
 			queryComponentChild.putString(PluginTagNames.STRING_VALUE,  wildcardTest.getValue() );
 			break;
-
+		
+		case CLASS_TEST:
+			ClassTest classTest = (ClassTest) queryComponent;
+			queryComponentChild.putString(PluginTagNames.CLASS_NAME,  classTest.getClassName() );
+			break;
+			
 		default:
 			throw new IllegalArgumentException();
 		}
@@ -200,7 +211,9 @@ public class QueryFile {
 			} else if ( value instanceof String ) {
 				queryComponentChild.putString(PluginTagNames.STRING_VALUE,  value.toString() );
 			} else if ( value instanceof Date ) {
-				queryComponentChild.putString(PluginTagNames.DATE_VALUE,  value.toString() );
+				SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+				String dateString = dateFormatter.format(value);
+				queryComponentChild.putString(PluginTagNames.DATE_VALUE, dateString );
 			} else if ( value instanceof Integer ) {
 				queryComponentChild.putString(PluginTagNames.INTEGER_VALUE,  value.toString() );
 			} else if ( value instanceof Double ) {
@@ -276,9 +289,7 @@ public class QueryFile {
 	private Query getQuery(XMLMemento memento) {
 		Query query = new Query();
 		
-		if ( memento.getChild(PluginTagNames.MAX_COUNT) != null ) {
-			query.setMaxCount( memento.getInteger( PluginTagNames.MAX_COUNT ) );
-		}
+		query.setMaxCount( memento.getInteger( PluginTagNames.MAX_COUNT ) );
 		query.setDistinct( memento.getBoolean( PluginTagNames.DISTINCT ) );
 		query.setIncludeSubclasses( memento.getBoolean( PluginTagNames.INCLUDE_SUBCLASSES ) );
 		query.setName( memento.getString( PluginTagNames.NAME ) );
@@ -342,6 +353,12 @@ public class QueryFile {
 			inSubFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
 			queryComponent = inSubFolderTest;
 			break;
+
+		case CLASS_TEST:
+			ClassTest classTest = new ClassTest(query);
+			classTest.setClassName( m.getString(PluginTagNames.CLASS_NAME) );
+			queryComponent = classTest;
+			break;
 		
 		case NULL_TEST:
 			NullTest nullTest = new NullTest(query);
@@ -391,8 +408,12 @@ public class QueryFile {
 		
 		String dateStringValue = m.getString(PluginTagNames.DATE_VALUE);
 		if ( dateStringValue != null ) {
-			// TODO fix me
-			return new Date();
+			SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+			try {
+				return dateFormatter.parse(dateStringValue);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 		String intStringValue = m.getString(PluginTagNames.INTEGER_VALUE );
@@ -486,17 +507,19 @@ public class QueryFile {
 	private IQueryField getQueryField(IMemento queryFieldChild, IQueryTable queryTable) {
 		
 		String name = queryFieldChild.getString( PluginTagNames.NAME );
-		String displayName = queryFieldChild.getString( PluginTagNames.DISPLAY_NAME );
-		String upperCase = queryFieldChild.getString( PluginTagNames.TYPE ).toUpperCase();
+		IQueryField queryField;
+		if ( "This".equals( name ) ) {
+			queryField = new ThisQueryField(queryTable);
+		} else {
+			String displayName = queryFieldChild.getString( PluginTagNames.DISPLAY_NAME );
+			QueryFieldType type = QueryFieldType.valueOf( queryFieldChild.getString( PluginTagNames.TYPE ) );
+			
+			Boolean orderable = queryFieldChild.getBoolean( PluginTagNames.ORDERABLE );
+			Boolean containable = queryFieldChild.getBoolean( PluginTagNames.CONTAINABLE );
+			queryField = new QueryField2(name, displayName, type, orderable, containable, queryTable );
+		}
 		
 		// FIXME
-		if ( upperCase.equals("ID") ) upperCase = "GUID";
-		QueryFieldType type = QueryFieldType.valueOf(upperCase );
-		
-		Boolean orderable = queryFieldChild.getBoolean( PluginTagNames.ORDERABLE );
-		Boolean containable = queryFieldChild.getBoolean( PluginTagNames.CONTAINABLE );
-		IQueryField queryField = new QueryField2(name, displayName, type, orderable, containable, queryTable );
-		
 		SortType sortType = SortType.NONE /*.valueOf( queryFieldChild.getString( PluginTagNames.SORT_TYPE ) )*/;
 		queryField.setSortType(sortType);
 		queryField.setSortOrder( queryFieldChild.getInteger( PluginTagNames.SORT_ORDER ) );

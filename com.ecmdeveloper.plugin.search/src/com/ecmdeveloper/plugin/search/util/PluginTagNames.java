@@ -67,4 +67,5 @@ public class PluginTagNames {
 	public static final String INTEGER_VALUE = "integerValue";
 	public static final String DOUBLE_VALUE = "doubleValue";
 	public static final String MAIN_QUERY = "mainQuery";
+	public static final String CLASS_NAME = "className";
 }

@@ -73,7 +73,7 @@ public class QueryFileStore {
 		return parentFolder;
 	}
 	
-	public Collection<QueryFileInfo> getQueryNames() {
+	public Collection<QueryFileInfo> getQueryFileInfo() {
 
 		File[] files = getQueryFiles();
 	    Collection<QueryFileInfo> queryFileInfos = new ArrayList<QueryFileInfo>();
@@ -101,5 +101,20 @@ public class QueryFileStore {
 	    };
 	    
 	    return queryFileStorePath.listFiles(fileFilter);
+	}
+
+	public boolean isExistingName(String newName) {
+		for (QueryFileInfo queryFileInfo : getQueryFileInfo() ) {
+			if ( newName.equalsIgnoreCase(queryFileInfo.getName() ) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	public void delete(QueryFileInfo queryInfo) {
+		File file = getQueryFile( queryInfo.getName() );
+		file.delete();
 	}
 }

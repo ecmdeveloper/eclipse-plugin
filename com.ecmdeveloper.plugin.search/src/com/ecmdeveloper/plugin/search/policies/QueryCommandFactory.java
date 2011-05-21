@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import com.ecmdeveloper.plugin.search.Activator;
+import com.ecmdeveloper.plugin.search.commands.CreateClassTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateFreeTextCommand;
@@ -39,6 +40,7 @@ import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.editor.QueryCreationFactory;
+import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
@@ -76,6 +78,8 @@ public class QueryCommandFactory {
 			command = new CreateInSubFolderTestCommand();
 		} else if ( objectType == FreeText.class ) {
 			command = new CreateFreeTextCommand();
+		} else if ( objectType == ClassTest.class ) {
+			command = new CreateClassTestCommand();
 		} else {			
 			command = new CreateCommand();
 		}
@@ -141,6 +145,10 @@ public class QueryCommandFactory {
 			operations.add(FreeText.DESCRIPTION);
 		}
 
+		if ( ClassTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(ClassTest.DESCRIPTION);
+		}
+		
 		dialog.setElements(operations.toArray());
 		return dialog;
 	}

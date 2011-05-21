@@ -23,7 +23,10 @@ package com.ecmdeveloper.plugin.search.editor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.EventObject;
+
+import javax.xml.soap.MessageFactory;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.DefaultEditDomain;
@@ -39,10 +42,14 @@ import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -66,6 +73,7 @@ import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.actions.ExecuteSearchAction;
 import com.ecmdeveloper.plugin.search.actions.RemoveTableAction;
 import com.ecmdeveloper.plugin.search.actions.SetMainQueryAction;
+import com.ecmdeveloper.plugin.search.actions.SetMaxCountAction;
 import com.ecmdeveloper.plugin.search.actions.ShowSqlAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleDistinctAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleIncludeSubclassesAction;
@@ -84,9 +92,14 @@ import com.ecmdeveloper.plugin.search.util.PluginMessage;
  */
 public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette implements PropertyChangeListener {
 
+	private static final String REPLACE_PROMPT_MESSAGE = "A query with the name \"{0}\" already exists, do you want to replace this query?";
+
+	private static final String QUERY_EDITOR = "Query Editor";
+
 	public static final String ID = "com.ecmdeveloper.plugin.search.searchEditor";
 	
 	private Query query;
+	private boolean modified;
 	private QueryProxy queryProxy = new QueryProxy();
 	private PaletteRoot root;
 	private QueryFieldsTable queryFieldsTable;
@@ -94,7 +107,10 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	private IAction actions[] = { new AddTableAction(this), new RemoveTableAction(this),
 			new EditQueryComponentAction(this), new ToggleIncludeSubclassesAction(this),
 			new ToggleDistinctAction(this), new ShowSqlAction(this), new SetMainQueryAction(this),
-			new ConvertToTextAction(this), new ExecuteSearchAction(this) };
+			new ConvertToTextAction(this), new ExecuteSearchAction(this), 
+			new SetMaxCountAction(this) };
+
+	private Text maxCountText;
 	
 	public GraphicalQueryEditor() {
 		setEditDomain(new DefaultEditDomain(this));
@@ -106,6 +122,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		query = (Query) getEditorInput().getAdapter(Query.class);
 		query.addPropertyChangeListener(this);
 		queryProxy.setQuery(query);
+		modified = false;
 	}
 
 	@Override
@@ -124,11 +141,22 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	@Override
 	public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 		
-		if ( propertyChangeEvent.getPropertyName().equals( Query.TABLE_ADDED ) ||
-				propertyChangeEvent.getPropertyName().equals( Query.TABLE_REMOVED ) ) {
-			firePropertyChange(IEditorPart.PROP_DIRTY);
+		String propertyName = propertyChangeEvent.getPropertyName();
+		if ( propertyName.equals( Query.TABLE_ADDED ) ||
+				propertyName.equals( Query.TABLE_REMOVED ) ) {
 			removeTableItem.setEnabled( !query.getQueryTables().isEmpty() );
 		}
+
+		boolean wasDirty = isDirty();
+		modified = true;
+		if (!wasDirty) {
+			firePropertyChange(IEditorPart.PROP_DIRTY);
+		}
+	}
+
+	@Override
+	public boolean isDirty() {
+		return modified || super.isDirty();
 	}
 
 	public void commandStackChanged(EventObject event) {
@@ -161,29 +189,48 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		createShowSQLButton(toolBar);
 		
 		new ToolItem(toolBar, SWT.SEPARATOR );
-
-//		Label l = new Label( toolBar, SWT.BOTTOM );
-//		l.setText("Hallo:");
-//
-//		ToolItem ti1 = new ToolItem(toolBar, SWT.SEPARATOR);
-//		l.pack();
-//		
-//		ti1.setWidth(l.getBounds().width);
-//		ti1.setControl(l);
 		
-		ToolBar tb = new ToolBar(composite, SWT.FLAT);
-		ToolItem ti = new ToolItem(tb, SWT.NONE);
+		maxCountText = createMaxCountText(composite);
+		
+		return toolBar;
+	}
+
+	private Text createMaxCountText(Composite composite) {
+
+		ToolBar toolbar = new ToolBar(composite, SWT.FLAT);
+		ToolItem ti = new ToolItem(toolbar, SWT.NONE);
 		ti.setText("Max Count:");	
 
-		ToolItem ti2 = new ToolItem(tb, SWT.SEPARATOR);
-		Text text = new Text(tb, SWT.BORDER );
-		text.setText("200");
+		ToolItem ti2 = new ToolItem(toolbar, SWT.SEPARATOR);
+		Text text = new Text(toolbar, SWT.BORDER );
+		text.setText("0000");
 		text.pack();
+		if ( query.getMaxCount() != null ) {
+			text.setText( query.getMaxCount().toString() );
+		} else {
+			text.setText("");			
+		}
+
+		text.addModifyListener( new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				IAction action = getActionRegistry().getAction( SetMaxCountAction.ID );
+				action.run();
+			} } );
 		
 		ti2.setWidth(text.getBounds().width);
 		ti2.setControl(text);
 		
-		return toolBar;
+		return text;
+	}
+
+	public Integer getMaxCount() {
+		String text = maxCountText.getText();
+		if ( !text.isEmpty() ) {
+			return new Integer( text );
+		}
+		return null;
 	}
 
 	private void createExecuteButton(ToolBar toolBar) {
@@ -310,14 +357,70 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	}
 
 	@Override
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+
+	@Override
 	public void doSave(IProgressMonitor monitor) {
+		saveQuery(false);
+	}
+
+	@Override
+	public void doSaveAs() {
+		saveQuery(true);
+	}
+
+	private void saveQuery(boolean saveAs) {
 		try {
 			QueryFileStore queryFileStore = new QueryFileStore();
+			if ( !setQueryName(queryFileStore, saveAs) ) {
+				return;
+			}
 			queryFileStore.save(query);
+			modified = false;
 			getCommandStack().markSaveLocation();
+			setPartName( query.getName() );
 		} catch (IOException e) {
-			PluginMessage.openError(getSite().getShell(), "Save", e.getLocalizedMessage(), e );
+			PluginMessage.openError(getSite().getShell(), QUERY_EDITOR, e.getLocalizedMessage(), e );
 		}
+	}
+
+	private boolean setQueryName(QueryFileStore queryFileStore, boolean saveAs) {
+		
+		while (true) {
+			String newName = promptForNewName();
+			if ( newName != null ) {
+				if ( saveAs || !query.getName().equalsIgnoreCase(newName) ) {
+					if (queryFileStore.isExistingName(newName)) {
+						if (promptForReplace(newName) != true) {
+							continue;
+						}
+					}
+					query.setName(newName);
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	private String promptForNewName() {
+		String newName = null;
+		InputDialog inputDialog = new InputDialog(getSite().getShell(), QUERY_EDITOR,
+				"Query Name", query.getName(), null);
+		if (inputDialog.open() == InputDialog.OK) {
+			newName = inputDialog.getValue();
+		}
+		return newName;
+	}
+
+	private boolean promptForReplace(String newName) {
+		String message = MessageFormat.format(REPLACE_PROMPT_MESSAGE, newName);
+		boolean answer = MessageDialog.openQuestion(getSite().getShell(),
+				QUERY_EDITOR, message);
+		return answer;
 	}
 
 	protected PaletteViewerProvider createPaletteViewerProvider() {
