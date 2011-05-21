@@ -26,16 +26,26 @@ package com.ecmdeveloper.plugin.search.editor;
  */
 public interface QueryIcons {
 
-	public static final String WILDCARD_TEST_ICON = "icons/old/ground16.gif";
-	public static final String WILDCARD_TEST_ICON_LARGE = "icons/old/ground24.gif";
-	public static final String NULL_TEST_ICON = "icons/old/ledicon16.gif";
-	public static final String NULL_TEST_ICON_LARGE = "icons/old/ledicon24.gif";
-	public static final String COMPARISON_ICON = "icons/old/label16.gif";
-	public static final String COMPARISON_ICON_LARGE = "icons/old/label24.gif";
-	public static final String FREE_TEXT_ICON = "icons/old/label16.gif";
-	public static final String FREE_TEXT_ICON_LARGE = "icons/old/label24.gif";
-	public static final String INFOLDER_TEST_ICON = "icons/old/connection16.gif";
-	public static final String INFOLDER_TEST_ICON_LARGE = "icons/old/connection24.gif";
-	public static final String INSUBFOLDER_TEST_ICON = "icons/old/arrow16.gif";
-	public static final String INSUBFOLDER_TEST_ICON_LARGE = "icons/old/arrow24.gif";
+	public static final String WILDCARD_TEST_ICON = "icons/like16.png";
+	public static final String WILDCARD_TEST_ICON_LARGE = "icons/like24.png";
+	public static final String NULL_TEST_ICON = "icons/null16.png";
+	public static final String NULL_TEST_ICON_LARGE = "icons/null24.png";
+	public static final String COMPARISON_ICON = "icons/comparison16.png";
+	public static final String COMPARISON_ICON_LARGE = "icons/comparison24.png";
+	public static final String FREE_TEXT_ICON = "icons/freetext16.png";
+	public static final String FREE_TEXT_ICON_LARGE = "icons/freetext24.png";
+	public static final String INFOLDER_TEST_ICON = "icons/infolder16.png";
+	public static final String INFOLDER_TEST_ICON_LARGE = "icons/infolder24.png";
+	public static final String INSUBFOLDER_TEST_ICON = "icons/insubfolder16.png";
+	public static final String INSUBFOLDER_TEST_ICON_LARGE = "icons/insubfolder24.png";
+	public static final String QUERY_COMPONENT_ICON = "icons/query_component.png";
+	public static final String CONTAINER = "icons/container.png";
+	public static final String AND_CONTAINER = "icons/and_container16.png";
+	public static final String AND_CONTAINER_LARGE = "icons/and_container24.png";
+	public static final String OR_CONTAINER = "icons/or_container16.png";
+	public static final String OR_CONTAINER_LARGE = "icons/or_container24.png";
+	public static final String NOT_CONTAINER = "icons/not_container16.png";
+	public static final String NOT_CONTAINER_LARGE = "icons/not_container24.png";
+	public static final String CLASS_TEST_ICON = "icons/class16.png";
+	public static final String CLASS_TEST_ICON_LARGE = "icons/class24.png";
 }

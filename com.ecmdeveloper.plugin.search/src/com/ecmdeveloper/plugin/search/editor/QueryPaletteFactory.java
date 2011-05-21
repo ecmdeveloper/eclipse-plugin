@@ -24,20 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
-import org.eclipse.gef.palette.MarqueeToolEntry;
 import org.eclipse.gef.palette.PaletteContainer;
 import org.eclipse.gef.palette.PaletteDrawer;
-import org.eclipse.gef.palette.PaletteEntry;
-import org.eclipse.gef.palette.PaletteGroup;
 import org.eclipse.gef.palette.PaletteRoot;
-import org.eclipse.gef.palette.PaletteStack;
-import org.eclipse.gef.palette.PanningSelectionToolEntry;
-import org.eclipse.gef.palette.ToolEntry;
-import org.eclipse.gef.tools.MarqueeSelectionTool;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.model.AndContainer;
+import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
@@ -45,7 +38,6 @@ import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
-import com.ecmdeveloper.plugin.search.model.QueryContainer;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
@@ -61,9 +53,8 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 
 	@SuppressWarnings("unchecked")
 	static private List createCategories(PaletteRoot root, QueryProxy queryProxy) {
-		List categories = new ArrayList();
 
-		//categories.add(createControlGroup(root));
+		List categories = new ArrayList();
 		categories.add(createContainersDrawer(queryProxy));
 		categories.add(createQueryPartsDrawer(queryProxy));
 
@@ -71,10 +62,36 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 	}
 
 	@SuppressWarnings("unchecked")
+	static private PaletteContainer createContainersDrawer(QueryProxy queryProxy) {
+	
+		PaletteDrawer drawer = new PaletteDrawer(
+				"Containers", Activator.getImageDescriptor(QueryIcons.CONTAINER));
+	
+		List entries = new ArrayList();
+	
+		CombinedTemplateCreationEntry combined;
+		
+		combined = createEntry("AND", "Logical AND container", QueryIcons.AND_CONTAINER,
+				QueryIcons.AND_CONTAINER_LARGE, AndContainer.class, queryProxy);
+		entries.add(combined);
+	
+		combined = createEntry("OR", "Logical OR container", QueryIcons.OR_CONTAINER,
+				QueryIcons.OR_CONTAINER_LARGE, OrContainer.class, queryProxy);
+		entries.add(combined);
+	
+		combined = createEntry("NOT", "Logical NOT container", QueryIcons.NOT_CONTAINER,
+				QueryIcons.NOT_CONTAINER_LARGE, NotContainer.class, queryProxy);
+		entries.add(combined);
+		
+		drawer.addAll(entries);
+		return drawer;
+	}
+
+	@SuppressWarnings("unchecked")
 	static private PaletteContainer createQueryPartsDrawer(QueryProxy queryProxy) {
 		
 		PaletteDrawer drawer = new PaletteDrawer(
-				"Query Parts", ImageDescriptor.createFromFile(QueryContainer.class, "icons/can.gif")); //$NON-NLS-1$
+				"Query Components", Activator.getImageDescriptor( QueryIcons.QUERY_COMPONENT_ICON) ); //$NON-NLS-1$
 
 		List<Object> entries = new ArrayList();
 
@@ -95,32 +112,12 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		combined = createEntry(InSubFolderTest.class, InSubFolderTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 		
+		combined = createEntry(InSubFolderTest.class, ClassTest.DESCRIPTION, queryProxy);
+		entries.add(combined);
+
 		combined = createEntry(FreeText.class, FreeText.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		drawer.addAll(entries);
-		return drawer;
-	}
-
-	@SuppressWarnings("unchecked")
-	static private PaletteContainer createContainersDrawer(QueryProxy queryProxy) {
-
-		PaletteDrawer drawer = new PaletteDrawer("Containers", ImageDescriptor.createFromFile(
-				QueryContainer.class, "icons/comp.gif"));//$NON-NLS-1$
-
-		List entries = new ArrayList();
-
-		CombinedTemplateCreationEntry combined;
-		
-		combined = createEntry("AND", "Logical AND container", "icons/and_container16.png", "icons/or_container24.png", AndContainer.class, queryProxy);
-		entries.add(combined);
-
-		combined = createEntry("OR", "Logical OR container", "icons/or_container16.png","icons/or_container16.png" , OrContainer.class, queryProxy);
-		entries.add(combined);
-
-		combined = createEntry("NOT", "Logical NOT container", "icons/not_container16.png", "icons/not_container24.png", NotContainer.class, queryProxy);
-		entries.add(combined);
-		
 		drawer.addAll(entries);
 		return drawer;
 	}
@@ -144,34 +141,6 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		return combined;
 	}
 	
-	@SuppressWarnings("unchecked")
-	static private PaletteContainer createControlGroup(PaletteRoot root) {
-		PaletteGroup controlGroup = new PaletteGroup("Control");
-
-		List entries = new ArrayList();
-
-		ToolEntry tool = new PanningSelectionToolEntry();
-		entries.add(tool);
-		root.setDefaultEntry(tool);
-
-		PaletteStack marqueeStack = new PaletteStack("Marquee_Stack", "", null); //$NON-NLS-1$
-		marqueeStack.add(new MarqueeToolEntry());
-		MarqueeToolEntry marquee = new MarqueeToolEntry();
-		marquee.setToolProperty(MarqueeSelectionTool.PROPERTY_MARQUEE_BEHAVIOR, new Integer(
-				MarqueeSelectionTool.BEHAVIOR_CONNECTIONS_TOUCHED));
-		marqueeStack.add(marquee);
-		marquee = new MarqueeToolEntry();
-		marquee.setToolProperty(MarqueeSelectionTool.PROPERTY_MARQUEE_BEHAVIOR, new Integer(
-				MarqueeSelectionTool.BEHAVIOR_CONNECTIONS_TOUCHED
-						| MarqueeSelectionTool.BEHAVIOR_NODES_CONTAINED));
-		marqueeStack.add(marquee);
-		marqueeStack.setUserModificationPermission(PaletteEntry.PERMISSION_NO_MODIFICATION);
-		entries.add(marqueeStack);
-
-		controlGroup.addAll(entries);
-		return controlGroup;
-	}
-
 	static PaletteRoot createPalette(QueryProxy queryProxy) {
 		PaletteRoot logicPalette = new PaletteRoot();
 		logicPalette.addAll(createCategories(logicPalette, queryProxy));

@@ -20,7 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.util.UUID;
+import java.util.HashMap;
 
 import org.eclipse.jface.wizard.IWizardPage;
 
@@ -41,11 +41,13 @@ public class ComparisonWizard extends QueryComponentWizard {
 	private ComparisonOperationWizardPage comparisonOperationWizardPage;
 	private ValueWizardPage valueWizardPage;
 	private ComparisonOperation comparisonOperation = ComparisonOperation.EQUAL;
+	private HashMap<QueryFieldType, ValueWizardPage> typePages;
 	private Object value;
 	
 	public ComparisonWizard(Query query) {
 		super(query);
 		setWindowTitle(TITLE);
+		typePages = new HashMap<QueryFieldType, ValueWizardPage>();
 	}
 
 	@Override
@@ -80,22 +82,22 @@ public class ComparisonWizard extends QueryComponentWizard {
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		
+//		System.out.println( getPageCount() );
+//		for (IWizardPage p: getPages() ) {
+//			System.out.println( p.getName() );
+//		}
+		
 		if ( page instanceof ComparisonOperationWizardPage ) {
 			IQueryField field = getField();
 			valueWizardPage = getValueWizardPage(field);
 			if ( valueWizardPage != null ) {
-				addPage(valueWizardPage);
 				valueWizardPage.setValue(value);
-				
-				if ( field.getType().equals( QueryFieldType.GUID ) )
-				{
-					valueWizardPage.setValue(UUID.randomUUID().toString() );
-				}
 				return valueWizardPage;
 			}
-		}
-		if ( page instanceof SelectFieldWizardPage ) {
+		} else if ( page instanceof SelectFieldWizardPage ) {
 			comparisonOperationWizardPage.setField( getField() );
+		} else if ( page instanceof ValueWizardPage ) {
+			return null;
 		}
 		
 		return super.getNextPage(page);
@@ -103,24 +105,48 @@ public class ComparisonWizard extends QueryComponentWizard {
 
 	private ValueWizardPage getValueWizardPage(IQueryField field) {
 		if ( field != null ) {
-			switch (field.getType() ) {
-			case STRING:
-				return new StringValueWizardPage();
-			case LONG:
-				return new IntegerValueWizardPage();
-			case DOUBLE:
-				return new DoubleValueWizardPage();
-			case GUID:
-				return new IdValueWizardPage();
-			case BOOLEAN:
-				return new BooleanValueWizardPage();
-			case DATE:
-				return new DateValueWizardPage();
-			case OBJECT:
-				return new ObjectValueWizardPage();
+			
+			if ( typePages.containsKey(field.getType() ) ) {
+				return typePages.get(field.getType());
 			}
+			
+			ValueWizardPage page = createValueWizardPage(field);
+			addPage(page);
+			typePages.put(field.getType(), page);
+			return page;
 		}
 		return null;
+	}
+
+	private ValueWizardPage createValueWizardPage(IQueryField field) {
+		ValueWizardPage page;
+		
+		switch (field.getType() ) {
+		case STRING:
+			page = new StringValueWizardPage();
+			break;
+		case LONG:
+			page = new IntegerValueWizardPage();
+			break;
+		case DOUBLE:
+			page = new DoubleValueWizardPage();
+			break;
+		case GUID:
+			page = new IdValueWizardPage();
+			break;
+		case BOOLEAN:
+			page = new BooleanValueWizardPage();
+			break;
+		case DATE:
+			page = new DateValueWizardPage();
+			break;
+		case OBJECT:
+			page = new ObjectValueWizardPage();
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+		return page;
 	}
 
 	@Override

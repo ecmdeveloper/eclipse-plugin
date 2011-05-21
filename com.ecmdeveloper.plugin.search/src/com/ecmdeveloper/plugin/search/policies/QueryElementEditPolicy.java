@@ -31,6 +31,7 @@ import com.ecmdeveloper.plugin.search.actions.EditQueryComponentAction;
 import com.ecmdeveloper.plugin.search.actions.SetMainQueryAction;
 import com.ecmdeveloper.plugin.search.commands.ConvertToTextCommand;
 import com.ecmdeveloper.plugin.search.commands.DeleteCommand;
+import com.ecmdeveloper.plugin.search.commands.EditClassTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.EditFreeTextCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInFolderTestCommand;
@@ -38,6 +39,7 @@ import com.ecmdeveloper.plugin.search.commands.EditInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
+import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
@@ -91,15 +93,17 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 		QueryComponent queryComponent = getQueryComponent(request);
 		if ( queryComponent instanceof Comparison ) {
 			return new EditComparisonCommand(queryComponent);
-		} if ( queryComponent instanceof NullTest ) {
+		} else if ( queryComponent instanceof NullTest ) {
 			return new EditNullTestCommand(queryComponent);
-		} if ( queryComponent instanceof WildcardTest ) {
+		} else if ( queryComponent instanceof WildcardTest ) {
 			return new EditWildcardTestCommand(queryComponent);
-		} if ( queryComponent instanceof InFolderTest ) {
+		} else if ( queryComponent instanceof InFolderTest ) {
 			return new EditInFolderTestCommand(queryComponent);
-		} if ( queryComponent instanceof InSubFolderTest ) {
+		} else if ( queryComponent instanceof InSubFolderTest ) {
 			return new EditInSubFolderTestCommand(queryComponent);
-		} if ( queryComponent instanceof FreeText ) {
+		} else if ( queryComponent instanceof ClassTest ) {
+			return new EditClassTestCommand(queryComponent);
+		} else if ( queryComponent instanceof FreeText ) {
 			return new EditFreeTextCommand(queryComponent);
 		}
 	
