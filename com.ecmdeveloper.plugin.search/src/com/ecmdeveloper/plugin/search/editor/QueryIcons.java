@@ -32,8 +32,8 @@ public interface QueryIcons {
 	public static final String NULL_TEST_ICON_LARGE = "icons/null24.png";
 	public static final String COMPARISON_ICON = "icons/comparison16.png";
 	public static final String COMPARISON_ICON_LARGE = "icons/comparison24.png";
-	public static final String FREE_TEXT_ICON = "icons/freetext16.png";
-	public static final String FREE_TEXT_ICON_LARGE = "icons/freetext24.png";
+	public static final String FREE_TEXT_ICON = "icons/sql16.png";
+	public static final String FREE_TEXT_ICON_LARGE = "icons/sql24.png";
 	public static final String INFOLDER_TEST_ICON = "icons/infolder16.png";
 	public static final String INFOLDER_TEST_ICON_LARGE = "icons/infolder24.png";
 	public static final String INSUBFOLDER_TEST_ICON = "icons/insubfolder16.png";
@@ -48,4 +48,6 @@ public interface QueryIcons {
 	public static final String NOT_CONTAINER_LARGE = "icons/not_container24.png";
 	public static final String CLASS_TEST_ICON = "icons/class16.png";
 	public static final String CLASS_TEST_ICON_LARGE = "icons/class24.png";
+	public static final String FULL_TEXT_ICON = "icons/fulltext16.png";
+	public static final String FULL_TEXT_ICON_LARGE = "icons/fulltext24.png";
 }

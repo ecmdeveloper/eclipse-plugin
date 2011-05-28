@@ -43,15 +43,17 @@ public class QueryTable2 implements IQueryTable {
 	private final String connectionDisplayName;
 	private final String name;
 	private final String displayName;
+	private final boolean cbrEnabled;
 	
 	public QueryTable2(String name, String displayName, String objectStoreName, String objectStoreDisplayName,
-			String connectionName, String connectionDisplayName) {
+			String connectionName, String connectionDisplayName, boolean cbrEnabled ) {
 		this.name = name;
 		this.displayName = displayName;
 		this.objectStoreName = objectStoreName;
 		this.objectStoreDisplayName = objectStoreDisplayName;
 		this.connectionName = connectionName;
 		this.connectionDisplayName = connectionDisplayName;
+		this.cbrEnabled = cbrEnabled;
 		childQueryTables = new ArrayList<IQueryTable>();
 	}
 
@@ -65,6 +67,7 @@ public class QueryTable2 implements IQueryTable {
 		name = classDescription.getName();
 		displayName = classDescription.getDisplayName();
 		childQueryTables = new ArrayList<IQueryTable>();
+		cbrEnabled = Boolean.TRUE.equals( classDescription.getCBREnabled() );
 		
 		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
 			IQueryField queryField = new QueryField2(propertyDescription, this );
@@ -93,6 +96,11 @@ public class QueryTable2 implements IQueryTable {
 	@Override
 	public String getDisplayName() {
 		return displayName;
+	}
+
+	@Override
+	public boolean isCBREnabled() {
+		return cbrEnabled;
 	}
 
 	@Override

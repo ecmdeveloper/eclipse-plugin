@@ -55,7 +55,9 @@ public class ClassTest extends QueryComponent  {
 	}
 
 	public void setClassName(String className) {
+		String oldValue = this.className;
 		this.className = className;
+		firePropertyChange(FIELD_CHANGED, oldValue, className );
 	}
 
 	@Override

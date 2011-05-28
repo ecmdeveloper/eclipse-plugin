@@ -34,6 +34,7 @@ import com.ecmdeveloper.plugin.search.commands.DeleteCommand;
 import com.ecmdeveloper.plugin.search.commands.EditClassTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.EditFreeTextCommand;
+import com.ecmdeveloper.plugin.search.commands.EditFullTextQueryCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditNullTestCommand;
@@ -42,6 +43,7 @@ import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
+import com.ecmdeveloper.plugin.search.model.FullTextQuery;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
@@ -105,8 +107,10 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 			return new EditClassTestCommand(queryComponent);
 		} else if ( queryComponent instanceof FreeText ) {
 			return new EditFreeTextCommand(queryComponent);
+		} else if ( queryComponent instanceof FullTextQuery ) {
+			return new EditFullTextQueryCommand(queryComponent);
 		}
-	
+		
 		return null;
 	}
 

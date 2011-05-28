@@ -125,4 +125,9 @@ public class MockQueryField implements IQueryField {
 		}
 		return true;
 	}
+
+	@Override
+	public boolean isCBREnabled() {
+		return QueryFieldType.STRING.equals( queryFieldType );
+	}
 }

@@ -20,9 +20,20 @@
 
 package com.ecmdeveloper.plugin.search.ui;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -31,15 +42,18 @@ import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 
@@ -57,7 +71,38 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 	private ISearchResultViewPart viewPart;
 	private IQueryListener fQueryListener;
 	private SearchResultLabelProvider labelProvider;
+	private MenuManager menuManager;
+	private SelectionProviderAdapter viewerAdapter;
 
+	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
+		private ArrayList fListeners= new ArrayList(5);
+		
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			fListeners.add(listener);
+		}
+
+		public ISelection getSelection() {
+			return viewer.getSelection();
+		}
+
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			fListeners.remove(listener);
+		}
+
+		public void setSelection(ISelection selection) {
+			viewer.setSelection(selection);
+		}
+
+		public void selectionChanged(SelectionChangedEvent event) {
+			// forward to my listeners
+			SelectionChangedEvent wrappedEvent= new SelectionChangedEvent(this, event.getSelection());
+			for (Iterator listeners= fListeners.iterator(); listeners.hasNext();) {
+				ISelectionChangedListener listener= (ISelectionChangedListener) listeners.next();
+				listener.selectionChanged(wrappedEvent);
+			}
+		}
+	}
+	
 	@Override
 	public void createControl(Composite parent) {
 //		pagebook = new PageBook(parent, SWT.NULL);
@@ -69,17 +114,49 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 		
 		viewerContainer = new Composite(parent, SWT.NO_FOCUS);
 		viewerContainer.setLayout(new FillLayout());
+
+		createMenuManager();		
+		
+		//NewSearchUI.addQueryListener(fQueryListener);
+		
+		viewerAdapter = new SelectionProviderAdapter();
+		getSite().setSelectionProvider(viewerAdapter);
+		getSite().registerContextMenu(viewPart.getViewSite().getId(), menuManager, viewerAdapter);
 		
 		createViewer(viewerContainer);
-		//NewSearchUI.addQueryListener(fQueryListener);
+	}
+
+	private void createMenuManager() {
+		menuManager = new MenuManager("#PopUp"); //$NON-NLS-1$
+		menuManager.setRemoveAllWhenShown(true);
+		menuManager.setParent(getSite().getActionBars().getMenuManager());
+		menuManager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mgr) {
+				SearchView.createContextMenuGroups(mgr);
+				fillContextMenu(mgr);
+				viewPart.fillContextMenu(mgr);
+			}
+		});
+	}
+
+	protected void fillContextMenu(IMenuManager manager) {
+		manager.add(new Separator("edit") );
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		manager.add(new Separator("other"));		
 	}
 
 	private void createViewer(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION );
 		labelProvider = new SearchResultLabelProvider();
 		viewer.setLabelProvider( labelProvider );
 		viewer.setContentProvider( new SearchResultContentProvider() );
+		viewer.addSelectionChangedListener(viewerAdapter);
+		
 		Table table = viewer.getTable();
+		
+		Menu menu = menuManager.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		
 		table.setHeaderVisible(true);
         TableColumn column= new TableColumn(table, SWT.LEFT);
         column.setText("Class");

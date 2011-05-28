@@ -68,4 +68,7 @@ public class PluginTagNames {
 	public static final String DOUBLE_VALUE = "doubleValue";
 	public static final String MAIN_QUERY = "mainQuery";
 	public static final String CLASS_NAME = "className";
+	public static final String FULL_TEXT_QUERY_TYPE = "fullTextQueryType";
+	public static final String ALL_FIELDS = "allFields";
+	public static final String CBR_ENABLED = "cbrEnabled";
 }

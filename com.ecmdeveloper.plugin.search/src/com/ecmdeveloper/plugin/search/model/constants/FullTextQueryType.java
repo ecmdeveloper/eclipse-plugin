@@ -24,14 +24,18 @@ package com.ecmdeveloper.plugin.search.model.constants;
  * @author ricardo.belfor
  *
  */
-public enum QueryComponentType {
+public enum FullTextQueryType {
 
-	COMPARISON,
-	FREE_TEXT,
-	IN_FOLDER_TEST,
-	IN_SUBFOLDER_TEST,
-	NULL_TEST,
-	WILDCARD_TEST,
-	CLASS_TEST,
-	FULL_TEXT
+	CONTAINS{		
+		@Override
+		public String toString() {
+			return super.toString() + ", search for precise or fuzzy matches.";
+		}
+	},
+	FREETEXT{		
+		@Override
+		public String toString() {
+			return super.toString() + ", search the text of document content for values that match the meaning.";
+		}
+	};
 }

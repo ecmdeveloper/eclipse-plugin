@@ -34,6 +34,7 @@ public class QueryField2 implements IQueryField {
 	private final IQueryTable queryTable;
 	private final boolean orderable;
 	private final boolean containable;
+	private final boolean cbrEnabled;
 	
 	private SortType sortType = SortType.NONE;
 	private int sortOrder = 0;
@@ -46,15 +47,18 @@ public class QueryField2 implements IQueryField {
 		this.queryFieldType = getQueryFieldType(propertyDescription);
 		this.orderable = propertyDescription.isOrderable();
 		this.containable = propertyDescription.isContainable();
+		this.cbrEnabled = propertyDescription.isCBREnabled();
+		
 	}
 	
 	public QueryField2(String name, String displayName, QueryFieldType queryFieldType,
-			boolean orderable, boolean containable, IQueryTable queryTable) {
+			boolean orderable, boolean containable, boolean cbrEnabled, IQueryTable queryTable) {
 		this.name = name;
 		this.displayName = displayName;
 		this.queryFieldType = queryFieldType;
 		this.orderable = orderable;
 		this.containable = containable;
+		this.cbrEnabled = cbrEnabled;
 		this.queryTable = queryTable;
 	}
 
@@ -148,5 +152,10 @@ public class QueryField2 implements IQueryField {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isCBREnabled() {
+		return cbrEnabled;
 	}
 }

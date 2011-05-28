@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.search.ui;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,10 +45,12 @@ public class SearchQuery implements ISearchQuery {
 
 	QuerySearchResult searchResult;
 	private final Query query;
-
+	private final String label;
+	
 	public SearchQuery(Query query) {
 		this.query = query;
 		searchResult = new QuerySearchResult(query,this);
+		label = query.getName() + " - " + (new Date()).toString();	
 	}
 	
 	@Override
@@ -62,7 +65,7 @@ public class SearchQuery implements ISearchQuery {
 
 	@Override
 	public String getLabel() {
-		return query.toString();
+		return label;
 	}
 
 	@Override
