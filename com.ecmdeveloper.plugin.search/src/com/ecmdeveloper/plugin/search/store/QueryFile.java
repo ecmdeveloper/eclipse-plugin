@@ -42,6 +42,7 @@ import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.ComparisonOperation;
 import com.ecmdeveloper.plugin.search.model.FreeText;
+import com.ecmdeveloper.plugin.search.model.FullTextQuery;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
@@ -61,6 +62,7 @@ import com.ecmdeveloper.plugin.search.model.QueryTable2;
 import com.ecmdeveloper.plugin.search.model.SortType;
 import com.ecmdeveloper.plugin.search.model.ThisQueryField;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
+import com.ecmdeveloper.plugin.search.model.constants.FullTextQueryType;
 import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
 import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
 import com.ecmdeveloper.plugin.search.model.constants.WildcardType;
@@ -198,6 +200,13 @@ public class QueryFile {
 			queryComponentChild.putString(PluginTagNames.CLASS_NAME,  classTest.getClassName() );
 			break;
 			
+		case FULL_TEXT:
+			FullTextQuery fullTextQuery = (FullTextQuery) queryComponent;
+			queryComponentChild.putBoolean( PluginTagNames.ALL_FIELDS, fullTextQuery.isAllFields() );
+			queryComponentChild.putString(PluginTagNames.TEXT, fullTextQuery.getText() );
+			queryComponentChild.putString(PluginTagNames.FULL_TEXT_QUERY_TYPE, fullTextQuery.getFullTextQueryType().name() );
+			break;
+			
 		default:
 			throw new IllegalArgumentException();
 		}
@@ -252,6 +261,7 @@ public class QueryFile {
 		queryTableChild.putString( PluginTagNames.CONNECTION_DISPLAY_NAME, queryTable.getConnectionDisplayName() );
 		queryTableChild.putString( PluginTagNames.OBJECT_STORE_NAME, queryTable.getObjectStoreName() );
 		queryTableChild.putString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME, queryTable.getObjectStoreDisplayName() );
+		queryTableChild.putBoolean( PluginTagNames.CBR_ENABLED, queryTable.isCBREnabled() );
 		
 		IMemento fieldsChild = queryTableChild.createChild(PluginTagNames.FIELDS);
 		initializeQueryFields(queryTable,fieldsChild);
@@ -277,6 +287,7 @@ public class QueryFile {
 		queryFieldChild.putBoolean( PluginTagNames.SUPPORTS_WILDCARDS, queryField.isSupportsWildcards() );
 		queryFieldChild.putBoolean( PluginTagNames.CONTAINABLE, queryField.isContainable() );
 		queryFieldChild.putBoolean( PluginTagNames.IS_QUERY_FIELD, queryField.isQueryField() );
+		queryFieldChild.putBoolean( PluginTagNames.CBR_ENABLED, queryField.isCBREnabled() );
 	}
 
 	public Query read() throws IOException, WorkbenchException {
@@ -374,6 +385,15 @@ public class QueryFile {
 			queryComponent = wildcardTest;
 			break;
 
+		case FULL_TEXT:
+			FullTextQuery fullTextQuery = new FullTextQuery(query);
+			fullTextQuery.setAllFields( m.getBoolean(PluginTagNames.ALL_FIELDS ) );
+			fullTextQuery.setText(m.getString(PluginTagNames.TEXT) );
+			FullTextQueryType fullTextQueryType = FullTextQueryType.valueOf(m
+					.getString(PluginTagNames.FULL_TEXT_QUERY_TYPE));
+			fullTextQuery.setFullTextQueryType(fullTextQueryType);
+			queryComponent = fullTextQuery;
+			break;
 		default:
 			throw new IllegalArgumentException();
 		}
@@ -486,8 +506,9 @@ public class QueryFile {
 		String connectionDisplayName = queryTableChild.getString( PluginTagNames.CONNECTION_DISPLAY_NAME );
 		String objectStoreName = queryTableChild.getString( PluginTagNames.OBJECT_STORE_NAME );
 		String objectStoreDisplayName = queryTableChild.getString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME );
+		boolean cbrEnabled = queryTableChild.getBoolean(PluginTagNames.CBR_ENABLED );
 
-		IQueryTable queryTable = new QueryTable2(name, displayName, objectStoreName, objectStoreDisplayName, connectionName, connectionDisplayName );
+		IQueryTable queryTable = new QueryTable2(name, displayName, objectStoreName, objectStoreDisplayName, connectionName, connectionDisplayName, cbrEnabled );
 		
 		IMemento queryFieldsChild = queryTableChild.getChild(PluginTagNames.FIELDS);
 		for (IMemento queryFieldChild : queryFieldsChild.getChildren( PluginTagNames.QUERY_FIELD ) ) {
@@ -516,11 +537,12 @@ public class QueryFile {
 			
 			Boolean orderable = queryFieldChild.getBoolean( PluginTagNames.ORDERABLE );
 			Boolean containable = queryFieldChild.getBoolean( PluginTagNames.CONTAINABLE );
-			queryField = new QueryField2(name, displayName, type, orderable, containable, queryTable );
+			boolean cbrEnabled = queryFieldChild.getBoolean(PluginTagNames.CBR_ENABLED );
+			
+			queryField = new QueryField2(name, displayName, type, orderable, containable, cbrEnabled, queryTable );
 		}
 		
-		// FIXME
-		SortType sortType = SortType.NONE /*.valueOf( queryFieldChild.getString( PluginTagNames.SORT_TYPE ) )*/;
+		SortType sortType = SortType.valueOf( queryFieldChild.getString( PluginTagNames.SORT_TYPE ) );
 		queryField.setSortType(sortType);
 		queryField.setSortOrder( queryFieldChild.getInteger( PluginTagNames.SORT_ORDER ) );
 		queryField.setSelected( queryFieldChild.getBoolean( PluginTagNames.SELECTED ) );

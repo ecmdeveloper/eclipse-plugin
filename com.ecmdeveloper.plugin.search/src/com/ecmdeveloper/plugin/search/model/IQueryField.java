@@ -39,4 +39,5 @@ public interface IQueryField {
 	public boolean isSupportsWildcards();
 	public boolean isContainable();
 	public boolean isQueryField();
+	public boolean isCBREnabled();
 }

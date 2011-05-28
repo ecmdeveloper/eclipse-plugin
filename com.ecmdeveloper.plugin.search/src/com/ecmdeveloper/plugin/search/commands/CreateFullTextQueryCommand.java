@@ -25,29 +25,31 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.FreeText;
-import com.ecmdeveloper.plugin.search.wizards.FreeTextWizard;
+import com.ecmdeveloper.plugin.search.model.FullTextQuery;
+import com.ecmdeveloper.plugin.search.wizards.FullTextQueryWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class CreateFreeTextCommand extends CreateCommand {
+public class CreateFullTextQueryCommand extends CreateCommand {
 
 	@Override
 	public void execute() {
 
 		Shell shell = Display.getCurrent().getActiveShell();
 
-		FreeTextWizard wizard = new FreeTextWizard();
-		if ( getQueryField() != null ) {
-			wizard.setText( getQueryField().getName() );
-		}
+		FullTextQueryWizard wizard = new FullTextQueryWizard( child.getQuery() );
+		wizard.setSelection( getQueryField() );
+
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {
-			FreeText freeText = (FreeText)child;
-			freeText.setText( wizard.getText() );
+			FullTextQuery fullTextQuery = (FullTextQuery)child;
+			fullTextQuery.setField( wizard.getField() );
+			fullTextQuery.setAllFields( wizard.isAllFields() );
+			fullTextQuery.setText( wizard.getText() );
+			fullTextQuery.setFullTextQueryType( wizard.getFullTextQueryType() );
 			super.execute();
 		}
 	}

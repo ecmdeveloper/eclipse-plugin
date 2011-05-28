@@ -73,6 +73,10 @@ public class SelectFieldWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 		Composite container = getContainer(parent);
 		createFieldsTree(container);
+		createExtraControls(container);
+	}
+	
+	protected void createExtraControls(Composite container ) {
 	}
 
 	private Composite getContainer(Composite parent) {
@@ -135,6 +139,10 @@ public class SelectFieldWizardPage extends WizardPage {
 
 	public void setField(IQueryField field) {
 		this.field = field;
+	}
+
+	protected TreeViewer getFieldsTree() {
+		return fieldsTree;
 	}
 
 	public void setFilter(QueryFieldFilter filter) {

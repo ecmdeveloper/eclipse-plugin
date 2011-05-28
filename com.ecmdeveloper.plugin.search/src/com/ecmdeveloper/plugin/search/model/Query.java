@@ -24,6 +24,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * @author ricardo.belfor
@@ -99,6 +101,15 @@ public class Query {
 	public Integer getMaxCount() {
 		return maxCount;
 	}
+	
+	public boolean isCRBEnabled() {
+		for (IQueryTable queryTable : getQueryTables() ) {
+			if ( queryTable.isCBREnabled() ) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public QueryDiagram getQueryDiagram() {
 		return queryDiagram;
 	}
@@ -153,6 +164,7 @@ public class Query {
 		appendSelectPart(sql);
 		appendFromPart(sql);
 		appendWherePart(sql);
+		appendOrderByPart(sql);
 		
 		return sql.toString();
 	}
@@ -205,6 +217,40 @@ public class Query {
 		}
 	}
 
+	private void appendOrderByPart(StringBuffer sql) {
+		ArrayList<IQueryField> orderByFields = getOrderByFields();
+
+		String concat = "\nORDER BY ";
+		for ( IQueryField queryField : orderByFields ) {
+			sql.append(concat);
+			sql.append( "[" );
+			sql.append( queryField.getName() );
+			sql.append( "] " );
+			sql.append( queryField.getSortType().name() );
+			concat = ",";
+		}
+	}
+
+	private ArrayList<IQueryField> getOrderByFields() {
+		ArrayList<IQueryField> orderByFields = new ArrayList<IQueryField>();
+		
+		for ( IQueryField queryField : getSelectedQueryFields() ) {
+			if ( !SortType.NONE.equals( queryField.getSortType() ) ) {
+				orderByFields.add(queryField);
+			}
+		}
+
+		Collections.sort(orderByFields, new Comparator<IQueryField>() {
+
+			@Override
+			public int compare(IQueryField arg0, IQueryField arg1) {
+				return Integer.valueOf(arg0.getSortOrder()).compareTo(
+						Integer.valueOf(arg1.getSortOrder()));
+			}
+		} );
+		return orderByFields;
+	}
+
 	@Override
 	public String toString() {
 		return toSQL();
@@ -231,6 +277,25 @@ public class Query {
 			}
 		}
 		return null;
+	}
+
+	public IQueryTable getTable(String tableName) {
+		return getTable(tableName, getQueryTables() );
+	}
+	
+	private IQueryTable getTable(String tableName, Collection<IQueryTable> queryTables2 ) {
+		for ( IQueryTable childQueryTable : queryTables2 ) {
+			if ( childQueryTable.getName().equals(tableName) ) {
+				return childQueryTable;
+			}
+			
+			IQueryTable queryTable = getTable(tableName, childQueryTable.getChildQueryTables() );
+			if ( queryTable != null ) {
+				return queryTable;
+			}
+		}
+		return null;
+		
 	}
 
 }

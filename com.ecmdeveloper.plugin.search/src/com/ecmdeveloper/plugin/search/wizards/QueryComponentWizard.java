@@ -32,10 +32,10 @@ import com.ecmdeveloper.plugin.search.model.Query;
  */
 public abstract class QueryComponentWizard extends Wizard {
 
-	private SelectFieldWizardPage selectFieldWizardPage;
-	private final Query query;
-	private IQueryField selection;
+	protected SelectFieldWizardPage selectFieldWizardPage;
+	protected IQueryField selection;
 	private boolean skipFieldSelection = false;
+	private final Query query;
 	
 	public QueryComponentWizard(Query query) {
 		this.query = query;
@@ -58,7 +58,7 @@ public abstract class QueryComponentWizard extends Wizard {
 		addPage(selectFieldWizardPage);
 	}
 
-	private StructuredSelection getFieldSelection() {
+	protected StructuredSelection getFieldSelection() {
 		StructuredSelection fieldSelection = null;
 		if ( selection != null ) {
 			fieldSelection = new StructuredSelection( selection );
@@ -76,6 +76,10 @@ public abstract class QueryComponentWizard extends Wizard {
 	
 	protected IQueryField getSelection() {
 		return selection;
+	}
+
+	protected Query getQuery() {
+		return query;
 	}
 
 	public void setSkipFieldSelection(boolean skipFieldSelection ) {

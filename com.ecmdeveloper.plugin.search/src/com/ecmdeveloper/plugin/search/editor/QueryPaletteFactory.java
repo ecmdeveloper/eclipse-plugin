@@ -33,6 +33,7 @@ import com.ecmdeveloper.plugin.search.model.AndContainer;
 import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
+import com.ecmdeveloper.plugin.search.model.FullTextQuery;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
@@ -97,25 +98,28 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 
 		CombinedTemplateCreationEntry combined;
 		
-		combined = createEntry(Comparison.class, Comparison.DESCRIPTION, queryProxy);
+		combined = createEntry(Comparison.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry(NullTest.class, NullTest.DESCRIPTION, queryProxy);
+		combined = createEntry(NullTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry(WildcardTest.class, WildcardTest.DESCRIPTION, queryProxy);
+		combined = createEntry(WildcardTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry( InFolderTest.class, InFolderTest.DESCRIPTION, queryProxy);
+		combined = createEntry( InFolderTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry(InSubFolderTest.class, InSubFolderTest.DESCRIPTION, queryProxy);
+		combined = createEntry(InSubFolderTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 		
-		combined = createEntry(InSubFolderTest.class, ClassTest.DESCRIPTION, queryProxy);
+		combined = createEntry(ClassTest.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
-		combined = createEntry(FreeText.class, FreeText.DESCRIPTION, queryProxy);
+		combined = createEntry(FreeText.DESCRIPTION, queryProxy);
+		entries.add(combined);
+
+		combined = createEntry(FullTextQuery.DESCRIPTION, queryProxy);
 		entries.add(combined);
 
 		drawer.addAll(entries);
@@ -131,11 +135,11 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		return combined;
 	}
 
-	private static CombinedTemplateCreationEntry createEntry(Class<? extends QueryElement> type,
-			QueryElementDescription description, QueryProxy queryProxy) {
+	private static CombinedTemplateCreationEntry createEntry(QueryElementDescription description,
+			QueryProxy queryProxy) {
 
 		CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(description
-				.getLabel(), description.getDescription(), new QueryCreationFactory(queryProxy, type),
+				.getLabel(), description.getDescription(), new QueryCreationFactory(queryProxy, description.getObjectType() ),
 				description.getIcon(), description.getLargeIcon());
 
 		return combined;

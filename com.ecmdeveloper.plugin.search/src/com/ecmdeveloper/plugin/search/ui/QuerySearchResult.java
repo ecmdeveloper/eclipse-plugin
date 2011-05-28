@@ -49,7 +49,6 @@ public class QuerySearchResult implements ISearchResult {
 	public QuerySearchResult(Query query, SearchQuery searchQuery) {
 		this.query = query;
 		this.searchQuery = searchQuery;
-		
 		columnNames = new ArrayList<String>();
 		Collection<IQueryField> selectedQueryFields = query.getSelectedQueryFields();
 		for (IQueryField queryField : selectedQueryFields ) {
@@ -69,7 +68,7 @@ public class QuerySearchResult implements ISearchResult {
 
 	@Override
 	public String getLabel() {
-		return query.toString();
+		return searchQuery.getLabel();
 	}
 
 	@Override

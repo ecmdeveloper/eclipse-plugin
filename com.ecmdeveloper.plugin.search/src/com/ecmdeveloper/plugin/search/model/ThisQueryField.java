@@ -107,4 +107,9 @@ public class ThisQueryField implements IQueryField {
 	public boolean isQueryField() {
 		return true;
 	}
+
+	@Override
+	public boolean isCBREnabled() {
+		return false;
+	}
 }

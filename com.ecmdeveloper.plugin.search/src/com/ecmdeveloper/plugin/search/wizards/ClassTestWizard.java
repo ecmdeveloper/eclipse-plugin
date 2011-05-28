@@ -52,8 +52,8 @@ public class ClassTestWizard extends QueryComponentWizard {
 
 	public void addPages() {
 		super.addPages();
-		classValueWizardPage = new ClassValueWizardPage();
-		classValueWizardPage.setValue(className);
+		classValueWizardPage = new ClassValueWizardPage(getQuery());
+		classValueWizardPage.setClassName(className);
 		addPage(classValueWizardPage);
 	}
 	
@@ -83,6 +83,6 @@ public class ClassTestWizard extends QueryComponentWizard {
 		if ( classValueWizardPage == null ) {
 			return null;
 		}
-		return (String) classValueWizardPage.getValue();
+		return (String) classValueWizardPage.getClassName();
 	}
 }

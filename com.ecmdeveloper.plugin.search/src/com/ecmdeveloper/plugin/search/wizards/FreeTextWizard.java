@@ -44,12 +44,12 @@ public class FreeTextWizard extends Wizard {
 	public boolean performFinish() {
 		return true;
 	}
+
 	public String getText() {
 		return (String) stringValueWizardPage.getValue();
 	}
 
 	public void setText(String text) {
 		this.text = text;
-		
 	}
 }

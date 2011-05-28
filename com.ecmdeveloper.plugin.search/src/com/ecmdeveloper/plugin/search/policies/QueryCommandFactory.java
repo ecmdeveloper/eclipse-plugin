@@ -35,6 +35,7 @@ import com.ecmdeveloper.plugin.search.commands.CreateClassTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateComparisonCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateFreeTextCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateFullTextQueryCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
@@ -43,6 +44,7 @@ import com.ecmdeveloper.plugin.search.editor.QueryCreationFactory;
 import com.ecmdeveloper.plugin.search.model.ClassTest;
 import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.FreeText;
+import com.ecmdeveloper.plugin.search.model.FullTextQuery;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
@@ -80,6 +82,8 @@ public class QueryCommandFactory {
 			command = new CreateFreeTextCommand();
 		} else if ( objectType == ClassTest.class ) {
 			command = new CreateClassTestCommand();
+		} else if ( objectType == FullTextQuery.class ) {
+			command = new CreateFullTextQueryCommand();
 		} else {			
 			command = new CreateCommand();
 		}
@@ -149,6 +153,10 @@ public class QueryCommandFactory {
 			operations.add(ClassTest.DESCRIPTION);
 		}
 		
+		if ( FullTextQuery.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(FullTextQuery.DESCRIPTION);
+		}
+
 		dialog.setElements(operations.toArray());
 		return dialog;
 	}

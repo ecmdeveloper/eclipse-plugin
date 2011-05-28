@@ -35,6 +35,7 @@ public interface IQueryTable {
 	public String getConnectionDisplayName();
 	public String getObjectStoreName();
 	public String getObjectStoreDisplayName();
+	public boolean isCBREnabled();
 	
 	// TODO: add these to a different interface?
 	public void addChildQueryTable(IQueryTable childTable);

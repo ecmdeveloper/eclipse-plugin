@@ -136,5 +136,10 @@ public class MockQueryTable implements IQueryTable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean isCBREnabled() {
+		return true;
+	}
 }
 
