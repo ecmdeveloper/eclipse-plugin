@@ -27,6 +27,8 @@ import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.SearchResultRow;
 import com.filenet.api.collection.RepositoryRowSet;
+import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.property.PropertyFilter;
 import com.filenet.api.query.RepositoryRow;
 import com.filenet.api.query.SearchSQL;
 import com.filenet.api.query.SearchScope;
@@ -58,7 +60,7 @@ public class ExecuteSearchTask extends BaseTask {
 		Iterator<?> iterator = searchResult.iterator();
 		while (iterator.hasNext()) {
 			RepositoryRow object = (RepositoryRow) iterator.next();
-			SearchResultRow s = new SearchResultRow(object);
+			SearchResultRow s = new SearchResultRow(object, objectStore);
 			searchResultList.add(s);
 		}
 		
@@ -72,8 +74,10 @@ public class ExecuteSearchTask extends BaseTask {
 
 	private RepositoryRowSet getSearchResult(String query) {
 		com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
+		PropertyFilter pf = new PropertyFilter();
+		pf.addIncludeProperty(0, null, null, PropertyNames.ID, null );
 		SearchScope scope = new SearchScope( internalObjectStore );
-		RepositoryRowSet fetchRows = scope.fetchRows(new SearchSQL( query ), null, null, null);
+		RepositoryRowSet fetchRows = scope.fetchRows(new SearchSQL( query ), null, pf, null);
 		return fetchRows;
 	}
 }

@@ -614,6 +614,18 @@
             </objectClass>
          </enablement>
       </decorator>
+      <decorator
+            class="com.ecmdeveloper.plugin.decorators.SearchResultRowDecorator"
+            id="com.ecmdeveloper.plugin.decorators.SearchResultRow"
+            label="Search Result Row"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="com.ecmdeveloper.plugin.model.SearchResultRow">
+            </objectClass>
+         </enablement>
+      </decorator>
    </extension>
    <extension
          point="org.eclipse.core.filesystem.filesystems">

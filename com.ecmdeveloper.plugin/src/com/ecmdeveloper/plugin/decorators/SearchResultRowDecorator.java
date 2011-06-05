@@ -1,5 +1,5 @@
 /**
- * Copyright 2010, Ricardo Belfor
+ * Copyright 2011, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -26,25 +26,36 @@ import org.eclipse.jface.viewers.IDecoration;
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.SearchResultRow;
 import com.ecmdeveloper.plugin.util.IconFiles;
 
 /**
- * @author Ricardo.Belfor
+ * @author ricardo.belfor
  *
  */
-public class DocumentDecorator extends ObjectStoreItemDecorator {
+public class SearchResultRowDecorator extends ObjectStoreItemDecorator {
 
 	private static int quadrant = IDecoration.BOTTOM_RIGHT;
 
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
-		Document document = (Document) element;
-
-		if (document.isCheckedOut()) {
+		if ( isCheckedOutDocument(element) ) { 
 			ImageDescriptor descriptor = Activator.getImageDescriptor(IconFiles.CHECKED_OUT_DECORATOR_IMAGE);
 			decoration.addOverlay(descriptor, quadrant);
 		}
+	}
+
+	private boolean isCheckedOutDocument(Object element) {
+		if ( element instanceof SearchResultRow ) {
+			IObjectStoreItem objectStoreItem = ((SearchResultRow)element).getObjectValue();
+			if ( objectStoreItem instanceof Document ) {
+				if ( ((Document)objectStoreItem).isCheckedOut() ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -52,6 +63,7 @@ public class DocumentDecorator extends ObjectStoreItemDecorator {
 		return false;
 	}
 
+	@Override
 	protected boolean isDecoratedType(IObjectStoreItem objectStoreItem) {
 		return objectStoreItem instanceof Document;
 	}
