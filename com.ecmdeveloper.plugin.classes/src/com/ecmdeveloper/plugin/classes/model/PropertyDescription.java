@@ -87,6 +87,7 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 	private Boolean containable;
 	private final Boolean systemOwned;
 	private final ObjectStore objectStore;
+	private final boolean cbrEnabled;
 	
 	public PropertyDescription(Object internalPropertyDescription, ObjectStore objectStore ) {
 		this.objectStore = objectStore;
@@ -99,11 +100,21 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 		multivalue = !Cardinality.SINGLE.equals( propertyDescription.get_Cardinality() );
 		systemOwned = propertyDescription.get_IsSystemOwned();
 		orderable = initializeOrderable();
+		cbrEnabled = initializeCBREnabled();
+		
 		containable = null;
 			
 		initializeOrderable();
 		initializeSettability();
 		initializeDescriptiveText();
+	}
+
+	private Boolean initializeCBREnabled() {
+		if ( propertyType.equals(PropertyType.STRING ) ) {
+			return Boolean.TRUE.equals( ((PropertyDescriptionString) propertyDescription).get_IsCBREnabled() );
+		} else {
+			return false;
+		}
 	}
 
 	private boolean initializeOrderable() {
@@ -189,6 +200,10 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 			containable = initializeContainable();
 		}
 		return containable;
+	}
+
+	public boolean isCBREnabled() {
+		return cbrEnabled;
 	}
 
 	private boolean initializeContainable() {
