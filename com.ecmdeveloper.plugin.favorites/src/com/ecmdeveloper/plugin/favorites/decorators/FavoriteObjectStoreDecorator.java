@@ -27,6 +27,7 @@ import com.ecmdeveloper.plugin.decorators.ObjectStoreItemDecorator;
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.favorites.util.IconFiles;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
@@ -56,5 +57,10 @@ public class FavoriteObjectStoreDecorator extends ObjectStoreItemDecorator {
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
+	}
+
+	@Override
+	protected boolean isDecoratedType(IObjectStoreItem objectStoreItem) {
+		return true;
 	}
 }
