@@ -47,6 +47,7 @@ public class ClassDescription implements IAdaptable {
 	private Boolean hasChildren;
 	private String id;
 	List<PropertyDescription> propertyDescriptions;
+	private final Boolean cbrEnabled;
 	
 	public ClassDescription(Object classDescription, Object parent, ObjectStore objectStore) {
 		
@@ -55,7 +56,10 @@ public class ClassDescription implements IAdaptable {
 			this.objectStore = objectStore;
 			this.parent = parent;
 			this.id = this.classDescription.get_Id().toString();
+			this.cbrEnabled = this.classDescription.get_IsCBREnabled();
 			refreshInternal();
+		} else {
+			this.cbrEnabled = false;
 		}
 	}
 
@@ -122,6 +126,10 @@ public class ClassDescription implements IAdaptable {
 
 	public String getId() {
 		return id;
+	}
+
+	public Boolean getCBREnabled() {
+		return cbrEnabled;
 	}
 
 	@Override
