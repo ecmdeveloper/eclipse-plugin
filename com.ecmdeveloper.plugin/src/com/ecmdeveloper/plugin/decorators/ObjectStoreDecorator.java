@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 
 import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
@@ -70,5 +71,9 @@ public class ObjectStoreDecorator extends ObjectStoreItemDecorator {
 	 */
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
+	}
+	
+	protected boolean isDecoratedType(IObjectStoreItem objectStoreItem) {
+		return objectStoreItem instanceof ObjectStore;
 	}
 }

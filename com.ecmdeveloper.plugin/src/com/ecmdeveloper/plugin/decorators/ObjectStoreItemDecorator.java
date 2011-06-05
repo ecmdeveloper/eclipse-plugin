@@ -113,9 +113,7 @@ public abstract class ObjectStoreItemDecorator implements ILightweightLabelDecor
 		     iter.next().labelProviderChanged(labelEvent);
 	}
 
-	private boolean isDecoratedType(IObjectStoreItem objectStoreItem) {
-		return objectStoreItem instanceof ObjectStore || objectStoreItem instanceof Document;
-	}
+	protected abstract boolean isDecoratedType(IObjectStoreItem objectStoreItem);
 
 	@Override
 	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event) {

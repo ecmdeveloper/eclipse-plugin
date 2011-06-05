@@ -32,4 +32,5 @@ public class IconFiles {
 	public static final String ICON_EXTERNAL_FILE = "icons/page_white_world.png";
 	public static final String HOURGLASS = "icons/hourglass.png";
 	public static final String FOLDER_EDIT = "icons/folder_edit.png";
+	public static final String CHECKED_OUT_DECORATOR_IMAGE = "icons/check.png";
 }
