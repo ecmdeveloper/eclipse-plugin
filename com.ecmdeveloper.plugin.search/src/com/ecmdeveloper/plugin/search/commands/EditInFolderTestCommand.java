@@ -38,6 +38,8 @@ public class EditInFolderTestCommand extends EditQueryComponentCommand {
 
 	private IQueryField previousField;
 	private IQueryField newField;
+	private String previousFolder;
+	private String newFolder;
 	
 	public EditInFolderTestCommand(QueryComponent queryComponent) {
 		super(queryComponent);
@@ -49,17 +51,26 @@ public class EditInFolderTestCommand extends EditQueryComponentCommand {
 		
 		Shell shell = Display.getCurrent().getActiveShell();
 		InFolderTest inFolderTest = getInFolderTest();
-
-		FolderTestWizard wizard = new FolderTestWizard( inFolderTest.getQuery() );
-		wizard.setSelection( inFolderTest.getField() );
+		FolderTestWizard wizard = getFolderTestWizard(inFolderTest);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 
 		if ( dialog.open() == Dialog.OK ) {
 			previousField = inFolderTest.getField();
+			previousFolder = inFolderTest.getFolder();
+			
 			newField = wizard.getField();
+			newFolder = wizard.getFolder();
+			
 			redo();
 		}
+	}
+
+	private FolderTestWizard getFolderTestWizard(InFolderTest inFolderTest) {
+		FolderTestWizard wizard = new FolderTestWizard( inFolderTest.getQuery() );
+		wizard.setSelection( inFolderTest.getField() );
+		wizard.setFolder( inFolderTest.getFolder() );
+		return wizard;
 	}
 
 	private InFolderTest getInFolderTest() {
@@ -70,6 +81,7 @@ public class EditInFolderTestCommand extends EditQueryComponentCommand {
 	public void redo() {
 		InFolderTest inFolderTest = getInFolderTest();
 		inFolderTest.setField( newField );
+		inFolderTest.setFolder(newFolder);
 	}
 
 	@Override
@@ -81,5 +93,6 @@ public class EditInFolderTestCommand extends EditQueryComponentCommand {
 	public void undo() {
 		InFolderTest inFolderTest = getInFolderTest();
 		inFolderTest.setField( previousField );
+		inFolderTest.setFolder( previousFolder );
 	}
 }

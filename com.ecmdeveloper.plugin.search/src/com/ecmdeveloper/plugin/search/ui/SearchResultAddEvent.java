@@ -18,20 +18,28 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.util;
+package com.ecmdeveloper.plugin.search.ui;
+
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.SearchResultEvent;
+
+import com.ecmdeveloper.plugin.model.SearchResultRow;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class IconFiles {
+public class SearchResultAddEvent extends SearchResultEvent {
 
-	public static String TABLE_FOLDER = "icons/folder_table.png";
-	public static String DISTINCT = "icons/table_sort.png";
-	public static String SHOW_SQL = "icons/table_lightning.png";
-	public static String SEARCH_EDITOR = "icons/find_edit.png";
-	public static String CLASS = "icons/class.png";
+	private static final long serialVersionUID = 7348268456390688457L;
+	private final SearchResultRow searchResultRow;
 	
-	private IconFiles() {
+	protected SearchResultAddEvent(ISearchResult searchResult, SearchResultRow searchResultRow ) {
+		super(searchResult);
+		this.searchResultRow = searchResultRow;
+	}
+
+	public SearchResultRow getSearchResultRow() {
+		return searchResultRow;
 	}
 }

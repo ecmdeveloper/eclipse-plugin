@@ -8,7 +8,7 @@
             contributorClass="com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditorContributor"
             default="false"
             extensions="search"
-            icon="icons/find.png"
+            icon="icons/find_edit.png"
             id="com.ecmdeveloper.plugin.search.searchEditor"
             name="Search Editor">
       </editor>
@@ -25,7 +25,7 @@
          point="org.eclipse.search.searchPages">
       <page
             class="com.ecmdeveloper.plugin.search.ui.SearchPage"
-            icon="icons/find.png"
+            icon="icons/find_edit.png"
             id="com.ecmdeveloper.plugin.search.searchPage"
             label="Content Engine Search">
       </page>
@@ -39,6 +39,15 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.search.menu?after=extraSearchGroup">
+         <command
+               commandId="com.ecmdeveloper.plugin.search.contentEngine"
+               icon="icons/find_edit.png"
+               style="push"
+               tooltip="Search Content Engine">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -47,6 +56,11 @@
             id="com.ecmdeveloper.plugin.search.export"
             name="Export">
       </command>
+      <command
+            description="Search Content Engine"
+            id="com.ecmdeveloper.plugin.search.contentEngine"
+            name="Content Engine">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -54,6 +68,26 @@
             class="com.ecmdeveloper.plugin.search.handlers.ExportHandler"
             commandId="com.ecmdeveloper.plugin.search.export">
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.search.handlers.SearchContentEngineHandler"
+            commandId="com.ecmdeveloper.plugin.search.contentEngine">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="com.ecmdeveloper.plugin.search.actionSet"
+            label="Open Content Engine Search"
+            visible="true">
+         <action
+               class="com.ecmdeveloper.plugin.search.handlers.ContentEngineSearchHandler"
+               icon="icons/find_edit.png"
+               id="com.ecmdeveloper.plugin.search.contentEngineSearch"
+               label="Content Engine"
+               menubarPath="org.eclipse.search.menu/dialogGroup"
+               style="push">
+         </action>
+      </actionSet>
    </extension>
 
 </plugin>
