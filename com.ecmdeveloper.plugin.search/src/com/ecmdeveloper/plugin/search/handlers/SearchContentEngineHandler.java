@@ -18,20 +18,31 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.util;
+package com.ecmdeveloper.plugin.search.handlers;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
+
+import com.ecmdeveloper.plugin.search.ui.SearchPage;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class IconFiles {
+public class SearchContentEngineHandler extends AbstractHandler implements IHandler {
 
-	public static String TABLE_FOLDER = "icons/folder_table.png";
-	public static String DISTINCT = "icons/table_sort.png";
-	public static String SHOW_SQL = "icons/table_lightning.png";
-	public static String SEARCH_EDITOR = "icons/find_edit.png";
-	public static String CLASS = "icons/class.png";
-	
-	private IconFiles() {
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		if (window == null)	return null;
+
+		NewSearchUI.openSearchDialog(window, SearchPage.ID);
+		return null;
 	}
 }

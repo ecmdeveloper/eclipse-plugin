@@ -18,20 +18,43 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.util;
+package com.ecmdeveloper.plugin.search.handlers;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+
+import com.ecmdeveloper.plugin.search.ui.SearchPage;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class IconFiles {
+public class ContentEngineSearchHandler implements IWorkbenchWindowActionDelegate {
 
-	public static String TABLE_FOLDER = "icons/folder_table.png";
-	public static String DISTINCT = "icons/table_sort.png";
-	public static String SHOW_SQL = "icons/table_lightning.png";
-	public static String SEARCH_EDITOR = "icons/find_edit.png";
-	public static String CLASS = "icons/class.png";
-	
-	private IconFiles() {
+	private IWorkbenchWindow window;
+
+	@Override
+	public void init(IWorkbenchWindow window) {
+		this.window = window;
+	}
+
+	@Override
+	public void dispose() {
+		window = null;
+	}
+
+	@Override
+	public void run(IAction action) {
+		if ( window == null || window.getActivePage() == null ) {
+			return;
+		}
+		NewSearchUI.openSearchDialog(window, SearchPage.ID);
+	}
+
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
 	}
 }

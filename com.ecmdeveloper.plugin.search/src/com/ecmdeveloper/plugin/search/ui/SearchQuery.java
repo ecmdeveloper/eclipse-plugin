@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.ui;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -31,11 +33,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.SearchResultRow;
 import com.ecmdeveloper.plugin.model.tasks.ExecuteSearchTask;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -43,14 +48,18 @@ import com.ecmdeveloper.plugin.search.model.Query;
  */
 public class SearchQuery implements ISearchQuery {
 
+	private static final String LABEL_FORMAT_EMPTY = "{0} - {1}";
+	private static final String LABEL_FORMAT = "{0} - {1} - {2} matches";
+	private static final String TASK_NAME = "Executing Search";
 	QuerySearchResult searchResult;
 	private final Query query;
-	private final String label;
+	private String label;
+	private String queryDate;
 	
 	public SearchQuery(Query query) {
 		this.query = query;
 		searchResult = new QuerySearchResult(query,this);
-		label = query.getName() + " - " + (new Date()).toString();	
+		queryDate = (new Date()).toString();
 	}
 	
 	@Override
@@ -65,7 +74,11 @@ public class SearchQuery implements ISearchQuery {
 
 	@Override
 	public String getLabel() {
-		return label;
+		if (searchResult.size() == 0 ) {
+			return label = MessageFormat.format(LABEL_FORMAT_EMPTY, query.getName(), queryDate );
+		} else {
+			return label = MessageFormat.format(LABEL_FORMAT, query.getName(), queryDate, searchResult.size());
+		}
 	}
 
 	@Override
@@ -75,21 +88,65 @@ public class SearchQuery implements ISearchQuery {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		monitor.beginTask("Executing Search", IProgressMonitor.UNKNOWN );
 				
+		try
+		{
+			searchResult.clear();
+			
+			monitor.beginTask(TASK_NAME, IProgressMonitor.UNKNOWN );
+			monitor.subTask( getLabel() );
+			ArrayList<SearchResultRow> searchResultRows = executeSearch();
+			monitor.done();
+
+			IStatus status = addRowsToResult(searchResultRows, monitor);
+			monitor.done();
+			return status;
+		} catch (Exception e) {
+			PluginMessage.openErrorFromThread(TASK_NAME, e.getLocalizedMessage(), e );
+			return Status.CANCEL_STATUS;
+		}
+	}
+
+	private IStatus addRowsToResult(ArrayList<SearchResultRow> searchResultRows,
+			IProgressMonitor monitor) {
+
+		monitor.beginTask("Fetching Result", searchResultRows.size() );
+
+		for (SearchResultRow searchResultRow : searchResultRows ) {
+			try {
+				addRowToResult(searchResultRow, monitor);
+				monitor.worked(1);
+			} catch (ExecutionException e) {
+				PluginMessage.openErrorFromThread(TASK_NAME, e.getLocalizedMessage(), e );
+				return Status.CANCEL_STATUS;
+			}
+			
+			if ( monitor.isCanceled() ) {
+				return Status.CANCEL_STATUS;
+			}
+		}
+		return Status.OK_STATUS;
+	}
+
+	private void addRowToResult(SearchResultRow searchResultRow, IProgressMonitor monitor) throws ExecutionException {
+		if ( searchResultRow.isHasObjectValue() ) {
+			IObjectStoreItem objectStoreItem = searchResultRow.loadObjectValue();
+			monitor.subTask( objectStoreItem.getDisplayName() );
+		}
+		searchResult.addRow(searchResultRow);
+	}
+
+	private ArrayList<SearchResultRow> executeSearch() throws Exception {
 		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
 		ObjectStore objectStore = getObjectStore(objectStoresManager);
-		ExecuteSearchTask task = new ExecuteSearchTask(query.toSQL(), objectStore);
-		try {
-			objectStoresManager.executeTaskSync(task);
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if ( !objectStore.isConnected() ) {
+			throw new Exception( "Object Store '" + objectStore.getDisplayName() + "' is not connected." );
 		}
+		ExecuteSearchTask task = new ExecuteSearchTask(query.toSQL(), objectStore);
+		objectStoresManager.executeTaskSync(task);
 		
-		searchResult.setSearchResult(task.getSearchResult());
-		monitor.done();
-		return Status.OK_STATUS;
+		ArrayList<SearchResultRow> searchResultRows = task.getSearchResult();
+		return searchResultRows;
 	}
 
 	private ObjectStore getObjectStore(ObjectStoresManager objectStoresManager) {

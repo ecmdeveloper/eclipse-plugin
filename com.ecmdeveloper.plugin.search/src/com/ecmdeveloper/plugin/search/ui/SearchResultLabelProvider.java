@@ -22,26 +22,78 @@ package com.ecmdeveloper.plugin.search.ui;
 
 import java.util.HashMap;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
+import com.ecmdeveloper.plugin.model.CustomObject;
+import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SearchResultLabelProvider extends LabelProvider implements ITableLabelProvider {
+public class SearchResultLabelProvider extends ObjectStoreItemLabelProvider implements ITableLabelProvider {
 
+	protected IDecoratorManager decorator;
+	
 	private HashMap<Integer,String> indexToNameMap = new HashMap<Integer, String>();
+
+	public SearchResultLabelProvider() {
+		super();
+		decorator = PlatformUI.getWorkbench().getDecoratorManager();
+	}
 	
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
+		if (element instanceof SearchResultRow) {
+			SearchResultRow searchResultRow = (SearchResultRow)element;
+			String name = indexToNameMap.get(Integer.valueOf(columnIndex) );
+			if ( name != null ) {
+				if ( name.equals("This") & searchResultRow.isHasObjectValue() ) {
+					IObjectStoreItem obj = searchResultRow.getObjectValue();
+					return getObjectStoreItemImage(obj, searchResultRow);					
+				} 
+			} 
+		}
 		return null;
 	}
 
-	public void connectIndexToName(Integer index, String name) {
+	private Image getObjectStoreItemImage(IObjectStoreItem obj, SearchResultRow searchResultRow) {
+		if (obj instanceof Folder) {
+			return getDecoratedImage( searchResultRow, getStandardImage(ISharedImages.IMG_OBJ_FOLDER ) );
+		} else if (obj instanceof Document) {
+			return getDecoratedImage(searchResultRow, getStandardImage(ISharedImages.IMG_OBJ_FILE ) );
+		} else if (obj instanceof CustomObject) {
+			return getDecoratedImage(searchResultRow, getStandardImage( ISharedImages.IMG_OBJ_ELEMENT ) );
+		}
+		return null;
+	}
+
+	public void addListener(ILabelProviderListener listener) {
+		decorator.addListener(listener);
+		super.addListener(listener);
+	}
+
+	public void removeListener(ILabelProviderListener listener) {
+		decorator.removeListener(listener);
+		super.removeListener(listener);
+	}
+	
+   @Override
+	public void dispose() {
+		super.dispose();
+	}
+
+   public void connectIndexToName(Integer index, String name) {
 		indexToNameMap.put(index, name);
 	}
 	
@@ -51,12 +103,28 @@ public class SearchResultLabelProvider extends LabelProvider implements ITableLa
 			SearchResultRow searchResultRow = (SearchResultRow)element;
 			String name = indexToNameMap.get(Integer.valueOf(columnIndex) );
 			if ( name != null ) {
-				Object value = searchResultRow.getValue(name);
-				if ( value != null ) {
-					return value.toString();
+				if ( name.equals("This") & searchResultRow.isHasObjectValue() ) {
+					IObjectStoreItem objectStoreItem = searchResultRow.getObjectValue();
+					return super.getText(objectStoreItem);
+				} else {
+					Object value = searchResultRow.getValue(name);
+					if ( value != null ) {
+						return value.toString();
+					}
 				}
 			} 
 		}
 		return "";
+	}
+
+	private Image getDecoratedImage(Object obj, Image image) {
+		Image decorated = decorator.decorateImage(image, obj);
+		if (decorated != null)
+			return decorated;
+		return image;
+	}
+
+	private Image getStandardImage(String imageKey) {
+		return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
 	}
 }

@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.ui;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.DialogPage;
@@ -33,6 +34,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,6 +49,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.WorkbenchException;
 
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
@@ -61,6 +65,8 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
  */
 public class SearchPage extends DialogPage implements ISearchPage {
 
+	public static final String ID = "com.ecmdeveloper.plugin.search.searchPage";
+	
 	private static final String PAGE_NAME = "Content Engine Search";
 	private static final String DATE_MODIFIED_FMT = "Date Modified: {0}";
 	private static final String SQL_FMT = "SQL: {0}";
@@ -90,24 +96,33 @@ public class SearchPage extends DialogPage implements ISearchPage {
 		} else if ( modifyQueryButton.getSelection() ) {
 			return performModifyQuery();
 		} else if ( executeQueryButton.getSelection() ) {
-			
+			return performExecuteQuery();
 		}
 		return false;
 	}
 
 	private boolean performModifyQuery() {
-		QueryFileInfo queryFileInfo = getSelectedQuery();
-		if ( queryFileInfo == null ) {
-			MessageDialog.openError(getShell(), PAGE_NAME, "There is no stored query selected.");
-			return false;
-		}
+
 		try {
-			Query query = queryFileStore.load( queryFileInfo.getName() );
+			Query query = getSelectedQuery();
+			if ( query == null ) {
+				return false;
+			}
 			return openQueryEditor( query );
 		} catch (Exception e) {
 			PluginMessage.openError(getShell(), PAGE_NAME, e.getLocalizedMessage(), e);
 		}
 		return false;
+	}
+
+	private Query getSelectedQuery() throws IOException, WorkbenchException {
+		QueryFileInfo queryFileInfo = getSelectedQueryFileInfo();
+		if ( queryFileInfo == null ) {
+			MessageDialog.openError(getShell(), PAGE_NAME, "There is no stored query selected.");
+			return null;
+		}
+		Query query = queryFileStore.load( queryFileInfo.getName() );
+		return query;
 	}
 
 	private boolean openQueryEditor(Query query) {
@@ -123,6 +138,22 @@ public class SearchPage extends DialogPage implements ISearchPage {
 		return false;
 	}
 
+	private boolean performExecuteQuery() {
+
+		try {
+			Query query = getSelectedQuery();
+			if ( query == null ) {
+				return false;
+			}
+			ISearchQuery searchQuery = new SearchQuery(query);
+			NewSearchUI.runQueryInBackground(searchQuery );
+			return true;
+		} catch (Exception e) {
+			PluginMessage.openError(getShell(), PAGE_NAME, e.getLocalizedMessage(), e);
+		}
+		return false;
+	}
+	
 	@Override
 	public void setContainer(ISearchPageContainer container) {
 	}
@@ -209,7 +240,7 @@ public class SearchPage extends DialogPage implements ISearchPage {
 	}
 
 	protected void deleteSelectedQuery() {
-		QueryFileInfo queryInfo = getSelectedQuery();
+		QueryFileInfo queryInfo = getSelectedQueryFileInfo();
 		
 		if ( queryInfo != null ) {
 			String message = MessageFormat.format("Do you want to delete the query \"{0}\"?",
@@ -224,7 +255,7 @@ public class SearchPage extends DialogPage implements ISearchPage {
 
 	private void updateQueryInfo() {
 		
-		QueryFileInfo queryInfo = getSelectedQuery();
+		QueryFileInfo queryInfo = getSelectedQueryFileInfo();
 	
 		if ( queryInfo != null ) {
 			dateModifiedLabel.setText(MessageFormat.format(DATE_MODIFIED_FMT, queryInfo
@@ -237,11 +268,11 @@ public class SearchPage extends DialogPage implements ISearchPage {
 			sqlLabel.setText( MessageFormat.format( SQL_FMT, "-" ) );
 		}
 		
-		modifyQueryButton.setSelection( queryInfo != null );
+		modifyQueryButton.setSelection( queryInfo != null && ! executeQueryButton.getSelection() );
 		newQueryButton.setSelection( queryInfo == null );
 	}
 
-	private QueryFileInfo getSelectedQuery() {
+	private QueryFileInfo getSelectedQueryFileInfo() {
 		QueryFileInfo queryInfo = null;
 		IStructuredSelection selection = (IStructuredSelection) queriesCombo.getSelection();
 		if ( !selection.isEmpty() ) {

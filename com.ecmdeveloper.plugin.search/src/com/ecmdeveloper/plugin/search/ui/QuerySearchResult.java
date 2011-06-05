@@ -108,4 +108,32 @@ public class QuerySearchResult implements ISearchResult {
             listener.searchResultChanged(new SearchResultEvent(this) { });
 		}
 	}
+
+	private void fireSearchResultAdded(SearchResultRow searchResultRow) {
+		for (ISearchResultListener listener: searchListeners) {
+            listener.searchResultChanged(new SearchResultAddEvent(this, searchResultRow) );
+		}
+	}
+
+	public void addRow(SearchResultRow searchResultRow) {
+		if (searchResult == null ) {
+			searchResult = new ArrayList<SearchResultRow>();
+		}
+		searchResult.add(searchResultRow);
+		fireSearchResultAdded(searchResultRow);
+	}
+
+	public void clear() {
+		if ( searchResult != null ) {
+			searchResult.clear();
+			fireSearchResultChanged();
+		}
+	}
+
+	public int size() {
+		if ( searchResult != null ) {
+			return searchResult.size();
+		}
+		return 0;
+	}
 }

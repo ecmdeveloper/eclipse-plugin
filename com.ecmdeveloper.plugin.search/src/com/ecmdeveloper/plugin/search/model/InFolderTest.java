@@ -62,7 +62,9 @@ public class InFolderTest extends QueryComponent {
 	}
 
 	public void setFolder(String folder) {
+		String oldValue = this.folder;
 		this.folder = folder;
+		firePropertyChange(FIELD_CHANGED, oldValue, folder);
 	}
 
 	@Override

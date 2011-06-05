@@ -31,9 +31,11 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -57,6 +59,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 
+import com.ecmdeveloper.plugin.model.SearchResultRow;
+
 /**
  * @author ricardo.belfor
  *
@@ -75,10 +79,12 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 	private SelectionProviderAdapter viewerAdapter;
 
 	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
-		private ArrayList fListeners= new ArrayList(5);
+		@SuppressWarnings("unchecked")
+		private ArrayList selectionListeners= new ArrayList(5);
 		
+		@SuppressWarnings("unchecked")
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
-			fListeners.add(listener);
+			selectionListeners.add(listener);
 		}
 
 		public ISelection getSelection() {
@@ -86,7 +92,7 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 		}
 
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-			fListeners.remove(listener);
+			selectionListeners.remove(listener);
 		}
 
 		public void setSelection(ISelection selection) {
@@ -96,7 +102,7 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 		public void selectionChanged(SelectionChangedEvent event) {
 			// forward to my listeners
 			SelectionChangedEvent wrappedEvent= new SelectionChangedEvent(this, event.getSelection());
-			for (Iterator listeners= fListeners.iterator(); listeners.hasNext();) {
+			for (Iterator listeners= selectionListeners.iterator(); listeners.hasNext();) {
 				ISelectionChangedListener listener= (ISelectionChangedListener) listeners.next();
 				listener.selectionChanged(wrappedEvent);
 			}
@@ -146,11 +152,31 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 	}
 
 	private void createViewer(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION );
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION ) {
+
+			@Override
+			public ISelection getSelection() {
+				IStructuredSelection selection = (IStructuredSelection) super.getSelection();
+				ArrayList<Object> newSelection = new ArrayList<Object>(); 
+				for ( Object object : selection.toList() ) {
+					if ( object instanceof SearchResultRow ) {
+						SearchResultRow searchResultRow = (SearchResultRow) object;
+						if ( searchResultRow.isHasObjectValue() ) {
+							newSelection.add( searchResultRow.getObjectValue() );
+						} else {
+							newSelection.add( searchResultRow );
+						}
+					}
+				}
+				return new StructuredSelection( newSelection);
+			}
+			
+		};
 		labelProvider = new SearchResultLabelProvider();
 		viewer.setLabelProvider( labelProvider );
 		viewer.setContentProvider( new SearchResultContentProvider() );
 		viewer.addSelectionChangedListener(viewerAdapter);
+	
 		
 		Table table = viewer.getTable();
 		
@@ -210,7 +236,10 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 
 			@Override
 			public void searchResultChanged(SearchResultEvent e) {
-				
+				updateViewer(e);
+			}
+
+			private void updateViewer(final SearchResultEvent e) {
 				System.out.println("searchResultChanged: " + e.toString() );
 				
 				getSite().getShell().getDisplay().asyncExec(new Runnable() {
@@ -218,7 +247,13 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 						Table table = viewer.getTable();
 						table.setRedraw(false);
 						try {
-							viewer.refresh();
+							if ( e instanceof SearchResultAddEvent ) {
+								SearchResultAddEvent addEvent = (SearchResultAddEvent) e;
+								viewer.add( addEvent.getSearchResultRow() );
+								viewPart.updateLabel();
+							} else {
+								viewer.refresh();
+							}
 						}
 						finally {
 							table.setRedraw(true);
@@ -267,6 +302,12 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 	public void dispose() {
 		super.dispose();
 		//NewSearchUI.removeQueryListener(fQueryListener);
+	}
+
+	private void disposeViewer() {
+		viewer.removeSelectionChangedListener(viewerAdapter);
+		viewer.getControl().dispose();
+		viewer = null;
 	}
 
 	@Override

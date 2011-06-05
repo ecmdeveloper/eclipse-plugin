@@ -110,11 +110,11 @@ public class WildcardTest extends QueryComponent {
 		
 		switch (wildcardType) {
 		case CONTAINS:
-			return MessageFormat.format("%{0}%", value);
+			return MessageFormat.format("''%{0}%''", value);
 		case ENDS_WITH:
-			return MessageFormat.format("%{0}", value);
+			return MessageFormat.format("''%{0}''", value);
 		case STARTS_WITH:
-			return MessageFormat.format("{0}%", value);
+			return MessageFormat.format("''{0}%''", value);
 		}
 		return value;
 	}

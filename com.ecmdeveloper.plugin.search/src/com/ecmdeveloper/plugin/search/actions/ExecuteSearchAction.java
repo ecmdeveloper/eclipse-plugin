@@ -66,7 +66,7 @@ public class ExecuteSearchAction extends SelectionAction {
 			// TODO message
 			return;
 		}
-
+		
 		ISearchQuery searchQuery = new SearchQuery(query);
 		NewSearchUI.runQueryInBackground(searchQuery );
 	}
