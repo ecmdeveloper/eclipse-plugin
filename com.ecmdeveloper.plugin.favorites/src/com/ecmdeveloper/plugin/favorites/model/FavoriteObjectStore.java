@@ -50,7 +50,7 @@ public class FavoriteObjectStore {
 		if ( children == null )
 		{
 			children = new ArrayList<ObjectStoreItem>();
-			children.add( new Placeholder() );
+			children.add( new Placeholder( Placeholder.Type.LOADING ) );
 
 			FavoritesManager.getInstance().fetchFavorites(this);
 		}		
