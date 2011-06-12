@@ -61,6 +61,11 @@
             id="com.ecmdeveloper.plugin.search.contentEngine"
             name="Content Engine">
       </command>
+      <command
+            defaultHandler="com.ecmdeveloper.plugin.search.handlers.SearchResultViewDoubleClickHandler"
+            id="com.ecmdeveloper.plugin.searchResultViewDoubleClick"
+            name="DoubleClick">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

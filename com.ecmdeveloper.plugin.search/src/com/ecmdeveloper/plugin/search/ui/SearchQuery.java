@@ -53,7 +53,6 @@ public class SearchQuery implements ISearchQuery {
 	private static final String TASK_NAME = "Executing Search";
 	QuerySearchResult searchResult;
 	private final Query query;
-	private String label;
 	private String queryDate;
 	
 	public SearchQuery(Query query) {
@@ -75,9 +74,9 @@ public class SearchQuery implements ISearchQuery {
 	@Override
 	public String getLabel() {
 		if (searchResult.size() == 0 ) {
-			return label = MessageFormat.format(LABEL_FORMAT_EMPTY, query.getName(), queryDate );
+			return MessageFormat.format(LABEL_FORMAT_EMPTY, query.getName(), queryDate );
 		} else {
-			return label = MessageFormat.format(LABEL_FORMAT, query.getName(), queryDate, searchResult.size());
+			return MessageFormat.format(LABEL_FORMAT, query.getName(), queryDate, searchResult.size());
 		}
 	}
 
@@ -96,6 +95,9 @@ public class SearchQuery implements ISearchQuery {
 			monitor.beginTask(TASK_NAME, IProgressMonitor.UNKNOWN );
 			monitor.subTask( getLabel() );
 			ArrayList<SearchResultRow> searchResultRows = executeSearch();
+			if ( monitor.isCanceled() ) {
+				return Status.CANCEL_STATUS;
+			}
 			monitor.done();
 
 			IStatus status = addRowsToResult(searchResultRows, monitor);

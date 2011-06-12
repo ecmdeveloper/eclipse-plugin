@@ -23,22 +23,20 @@ package com.ecmdeveloper.plugin.search.ui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IQueryListener;
-import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.ISearchResultPage;
@@ -46,9 +44,9 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -56,22 +54,27 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.ShowInContext;
 
 import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.util.PluginLog;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SearchResultPage extends Page implements ISearchResultPage {
+public class SearchResultPage extends Page implements ISearchResultPage, IShowInSource {
 
+	private static final String DOUBLE_CLICK_HANDLER_ID = "com.ecmdeveloper.plugin.searchResultViewDoubleClick";
+	
 	private String id;
 	private QuerySearchResult searchResult;
 	private TableViewer viewer;
 	private Composite viewerContainer;
-	private PageBook pagebook;
 	private ISearchResultViewPart viewPart;
 	private IQueryListener fQueryListener;
 	private SearchResultLabelProvider labelProvider;
@@ -111,12 +114,6 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 	
 	@Override
 	public void createControl(Composite parent) {
-//		pagebook = new PageBook(parent, SWT.NULL);
-//		pagebook.setLayoutData(new GridData(GridData.FILL_BOTH));
-//		viewerContainer = new Composite(pagebook, SWT.NULL);
-//		viewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-////		viewerContainer.setSize(100, 100);
-//		viewerContainer.setLayout(new FillLayout());
 		
 		viewerContainer = new Composite(parent, SWT.NO_FOCUS);
 		viewerContainer.setLayout(new FillLayout());
@@ -138,11 +135,33 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 		menuManager.setParent(getSite().getActionBars().getMenuManager());
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {
-				SearchView.createContextMenuGroups(mgr);
+				createContextMenuGroups(mgr);
 				fillContextMenu(mgr);
 				viewPart.fillContextMenu(mgr);
 			}
 		});
+	}
+
+	/**
+	 * Creates the groups and separators for the search view's context menu. Copied
+	 * from {@link org.eclipse.search2.internal.ui.SearchView}.
+	 * @param menu
+	 */
+	@SuppressWarnings("restriction")
+	protected void createContextMenuGroups(IMenuManager menu) {
+		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
+		menu.add(new Separator(IContextMenuConstants.GROUP_EDIT));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_REMOVE_MATCHES));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
+		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
+		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
@@ -176,19 +195,36 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 		viewer.setLabelProvider( labelProvider );
 		viewer.setContentProvider( new SearchResultContentProvider() );
 		viewer.addSelectionChangedListener(viewerAdapter);
-	
-		
-		Table table = viewer.getTable();
-		
+			
 		Menu menu = menuManager.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		
+		Table table = viewer.getTable();
 		table.setHeaderVisible(true);
         TableColumn column= new TableColumn(table, SWT.LEFT);
         column.setText("Class");
         column.setWidth(200);
+        hookMouse();
 	}
 
+	private void hookMouse() {
+		viewer.getTable().addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				handleDoubleClick();
+			}
+		});
+	}
+		
+	private void handleDoubleClick() {
+
+		try {
+			IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+			handlerService.executeCommand(DOUBLE_CLICK_HANDLER_ID, null );
+		} catch (Exception exception) {
+			PluginLog.error( exception );
+		}
+	}
+	
 	@Override
 	public Control getControl() {
 		return viewerContainer;
@@ -253,6 +289,7 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 								viewPart.updateLabel();
 							} else {
 								viewer.refresh();
+								viewPart.updateLabel();
 							}
 						}
 						finally {
@@ -317,12 +354,8 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 			control.setFocus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResultPage#getUIState()
-	 */
 	@Override
 	public Object getUIState() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -332,5 +365,14 @@ public class SearchResultPage extends Page implements ISearchResultPage {
 
 	@Override
 	public void restoreState(IMemento memento) {
+	}
+
+	@Override
+	public ShowInContext getShowInContext() {
+		return new ShowInContext(null, viewer.getSelection());	
+	}
+	
+	public ISearchResult getSearchResult() {
+		return searchResult;
 	}
 }
