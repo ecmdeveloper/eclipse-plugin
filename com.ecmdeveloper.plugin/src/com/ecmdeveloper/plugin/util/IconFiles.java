@@ -33,4 +33,6 @@ public class IconFiles {
 	public static final String HOURGLASS = "icons/hourglass.png";
 	public static final String FOLDER_EDIT = "icons/folder_edit.png";
 	public static final String CHECKED_OUT_DECORATOR_IMAGE = "icons/check.png";
+	public static final String ERROR = "icons/error.png";
+	public static final String MESSAGE = "icons/information.png";
 }

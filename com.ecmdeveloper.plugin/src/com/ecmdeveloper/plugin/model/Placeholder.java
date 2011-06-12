@@ -21,6 +21,10 @@ package com.ecmdeveloper.plugin.model;
 
 import java.util.Collection;
 
+import org.eclipse.swt.graphics.Image;
+
+import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.util.IconFiles;
 import com.filenet.api.core.IndependentlyPersistableObject;
 
 /**
@@ -30,38 +34,55 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  */
 public class Placeholder extends ObjectStoreItem implements IObjectStoreItem{
 
-	public Placeholder() {
+	private final Type type;
+
+	public enum Type {
+		LOADING,
+		ERROR,
+		MESSAGE
+	}
+	
+	public Placeholder(Placeholder.Type type) {
 		super(null, null);
-		this.name = "Loading...";
-		// TODO Auto-generated constructor stub
+		this.type = type;
+		if ( type.equals(Type.LOADING) ) {
+			this.name = "Loading...";
+		}
 	}
 
 	@Override
 	public IndependentlyPersistableObject getObjectStoreObject() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Collection<IObjectStoreItem> getChildren() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-		
+		this.name = name;
 	}
 
 	@Override
 	public String getClassName() {
 		return null;
+	}
+	
+	public Image getImage() {
+		switch (type) {
+		case ERROR:
+			return Activator.getImage( IconFiles.ERROR );
+		case LOADING:
+			return Activator.getImage( IconFiles.HOURGLASS );
+		case MESSAGE:
+			return Activator.getImage( IconFiles.MESSAGE );		
+		}
+		throw new IllegalArgumentException();
 	}
 }

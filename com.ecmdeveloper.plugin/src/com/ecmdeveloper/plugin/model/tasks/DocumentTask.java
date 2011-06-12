@@ -65,6 +65,16 @@ public abstract class DocumentTask extends BaseTask {
 		return currentVersion;
 	}
 
+	protected com.filenet.api.core.Document getReleasedVersion() {
+		
+		VersionSeries versionSeries = getVersionSeries();
+		versionSeries.fetchProperties( new String[] { PropertyNames.RELEASED_VERSION } );
+		com.filenet.api.core.Document currentVersion = (com.filenet.api.core.Document) versionSeries
+				.get_ReleasedVersion();
+	
+		return currentVersion;
+	}
+
 	private VersionSeries getVersionSeries() {
 		com.filenet.api.core.Document internalDocument = getInternalDocument();
 		internalDocument.fetchProperties( new String[] { PropertyNames.VERSION_SERIES } );
