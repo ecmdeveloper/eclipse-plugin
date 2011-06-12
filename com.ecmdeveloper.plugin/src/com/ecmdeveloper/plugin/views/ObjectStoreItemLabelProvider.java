@@ -78,7 +78,7 @@ public class ObjectStoreItemLabelProvider extends LabelProvider {
 	public Image getImage(Object obj) {
 
 		if ( obj instanceof Placeholder ){
-	         return Activator.getImage( IconFiles.HOURGLASS );
+	         return ((Placeholder)obj).getImage();
 		} else if (obj instanceof ObjectStore) {
 	         return getDecoratedImage(obj, IconFiles.ICON_OBJECTSTORE );
 		} else if ( obj instanceof Action ) {

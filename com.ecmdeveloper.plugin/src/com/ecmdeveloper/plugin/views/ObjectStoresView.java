@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -31,10 +32,17 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
+import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.util.PluginLog;
 
@@ -48,6 +56,8 @@ public class ObjectStoresView extends ViewPart {
 	private static final String DOUBLE_CLICK_HANDLER_ID = "com.ecmdeveloper.plugin.objectStoresViewDoubleClick";
 	
 	private TreeViewer viewer;
+
+	private ObjectStoresViewContentProvider contentProvider;
 	
 	class NameSorter extends ViewerSorter {
 	}
@@ -63,9 +73,10 @@ public class ObjectStoresView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		
+
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new ObjectStoresViewContentProvider());
+		contentProvider = new ObjectStoresViewContentProvider();
+		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObjectStoreItemLabelProvider());
 		viewer.setInput( ObjectStoresManager.getManager() );
 		viewer.setSorter( new ObjectStoresViewSorter() );
@@ -118,6 +129,7 @@ public class ObjectStoresView extends ViewPart {
 		manager.add(new Separator("edit") );
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		manager.add(new Separator("other"));		
+		manager.add(new Separator("group.show") );
 	}
 	
 	/**
@@ -125,5 +137,13 @@ public class ObjectStoresView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+
+	public TreeViewer getViewer() {
+		return viewer;
+	}
+
+	public ObjectStoresViewContentProvider getContentProvider() {
+		return contentProvider;
 	}
 }

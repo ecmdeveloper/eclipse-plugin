@@ -20,6 +20,10 @@
 
 package com.ecmdeveloper.plugin.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
@@ -100,6 +104,28 @@ public class SearchResultRow {
 		return objectStoreItem; 
 	}
 
+	public Collection<String> getValueNames() {
+		ArrayList<String> valueNames = new ArrayList<String>();
+
+		valueNames.addAll( values.keySet() );
+		Collections.sort( valueNames, new Comparator<String>() {
+
+			@Override
+			public int compare(String arg0, String arg1) {
+				if ( arg0.equals(THIS_PROPERTY_NAME) ) {
+					return 1;
+				}
+
+				if ( arg1.equals(THIS_PROPERTY_NAME) ) {
+					return -1;
+				}
+				return arg0.compareTo(arg1);
+			}
+		} );
+		
+		return valueNames;
+	}
+	
 	public IObjectStoreItem getObjectValue() {
 		return objectStoreItem;
 	}

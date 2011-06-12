@@ -43,7 +43,7 @@ import com.ecmdeveloper.plugin.util.PluginLog;
  */
 public class ObjectStoresViewDoubleClickHandler extends AbstractHandler  {
 
-	public static final String VIEW_DOCUMENT_COMMAND_ID = "com.ecmdeveloper.plugin.viewDocument";
+	public static final String VIEW_DOCUMENT_COMMAND_ID = "com.ecmdeveloper.plugin.viewReleasedDocument";
 	public static final String CONNECT_OBJECT_STORE_COMMAND_ID = "com.ecmdeveloper.plugin.connectObjectStore";
 	
 	private IWorkbenchWindow window;

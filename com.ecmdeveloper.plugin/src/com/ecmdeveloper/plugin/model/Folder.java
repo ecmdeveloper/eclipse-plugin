@@ -116,7 +116,7 @@ public class Folder extends ObjectStoreItem {
 	public Collection<IObjectStoreItem> getChildren() {
 		if ( children == null )	{
 			children = new ArrayList<IObjectStoreItem>();
-			children.add( new Placeholder() );
+			children.add( new Placeholder(Placeholder.Type.LOADING) );
 
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
 			ObjectStoresManager.getManager().executeTaskASync(loadChildrenTask);

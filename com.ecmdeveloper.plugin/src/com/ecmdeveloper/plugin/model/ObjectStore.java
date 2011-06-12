@@ -78,7 +78,7 @@ public class ObjectStore extends ObjectStoreItem
 		if ( children == null )
 		{
 			children = new ArrayList<IObjectStoreItem>();
-			children.add( new Placeholder() );
+			children.add( new Placeholder( Placeholder.Type.LOADING ) );
 			
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
 			ObjectStoresManager.getManager().executeTaskASync(loadChildrenTask);
