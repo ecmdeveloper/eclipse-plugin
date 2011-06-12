@@ -66,6 +66,28 @@
             name="Content View"
             restorable="true">
       </view>
+      <category
+            id="com.ecmdeveloper.plugin.contentEngine"
+            name="Content Engine">
+      </category>
+      <view
+            allowMultiple="true"
+            category="com.ecmdeveloper.plugin.contentEngine"
+            class="com.ecmdeveloper.plugin.ui.views.ParentFolderView"
+            icon="icons/folder_database.png"
+            id="com.ecmdeveloper.plugin.ui.parentFolderView"
+            name="Parent Folder"
+            restorable="false">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="com.ecmdeveloper.plugin.ui.contentEnginePerspective">
+         <showInPart
+               id="com.ecmdeveloper.plugin.ui.parentFolderView">
+         </showInPart>
+      </perspectiveExtension>
    </extension>
 
 </plugin>
