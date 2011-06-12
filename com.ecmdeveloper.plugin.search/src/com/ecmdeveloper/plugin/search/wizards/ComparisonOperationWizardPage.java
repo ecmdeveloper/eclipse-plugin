@@ -116,7 +116,6 @@ public class ComparisonOperationWizardPage extends WizardPage {
 	
 	protected void updateSelection(Object source) {
 		comparisonOperation = buttonComparisonOperationMap.get(source);
-		System.out.println(comparisonOperation.toString());
 		getWizard().getContainer().updateButtons();
 	}
 

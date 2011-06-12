@@ -103,7 +103,7 @@ public class SearchResultLabelProvider extends ObjectStoreItemLabelProvider impl
 			SearchResultRow searchResultRow = (SearchResultRow)element;
 			String name = indexToNameMap.get(Integer.valueOf(columnIndex) );
 			if ( name != null ) {
-				if ( name.equals("This") & searchResultRow.isHasObjectValue() ) {
+				if ( name.equals("This") && searchResultRow.isHasObjectValue() ) {
 					IObjectStoreItem objectStoreItem = searchResultRow.getObjectValue();
 					return super.getText(objectStoreItem);
 				} else {

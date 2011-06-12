@@ -72,4 +72,4 @@ public abstract class ValueWizardPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		return gd;
 	}
-	}
+}

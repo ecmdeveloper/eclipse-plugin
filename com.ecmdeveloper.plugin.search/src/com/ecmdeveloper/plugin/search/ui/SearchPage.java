@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchQuery;
@@ -57,6 +58,7 @@ import com.ecmdeveloper.plugin.search.editor.QueryEditorInput;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.store.QueryFileInfo;
 import com.ecmdeveloper.plugin.search.store.QueryFileStore;
+import com.ecmdeveloper.plugin.search.ui.wizard.ExportSearchResultWizard;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -240,17 +242,22 @@ public class SearchPage extends DialogPage implements ISearchPage {
 	}
 
 	protected void deleteSelectedQuery() {
-		QueryFileInfo queryInfo = getSelectedQueryFileInfo();
+//		QueryFileInfo queryInfo = getSelectedQueryFileInfo();
+//		
+//		if ( queryInfo != null ) {
+//			String message = MessageFormat.format("Do you want to delete the query \"{0}\"?",
+//					queryInfo.getName());
+//			if ( MessageDialog.openConfirm(getShell(), PAGE_NAME, message ) ) { 
+//				queryFileStore.delete(queryInfo);
+//				queriesCombo.setInput( queryFileStore.getQueryFileInfo() );
+//				updateQueryInfo();
+//			}
+//		}
+		ExportSearchResultWizard wizard = new ExportSearchResultWizard(null);
+		WizardDialog dialog = new WizardDialog( getShell(), wizard);
+		dialog.create();
+		dialog.open();
 		
-		if ( queryInfo != null ) {
-			String message = MessageFormat.format("Do you want to delete the query \"{0}\"?",
-					queryInfo.getName());
-			if ( MessageDialog.openConfirm(getShell(), PAGE_NAME, message ) ) { 
-				queryFileStore.delete(queryInfo);
-				queriesCombo.setInput( queryFileStore.getQueryFileInfo() );
-				updateQueryInfo();
-			}
-		}
 	}
 
 	private void updateQueryInfo() {
