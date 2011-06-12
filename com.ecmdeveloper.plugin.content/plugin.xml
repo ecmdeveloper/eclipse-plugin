@@ -4,8 +4,13 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            description="View This Document"
+            id="com.ecmdeveloper.plugin.viewThisDocument"
+            name="This Version">
+      </command>
+      <command
             description="View Released Document"
-            id="com.ecmdeveloper.plugin.viewDocument"
+            id="com.ecmdeveloper.plugin.viewReleasedDocument"
             name="Released Version">
       </command>
       <command
@@ -39,8 +44,13 @@
             name="Released Versions With Each Other">
       </command>
       <command
+            description="Download This Document Content"
+            id="com.ecmdeveloper.plugin.downloadThisDocument"
+            name="This Version">
+      </command>
+      <command
             description="Download Released Document Content"
-            id="com.ecmdeveloper.plugin.downloadDocument"
+            id="com.ecmdeveloper.plugin.downloadReleasedDocument"
             name="Released Version">
       </command>
       <command
@@ -92,8 +102,8 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="com.ecmdeveloper.plugin.content.handlers.ViewDocumentHandler"
-            commandId="com.ecmdeveloper.plugin.viewDocument">
+            class="com.ecmdeveloper.plugin.content.handlers.ViewReleasedDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.viewReleasedDocument">
          <enabledWhen>
             <with
                   variable="selection">
@@ -284,8 +294,8 @@
          </enabledWhen>
       </handler>
       <handler
-            class="com.ecmdeveloper.plugin.content.handlers.DownloadDocumentHandler"
-            commandId="com.ecmdeveloper.plugin.downloadDocument">
+            class="com.ecmdeveloper.plugin.content.handlers.DownloadReleasedDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.downloadReleasedDocument">
          <enabledWhen>
             <with
                   variable="selection">
@@ -389,6 +399,36 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.content.handlers.ViewDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.viewThisDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.content.handlers.DownloadDocumentHandler"
+            commandId="com.ecmdeveloper.plugin.downloadThisDocument">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.model.Document">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -397,7 +437,7 @@
          <menu
                label="View">
             <command
-                  commandId="com.ecmdeveloper.plugin.viewDocument"
+                  commandId="com.ecmdeveloper.plugin.viewReleasedDocument"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -455,7 +495,7 @@
                icon="icons/page_save.png"
                label="Download">
             <command
-                  commandId="com.ecmdeveloper.plugin.downloadDocument"
+                  commandId="com.ecmdeveloper.plugin.downloadReleasedDocument"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -781,7 +821,7 @@
          <menu
                label="View">
             <command
-                  commandId="com.ecmdeveloper.plugin.viewDocument"
+                  commandId="com.ecmdeveloper.plugin.viewReleasedDocument"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -839,7 +879,7 @@
                icon="icons/page_save.png"
                label="Download">
             <command
-                  commandId="com.ecmdeveloper.plugin.downloadDocument"
+                  commandId="com.ecmdeveloper.plugin.downloadReleasedDocument"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -1050,7 +1090,25 @@
          <menu
                label="View">
             <command
-                  commandId="com.ecmdeveloper.plugin.viewDocument"
+                  commandId="com.ecmdeveloper.plugin.viewThisDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewReleasedDocument"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -1108,7 +1166,358 @@
                icon="icons/page_save.png"
                label="Download">
             <command
-                  commandId="com.ecmdeveloper.plugin.downloadDocument"
+                  commandId="com.ecmdeveloper.plugin.downloadThisDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadReleasedDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadCurrentDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadDocumentVersions"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/page_copy.png"
+               label="Compare">
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocuments"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <separator
+               name="editContentSeparator">
+         </separator>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkoutDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.cancelCheckoutDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <not>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="com.ecmdeveloper.plugin.content.isTracked">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveTrackedFile"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <test
+                                 forcePluginActivation="true"
+                                 property="com.ecmdeveloper.plugin.content.isTracked">
+                           </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkinDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <not>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="com.ecmdeveloper.plugin.content.isTracked">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkinTrackedFile"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                           <test
+                                 forcePluginActivation="true"
+                                 property="com.ecmdeveloper.plugin.content.isTracked">
+                           </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.ui.parentFolderView?after=additions">
+         <menu
+               label="View">
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewReleasedDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewCurrentDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewDocumentVersion"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.model.Document">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/page_save.png"
+               label="Download">
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadReleasedDocument"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
