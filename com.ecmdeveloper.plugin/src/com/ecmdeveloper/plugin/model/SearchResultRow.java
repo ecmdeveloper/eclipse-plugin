@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
@@ -104,7 +105,7 @@ public class SearchResultRow {
 		return objectStoreItem; 
 	}
 
-	public Collection<String> getValueNames() {
+	public ArrayList<String> getValueNames() {
 		ArrayList<String> valueNames = new ArrayList<String>();
 
 		valueNames.addAll( values.keySet() );
@@ -113,11 +114,11 @@ public class SearchResultRow {
 			@Override
 			public int compare(String arg0, String arg1) {
 				if ( arg0.equals(THIS_PROPERTY_NAME) ) {
-					return 1;
+					return -1;
 				}
 
 				if ( arg1.equals(THIS_PROPERTY_NAME) ) {
-					return -1;
+					return 1;
 				}
 				return arg0.compareTo(arg1);
 			}
@@ -140,5 +141,38 @@ public class SearchResultRow {
 			objectType = FetchObjectTask.CUSTOM_OBJECT_TYPE;
 		}
 		return objectType;
+	}
+	
+	public int compareTo(SearchResultRow searchResultRow, String valueName ) {
+		
+		Object value1 = getValue(valueName);
+		Object value2 = searchResultRow.getValue(valueName);
+		
+		int returnCode; 
+		if ( value1 == null && value2 == null ) {
+			returnCode = 0;
+		} else if ( value1 == null ) {
+			returnCode = -1;
+		} else if ( value2 == null ) {
+			returnCode = 1;
+		} else if ( valueName.equals( THIS_PROPERTY_NAME ) ) {
+			returnCode = getObjectValue().getDisplayName().compareTo(
+					searchResultRow.getObjectValue().getDisplayName());
+		} else {
+			
+			if ( value1 instanceof Date ) {
+				returnCode = ((Date) value1).compareTo((Date) value2);
+			} else if ( value1 instanceof Boolean )  {
+				returnCode = ((Boolean) value1).compareTo((Boolean) value2);
+			} else if ( value1 instanceof Double) {
+				returnCode = ((Double) value1).compareTo((Double) value2);
+			} else if ( value1 instanceof Long ) {
+				returnCode = ((Long) value1).compareTo((Long) value2);
+			} else {
+				returnCode = value1.toString().compareTo( value2.toString() );
+			}
+		}
+		
+		return returnCode;
 	}
 }
