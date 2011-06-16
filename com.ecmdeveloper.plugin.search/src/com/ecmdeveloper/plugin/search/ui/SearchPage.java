@@ -242,22 +242,17 @@ public class SearchPage extends DialogPage implements ISearchPage {
 	}
 
 	protected void deleteSelectedQuery() {
-//		QueryFileInfo queryInfo = getSelectedQueryFileInfo();
-//		
-//		if ( queryInfo != null ) {
-//			String message = MessageFormat.format("Do you want to delete the query \"{0}\"?",
-//					queryInfo.getName());
-//			if ( MessageDialog.openConfirm(getShell(), PAGE_NAME, message ) ) { 
-//				queryFileStore.delete(queryInfo);
-//				queriesCombo.setInput( queryFileStore.getQueryFileInfo() );
-//				updateQueryInfo();
-//			}
-//		}
-		ExportSearchResultWizard wizard = new ExportSearchResultWizard(null);
-		WizardDialog dialog = new WizardDialog( getShell(), wizard);
-		dialog.create();
-		dialog.open();
+		QueryFileInfo queryInfo = getSelectedQueryFileInfo();
 		
+		if ( queryInfo != null ) {
+			String message = MessageFormat.format("Do you want to delete the query \"{0}\"?",
+					queryInfo.getName());
+			if ( MessageDialog.openConfirm(getShell(), PAGE_NAME, message ) ) { 
+				queryFileStore.delete(queryInfo);
+				queriesCombo.setInput( queryFileStore.getQueryFileInfo() );
+				updateQueryInfo();
+			}
+		}
 	}
 
 	private void updateQueryInfo() {

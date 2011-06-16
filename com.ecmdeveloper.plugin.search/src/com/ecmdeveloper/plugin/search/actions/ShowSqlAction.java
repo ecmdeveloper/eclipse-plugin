@@ -22,11 +22,13 @@ package com.ecmdeveloper.plugin.search.actions;
 
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.ui.ShowQueryDialog;
 
 /**
  * @author ricardo.belfor
@@ -54,8 +56,14 @@ public class ShowSqlAction extends SelectionAction {
 		Shell shell = getWorkbenchPart().getSite().getShell();
 		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
 		Query query = editor.getQuery();
+
+		ShowQueryDialog dialog = new ShowQueryDialog(shell, query );
+		dialog.create();
+		if (dialog.open() == Window.OK) {
+		}
+
 		
-		String message = query.toSQL();
-		MessageDialog.openInformation(shell, getText(), message);
+//		String message = query.toSQL();
+//		MessageDialog.openInformation(shell, getText(), message);
 	}
 }

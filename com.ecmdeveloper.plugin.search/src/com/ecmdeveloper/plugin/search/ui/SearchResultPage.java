@@ -42,10 +42,11 @@ import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
-import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -57,7 +58,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.Page;
-import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ShowInContext;
 
 import com.ecmdeveloper.plugin.model.SearchResultRow;
@@ -80,6 +80,8 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
 	private SearchResultLabelProvider labelProvider;
 	private MenuManager menuManager;
 	private SelectionProviderAdapter viewerAdapter;
+
+	private SearchResultComparator viewerComparator;
 
 	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
 		@SuppressWarnings("unchecked")
@@ -195,7 +197,10 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
 		viewer.setLabelProvider( labelProvider );
 		viewer.setContentProvider( new SearchResultContentProvider() );
 		viewer.addSelectionChangedListener(viewerAdapter);
-			
+		
+		viewerComparator = new SearchResultComparator();
+		viewer.setComparator(viewerComparator);
+		
 		Menu menu = menuManager.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		
@@ -207,6 +212,26 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
         hookMouse();
 	}
 
+	private SelectionAdapter getSelectionAdapter(final TableColumn column,
+			final String sortValue) {
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				viewerComparator.setSortValue(sortValue);
+				int dir = viewer.getTable().getSortDirection();
+				if (viewer.getTable().getSortColumn() == column) {
+					dir = dir == SWT.UP ? SWT.DOWN : SWT.UP;
+				} else {
+					dir = SWT.DOWN;
+				}
+				viewer.getTable().setSortDirection(dir);
+				viewer.getTable().setSortColumn(column);
+				viewer.refresh();
+			}
+		};
+		return selectionAdapter;
+	}
+	
 	private void hookMouse() {
 		viewer.getTable().addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
@@ -276,7 +301,6 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
 			}
 
 			private void updateViewer(final SearchResultEvent e) {
-				System.out.println("searchResultChanged: " + e.toString() );
 				
 				getSite().getShell().getDisplay().asyncExec(new Runnable() {
 					public void run() {
@@ -311,6 +335,7 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
 		        TableColumn column= new TableColumn(table, SWT.LEFT);
 		        column.setText( columnName );
 		        column.setWidth(200);
+		        column.addSelectionListener( getSelectionAdapter(column, columnName) );
 		        labelProvider.connectIndexToName(index++, columnName);
 			}
 		}

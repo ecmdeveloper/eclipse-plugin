@@ -37,27 +37,33 @@ public class CSVSearchResultExport extends SearchResultExport {
 
 	private CSVWriter csvWriter;
 	private final char separator;
+	private boolean writeHeader;
 	
 	public CSVSearchResultExport(Collection<SearchResultRow> searchResult, String filename,
 			boolean writeHeader, char separator ) {
-		super(searchResult, filename, writeHeader);
+		super(searchResult, filename );
 		this.separator = separator;
+		this.writeHeader = writeHeader;
+	}
+
+	@Override
+	protected void startExport(FileWriter writer) {
+		csvWriter = new CSVWriter(writer, separator );
 	}
 
 	@Override
 	protected void writeHeaderRow(FileWriter writer, Collection<String> valueNames) {
-		getCSVWriter(writer).writeNext( valueNames.toArray( new String[valueNames.size()] ) );
-	}
-
-	private CSVWriter getCSVWriter(Writer writer) {
-		if ( csvWriter != null ) {
-			csvWriter = new CSVWriter(writer, separator );
+		if ( writeHeader ) {
+			csvWriter.writeNext( valueNames.toArray( new String[valueNames.size()] ) );
 		}
-		return csvWriter;	
 	}
 
 	@Override
-	protected void writeValuesRow(FileWriter writer, ArrayList<String> values) {
-		getCSVWriter(writer).writeNext( values.toArray( new String[values.size()] ) );
+	protected void writeValuesRow(FileWriter writer, ArrayList<String> values, ArrayList<String> valueNames) {
+		csvWriter.writeNext( values.toArray( new String[values.size()] ) );
+	}
+
+	@Override
+	protected void finishExport(FileWriter writer) {
 	}
 }

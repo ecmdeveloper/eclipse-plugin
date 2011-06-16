@@ -78,7 +78,7 @@ public class QuerySearchResult implements ISearchResult {
 
 	@Override
 	public String getTooltip() {
-		return query.toString();
+		return query.getName();
 	}
 
 	@Override

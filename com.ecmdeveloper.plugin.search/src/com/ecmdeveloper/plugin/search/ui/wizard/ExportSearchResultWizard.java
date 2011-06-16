@@ -22,15 +22,26 @@ package com.ecmdeveloper.plugin.search.ui.wizard;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream.GetField;
+import java.text.MessageFormat;
 import java.util.Collection;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.model.SearchResultRow;
 import com.ecmdeveloper.plugin.search.ui.wizard.ExportFileWizardPage.Format;
 import com.ecmdeveloper.plugin.search.util.CSVSearchResultExport;
+import com.ecmdeveloper.plugin.search.util.HTMLSearchResultExport;
 import com.ecmdeveloper.plugin.search.util.SearchResultExport;
+import com.ecmdeveloper.plugin.search.util.XMLSearchResultExport;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -41,21 +52,34 @@ public class ExportSearchResultWizard extends Wizard {
 
 	private static final String TITLE = "Export Search Result";
 	private final Collection<SearchResultRow> searchResult;
+	private final String label;
+	private final IWorkbench workbench;
+
 	private ExportFileWizardPage exportFileWizardPage;
 	private CSVExportWizardPage csvExportWizardPage;
+	private HTMLExportWizardPage htmlExportWizardPage;
+	private XMLExportWizardPage xmlExportWizardPage;
 
-	public ExportSearchResultWizard(Collection<SearchResultRow> searchResult) {
+	public ExportSearchResultWizard(Collection<SearchResultRow> searchResult, String label, IWorkbench workbench) {
 		this.searchResult = searchResult;
+		this.label = label;
+		this.workbench = workbench;
 		setWindowTitle(TITLE);
 	}
 
 	@Override
 	public void addPages() {
-		exportFileWizardPage = new ExportFileWizardPage();
+		exportFileWizardPage = new ExportFileWizardPage(label);
 		addPage(exportFileWizardPage);
 		
 		csvExportWizardPage = new CSVExportWizardPage();
 		addPage(csvExportWizardPage);
+		
+		htmlExportWizardPage = new HTMLExportWizardPage();
+		addPage(htmlExportWizardPage);
+		
+		xmlExportWizardPage = new XMLExportWizardPage();
+		addPage(xmlExportWizardPage);
 	}
 
 	@Override
@@ -70,8 +94,9 @@ public class ExportSearchResultWizard extends Wizard {
 		case CSV:
 			return csvExportWizardPage.isPageComplete();
 		case HTML:
+			return htmlExportWizardPage.isPageComplete();
 		case XML:
-			return false;
+			return xmlExportWizardPage.isPageComplete();
 		}
 		return false;
 	}
@@ -86,8 +111,9 @@ public class ExportSearchResultWizard extends Wizard {
 			case CSV:
 				return csvExportWizardPage;
 			case HTML:
+				return htmlExportWizardPage;
 			case XML:
-				return null;
+				return xmlExportWizardPage;
 			}
 		}
 		return null;
@@ -101,27 +127,40 @@ public class ExportSearchResultWizard extends Wizard {
 		if ( searchResultExport != null) {
 			try {
 				searchResultExport.export();
+				if ( exportFileWizardPage.isOpenFileInEditor() ) {
+					openFileInEditor( searchResultExport.getFilename() );
+				}
 				return true;
 			} catch (IOException e) {
 				PluginMessage.openError(getShell(), TITLE, e.getLocalizedMessage(), e );
 				return false;
 			}
 		}
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	private void openFileInEditor(String filename) {
+		try {
+			IFileStore store = EFS.getLocalFileSystem().getStore( new Path( filename ) );
+			IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
+			IDE.openEditorOnFileStore( activePage, store );
+		} catch (PartInitException e) {
+			PluginMessage.openError( getShell(), TITLE, e.getLocalizedMessage(), e);
+		}
 	}
 
 	private SearchResultExport getSearchResultExporter() {
 
 		Format format = exportFileWizardPage.getFormat();
-		String filename = exportFileWizardPage.getExportPath() + File.pathSeparator + exportFileWizardPage.getFilename();
+		String filename = exportFileWizardPage.getExportPath() + File.separator + exportFileWizardPage.getFilename();
 
 		switch (format ) {
 		case CSV:
 			return createCSVSearchResultExport(filename);
 		case HTML:
+			return createHTMLSearchResultExport(filename);
 		case XML:
-			break;
+			return createXMLSearchResultExport(filename);
 		}
 		return null;
 	}
@@ -130,5 +169,16 @@ public class ExportSearchResultWizard extends Wizard {
 		boolean writeHeader = csvExportWizardPage.isWriteHeader();
 		char delimiter = csvExportWizardPage.getDelimiter();
 		return new CSVSearchResultExport(searchResult, filename, writeHeader, delimiter );
+	}
+
+	private SearchResultExport createHTMLSearchResultExport(String filename) {
+		boolean writeHeader = htmlExportWizardPage.isWriteHeader();
+		return new HTMLSearchResultExport(searchResult, filename, writeHeader );
+	}
+
+	private SearchResultExport createXMLSearchResultExport(String filename) {
+		String rowsTag = xmlExportWizardPage.getRowsTag();
+		String rowTag = xmlExportWizardPage.getRowTag();
+		return new XMLSearchResultExport(searchResult, filename, rowsTag, rowTag );
 	}
 }
