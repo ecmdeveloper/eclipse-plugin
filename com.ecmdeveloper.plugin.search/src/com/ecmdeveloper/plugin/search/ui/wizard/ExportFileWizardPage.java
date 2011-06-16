@@ -62,13 +62,16 @@ public class ExportFileWizardPage extends WizardPage {
 		}
 	}
 
+	static private String exportPath;
 	private Format format = Format.CSV;
 	private String filename;
-	private String exportPath;
 	private boolean openFileInEditor;
+	private final String label;
+	private StringFieldEditor filenameEditor;
 	
-	protected ExportFileWizardPage() {
+	protected ExportFileWizardPage(String label) {
 		super(TITLE);
+		this.label = label;
 		setTitle(TITLE);
 		setDescription(DESCRIPTION );
 	}
@@ -76,9 +79,7 @@ public class ExportFileWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = createContainer(parent);
-//		createFormatButtons(container);
-//		createFileSelectionControls(container);
-		
+
 		createFormatEditor(container);
 		createDirectoryEditor(container);
 		createFilenameEditor(container);
@@ -109,8 +110,20 @@ public class ExportFileWizardPage extends WizardPage {
 		formatEditor.setPropertyChangeListener( new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
+				Format oldFormat = format;
 				format = Format.valueOf((String) event.getNewValue());
+				updateFilenameExtension(oldFormat);
 				updateControls();
+			}
+
+			private void updateFilenameExtension(Format oldFormat) {
+				if ( oldFormat != null  ) {
+					String suffix = "." + oldFormat.name().toLowerCase();
+					if ( filename != null && filename.endsWith(suffix) ) {
+						filenameEditor.setStringValue( filename.substring(0, filename.length() - suffix.length() + 1 ) + 
+								format.name().toLowerCase() );
+					}
+				}
 			}
 		});
 	}
@@ -137,6 +150,9 @@ public class ExportFileWizardPage extends WizardPage {
 		
 		DirectoryFieldEditor exportFileEditor = new DirectoryFieldEditor("", "Export path:", container);
 		exportFileEditor.setEmptyStringAllowed(false);
+		if ( exportPath != null ) {
+			exportFileEditor.setStringValue(exportPath);
+		}
 		exportFileEditor.setPropertyChangeListener( new IPropertyChangeListener() {
 	
 			@Override
@@ -144,7 +160,6 @@ public class ExportFileWizardPage extends WizardPage {
 				checkValidInput(event);
 				if ( event.getProperty().equals( FieldEditor.VALUE ) ) {
 					exportPath = (String) event.getNewValue();
-					System.out.println( event.getNewValue().toString() );
 					updateControls();
 				}
 			}} 
@@ -154,15 +169,16 @@ public class ExportFileWizardPage extends WizardPage {
 	}
 
 	private void createFilenameEditor(Composite container) {
-		StringFieldEditor editor = new StringFieldEditor("", "Export Filename:",container ) {
+		filenameEditor = new StringFieldEditor("", "Export Filename:",container ) {
 			@Override
 			public int getNumberOfControls() {
 				return 3;
 			}
 		};
 
-		editor.setEmptyStringAllowed(false);
-		editor.setPropertyChangeListener( new IPropertyChangeListener() {
+		filenameEditor.setEmptyStringAllowed(false);
+		filenameEditor.setStringValue("WORKAROUND FOR UPDATE TRIGGER");
+		filenameEditor.setPropertyChangeListener( new IPropertyChangeListener() {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
@@ -173,6 +189,8 @@ public class ExportFileWizardPage extends WizardPage {
 				}
 			}
 		});
+
+		filenameEditor.setStringValue(label + "." + format.name().toLowerCase() );
 	}
 
 	protected void updateControls() {
@@ -222,5 +240,4 @@ public class ExportFileWizardPage extends WizardPage {
 	public boolean isOpenFileInEditor() {
 		return openFileInEditor;
 	}
-
 }

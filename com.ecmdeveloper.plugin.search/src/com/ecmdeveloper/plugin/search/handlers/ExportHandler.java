@@ -21,22 +21,16 @@
 package com.ecmdeveloper.plugin.search.handlers;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -60,12 +54,14 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		if (window == null)	return null;
 
-		Collection<SearchResultRow> result = getSearchResult();
+		SearchResultPage searchResultPage = getSearchResultPage();
+		Collection<SearchResultRow> result = getSearchResult(searchResultPage);
 		if ( result == null || result.isEmpty() ) {
 			MessageDialog.openError(window.getShell(), HANDLER_NAME, EMPTY_SEARCH_RESULT_MESSAGE );
 		}
 
-		ExportSearchResultWizard wizard = new ExportSearchResultWizard(result);
+		String name = searchResultPage.getSearchResult().getTooltip();
+		ExportSearchResultWizard wizard = new ExportSearchResultWizard(result, name, window.getWorkbench() );
 		WizardDialog dialog = new WizardDialog( window.getShell(), wizard);
 		dialog.create();
 		dialog.open();
@@ -73,18 +69,25 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 		return null;
 	}
 
-	private Collection<SearchResultRow> getSearchResult() {
-		ISearchResultViewPart searchResultView = NewSearchUI.getSearchResultView();
-		ISearchResultPage activePage = searchResultView.getActivePage();
-
+	private Collection<SearchResultRow> getSearchResult(SearchResultPage searchResultPage) {
+		
 		Collection<SearchResultRow> result = null;
-		if ( activePage instanceof SearchResultPage ) {
-			SearchResultPage searchResultPage = (SearchResultPage)activePage;
+		if ( searchResultPage != null ) {
 			QuerySearchResult searchResult = (QuerySearchResult) searchResultPage.getSearchResult();
-			
 			result = searchResult.getResult();
 		}
 		return result;
+	}
+
+	private SearchResultPage getSearchResultPage() {
+		ISearchResultViewPart searchResultView = NewSearchUI.getSearchResultView();
+		ISearchResultPage activePage = searchResultView.getActivePage();
+
+		SearchResultPage searchResultPage = null;
+		if ( activePage instanceof SearchResultPage ) {
+			searchResultPage = (SearchResultPage)activePage;
+		}
+		return searchResultPage;
 	}
 
 }

@@ -38,15 +38,16 @@ public abstract class SearchResultExport {
 
 	private final Collection<SearchResultRow> searchResult;
 	private final String filename;
-	private boolean writeHeader;
 	
-	public SearchResultExport(Collection<SearchResultRow> searchResult, String filename,
-			boolean writeHeader) {
+	public SearchResultExport(Collection<SearchResultRow> searchResult, String filename ) {
 		this.searchResult = searchResult;
 		this.filename = filename;
-		this.writeHeader = writeHeader;
 	}
 	
+	public String getFilename() {
+		return filename;
+	}
+
 	public void export() throws IOException {
 		
 		if ( searchResult.isEmpty() ) {
@@ -54,26 +55,30 @@ public abstract class SearchResultExport {
 		}
 		
 		FileWriter writer = new FileWriter( new File(filename) );
- 
+		startExport(writer);
 		SearchResultRow firstRow = searchResult.iterator().next();
-		Collection<String> valueNames = firstRow.getValueNames();
-		if ( writeHeader ) {
-			writeHeaderRow( writer, valueNames );
-		}
+		ArrayList<String> valueNames = firstRow.getValueNames();
+		writeHeaderRow( writer, valueNames );
 		
 		Iterator<SearchResultRow> iterator = searchResult.iterator();
 		while (iterator.hasNext() ) {
 			SearchResultRow searchResultRow = iterator.next();
 			ArrayList<String> values = getValues(searchResultRow, valueNames);
-			writeValuesRow( writer, values );
+			writeValuesRow( writer, values, valueNames );
 		}
+		
+		finishExport(writer);
 		
 		writer.close();
 	}
 
-	protected abstract void writeHeaderRow(FileWriter writer, Collection<String> valueNames);
+	protected abstract void startExport(FileWriter writer) throws IOException;
 
-	protected abstract void writeValuesRow(FileWriter writer, ArrayList<String> values);
+	protected abstract void writeHeaderRow(FileWriter writer, Collection<String> valueNames) throws IOException;
+
+	protected abstract void writeValuesRow(FileWriter writer, ArrayList<String> values, ArrayList<String> valueNames) throws IOException;
+
+	protected abstract void finishExport(FileWriter writer) throws IOException;
 
 	private ArrayList<String> getValues(SearchResultRow searchResultRow,
 			Collection<String> valueNames) {
