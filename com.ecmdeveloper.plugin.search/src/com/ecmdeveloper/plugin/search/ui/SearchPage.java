@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -78,7 +79,7 @@ public class SearchPage extends DialogPage implements ISearchPage {
 	private Button modifyQueryButton;
 	private Label dateModifiedLabel;
 	private ComboViewer queriesCombo;
-	private Label sqlLabel;
+//	private Label sqlLabel;
 
 	public SearchPage() {
 	}
@@ -203,9 +204,12 @@ public class SearchPage extends DialogPage implements ISearchPage {
 		group.setLayoutData(gd);
 		group.setLayout( new RowLayout( SWT.VERTICAL) );
 		createQueriesCombo(group);
-		createDeleteButton(group);
+		Composite buttonRow = new Composite(parent, SWT.NONE);
+		buttonRow.setLayout( new RowLayout( SWT.HORIZONTAL) );
+		createDeleteButton(buttonRow);
+		createShowSQLButton(buttonRow);
 		dateModifiedLabel = addLabel(group, MessageFormat.format( DATE_MODIFIED_FMT, "-" ) );
-		sqlLabel = addLabel(group, MessageFormat.format( SQL_FMT, "-" ) );
+//		sqlLabel = addLabel(group, MessageFormat.format( SQL_FMT, "-" ) );
 	}
 
 	private Label addLabel(Composite container, String text) {
@@ -241,6 +245,20 @@ public class SearchPage extends DialogPage implements ISearchPage {
 		button.setText("Delete");
 	}
 
+	private void createShowSQLButton(Composite container) {
+		Button button = new Button(container, SWT.NONE);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				QueryFileInfo queryInfo = getSelectedQueryFileInfo();
+				if ( queryInfo != null ) {
+					showQuery( queryInfo.getSql() );
+				}
+			}
+		});
+		button.setText("Show SQL");
+	}
+	
 	protected void deleteSelectedQuery() {
 		QueryFileInfo queryInfo = getSelectedQueryFileInfo();
 		
@@ -263,11 +281,11 @@ public class SearchPage extends DialogPage implements ISearchPage {
 			dateModifiedLabel.setText(MessageFormat.format(DATE_MODIFIED_FMT, queryInfo
 					.getLastModified().toString()));
 			dateModifiedLabel.pack();
-			sqlLabel.setText( MessageFormat.format( SQL_FMT, queryInfo.getSql() ) );
-			sqlLabel.pack(true);
+//			sqlLabel.setText( MessageFormat.format( SQL_FMT, queryInfo.getSql() ) );
+//			sqlLabel.pack(true);
 		} else {
 			dateModifiedLabel.setText( MessageFormat.format( DATE_MODIFIED_FMT, "-" ) );
-			sqlLabel.setText( MessageFormat.format( SQL_FMT, "-" ) );
+//			sqlLabel.setText( MessageFormat.format( SQL_FMT, "-" ) );
 		}
 		
 		modifyQueryButton.setSelection( queryInfo != null && ! executeQueryButton.getSelection() );
@@ -281,5 +299,11 @@ public class SearchPage extends DialogPage implements ISearchPage {
 			queryInfo = (QueryFileInfo) selection.iterator().next();
 		}
 		return queryInfo;
+	}
+	
+	private void showQuery(String sql) {
+		ShowQueryDialog dialog = new ShowQueryDialog(getShell(), sql );
+		dialog.create();
+		dialog.open();
 	}
 }

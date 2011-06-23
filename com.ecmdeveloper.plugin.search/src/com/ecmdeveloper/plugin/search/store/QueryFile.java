@@ -262,6 +262,7 @@ public class QueryFile {
 		queryTableChild.putString( PluginTagNames.OBJECT_STORE_NAME, queryTable.getObjectStoreName() );
 		queryTableChild.putString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME, queryTable.getObjectStoreDisplayName() );
 		queryTableChild.putBoolean( PluginTagNames.CBR_ENABLED, queryTable.isCBREnabled() );
+		queryTableChild.putString( PluginTagNames.ALIAS, queryTable.getAlias() );
 		
 		IMemento fieldsChild = queryTableChild.createChild(PluginTagNames.FIELDS);
 		initializeQueryFields(queryTable,fieldsChild);
@@ -288,6 +289,7 @@ public class QueryFile {
 		queryFieldChild.putBoolean( PluginTagNames.CONTAINABLE, queryField.isContainable() );
 		queryFieldChild.putBoolean( PluginTagNames.IS_QUERY_FIELD, queryField.isQueryField() );
 		queryFieldChild.putBoolean( PluginTagNames.CBR_ENABLED, queryField.isCBREnabled() );
+		queryFieldChild.putString( PluginTagNames.ALIAS, queryField.getAlias() );
 	}
 
 	public Query read() throws IOException, WorkbenchException {

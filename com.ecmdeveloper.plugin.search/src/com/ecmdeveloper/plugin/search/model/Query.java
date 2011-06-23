@@ -170,7 +170,7 @@ public class Query {
 	}
 
 	private void appendSelectPart(StringBuffer sql) {
-		sql.append( "\nSELECT " );
+		sql.append( "SELECT " );
 		if ( isDistinct() ) {
 			sql.append("DISTINCT ");
 		}
@@ -186,8 +186,8 @@ public class Query {
 		if ( !selectedQueryFields.isEmpty() ) {
 			for (IQueryField queryField : selectedQueryFields ) {
 				sql.append(concat);
-				sql.append( queryField.getName() );
-				concat = ", ";
+				appendFieldPart(sql, queryField);
+				concat = "\r\n\t, ";
 			}
 			sql.append(" ");
 		} else {
@@ -195,17 +195,36 @@ public class Query {
 		}
 	}
 
+	private void appendFieldPart(StringBuffer sql, IQueryField queryField) {
+		sql.append( queryField.getName() );
+		if ( queryField.getAlias() != null ) {
+			sql.append(' ');
+			sql.append("AS ");
+			sql.append( queryField.getAlias() );
+		}
+	}
+
 	private void appendFromPart(StringBuffer sql) {
 		sql.append("\nFROM ");
 		if ( getQueryTables().size() == 1) {
-			sql.append("[");
-			sql.append( getQueryTables().iterator().next() );
-			sql.append( "] ");
+			IQueryTable queryTable = getQueryTables().iterator().next();
+			appendTablePart(sql, queryTable);
 			if ( !includeSubclasses ) {
-				sql.append( " WITH EXCLUDESUBCLASSES ");
+				sql.append( "WITH EXCLUDESUBCLASSES ");
 			}
 		} else {
 			// TODO something with joins
+		}
+	}
+
+	private void appendTablePart(StringBuffer sql, IQueryTable queryTable) {
+		sql.append("[");
+		sql.append( queryTable );
+		sql.append( "] ");
+		if ( queryTable.getAlias() != null ) {
+			sql.append("AS ");
+			sql.append(queryTable.getAlias() );
+			sql.append(' ');
 		}
 	}
 	private void appendWherePart(StringBuffer sql) {

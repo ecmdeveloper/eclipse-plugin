@@ -29,6 +29,7 @@ public class ThisQueryField implements IQueryField {
 	private static final String NAME = "This";
 	private final IQueryTable queryTable;
 	private boolean selected;
+	private String alias;
 
 	public ThisQueryField(IQueryTable queryTable) {
 		this.queryTable = queryTable;
@@ -111,5 +112,15 @@ public class ThisQueryField implements IQueryField {
 	@Override
 	public boolean isCBREnabled() {
 		return false;
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 }

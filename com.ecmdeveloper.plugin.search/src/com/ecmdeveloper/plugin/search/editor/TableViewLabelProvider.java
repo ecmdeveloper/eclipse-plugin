@@ -33,6 +33,8 @@ public class TableViewLabelProvider extends LabelProvider implements ITableLabel
 	private String getQueryTableColumnText(IQueryTable queryTable, int columnIndex) {
 		if ( columnIndex == QueryFieldsTable.NAME_COLUMN_INDEX) {
 			return queryTable.getName(); 
+		} else if ( columnIndex == QueryFieldsTable.ALIAS_COLUMN_INDEX ) {
+			return queryTable.getAlias();
 		}
 		return "";
 	}
@@ -43,6 +45,8 @@ public class TableViewLabelProvider extends LabelProvider implements ITableLabel
 			return queryField.getName(); 
 		} else if ( columnIndex == QueryFieldsTable.TYPE_COLUMN_INDEX ) {
 			return queryField.getType().toString();
+		} else if ( columnIndex == QueryFieldsTable.ALIAS_COLUMN_INDEX ) {
+			return queryField.getAlias();
 		} else if ( columnIndex == QueryFieldsTable.SORT_TYPE_COLUMN_INDEX ) {
 			return queryField.getSortType().toString();
 		} else if ( columnIndex == QueryFieldsTable.SORT_ORDER_COLUMN_INDEX ) {

@@ -32,6 +32,7 @@ public class MockQueryTable implements IQueryTable {
 	private ArrayList<IQueryField> fields;
 	private final String name;
 	private Collection<IQueryTable> childQueryTables;
+	private String alias;
 	
 	public MockQueryTable(String name) {
 		this.name = name;
@@ -140,6 +141,16 @@ public class MockQueryTable implements IQueryTable {
 	@Override
 	public boolean isCBREnabled() {
 		return true;
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 }
 

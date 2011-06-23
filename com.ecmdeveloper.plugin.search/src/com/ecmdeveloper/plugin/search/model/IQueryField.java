@@ -34,6 +34,8 @@ public interface IQueryField {
 	public int getSortOrder();
 	public boolean isSelected();
 	public void setSelected(boolean selected);
+	public void setAlias(String alias);
+	public String getAlias();
 	public IQueryTable getQueryTable();
 	public boolean isOrderable();
 	public boolean isSupportsWildcards();

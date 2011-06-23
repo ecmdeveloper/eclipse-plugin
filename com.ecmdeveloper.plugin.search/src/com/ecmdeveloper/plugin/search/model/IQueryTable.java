@@ -36,6 +36,8 @@ public interface IQueryTable {
 	public String getObjectStoreName();
 	public String getObjectStoreDisplayName();
 	public boolean isCBREnabled();
+	public void setAlias(String alias);
+	public String getAlias();
 	
 	// TODO: add these to a different interface?
 	public void addChildQueryTable(IQueryTable childTable);
