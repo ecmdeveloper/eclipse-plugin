@@ -74,12 +74,17 @@ public abstract class QueryComponent extends QuerySubpart{
 	}
 
 	protected void appendField(StringBuffer result, boolean strict) {
-		if ( strict ) {
-			result.append("[");
-		}
-		result.append(getField());
-		if ( strict ) {
-			result.append("]");
+		String alias = getField().getAlias();
+		if ( alias == null ) {
+			if ( strict ) {
+				result.append("[");
+			}
+			result.append(getField());
+			if ( strict ) {
+				result.append("]");
+			}
+		} else {
+			result.append(alias);
 		}
 	}
 	

@@ -20,38 +20,10 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
-import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
-
 /**
  * @author ricardo.belfor
  *
  */
-public class OrContainer extends QueryContainer {
+public class SqlQuery {
 
-	private static final String OR_LABEL = "OR";
-	private static final long serialVersionUID = 1L;
-
-	public OrContainer(Query query) {
-		super(query);
-	}
-	
-	@Override
-	public String toString() {
-		return OR_LABEL;
-	}
-
-	@Override
-	protected String getConcatOperation() {
-		return OR_LABEL;
-	}
-
-	@Override
-	protected String getOperationPrefix() {
-		return null;
-	}
-
-	@Override
-	public QueryContainerType getType() {
-		return QueryContainerType.OR_CONTAINER;
-	}
 }

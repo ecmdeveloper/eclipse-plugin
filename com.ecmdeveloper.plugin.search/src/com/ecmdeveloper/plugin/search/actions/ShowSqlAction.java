@@ -52,18 +52,12 @@ public class ShowSqlAction extends SelectionAction {
 
 	@Override
 	public void run() {
-		
 		Shell shell = getWorkbenchPart().getSite().getShell();
 		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
 		Query query = editor.getQuery();
 
-		ShowQueryDialog dialog = new ShowQueryDialog(shell, query );
+		ShowQueryDialog dialog = new ShowQueryDialog(shell, query.toSQL() );
 		dialog.create();
-		if (dialog.open() == Window.OK) {
-		}
-
-		
-//		String message = query.toSQL();
-//		MessageDialog.openInformation(shell, getText(), message);
+		dialog.open();
 	}
 }

@@ -28,7 +28,7 @@ import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
  */
 public class AndContainer extends QueryContainer {
 
-	private static final String AND_LABEL = "and";
+	private static final String AND_LABEL = "AND";
 	private static final long serialVersionUID = 1L;
 
 	public AndContainer(Query query) {

@@ -51,13 +51,15 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 
 	public static final int NAME_COLUMN_INDEX = 0;
 	public static final int TYPE_COLUMN_INDEX = 1;
-	public static final int SORT_TYPE_COLUMN_INDEX = 2;
-	public static final int SORT_ORDER_COLUMN_INDEX = 3;
+	public static final int ALIAS_COLUMN_INDEX = 2;
+	public static final int SORT_TYPE_COLUMN_INDEX = 3;
+	public static final int SORT_ORDER_COLUMN_INDEX = 4;
 	
 	private static final String NAME_COLUMN_NAME = "Name";
 	private static final String TYPE_COLUMN_NAME = "Field Type";
 	private static final String SORT_TYPE_COLUMN_NAME = "Sort Type";
 	private static final String SORT_ORDER_COLUMN_NAME = "Sort Order";
+	private static final String ALIAS_COLUMN_NAME = "Alias";
 	
 	private CheckboxTreeViewer tableViewer;
 	private final Query query;
@@ -90,7 +92,10 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 
 		createTableViewerColumn(NAME_COLUMN_NAME, 200, NAME_COLUMN_INDEX );
 		createTableViewerColumn(TYPE_COLUMN_NAME, 100, TYPE_COLUMN_INDEX );
-		TreeViewerColumn column = createTableViewerColumn(SORT_TYPE_COLUMN_NAME, 100, SORT_TYPE_COLUMN_INDEX );
+		TreeViewerColumn column = createTableViewerColumn(ALIAS_COLUMN_NAME, 100, ALIAS_COLUMN_INDEX );
+		column.setEditingSupport(new AliasEditingSupport(tableViewer) );
+		
+		column = createTableViewerColumn(SORT_TYPE_COLUMN_NAME, 100, SORT_TYPE_COLUMN_INDEX );
 		column.setEditingSupport( new SortTypeEditingSupport( this) );
 
 		column = createTableViewerColumn(SORT_ORDER_COLUMN_NAME, 100, SORT_ORDER_COLUMN_INDEX );

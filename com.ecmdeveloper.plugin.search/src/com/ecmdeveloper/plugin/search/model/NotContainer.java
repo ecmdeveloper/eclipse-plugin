@@ -28,7 +28,7 @@ import com.ecmdeveloper.plugin.search.model.constants.QueryContainerType;
  */
 public class NotContainer extends QueryContainer {
 
-	private static final String NOT_LABEL = "not";
+	private static final String NOT_LABEL = "NOT";
 	private static final long serialVersionUID = 1L;
 
 	public NotContainer(Query query) {

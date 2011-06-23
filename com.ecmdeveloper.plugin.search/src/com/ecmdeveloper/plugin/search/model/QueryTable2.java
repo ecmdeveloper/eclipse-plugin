@@ -44,6 +44,7 @@ public class QueryTable2 implements IQueryTable {
 	private final String name;
 	private final String displayName;
 	private final boolean cbrEnabled;
+	private String alias;
 	
 	public QueryTable2(String name, String displayName, String objectStoreName, String objectStoreDisplayName,
 			String connectionName, String connectionDisplayName, boolean cbrEnabled ) {
@@ -185,5 +186,15 @@ public class QueryTable2 implements IQueryTable {
 	@Override
 	public void addQueryField(IQueryField queryField) {
 		fields.add(queryField);
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 }

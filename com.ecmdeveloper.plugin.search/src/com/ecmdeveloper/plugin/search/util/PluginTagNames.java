@@ -71,4 +71,5 @@ public class PluginTagNames {
 	public static final String FULL_TEXT_QUERY_TYPE = "fullTextQueryType";
 	public static final String ALL_FIELDS = "allFields";
 	public static final String CBR_ENABLED = "cbrEnabled";
+	public static final String ALIAS = "alias";
 }

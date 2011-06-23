@@ -33,6 +33,7 @@ public class MockQueryField implements IQueryField {
 	private SortType sortType = SortType.NONE;
 	private int sortOrder = 0;
 	private boolean selected;
+	private String alias;
 	
 	public MockQueryField(String name, QueryFieldType queryFieldType, IQueryTable queryTable) {
 		this.name = name;
@@ -129,5 +130,15 @@ public class MockQueryField implements IQueryField {
 	@Override
 	public boolean isCBREnabled() {
 		return QueryFieldType.STRING.equals( queryFieldType );
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 }

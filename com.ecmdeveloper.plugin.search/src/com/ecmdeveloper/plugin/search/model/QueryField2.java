@@ -20,6 +20,9 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 
 /**
@@ -28,6 +31,8 @@ import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
  */
 public class QueryField2 implements IQueryField {
 
+	public static final String PROPERTY_VALUE = "property_value";
+	
 	private final String name;
 	private final String displayName;
 	private final QueryFieldType queryFieldType;
@@ -39,7 +44,10 @@ public class QueryField2 implements IQueryField {
 	private SortType sortType = SortType.NONE;
 	private int sortOrder = 0;
 	private boolean selected;
+	private String alias;
 
+	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+	
 	public QueryField2(PropertyDescription propertyDescription, IQueryTable queryTable) {
 		this.queryTable = queryTable;
 		this.name = propertyDescription.getName();
@@ -104,7 +112,9 @@ public class QueryField2 implements IQueryField {
 
 	@Override
 	public void setSortType(SortType sortType) {
+		SortType oldValue = this.sortType;
 		this.sortType = sortType;
+		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  sortType);
 	}
 
 	@Override
@@ -114,7 +124,9 @@ public class QueryField2 implements IQueryField {
 
 	@Override
 	public void setSortOrder(int sortOrder) {
+		int oldValue = this.sortOrder;
 		this.sortOrder = sortOrder;
+		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  sortOrder);
 	}
 
 	@Override
@@ -124,7 +136,9 @@ public class QueryField2 implements IQueryField {
 
 	@Override
 	public void setSelected(boolean selected) {
+		boolean oldValue = this.selected;
 		this.selected = selected;
+		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  selected);
 	}
 
 	public IQueryTable getQueryTable() {
@@ -157,5 +171,25 @@ public class QueryField2 implements IQueryField {
 	@Override
 	public boolean isCBREnabled() {
 		return cbrEnabled;
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public void setAlias(String alias) {
+		String oldValue = this.alias;
+		this.alias = alias;
+		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  alias);
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener l){
+		listeners.addPropertyChangeListener(l);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener l){
+		listeners.removePropertyChangeListener(l);
 	}
 }
