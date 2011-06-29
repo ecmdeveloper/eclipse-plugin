@@ -287,8 +287,10 @@ public class QueryFile {
 		queryFieldChild.putBoolean( PluginTagNames.ORDERABLE, queryField.isOrderable() );
 		queryFieldChild.putBoolean( PluginTagNames.SUPPORTS_WILDCARDS, queryField.isSupportsWildcards() );
 		queryFieldChild.putBoolean( PluginTagNames.CONTAINABLE, queryField.isContainable() );
-		queryFieldChild.putBoolean( PluginTagNames.IS_QUERY_FIELD, queryField.isQueryField() );
+		queryFieldChild.putBoolean( PluginTagNames.SEARCHABLE, queryField.isQueryField() );
 		queryFieldChild.putBoolean( PluginTagNames.CBR_ENABLED, queryField.isCBREnabled() );
+		queryFieldChild.putBoolean( PluginTagNames.SELECTABLE, queryField.isSelectable() );
+		
 		queryFieldChild.putString( PluginTagNames.ALIAS, queryField.getAlias() );
 	}
 
@@ -511,6 +513,8 @@ public class QueryFile {
 		boolean cbrEnabled = queryTableChild.getBoolean(PluginTagNames.CBR_ENABLED );
 
 		IQueryTable queryTable = new QueryTable2(name, displayName, objectStoreName, objectStoreDisplayName, connectionName, connectionDisplayName, cbrEnabled );
+
+		queryTable.setAlias(queryTableChild.getString( PluginTagNames.ALIAS) );
 		
 		IMemento queryFieldsChild = queryTableChild.getChild(PluginTagNames.FIELDS);
 		for (IMemento queryFieldChild : queryFieldsChild.getChildren( PluginTagNames.QUERY_FIELD ) ) {
@@ -540,14 +544,16 @@ public class QueryFile {
 			Boolean orderable = queryFieldChild.getBoolean( PluginTagNames.ORDERABLE );
 			Boolean containable = queryFieldChild.getBoolean( PluginTagNames.CONTAINABLE );
 			boolean cbrEnabled = queryFieldChild.getBoolean(PluginTagNames.CBR_ENABLED );
-			
-			queryField = new QueryField2(name, displayName, type, orderable, containable, cbrEnabled, queryTable );
+			boolean selectable = queryFieldChild.getBoolean(PluginTagNames.SELECTABLE );
+			boolean searchable = queryFieldChild.getBoolean(PluginTagNames.SEARCHABLE );
+			queryField = new QueryField2(name, displayName, type, orderable, containable, cbrEnabled, searchable, selectable, queryTable );
 		}
 		
 		SortType sortType = SortType.valueOf( queryFieldChild.getString( PluginTagNames.SORT_TYPE ) );
 		queryField.setSortType(sortType);
 		queryField.setSortOrder( queryFieldChild.getInteger( PluginTagNames.SORT_ORDER ) );
 		queryField.setSelected( queryFieldChild.getBoolean( PluginTagNames.SELECTED ) );
+		queryField.setAlias(queryFieldChild.getString( PluginTagNames.ALIAS) );
 		
 		return queryField;
 		

@@ -20,9 +20,6 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 
 /**
@@ -40,14 +37,14 @@ public class QueryField2 implements IQueryField {
 	private final boolean orderable;
 	private final boolean containable;
 	private final boolean cbrEnabled;
+	private final boolean searchable;
+	private final boolean selectable;
 	
 	private SortType sortType = SortType.NONE;
 	private int sortOrder = 0;
 	private boolean selected;
 	private String alias;
 
-	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
-	
 	public QueryField2(PropertyDescription propertyDescription, IQueryTable queryTable) {
 		this.queryTable = queryTable;
 		this.name = propertyDescription.getName();
@@ -56,18 +53,21 @@ public class QueryField2 implements IQueryField {
 		this.orderable = propertyDescription.isOrderable();
 		this.containable = propertyDescription.isContainable();
 		this.cbrEnabled = propertyDescription.isCBREnabled();
-		
+		this.searchable = propertyDescription.isSearchable();
+		this.selectable = propertyDescription.isSelectable();
 	}
 	
 	public QueryField2(String name, String displayName, QueryFieldType queryFieldType,
-			boolean orderable, boolean containable, boolean cbrEnabled, IQueryTable queryTable) {
+			boolean orderable, boolean containable, boolean cbrEnabled, boolean searchable, boolean selectable, IQueryTable queryTable) {
 		this.name = name;
 		this.displayName = displayName;
 		this.queryFieldType = queryFieldType;
 		this.orderable = orderable;
 		this.containable = containable;
 		this.cbrEnabled = cbrEnabled;
+		this.selectable = selectable;
 		this.queryTable = queryTable;
+		this.searchable = true;
 	}
 
 	private QueryFieldType getQueryFieldType(PropertyDescription propertyDescription) {
@@ -114,7 +114,7 @@ public class QueryField2 implements IQueryField {
 	public void setSortType(SortType sortType) {
 		SortType oldValue = this.sortType;
 		this.sortType = sortType;
-		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  sortType);
+		queryTable.notifyQueryFieldChanged(PROPERTY_VALUE, oldValue,  sortType);
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class QueryField2 implements IQueryField {
 	public void setSortOrder(int sortOrder) {
 		int oldValue = this.sortOrder;
 		this.sortOrder = sortOrder;
-		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  sortOrder);
+		queryTable.notifyQueryFieldChanged(PROPERTY_VALUE, oldValue,  sortOrder);
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class QueryField2 implements IQueryField {
 	public void setSelected(boolean selected) {
 		boolean oldValue = this.selected;
 		this.selected = selected;
-		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  selected);
+		queryTable.notifyQueryFieldChanged(PROPERTY_VALUE, oldValue,  selected);
 	}
 
 	public IQueryTable getQueryTable() {
@@ -162,10 +162,7 @@ public class QueryField2 implements IQueryField {
 
 	@Override
 	public boolean isQueryField() {
-		if ( queryFieldType.equals(QueryFieldType.BINARY ) ) {
-			return false;
-		}
-		return true;
+		return searchable;
 	}
 
 	@Override
@@ -182,14 +179,11 @@ public class QueryField2 implements IQueryField {
 	public void setAlias(String alias) {
 		String oldValue = this.alias;
 		this.alias = alias;
-		listeners.firePropertyChange(PROPERTY_VALUE, oldValue,  alias);
+		queryTable.notifyQueryFieldChanged(PROPERTY_VALUE, oldValue,  alias);
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener l){
-		listeners.addPropertyChangeListener(l);
-	}
-
-	public void removePropertyChangeListener(PropertyChangeListener l){
-		listeners.removePropertyChangeListener(l);
+	@Override
+	public boolean isSelectable() {
+		return selectable;
 	}
 }

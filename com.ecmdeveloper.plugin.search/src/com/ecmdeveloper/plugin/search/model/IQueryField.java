@@ -32,6 +32,7 @@ public interface IQueryField {
 	public SortType getSortType();
 	public void setSortOrder(int sortOrder);
 	public int getSortOrder();
+	public boolean isSelectable();
 	public boolean isSelected();
 	public void setSelected(boolean selected);
 	public void setAlias(String alias);

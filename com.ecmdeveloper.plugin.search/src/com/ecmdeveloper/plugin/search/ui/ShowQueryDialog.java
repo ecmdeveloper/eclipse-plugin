@@ -39,7 +39,7 @@ import com.ecmdeveloper.plugin.search.model.Query;
  */
 public class ShowQueryDialog extends Dialog {
 
-	private static final String[] KEYWORDS = { "SELECT", "BATCHSIZE", "TIMELIMIT",
+	private static final String[] KEYWORDS = { "SELECT", "OPTIONS", "BATCHSIZE", "TIMELIMIT",
 			"FULLTEXTROWLIMIT", "DISTINCT", "ALL", "TOP", "FROM", "WHERE", "ORDER BY", "AS",
 			"INNER", "LEFT", "OUTER", "RIGHT", "FULL", "JOIN", "ON", "WITH", "INCLUDESUBCLASSES",
 			"EXCLUDESUBCLASSES", "AND", "OR", "NOT", "LIKE", "IS", "NOT", "NULL", "IN", "EXISTS", "ASC", "DESC" };

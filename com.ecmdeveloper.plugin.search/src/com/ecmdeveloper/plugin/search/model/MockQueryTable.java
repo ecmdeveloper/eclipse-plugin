@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -151,6 +152,24 @@ public class MockQueryTable implements IQueryTable {
 	@Override
 	public void setAlias(String alias) {
 		this.alias = alias;
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyQueryFieldChanged(String propertyName, Object oldValue, Object newValue) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

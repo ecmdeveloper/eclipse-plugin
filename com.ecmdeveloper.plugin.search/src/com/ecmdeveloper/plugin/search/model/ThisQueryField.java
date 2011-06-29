@@ -123,4 +123,9 @@ public class ThisQueryField implements IQueryField {
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
+
+	@Override
+	public boolean isSelectable() {
+		return true;
+	}
 }

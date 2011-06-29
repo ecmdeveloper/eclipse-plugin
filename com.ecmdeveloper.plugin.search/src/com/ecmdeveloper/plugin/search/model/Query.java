@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -31,13 +32,14 @@ import java.util.Comparator;
  * @author ricardo.belfor
  *
  */
-public class Query {
+public class Query implements PropertyChangeListener {
 
 	public static final String TABLE_ADDED = "TableAdded";
 	public static final String TABLE_REMOVED = "TableAdded";
 	public static final String TOGGLE_INCLUDE_SUBCLASSES = "ToggleIncludeSubclasses";
 	private static final String TOGGLE_DISTINCT = "ToggleDistinct";
 	private static final String MAX_COUNT = "MaxCount";
+	private static final String TIME_LIMIT = "TimeLimit";
 	
 	private ArrayList<IQueryTable> queryTables = new ArrayList<IQueryTable>();
 	private QueryDiagram queryDiagram;
@@ -45,6 +47,7 @@ public class Query {
 	private boolean includeSubclasses = true;
 	private boolean distinct;
 	private Integer maxCount;
+	private Integer timeLimit;
 	private String name;
 	
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
@@ -52,7 +55,6 @@ public class Query {
 	public Query() {
 		queryDiagram = new QueryDiagram(this);
 		queryDiagram.setRootDiagram(true);
-//		add( new MockQueryTable("Query Table 1") );
 	}
 	
 	public String getName() {
@@ -68,11 +70,13 @@ public class Query {
 	}
 	
 	public void add(IQueryTable queryTable) {
+		queryTable.addPropertyChangeListener(this);
 		queryTables.add(queryTable);
 		listeners.firePropertyChange(TABLE_ADDED, queryTable, null);
 	}
 	
 	public void remove(IQueryTable queryTable) {
+		queryTable.removePropertyChangeListener(this);
 		queryTables.remove(queryTable);
 		listeners.firePropertyChange(TABLE_REMOVED, queryTable, null);
 	}
@@ -102,6 +106,15 @@ public class Query {
 		return maxCount;
 	}
 	
+	public Integer getTimeLimit() {
+		return timeLimit;
+	}
+
+	public void setTimeLimit(Integer timeLimit) {
+		this.timeLimit = timeLimit;
+		listeners.firePropertyChange(TIME_LIMIT, timeLimit,  null);
+	}
+
 	public boolean isCRBEnabled() {
 		for (IQueryTable queryTable : getQueryTables() ) {
 			if ( queryTable.isCBREnabled() ) {
@@ -155,6 +168,9 @@ public class Query {
 
 	public void removePropertyChangeListener(PropertyChangeListener l){
 		listeners.removePropertyChangeListener(l);
+		for (IQueryTable queryTable : getQueryTables() ) {
+			queryTable.removePropertyChangeListener(this);
+		}
 	}
 	
 	public String toSQL() {
@@ -165,6 +181,7 @@ public class Query {
 		appendFromPart(sql);
 		appendWherePart(sql);
 		appendOrderByPart(sql);
+		appendOptionsPart(sql);
 		
 		return sql.toString();
 	}
@@ -200,10 +217,17 @@ public class Query {
 		if ( queryField.getAlias() != null ) {
 			sql.append(' ');
 			sql.append("AS ");
-			sql.append( queryField.getAlias() );
+			sql.append( getSafeAlias( queryField.getAlias() ) );
 		}
 	}
 
+	private String getSafeAlias(String alias) {
+		if ( isComplexName(alias) ) {
+			alias = "[" + alias + "]";
+		}
+		return alias;
+	}
+	
 	private void appendFromPart(StringBuffer sql) {
 		sql.append("\nFROM ");
 		if ( getQueryTables().size() == 1) {
@@ -223,10 +247,11 @@ public class Query {
 		sql.append( "] ");
 		if ( queryTable.getAlias() != null ) {
 			sql.append("AS ");
-			sql.append(queryTable.getAlias() );
+			sql.append( getSafeAlias( queryTable.getAlias() ) );
 			sql.append(' ');
 		}
 	}
+
 	private void appendWherePart(StringBuffer sql) {
 
 		String whereClause = getQueryDiagram().toSQL();
@@ -268,6 +293,15 @@ public class Query {
 			}
 		} );
 		return orderByFields;
+	}
+
+	private void appendOptionsPart(StringBuffer sql) {
+		if ( timeLimit != null ) {
+			sql.append("\nOPTIONS(" );
+			sql.append("TIMELIMIT ");
+			sql.append(timeLimit);
+			sql.append(") " );
+		}		
 	}
 
 	@Override
@@ -317,4 +351,23 @@ public class Query {
 		
 	}
 
+	@Override
+	public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+		listeners.firePropertyChange(propertyChangeEvent);
+	}
+
+	public static boolean isComplexName(String stringValue) {
+		boolean complexName = false;
+		for (int i = 0; i < stringValue.length(); ++i) {
+			char charAt = stringValue.charAt(i);
+			if ( !isAlphaNumeric(charAt) ) {
+				complexName = true;
+			}
+		}
+		return complexName;
+	}
+
+	private static boolean isAlphaNumeric(char c) {
+		return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	}
 }

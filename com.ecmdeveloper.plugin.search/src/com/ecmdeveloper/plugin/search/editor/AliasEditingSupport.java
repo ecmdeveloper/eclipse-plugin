@@ -51,12 +51,13 @@ public class AliasEditingSupport extends EditingSupport {
 
 	@Override
 	protected Object getValue(Object element) {
+		String alias = "";
 		if ( element instanceof IQueryField ) {
-			return ((IQueryField) element).getAlias();
+			alias = ((IQueryField) element).getAlias();
 		} else if ( element instanceof IQueryTable ) {
-			return ((IQueryTable) element).getAlias();
+			alias = ((IQueryTable) element).getAlias();
 		}
-		return null;
+		return alias == null? "" : alias;
 	}
 
 	@Override
@@ -72,27 +73,9 @@ public class AliasEditingSupport extends EditingSupport {
 
 	private String getAliasFromValue(Object value) {
 		String alias = (String) value;
-		if ( alias != null && isComplexName(alias) ) {
-			if ( ( !alias.startsWith("[") && ! alias.endsWith("]" ) ) &&  
-				   !alias.startsWith("\"") && ! alias.endsWith("\"" ) ) {
-				alias = "[" + alias + "]";
-			}
+		if ( alias != null && alias.isEmpty() ) {
+			alias = null;
 		}
 		return alias;
-	}
-
-	private boolean isComplexName(String stringValue) {
-		boolean complexName = false;
-		for (int i = 0; i < stringValue.length(); ++i) {
-			char charAt = stringValue.charAt(i);
-			if ( !isAlphaNumeric(charAt) ) {
-				complexName = true;
-			}
-		}
-		return complexName;
-	}
-
-	private boolean isAlphaNumeric(char c) {
-		return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 	}
 }

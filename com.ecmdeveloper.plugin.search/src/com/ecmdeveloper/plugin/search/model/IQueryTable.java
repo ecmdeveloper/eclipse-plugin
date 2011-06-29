@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 /**
@@ -45,4 +46,7 @@ public interface IQueryTable {
 	public Collection<IQueryField> getSelectedQueryFields();
 	public void addQueryField(IQueryField queryField );
 	public IQueryField getQueryField(String fieldName);
+	public void addPropertyChangeListener(PropertyChangeListener listener);
+	public void removePropertyChangeListener(PropertyChangeListener listener);
+	void notifyQueryFieldChanged(String propertyName, Object oldValue, Object newValue);
 }

@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.EventObject;
 
-import javax.xml.soap.MessageFactory;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
@@ -74,6 +72,8 @@ import com.ecmdeveloper.plugin.search.actions.ExecuteSearchAction;
 import com.ecmdeveloper.plugin.search.actions.RemoveTableAction;
 import com.ecmdeveloper.plugin.search.actions.SetMainQueryAction;
 import com.ecmdeveloper.plugin.search.actions.SetMaxCountAction;
+import com.ecmdeveloper.plugin.search.actions.SetTimeLimitAction;
+import com.ecmdeveloper.plugin.search.actions.ShowPartSqlAction;
 import com.ecmdeveloper.plugin.search.actions.ShowSqlAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleDistinctAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleIncludeSubclassesAction;
@@ -108,9 +108,11 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 			new EditQueryComponentAction(this), new ToggleIncludeSubclassesAction(this),
 			new ToggleDistinctAction(this), new ShowSqlAction(this), new SetMainQueryAction(this),
 			new ConvertToTextAction(this), new ExecuteSearchAction(this), 
-			new SetMaxCountAction(this) };
+			new SetMaxCountAction(this), new SetTimeLimitAction(this), new ShowPartSqlAction(this) };
 
 	private Text maxCountText;
+
+	private Text timeLimitText;
 	
 	public GraphicalQueryEditor() {
 		setEditDomain(new DefaultEditDomain(this));
@@ -191,6 +193,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		new ToolItem(toolBar, SWT.SEPARATOR );
 		
 		maxCountText = createMaxCountText(composite);
+		timeLimitText = createMaxTimeText(composite);
 		
 		return toolBar;
 	}
@@ -233,9 +236,47 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		return null;
 	}
 
+	private Text createMaxTimeText(Composite composite) {
+
+		ToolBar toolbar = new ToolBar(composite, SWT.FLAT);
+		ToolItem ti = new ToolItem(toolbar, SWT.NONE);
+		ti.setText("Time Limit:");	
+
+		ToolItem ti2 = new ToolItem(toolbar, SWT.SEPARATOR);
+		Text text = new Text(toolbar, SWT.BORDER );
+		text.setText("0000");
+		text.pack();
+		if ( query.getTimeLimit() != null ) {
+			text.setText( query.getTimeLimit().toString() );
+		} else {
+			text.setText("");			
+		}
+
+		text.addModifyListener( new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				IAction action = getActionRegistry().getAction( SetTimeLimitAction.ID );
+				action.run();
+			} } );
+		
+		ti2.setWidth(text.getBounds().width);
+		ti2.setControl(text);
+		
+		return text;
+	}
+	
+	public Integer getTimeLimit() {
+		String text = timeLimitText.getText();
+		if ( !text.isEmpty() ) {
+			return new Integer( text );
+		}
+		return null;
+	}
+
 	private void createExecuteButton(ToolBar toolBar) {
 		ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
-		toolItem.setImage( Activator.getImage("icons/find.png") );
+		toolItem.setImage( Activator.getImage(IconFiles.EXECUTE) );
 		toolItem.setToolTipText("Execute Search");
 		toolItem.addSelectionListener( new SelectionAdapter(){
 			@Override
@@ -248,7 +289,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 
 	private void createAddTableButton(ToolBar toolBar) {
 		ToolItem addTableItem = new ToolItem(toolBar, SWT.PUSH);
-		addTableItem.setImage( Activator.getImage("icons/table_add.png") );
+		addTableItem.setImage( Activator.getImage(IconFiles.TABLE_ADD) );
 		addTableItem.setToolTipText("Add Table");
 		addTableItem.addSelectionListener( new SelectionAdapter(){
 			@Override
@@ -261,7 +302,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 
 	private ToolItem createDeleteTableButton(ToolBar toolBar) {
 		ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
-		toolItem.setImage( Activator.getImage("icons/table_delete.png") );
+		toolItem.setImage( Activator.getImage(IconFiles.TABLE_DELETE) );
 		toolItem.setToolTipText("Remove Table");
 		toolItem.setEnabled( !query.getQueryTables().isEmpty() );
 		toolItem.addSelectionListener( new SelectionAdapter(){
@@ -276,7 +317,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	
 	private void createIncludeSubClassesButton(ToolBar toolBar) {
 		ToolItem toolItem = new ToolItem(toolBar, SWT.CHECK);
-		toolItem.setImage( Activator.getImage("icons/table_multiple.png") );
+		toolItem.setImage( Activator.getImage(IconFiles.TABLE_SUBCLASSES) );
 		toolItem.setToolTipText("Include Subclasses");
 		toolItem.setSelection( query.isIncludeSubclasses() );
 		toolItem.addSelectionListener( new SelectionAdapter(){

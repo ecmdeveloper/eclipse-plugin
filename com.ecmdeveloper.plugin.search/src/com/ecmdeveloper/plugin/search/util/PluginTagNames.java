@@ -42,7 +42,6 @@ public class PluginTagNames {
 	public static final String ORDERABLE = "orderable";
 	public static final String SUPPORTS_WILDCARDS = "supportsWildcards";
 	public static final String CONTAINABLE = "containable";
-	public static final String IS_QUERY_FIELD = "isQueryField";
 	public static final String DISTINCT = "distinct";
 	public static final String INCLUDE_SUBCLASSES = "include_subclasses";
 	public static final String SQL = "sql";
@@ -72,4 +71,6 @@ public class PluginTagNames {
 	public static final String ALL_FIELDS = "allFields";
 	public static final String CBR_ENABLED = "cbrEnabled";
 	public static final String ALIAS = "alias";
+	public static final String SELECTABLE = "selectable";
+	public static final String SEARCHABLE = "searchable";
 }
