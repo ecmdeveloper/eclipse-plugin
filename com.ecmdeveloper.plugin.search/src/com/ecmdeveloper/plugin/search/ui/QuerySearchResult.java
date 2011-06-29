@@ -52,7 +52,11 @@ public class QuerySearchResult implements ISearchResult {
 		columnNames = new ArrayList<String>();
 		Collection<IQueryField> selectedQueryFields = query.getSelectedQueryFields();
 		for (IQueryField queryField : selectedQueryFields ) {
-			columnNames.add( queryField.getName() );
+			if ( queryField.getAlias() == null ) {
+				columnNames.add( queryField.getName() );
+			} else {
+				columnNames.add( queryField.getAlias() );
+			}
 		}
 	}
 

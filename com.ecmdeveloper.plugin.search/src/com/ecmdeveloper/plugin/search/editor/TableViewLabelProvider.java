@@ -13,8 +13,14 @@ public class TableViewLabelProvider extends LabelProvider implements ITableLabel
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-		if ( columnIndex == QueryFieldsTable.NAME_COLUMN_INDEX && element instanceof IQueryTable ) {
-			return Activator.getImage( IconFiles.TABLE_FOLDER );
+		if ( columnIndex == QueryFieldsTable.NAME_COLUMN_INDEX ) {
+			if ( element instanceof IQueryTable ) {
+				return Activator.getImage( IconFiles.TABLE_FOLDER );
+			} else if ( element instanceof IQueryField ) {
+				if ( ((IQueryField) element).isQueryField() ) {
+					return Activator.getImage( IconFiles.SEARCHABLE_QUERY_FIELD );
+				}
+			}
 		}
 		return null;
 	}

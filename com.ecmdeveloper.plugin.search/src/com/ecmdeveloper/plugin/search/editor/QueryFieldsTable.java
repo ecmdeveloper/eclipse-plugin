@@ -26,22 +26,25 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.gef.dnd.TemplateTransfer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-import com.ecmdeveloper.plugin.classes.views.ClassesViewDragSource;
-import com.ecmdeveloper.plugin.search.model.ThisQueryField;
+import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
+import com.ecmdeveloper.plugin.search.util.IconFiles;
 
 /**
  * @author ricardo.belfor
@@ -64,6 +67,19 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 	private CheckboxTreeViewer tableViewer;
 	private final Query query;
 
+	class BaseColumnLabelProvider extends ColumnLabelProvider {
+		
+		@Override
+		public Color getForeground(Object element) {
+			if ( element instanceof IQueryField ) {
+				if ( !((IQueryField) element).isSelectable() ) {
+					return tableViewer.getTree().getDisplay().getSystemColor(SWT.COLOR_GRAY );
+				}
+			}
+			return super.getForeground(element);
+		}
+	}
+	
 	public QueryFieldsTable(Query query, Composite parent) {
 		this.query = query;
 		createTableViewer(parent);
@@ -90,24 +106,102 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 		Tree table = tableViewer.getTree();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createTableViewerColumn(NAME_COLUMN_NAME, 200, NAME_COLUMN_INDEX );
-		createTableViewerColumn(TYPE_COLUMN_NAME, 100, TYPE_COLUMN_INDEX );
-		TreeViewerColumn column = createTableViewerColumn(ALIAS_COLUMN_NAME, 100, ALIAS_COLUMN_INDEX );
-		column.setEditingSupport(new AliasEditingSupport(tableViewer) );
-		
-		column = createTableViewerColumn(SORT_TYPE_COLUMN_NAME, 100, SORT_TYPE_COLUMN_INDEX );
-		column.setEditingSupport( new SortTypeEditingSupport( this) );
-
-		column = createTableViewerColumn(SORT_ORDER_COLUMN_NAME, 100, SORT_ORDER_COLUMN_INDEX );
-		column.setEditingSupport( new SortOrderEditingSupport( tableViewer ) );
+		createNameColumn();
+		createTypeColumn();
+		createAliasColumn();
+		createSortTypeColumn();
+		createSortOrderColumn();
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		tableViewer.setContentProvider( new QueryContentProvider() );
-		tableViewer.setLabelProvider( new TableViewLabelProvider() );
+		tableViewer.addCheckStateListener( getCheckStateListener() );
+		tableViewer.setInput( query );
+		refreshTableViewer();
+	}
 
-		tableViewer.addCheckStateListener( new ICheckStateListener() {
+	private void createNameColumn() {
+		TreeViewerColumn nameColumn = createTableViewerColumn(NAME_COLUMN_NAME, 200, NAME_COLUMN_INDEX );
+		nameColumn.setLabelProvider( new ColumnLabelProvider() {
 
+			@Override
+			public Image getImage(Object element) {
+				if ( element instanceof IQueryTable ) {
+					return Activator.getImage( IconFiles.TABLE_FOLDER );
+				} else if ( element instanceof IQueryField ) {
+					if ( ((IQueryField) element).isQueryField() ) {
+						return Activator.getImage( IconFiles.SEARCHABLE_QUERY_FIELD );
+					}
+				}				
+				return super.getImage(element);
+			}} );
+	}
+
+	private void createAliasColumn() {
+		TreeViewerColumn column = createTableViewerColumn(ALIAS_COLUMN_NAME, 100, ALIAS_COLUMN_INDEX );
+		column.setEditingSupport(new AliasEditingSupport(tableViewer) );
+		column.setLabelProvider( new BaseColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if ( element instanceof IQueryField ) {
+					return ((IQueryField) element).getAlias();
+				} else if (element instanceof IQueryTable ) {
+					return ((IQueryTable) element).getAlias();
+				}
+				return "";
+			}});
+	}
+
+	private void createSortOrderColumn() {
+		TreeViewerColumn column;
+		column = createTableViewerColumn(SORT_ORDER_COLUMN_NAME, 100, SORT_ORDER_COLUMN_INDEX );
+		column.setEditingSupport( new SortOrderEditingSupport( tableViewer ) );
+		column.setLabelProvider( new BaseColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if ( element instanceof IQueryField ) {
+					IQueryField queryField = (IQueryField) element;
+					if ( queryField.getSortOrder() != 0 ) {
+						return Integer.toString( queryField.getSortOrder() );
+					}
+				}
+				return "";
+			}} );
+	}
+
+	private void createSortTypeColumn() {
+		TreeViewerColumn column;
+		column = createTableViewerColumn(SORT_TYPE_COLUMN_NAME, 100, SORT_TYPE_COLUMN_INDEX );
+		column.setEditingSupport( new SortTypeEditingSupport( this) );
+		column.setLabelProvider( new BaseColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if ( element instanceof IQueryField ) {
+					return ((IQueryField) element).getSortType().toString();
+				}
+				return "";
+			}} );
+	}
+
+	private void createTypeColumn() {
+		TreeViewerColumn typeColumn = createTableViewerColumn(TYPE_COLUMN_NAME, 100, TYPE_COLUMN_INDEX );
+		typeColumn.setLabelProvider( new BaseColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if ( element instanceof IQueryField ) {
+					return ((IQueryField) element).getType().toString();
+				}
+				return "";
+			} } );
+	}
+
+	private ICheckStateListener getCheckStateListener() {
+		return new ICheckStateListener() {
+	
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
@@ -120,11 +214,7 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 				} else if ( element instanceof IQueryField ) {
 					((IQueryField) element).setSelected( event.getChecked() );
 				}
-			}} );
-
-		tableViewer.setInput( query );
-		refreshTableViewer();
-//			getSite().setSelectionProvider(tableViewer);
+			}};
 	}
 
 	private TreeViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
@@ -136,7 +226,7 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 		column.setWidth(bound);
 		column.setResizable(true);
 		column.setMoveable(true);
-		
+
 		return viewerColumn;
 	}
 

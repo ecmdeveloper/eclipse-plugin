@@ -33,6 +33,7 @@ import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.QueryTable2;
+import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -80,14 +81,13 @@ public class TableSelectionWizard extends Wizard {
 										queryTable.addChildQueryTable( childTable );
 									}
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									PluginMessage.openErrorFromThread(getShell(), TITLE, e.getLocalizedMessage(), e);
 								}
 								monitor.done();
 							}
 						});
 					} catch (InvocationTargetException e) {
-						//PluginMessage.openError(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
+						PluginMessage.openErrorFromThread(getShell(), TITLE, e.getLocalizedMessage(), e);
 					} catch (InterruptedException e) {
 						// User canceled, so stop but don’t close wizard.
 					}

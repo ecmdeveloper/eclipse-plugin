@@ -88,6 +88,9 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 	private final Boolean systemOwned;
 	private final ObjectStore objectStore;
 	private final boolean cbrEnabled;
+	private final boolean hidden;
+	private final boolean searchable;
+	private final boolean selectable;
 	
 	public PropertyDescription(Object internalPropertyDescription, ObjectStore objectStore ) {
 		this.objectStore = objectStore;
@@ -101,6 +104,10 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 		systemOwned = propertyDescription.get_IsSystemOwned();
 		orderable = initializeOrderable();
 		cbrEnabled = initializeCBREnabled();
+		hidden = propertyDescription.get_IsHidden();
+		System.out.println( name + " is " + propertyDescription.get_IsSearchable() );
+		searchable = propertyDescription.get_IsSearchable();
+		selectable = propertyDescription.get_IsSelectable();
 		
 		containable = null;
 			
@@ -124,7 +131,7 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 			return false;
 		} else if (	propertyType.equals(PropertyType.STRING ) ) {
 			Boolean usesLongColumn = ((PropertyDescriptionString) propertyDescription).get_UsesLongColumn();
-			return usesLongColumn != null && usesLongColumn.booleanValue();
+			return ! (usesLongColumn != null && usesLongColumn.booleanValue());
 		} else {
 			return true;
 		}
@@ -204,6 +211,18 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 
 	public boolean isCBREnabled() {
 		return cbrEnabled;
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public boolean isSelectable() {
+		return selectable;
+	}
+
+	public boolean isSearchable() {
+		return searchable;
 	}
 
 	private boolean initializeContainable() {

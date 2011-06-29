@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +29,7 @@ import java.util.Comparator;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
@@ -45,6 +48,8 @@ public class QueryTable2 implements IQueryTable {
 	private final String displayName;
 	private final boolean cbrEnabled;
 	private String alias;
+	
+	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
 	public QueryTable2(String name, String displayName, String objectStoreName, String objectStoreDisplayName,
 			String connectionName, String connectionDisplayName, boolean cbrEnabled ) {
@@ -70,9 +75,13 @@ public class QueryTable2 implements IQueryTable {
 		childQueryTables = new ArrayList<IQueryTable>();
 		cbrEnabled = Boolean.TRUE.equals( classDescription.getCBREnabled() );
 		
-		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
-			IQueryField queryField = new QueryField2(propertyDescription, this );
-			fields.add(queryField);
+		for ( PropertyDescription propertyDescription : classDescription.getAllPropertyDescriptions() ) {
+			if ( isQueryTableProperty(propertyDescription) ) {
+				IQueryField queryField = new QueryField2(propertyDescription, this );
+				fields.add(queryField);
+			} else {
+				System.out.println( "Skipping " + propertyDescription.getName() );
+			}
 		}
 		
 		Collections.sort(fields, new Comparator<IQueryField>(){
@@ -82,6 +91,19 @@ public class QueryTable2 implements IQueryTable {
 			}
 		});
 		fields.add(0, new ThisQueryField(this) );
+	}
+
+	private boolean isQueryTableProperty(PropertyDescription propertyDescription) {
+		if ( propertyDescription.getName().equals("This") ) {
+			return false;
+		} else if (propertyDescription.isSearchable()) {
+			return true;
+		} else if (propertyDescription.isSelectable()
+				&& !propertyDescription.getPropertyType().equals(PropertyType.OBJECT)) {
+			return true;
+		}
+		return false;
+	
 	}
 
 	@Override
@@ -196,5 +218,26 @@ public class QueryTable2 implements IQueryTable {
 	@Override
 	public void setAlias(String alias) {
 		this.alias = alias;
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener){
+		listeners.addPropertyChangeListener(listener);
+		for ( IQueryTable childQueryTable : childQueryTables ) {
+			childQueryTable.addPropertyChangeListener(listener);
+		}
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener){
+		for ( IQueryTable childQueryTable : childQueryTables ) {
+			childQueryTable.removePropertyChangeListener(listener);
+		}
+		listeners.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public void notifyQueryFieldChanged(String propertyName, Object oldValue, Object newValue) {
+		listeners.firePropertyChange(propertyName, oldValue,  newValue);
 	}
 }

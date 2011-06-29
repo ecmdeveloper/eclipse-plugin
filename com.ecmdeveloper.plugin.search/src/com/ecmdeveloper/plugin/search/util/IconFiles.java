@@ -26,11 +26,16 @@ package com.ecmdeveloper.plugin.search.util;
  */
 public class IconFiles {
 
-	public static String TABLE_FOLDER = "icons/folder_table.png";
-	public static String DISTINCT = "icons/table_sort.png";
-	public static String SHOW_SQL = "icons/table_lightning.png";
-	public static String SEARCH_EDITOR = "icons/find_edit.png";
-	public static String CLASS = "icons/class.png";
+	public static final String EXECUTE = "icons/find_run.png";
+	public static final String TABLE_FOLDER = "icons/folder_table.png";
+	public static final String DISTINCT = "icons/table_sort.png";
+	public static final String SHOW_SQL = "icons/table_lightning.png";
+	public static final String SEARCH_EDITOR = "icons/find_edit.png";
+	public static final String CLASS = "icons/class.png";
+	public static final String TABLE_ADD = "icons/table_add.png";
+	public static final String TABLE_DELETE = "icons/table_delete.png";
+	public static final String TABLE_SUBCLASSES = "icons/table_multiple.png";
+	public static final String SEARCHABLE_QUERY_FIELD = "icons/page_find.png";
 	
 	private IconFiles() {
 	}

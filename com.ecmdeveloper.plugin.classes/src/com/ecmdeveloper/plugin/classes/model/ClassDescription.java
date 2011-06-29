@@ -76,7 +76,7 @@ public class ClassDescription implements IAdaptable {
 		displayName = classDescription.get_DisplayName(); 
 		hasChildren = ! classDescription.get_ImmediateSubclassDescriptions().isEmpty();
 		children = null;
-		getPropertyDescriptions();
+		initializePropertyDescriptions();
 	}
 
 	public Object getObjectStoreObject() {
@@ -162,8 +162,12 @@ public class ClassDescription implements IAdaptable {
 		hasChildren = ! children.isEmpty();
 	}
 	
-	public Collection<PropertyDescription> getPropertyDescriptions() {
-
+	public Collection<PropertyDescription> getAllPropertyDescriptions() {
+		return propertyDescriptions;
+	}
+	
+	private void initializePropertyDescriptions() {
+		
 		if ( propertyDescriptions == null ) {
 			
 			PropertyDescriptionList propertyDescriptionsList = classDescription.get_PropertyDescriptions();
@@ -172,21 +176,21 @@ public class ClassDescription implements IAdaptable {
 			
 			while (iterator.hasNext()) {
 				com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) iterator.next();
-				
-				if (  ! internalPropertyDescription.get_IsHidden()) {
-//					System.out.println( "Adding " + internalPropertyDescription.get_Name() );
-					propertyDescriptions.add( new PropertyDescription(internalPropertyDescription, objectStore) );
-				} else {
-//					if ( internalPropertyDescription.get_IsHidden() ) {
-//						System.out.println( "Skipping hidden " + internalPropertyDescription.get_Name() );
-//					} else {
-//						System.out.println( "Skipping " + internalPropertyDescription.get_Name() );
-//					}
-				}
+				propertyDescriptions.add( new PropertyDescription(internalPropertyDescription, objectStore) );
 			}
 		}
 		
-		return propertyDescriptions;
+	}
+	
+	public Collection<PropertyDescription> getPropertyDescriptions() {
+
+		Collection<PropertyDescription> filteredPropertyDescriptions = new ArrayList<PropertyDescription>();
+		for ( PropertyDescription propertyDescription : propertyDescriptions ) {
+			if ( ! propertyDescription.isHidden() ) {
+				filteredPropertyDescriptions.add(propertyDescription);
+			}
+		}
+		return filteredPropertyDescriptions;
 	}
 
 	@SuppressWarnings("unchecked")
