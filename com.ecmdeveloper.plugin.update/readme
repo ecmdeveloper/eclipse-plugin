@@ -1,14 +1,9 @@
 Install this plugin using the Eclipse update site http://www.ecmdeveloper.com/update
 
-Release notes for version 1.4.0.0:
+Release notes for version 1.5.0.0:
 
 Changes:
 
-* Creation of new folders, documents and custom objects.
-* Tracking of files checked out into the workspace.
-* Favorites view.
-* Content Engine Perspective, modified Class Diagram editing perspective.
-* Double click also connects Object Stores and expands Folders.
-* The code module editor is simplified, Java projects, packages or source files can be added as a whole.
-* The delete function is improved, allowing bulk deletion of objects with children.
-* Fixed bug accessing multiple Content Engines with different password.
+* Searching of folders, documents and custom objects.
+* Fixed bug with empty code module after initial creation
+* Multiple Java elements can be added at once to a code module
