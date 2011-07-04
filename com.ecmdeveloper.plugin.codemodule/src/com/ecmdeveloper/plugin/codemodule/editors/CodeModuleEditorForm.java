@@ -252,8 +252,15 @@ public class CodeModuleEditorForm extends FormPage {
 
 		createUpdateCodeModuleLink(toolkit, client);
 		createShowCodeModuleActionsLink(toolkit, client);
+		//createAddActionLink(toolkit, client);
 		
 		section.setClient(client);
+	}
+
+	private void createAddActionLink(FormToolkit toolkit, Composite client) {
+		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
+		link.setText("Add Action");
+		link.setImage( Activator.getImage(IconFiles.ICON_ADD_EVENT_ACTION) );
 	}
 
 	private void createUpdateCodeModuleLink(FormToolkit toolkit,
@@ -374,7 +381,9 @@ public class CodeModuleEditorForm extends FormPage {
 		ElementTreeSelectionDialog dialog = getJavaElementSelectionDialog();
 		int result = dialog.open();
 		if ( result == Dialog.OK ) {
-			codeModuleFile.addJavaElement( (IJavaElement)dialog.getFirstResult());
+			for ( Object object : dialog.getResult() ) {
+				codeModuleFile.addJavaElement( (IJavaElement)object );
+			}
 			validateForm();
 		}
 	}

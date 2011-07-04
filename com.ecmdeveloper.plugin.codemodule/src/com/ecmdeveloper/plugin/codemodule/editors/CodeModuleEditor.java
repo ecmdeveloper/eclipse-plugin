@@ -1,10 +1,12 @@
 package com.ecmdeveloper.plugin.codemodule.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -19,6 +21,10 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManagerListener;
 import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
 
 public class CodeModuleEditor extends FormEditor implements CodeModulesManagerListener {
+
+	private static final String NO_FILES_MESSAGE = "This Code Module does not contain any files. Are you sure you want to save?";
+
+	private static final String TITLE = "Code Module Editor";
 
 	public static final String CODE_MODULE_EDITOR_ID = "com.ecmdeveloper.plugin.editors.codeModuleEditor";
 
@@ -101,7 +107,13 @@ public class CodeModuleEditor extends FormEditor implements CodeModulesManagerLi
 	public void doSave(IProgressMonitor monitor) {
 
 		try {
-		
+
+			if ( codeModuleFile.getContentElementFiles().isEmpty() ) {
+				if ( !MessageDialog.openConfirm( getSite().getShell(), TITLE, NO_FILES_MESSAGE) ) {
+					return;
+				}
+			}
+			
 			if ( codeModuleFile.getId() != null ) {
 				CodeModulesManager.getManager().saveCodeModuleFile(codeModuleFile);
 			} else {
@@ -112,7 +124,7 @@ public class CodeModuleEditor extends FormEditor implements CodeModulesManagerLi
 			codeModuleEditorForm.refreshFormContent(codeModuleFile);
 		}
 		catch (Exception e ) {
-			PluginMessage.openError( getSite().getShell(), "Code Module Editor", "Save failed", e );
+			PluginMessage.openError( getSite().getShell(), TITLE, "Save failed", e );
 		}
 	}
 

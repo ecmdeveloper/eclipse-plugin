@@ -55,6 +55,7 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 import com.ecmdeveloper.plugin.model.Action;
+import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author Ricardo Belfor
@@ -62,6 +63,7 @@ import com.ecmdeveloper.plugin.model.Action;
  */
 public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler {
 
+	private static final String NOT_SAVED_MESSAGE = "The Code Module ''{0}'' is not saved yet. Please save before trying to update.";
 	private static final String MODIFIED_MESSAGE = "\"{0}\" has been modified. Save changes?";
 	private static final String SELECT_ACTIONS_MESSAGE = Messages.UpdateCodeModuleHandler_SelectActionsMessage;
 	private static final String UPDATE_MESSAGE = Messages.UpdateCodeModuleHandler_UpdateMessage;
@@ -85,6 +87,11 @@ public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler
 		final ArrayList<CodeModuleFile> list = new ArrayList<CodeModuleFile>();
 		while ( iterator.hasNext() ) {
 			CodeModuleFile codeModuleFile = (CodeModuleFile) iterator.next();
+			if ( codeModuleFile.getId() == null ) {
+				PluginMessage.openError(window.getShell(), HANDLER_NAME, MessageFormat.format(
+						NOT_SAVED_MESSAGE, codeModuleFile.getName()), null);
+				return null;
+			}
 			list.add( codeModuleFile );
 			checkCodeModuleEditor(window, codeModuleFile);
 		}

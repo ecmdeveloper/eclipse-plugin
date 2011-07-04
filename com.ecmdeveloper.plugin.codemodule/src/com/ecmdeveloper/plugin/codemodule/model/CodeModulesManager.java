@@ -190,13 +190,13 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		}
 	}
 
-	public void saveNewCodeModuleFile(CodeModuleFile codeModuleFile) throws ExecutionException {
+	public void saveNewCodeModuleFile(CodeModuleFile codeModuleFile) throws Exception {
 
 		ObjectStore objectStore = getObjectStore(codeModuleFile);
 		ObjectStore.assertConnected(objectStore);
 		
 		CreateCodeModuleTask task = new CreateCodeModuleTask(codeModuleFile
-				.getName(), codeModuleFile.getFiles(), objectStore );
+				.getName(), codeModuleFile.getContentElementFiles(), objectStore );
 		
 		CodeModule codeModule = (CodeModule) getObjectStoresManager().executeTaskSync(task);
 		codeModuleFile.setId( codeModule.getId() );
