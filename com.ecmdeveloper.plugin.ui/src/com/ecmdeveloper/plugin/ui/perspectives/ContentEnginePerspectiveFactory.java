@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.ui.perspectives;
 
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -92,6 +93,7 @@ public class ContentEnginePerspectiveFactory implements IPerspectiveFactory {
 		addPerspectiveShortcuts(layout);
 		addShowViewShortcuts(layout);
 		addNewWizardShortcuts(layout);
+		layout.addActionSet("com.ecmdeveloper.plugin.search.actionSet");
 	}
 
 	private void addPerspectiveShortcuts(IPageLayout layout) {
@@ -105,6 +107,7 @@ public class ContentEnginePerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(TRACKED_FILES_VIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
 		layout.addShowViewShortcut(CLASSES_VIEW_ID);
+		layout.addShowViewShortcut(NewSearchUI.SEARCH_VIEW_ID);
 	}
 
 	private void addNewWizardShortcuts(IPageLayout layout) {
