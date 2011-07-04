@@ -105,7 +105,6 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 		orderable = initializeOrderable();
 		cbrEnabled = initializeCBREnabled();
 		hidden = propertyDescription.get_IsHidden();
-		System.out.println( name + " is " + propertyDescription.get_IsSearchable() );
 		searchable = propertyDescription.get_IsSearchable();
 		selectable = propertyDescription.get_IsSelectable();
 		
@@ -230,7 +229,6 @@ public class PropertyDescription implements IAdaptable, TaskListener {
 			try {
 				// TODO: make this asynchronous?
 				PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) propertyDescription;
-//				System.out.println(objectPropertyDescription.get_RequiredClass().get_Name() );
 				CheckContainableClass task = new CheckContainableClass(objectPropertyDescription,
 						objectStore);
 				ClassesManager.getManager().executeTaskSync( task );

@@ -23,6 +23,8 @@ package com.ecmdeveloper.plugin.classes.model.task;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.filenet.api.exception.EngineRuntimeException;
+import com.filenet.api.exception.ExceptionCode;
 import com.filenet.api.meta.ClassDescription;
 import com.filenet.api.meta.PropertyDescriptionObject;
 
@@ -48,11 +50,19 @@ public class CheckContainableClass extends BaseTask {
 	@Override
 	protected Object execute() throws Exception {
 
-		ClassDescription requiredClass = propertyDescription.get_RequiredClass();
-
-		containable = requiredClass.describedIsOfClass("Document")
-				|| requiredClass.describedIsOfClass("Folder")
-				|| requiredClass.describedIsOfClass("CustomObject");
+		try
+		{
+			ClassDescription requiredClass = propertyDescription.get_RequiredClass();
+	
+			containable = requiredClass.describedIsOfClass("Document")
+					|| requiredClass.describedIsOfClass("Folder")
+					|| requiredClass.describedIsOfClass("CustomObject");
+		} catch (EngineRuntimeException e ) {
+			// 	WORKAROUND: the class 'ReplicationGroup' gives this exception. This exception is ignored.
+			if ( e.getExceptionCode() != ExceptionCode.E_OBJECT_NOT_FOUND ) {
+				throw e;
+			} 
+		}
 		
 		return null;
 	}
