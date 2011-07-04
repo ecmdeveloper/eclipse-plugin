@@ -38,7 +38,7 @@ public class Comparison extends QueryComponent {
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					return queryField.isQueryField();
+					return queryField.isSearchable();
 				}};	
 	
 	private ComparisonOperation comparisonOperation;

@@ -67,7 +67,7 @@ public class QueryField2 implements IQueryField {
 		this.cbrEnabled = cbrEnabled;
 		this.selectable = selectable;
 		this.queryTable = queryTable;
-		this.searchable = true;
+		this.searchable = searchable;
 	}
 
 	private QueryFieldType getQueryFieldType(PropertyDescription propertyDescription) {
@@ -152,7 +152,7 @@ public class QueryField2 implements IQueryField {
 
 	@Override
 	public boolean isSupportsWildcards() {
-		return QueryFieldType.STRING.equals( queryFieldType );
+		return searchable && QueryFieldType.STRING.equals( queryFieldType );
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public class QueryField2 implements IQueryField {
 	}
 
 	@Override
-	public boolean isQueryField() {
+	public boolean isSearchable() {
 		return searchable;
 	}
 

@@ -21,20 +21,41 @@
 package com.ecmdeveloper.plugin.search.ui;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+
+import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
+import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SearchResultContentProvider implements IStructuredContentProvider {
+public class SearchResultContentProvider implements IStructuredContentProvider, ObjectStoresManagerListener {
 
 	private QuerySearchResult searchResult; 
-
+	private TableViewer viewer;
+	private ObjectStoresManager manager;
+	
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		
+		this.viewer = (TableViewer) viewer;
+		
 		if ( newInput instanceof QuerySearchResult ) {
 			searchResult = (QuerySearchResult) newInput;
+			
+			if ( manager == null ) {
+				manager = ObjectStoresManager.getManager();
+				manager.addObjectStoresManagerListener(this);
+			}
+		}
+		
+		if ( newInput == null && manager != null ) {
+			manager.removeObjectStoresManagerListener(this);
+			manager = null;
 		}
 	}
 
@@ -48,5 +69,44 @@ public class SearchResultContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void dispose() {
+	}
+
+	@Override
+	public void objectStoreItemsChanged(final ObjectStoresManagerEvent event) {
+		viewer.getControl().getDisplay().asyncExec( new Runnable() {
+			
+			@Override
+			public void run() {
+				updateViewer(event);
+			}
+		});
+		
+	}
+
+	protected void updateViewer(ObjectStoresManagerEvent event) {
+
+		if ( event.getItemsRemoved() != null ) {
+			viewer.remove( searchResult.getSearchResultRows( event.getItemsRemoved() ) );
+		}
+		
+		if ( event.getItemsUpdated() != null ) {
+			viewer.update( searchResult.getSearchResultRows( event.getItemsUpdated() ), null );
+		}
+		
+	}
+
+	@Override
+	public void objectStoreItemsRefreshed(final ObjectStoresManagerRefreshEvent event) {
+		viewer.getControl().getDisplay().asyncExec( new Runnable() {
+			
+			@Override
+			public void run() {
+				refreshViewer(event);
+			}
+		});
+	}
+
+	protected void refreshViewer(ObjectStoresManagerRefreshEvent event) {
+		viewer.update( searchResult.getSearchResultRows( event.getItemsRefreshed() ), null );
 	}
 }

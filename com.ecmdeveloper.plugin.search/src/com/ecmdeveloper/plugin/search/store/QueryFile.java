@@ -287,7 +287,7 @@ public class QueryFile {
 		queryFieldChild.putBoolean( PluginTagNames.ORDERABLE, queryField.isOrderable() );
 		queryFieldChild.putBoolean( PluginTagNames.SUPPORTS_WILDCARDS, queryField.isSupportsWildcards() );
 		queryFieldChild.putBoolean( PluginTagNames.CONTAINABLE, queryField.isContainable() );
-		queryFieldChild.putBoolean( PluginTagNames.SEARCHABLE, queryField.isQueryField() );
+		queryFieldChild.putBoolean( PluginTagNames.SEARCHABLE, queryField.isSearchable() );
 		queryFieldChild.putBoolean( PluginTagNames.CBR_ENABLED, queryField.isCBREnabled() );
 		queryFieldChild.putBoolean( PluginTagNames.SELECTABLE, queryField.isSelectable() );
 		

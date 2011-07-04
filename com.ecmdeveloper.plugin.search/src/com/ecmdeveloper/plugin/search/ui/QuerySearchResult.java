@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.search.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.search.ui.ISearchQuery;
@@ -30,6 +31,7 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.SearchResultRow;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -139,5 +141,19 @@ public class QuerySearchResult implements ISearchResult {
 			return searchResult.size();
 		}
 		return 0;
+	}
+	
+	public SearchResultRow[] getSearchResultRows(IObjectStoreItem[] objectStoreItems ) {
+		
+		ArrayList<SearchResultRow> searchResultRows = new ArrayList<SearchResultRow>();
+		for ( IObjectStoreItem objectStoreItem : objectStoreItems ) {
+			for ( SearchResultRow searchResultRow : searchResult ) {
+				if ( objectStoreItem.equals( searchResultRow.getObjectValue() ) ) {
+					searchResultRows.add(searchResultRow);
+				}
+			}
+		}
+		
+		return searchResultRows.toArray( new SearchResultRow[ searchResultRows.size() ] );
 	}
 }

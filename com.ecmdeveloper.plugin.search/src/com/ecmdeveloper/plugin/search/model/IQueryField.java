@@ -41,6 +41,6 @@ public interface IQueryField {
 	public boolean isOrderable();
 	public boolean isSupportsWildcards();
 	public boolean isContainable();
-	public boolean isQueryField();
+	public boolean isSearchable();
 	public boolean isCBREnabled();
 }
