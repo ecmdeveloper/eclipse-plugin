@@ -2,7 +2,7 @@
 <feature
       id="com.ecmdeveloper.plugin"
       label="ECM Developer Plug-in for CE 4.5.1 and beyond"
-      version="1.4.0"
+      version="1.5.0"
       provider-name="ECMDEVELOPER">
 
    <description url="http://www.ecmdeveloper.com">
@@ -277,6 +277,13 @@ Library.
 
    <plugin
          id="com.ecmdeveloper.plugin.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.search"
          download-size="0"
          install-size="0"
          version="0.0.0"
