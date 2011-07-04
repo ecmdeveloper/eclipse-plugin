@@ -44,6 +44,7 @@ import com.ecmdeveloper.plugin.codemodule.handlers.util.CodeModuleActionLabelPro
 import com.ecmdeveloper.plugin.codemodule.handlers.util.GetCodeModuleActionsJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.model.Action;
+import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * This handler handles the
@@ -56,6 +57,7 @@ import com.ecmdeveloper.plugin.model.Action;
 public class ShowCodeModuleActionsHandler extends AbstractHandler implements
 		IHandler {
 
+	private static final String NOT_SAVED_MESSAGE = "The Code Module ''{0}'' is not saved yet. Please save before trying to perform this action.";
 	private static final String NO_ACTIONS_MESSAGE = "There are no Actions related to the Code Module \"{0}\"";
 	private static final String SHOW_ACTIONS_MESSAGE = "The actions related to the Code Module \"{0}\"\n:";
 	private static final String SHOW_ACTIONS_DIALOG_TITLE = "Actions";
@@ -76,7 +78,14 @@ public class ShowCodeModuleActionsHandler extends AbstractHandler implements
 			
 			final ArrayList<CodeModuleFile> list = new ArrayList<CodeModuleFile>();
 			while ( iterator.hasNext() ) {
-				list.add( (CodeModuleFile) iterator.next() );
+				CodeModuleFile codeModuleFile = (CodeModuleFile) iterator.next();
+				if ( codeModuleFile.getId() == null ) {
+					PluginMessage.openError(window.getShell(), "Show Actions", MessageFormat.format(
+							NOT_SAVED_MESSAGE, codeModuleFile.getName()), null);
+					return null;
+				}
+
+				list.add( codeModuleFile );
 			}
 			
 			GetCodeModuleActionsJob job = new GetCodeModuleActionsJob(list, window.getShell() );
