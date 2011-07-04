@@ -129,7 +129,7 @@ public class QueryFieldsTable implements PropertyChangeListener  {
 				if ( element instanceof IQueryTable ) {
 					return Activator.getImage( IconFiles.TABLE_FOLDER );
 				} else if ( element instanceof IQueryField ) {
-					if ( ((IQueryField) element).isQueryField() ) {
+					if ( ((IQueryField) element).isSearchable() ) {
 						return Activator.getImage( IconFiles.SEARCHABLE_QUERY_FIELD );
 					}
 				}				

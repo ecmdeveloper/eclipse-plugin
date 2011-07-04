@@ -120,7 +120,7 @@ public class MockQueryField implements IQueryField {
 	}
 
 	@Override
-	public boolean isQueryField() {
+	public boolean isSearchable() {
 		if ( queryFieldType.equals(QueryFieldType.BINARY ) ) {
 			return false;
 		}

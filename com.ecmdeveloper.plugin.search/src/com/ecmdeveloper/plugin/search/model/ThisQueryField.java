@@ -105,7 +105,7 @@ public class ThisQueryField implements IQueryField {
 	}
 
 	@Override
-	public boolean isQueryField() {
+	public boolean isSearchable() {
 		return true;
 	}
 

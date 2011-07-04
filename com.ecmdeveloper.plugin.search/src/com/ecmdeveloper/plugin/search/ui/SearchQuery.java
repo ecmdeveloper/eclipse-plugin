@@ -104,7 +104,8 @@ public class SearchQuery implements ISearchQuery {
 			monitor.done();
 			return status;
 		} catch (Exception e) {
-			PluginMessage.openErrorFromThread(TASK_NAME, e.getLocalizedMessage(), e );
+			String message = MessageFormat.format("Executing query ''{0}'' failed.", query.getName());
+			PluginMessage.openErrorFromThread(TASK_NAME, message, e );
 			return Status.CANCEL_STATUS;
 		}
 	}
@@ -141,9 +142,7 @@ public class SearchQuery implements ISearchQuery {
 	private ArrayList<SearchResultRow> executeSearch() throws Exception {
 		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
 		ObjectStore objectStore = getObjectStore(objectStoresManager);
-		if ( !objectStore.isConnected() ) {
-			throw new Exception( "Object Store '" + objectStore.getDisplayName() + "' is not connected." );
-		}
+		ObjectStore.assertConnected(objectStore);
 		ExecuteSearchTask task = new ExecuteSearchTask(query.toSQL(), objectStore);
 		objectStoresManager.executeTaskSync(task);
 		

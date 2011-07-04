@@ -335,6 +335,7 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
 		        TableColumn column= new TableColumn(table, SWT.LEFT);
 		        column.setText( columnName );
 		        column.setWidth(200);
+		        column.setMoveable(true);
 		        column.addSelectionListener( getSelectionAdapter(column, columnName) );
 		        labelProvider.connectIndexToName(index++, columnName);
 			}

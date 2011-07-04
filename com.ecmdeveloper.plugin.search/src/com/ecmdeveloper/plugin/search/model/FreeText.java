@@ -39,7 +39,7 @@ public class FreeText extends QueryComponent {
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					return true;
+					return queryField.isSearchable();
 				}};	
 	
 	private String text;

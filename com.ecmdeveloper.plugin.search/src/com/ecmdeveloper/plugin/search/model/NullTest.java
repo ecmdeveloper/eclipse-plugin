@@ -39,7 +39,7 @@ public class NullTest extends QueryComponent {
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					return true;
+					return queryField.isSearchable();
 				}};	
 
 	private boolean negated;
