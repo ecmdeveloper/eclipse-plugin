@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.search.layout;
 import java.util.List;
 
 import org.eclipse.draw2d.AbstractLayout;
+import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
@@ -32,8 +33,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
  * @author ricardo.belfor
  *
  */
-public class QueryContainerLayout extends AbstractLayout {
-//public class QueryContainerLayout extends AbstractHintLayout {
+//public class QueryContainerLayout extends AbstractLayout {
+public class QueryContainerLayout extends FlowLayout  {
 
 	/** Space in pixels between Figures **/
 	protected int spacing;
