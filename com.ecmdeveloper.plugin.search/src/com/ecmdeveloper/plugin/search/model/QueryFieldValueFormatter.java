@@ -53,10 +53,27 @@ public class QueryFieldValueFormatter {
 	}
 
 	private static String formatDate(Object value) {
-		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		String dateValue = dateFormatter.format(value);
-		dateValue.replaceAll("T00:00:00", "");
+		if ( dateValue.endsWith("T00:00:00") ) {
+			dateValue = dateValue.replaceAll("T00:00:00", "");
+		} else {
+			dateValue += getISOTimeZone(value);
+		}
 		return dateValue;
+	}
+
+	private static String getISOTimeZone(Object value) {
+		SimpleDateFormat timeZoneFormatter = new SimpleDateFormat("Z");
+		String timeZone = timeZoneFormatter.format(value);
+		if ( timeZone.equals("Z") ) {
+			timeZone = "+00:00";
+		} else if ( timeZone.length() == 5) {
+			timeZone = timeZone.substring(0,3) + ":" + timeZone.substring(3);
+		} else if ( timeZone.length() == 3 ) {
+			timeZone = timeZone + ":00";
+		}
+		return timeZone;
 	}
 
 	private static String formatString(Object value) {

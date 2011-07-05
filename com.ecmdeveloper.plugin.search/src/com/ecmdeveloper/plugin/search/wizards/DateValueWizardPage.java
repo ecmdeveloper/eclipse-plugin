@@ -82,6 +82,8 @@ public class DateValueWizardPage extends ValueWizardPage {
 				if (ommitTime) {
 					time.setTime(0,0,0);
 				}
+				setValue( getCalendarValue() );
+				setDirty();
 			}} );
 	}
 
