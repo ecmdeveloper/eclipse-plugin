@@ -1,5 +1,5 @@
 /**
- * Copyright 2010, Ricardo Belfor
+ * Copyright 2011, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,20 +18,34 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.scripting.classloader;
+package com.ecmdeveloper.plugin.scripting.wizard;
 
-import java.net.URL;
-import java.net.URLClassLoader;
+import org.eclipse.jface.wizard.Wizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class ScriptProjectClassLoader extends URLClassLoader{
+public class LaunchScriptWizard extends Wizard {
 
-	public ScriptProjectClassLoader(URL[] arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	
+	private ConfigureScriptWizardPage configureScriptWizardPage;
+	private SelectScriptWizardPage selectScriptWizardPage;
+
+	@Override
+	public void addPages() {
+		
+		selectScriptWizardPage = new SelectScriptWizardPage();
+		addPage(selectScriptWizardPage);
+		
+		configureScriptWizardPage = new ConfigureScriptWizardPage();
+		addPage(configureScriptWizardPage);
+	}
+
+	@Override
+	public boolean performFinish() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

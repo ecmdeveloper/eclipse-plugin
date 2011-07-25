@@ -20,6 +20,11 @@
 
 package com.ecmdeveloper.plugin.scripting.handlers;
 
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION;
+
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -33,11 +38,19 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -45,17 +58,26 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.scripting.Activator;
 import com.ecmdeveloper.plugin.scripting.classloader.ProjectClassLoader;
 import com.ecmdeveloper.plugin.scripting.dialogs.MethodSelectionDialog;
+import com.ecmdeveloper.plugin.scripting.engine.MethodRunner;
+import com.ecmdeveloper.plugin.scripting.engine.ScriptingContext;
 import com.ecmdeveloper.plugin.scripting.jobs.ExecuteMethodJob;
 import com.ecmdeveloper.plugin.scripting.util.PluginMessage;
+import com.ecmdeveloper.plugin.scripting.wizard.LaunchScriptWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
 public class ExecuteMethodHandler  extends AbstractHandler implements IHandler {
+
+	private static final String HANDLER_NAME = "Execute Script";
 
 	private static final String LOADING_CLASS_FAILED_MESSAGE = "Loading class \"{0}\" failed";
 
@@ -74,23 +96,66 @@ public class ExecuteMethodHandler  extends AbstractHandler implements IHandler {
 
 		if (!(selection instanceof IStructuredSelection))
 			return null;
-		
+
+		LaunchScriptWizard wizard = new LaunchScriptWizard();
+		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		dialog.create();
+		if ( dialog.open() == Dialog.OK ) {
+		}
+		 
 		MethodSelectionDialog methodSelectionDialog = createMethodSelectionDialog(window);
 		method = selectMethod(methodSelectionDialog);
 		if ( method == null ) {
 			return null;
 		}
 
-		Class<?> methodClass = loadMethodClass();
-		if ( methodClass != null ) {
-			Method classMethod = getClassMethod(methodClass);
-			if ( classMethod != null ) {
-				Writer writer = getWriter();
-				scheduleJob(selection, methodClass, classMethod, writer);
-			}
+		ScriptingContext scriptingContext = getScriptingContext(selection);
+		if ( scriptingContext == null ) {
+			return null;
 		}
 		
+		scriptingContext.setScriptMethodName(method.getElementName());
+		scriptingContext.setScriptClassName(method.getDeclaringType().getFullyQualifiedName());
+		
+		try {
+			String filename = Activator.getDefault().getScriptingContextSerializer().serialize(scriptingContext);
+			executeMethod(filename);
+		} catch (Exception e) {
+			PluginMessage.openError(window.getShell(), HANDLER_NAME, e.getLocalizedMessage(), e );
+			return null;
+		}
+
 		return null;
+	}
+
+	private ScriptingContext getScriptingContext(ISelection selection) {
+		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+		ScriptingContext scriptingContext = null;
+		while ( iterator.hasNext() ) {
+			
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
+			if ( scriptingContext == null ) {
+				ObjectStore objectStore = objectStoreItem.getObjectStore();
+				ContentEngineConnection connection = objectStore.getConnection();
+				scriptingContext = new ScriptingContext(connection.getUsername(), connection
+						.getPassword(), connection.getUrl(), objectStore.getName() );
+			}
+			scriptingContext.addObject(objectStoreItem.getId(), objectStoreItem.getClassName() );
+		}
+		return scriptingContext;
+	}
+
+	private void executeMethod(String filename) throws CoreException {
+
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType launchConfigurationType = launchManager.getLaunchConfigurationType(ID_JAVA_APPLICATION);
+		
+		ILaunchConfigurationWorkingCopy workingCopy = launchConfigurationType.newInstance(null, HANDLER_NAME );
+		workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, MethodRunner.class.getName() );
+		workingCopy.setAttribute(ATTR_PROJECT_NAME, method.getJavaProject().getElementName() );
+		workingCopy.setAttribute(ATTR_PROGRAM_ARGUMENTS, "\"" + filename + "\"" );
+		ILaunchConfiguration launchConfiguration = workingCopy.doSave();
+		DebugUITools.launch(launchConfiguration,ILaunchManager.RUN_MODE);
 	}
 
 	private MethodSelectionDialog createMethodSelectionDialog(IWorkbenchWindow window) {
