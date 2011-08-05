@@ -61,4 +61,11 @@ public class Activator extends AbstractUIPlugin {
 		URL fileUrl = FileLocator.toFileURL(locationUrl);
 		return fileUrl.getFile();
 	}
+
+	public String getLog4JLocation() throws Exception {
+		Bundle bundle = getBundle();
+		URL locationUrl = FileLocator.find(bundle, new Path("/dist/log4j.properties"), null);
+		URL fileUrl = FileLocator.toFileURL(locationUrl);
+		return fileUrl.getFile();
+	}
 }

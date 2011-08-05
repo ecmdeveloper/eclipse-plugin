@@ -20,17 +20,23 @@
 
 package com.ecmdeveloper.plugin.scripting.wizard;
 
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -39,6 +45,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+
+import com.ecmdeveloper.plugin.scripting.ScriptingProjectNature;
 
 /**
  * @author ricardo.belfor
@@ -49,17 +57,22 @@ public class SelectScriptWizardPage extends WizardPage {
 	private static final String TITLE = "Select Method";
 
 	private TreeViewer javaElementsTree;
+	private IMethod method;
 
 	protected SelectScriptWizardPage() {
 		super(TITLE);
 		setTitle(TITLE);
-		setDescription("TODO");
+		setDescription("Select the method to launch. Only Content Engine Scripting Projects\r\ncan be used.");
 	}
 
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = getContainer(parent);
 		createJavaElementsTree(container);
+		
+		if ( !hasScriptingProjects()) {
+			setErrorMessage("The Workspace does not contain open scripting projects. Use the \r\nNew Project wizard to create a new Content Engine Scripting Project.");
+		}
 	}
 	
 	private void createJavaElementsTree(Composite container) {
@@ -78,6 +91,40 @@ public class SelectScriptWizardPage extends WizardPage {
 		javaElementsTree.setInput( JavaCore.create(root) );
 		
 		javaElementsTree.addFilter( getJavaElementFilter());
+
+		javaElementsTree.addSelectionChangedListener( new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				fieldSelectionChanged();
+			}} 
+		);
+	}
+
+	protected void fieldSelectionChanged() {
+		IStructuredSelection selection = (IStructuredSelection) javaElementsTree.getSelection();
+		Iterator<?> iterator = selection.iterator();
+		if (iterator.hasNext() ) {
+			Object selectedObject = iterator.next();
+			if ( selectedObject instanceof IMethod ) {
+				this.method = (IMethod) selectedObject;
+			} else {
+				this.method = null;
+			}
+		}		
+	}
+
+	private boolean hasScriptingProjects() {
+		
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for ( IProject project : root.getProjects() ) {
+			if ( project.isOpen() ) {
+				if ( ScriptingProjectNature.hasNature(project) ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private ViewerFilter getJavaElementFilter() {
@@ -96,8 +143,11 @@ public class SelectScriptWizardPage extends WizardPage {
 							e.printStackTrace();
 						}
 					}
-					if ( type == IJavaElement.JAVA_PROJECT || type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.COMPILATION_UNIT ||
-							type == IJavaElement.TYPE || type == IJavaElement.METHOD) {
+					if ( type == IJavaElement.JAVA_PROJECT ) {
+						IJavaProject javaProject = ((IJavaProject)element);
+						return ScriptingProjectNature.hasNature(javaProject.getProject());
+					} else if ( type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.COMPILATION_UNIT ||
+						type == IJavaElement.TYPE || type == IJavaElement.METHOD) {
 						return true;
 					} else if (type == IJavaElement.PACKAGE_FRAGMENT_ROOT ) {
 						try {

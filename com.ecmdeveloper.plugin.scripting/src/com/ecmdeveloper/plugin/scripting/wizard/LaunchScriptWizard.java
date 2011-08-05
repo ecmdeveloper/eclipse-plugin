@@ -20,7 +20,11 @@
 
 package com.ecmdeveloper.plugin.scripting.wizard;
 
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.Wizard;
+
+import com.ecmdeveloper.plugin.scripting.Activator;
 
 /**
  * @author ricardo.belfor
@@ -28,24 +32,45 @@ import org.eclipse.jface.wizard.Wizard;
  */
 public class LaunchScriptWizard extends Wizard {
 
-	
 	private ConfigureScriptWizardPage configureScriptWizardPage;
-	private SelectScriptWizardPage selectScriptWizardPage;
+	private ConfigureCredentialsWizardPage configureCredentialsWizardPage;
 
 	@Override
 	public void addPages() {
 		
-		selectScriptWizardPage = new SelectScriptWizardPage();
-		addPage(selectScriptWizardPage);
-		
-		configureScriptWizardPage = new ConfigureScriptWizardPage();
+		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+
+		configureScriptWizardPage = new ConfigureScriptWizardPage(preferenceStore);
 		addPage(configureScriptWizardPage);
+		
+		configureCredentialsWizardPage = new ConfigureCredentialsWizardPage(preferenceStore );
+		addPage(configureCredentialsWizardPage);
 	}
 
 	@Override
 	public boolean performFinish() {
-		// TODO Auto-generated method stub
-		return false;
+		configureScriptWizardPage.store();
+		configureCredentialsWizardPage.store();
+		return true;
 	}
 
+	public IMethod getMethod() {
+		return configureScriptWizardPage.getMethod();
+	}
+	
+	public boolean isDebug() {
+		return configureScriptWizardPage.isDebug();
+	}
+
+	public boolean isUseExistingCredentials() {
+		return configureCredentialsWizardPage.isUseExistingCredentials();
+	}
+
+	public String getUsername() {
+		return configureCredentialsWizardPage.getUsername();
+	}
+
+	public String getPassword() {
+		return configureCredentialsWizardPage.getPassword();
+	}
 }
