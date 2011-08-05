@@ -19,17 +19,22 @@
  */
 package com.ecmdeveloper.plugin.properties;
 
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 
 public class ObjectStoreItemPropertyPage extends PropertyPage {
+
+	private StringFieldEditor nameEditor;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -38,8 +43,16 @@ public class ObjectStoreItemPropertyPage extends PropertyPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		panel.setLayout(layout);
+
+		IObjectStoreItem objectStoreItem = (IObjectStoreItem) getElement();
+//		nameEditor = new StringFieldEditor("name", "Name:", panel);
+//		nameEditor.setStringValue(objectStoreItem.getName() );
 		
-		createPageRow(panel, "Name:", ((IObjectStoreItem) getElement()).getName() );		
+		createPageRow(panel, "Display Name:", objectStoreItem.getDisplayName() );		
+		createPageRow(panel, "Name:", objectStoreItem.getName() );
+		if ( !(objectStoreItem instanceof ObjectStore) ) {
+			createPageRow(panel, "Id:", objectStoreItem.getId() );		
+		}
 		createPageRow(panel, "Type:", getElement().getClass().getSimpleName() );		
 
 		return panel;
@@ -51,7 +64,8 @@ public class ObjectStoreItemPropertyPage extends PropertyPage {
 		namelabel.setLayoutData( new GridData(GridData.BEGINNING) );
 		namelabel.setText( name );
 		
-		Label nameLabelValue = new Label(panel, SWT.NONE);
+		Text nameLabelValue = new Text(panel, SWT.WRAP
+				| SWT.READ_ONLY);
 		nameLabelValue.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
 		nameLabelValue.setText( value );
 	}
