@@ -32,6 +32,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import com.ecmdeveloper.plugin.scripting.ScriptingProjectNature;
+
 /**
  * @author ricardo.belfor
  *
@@ -54,7 +56,9 @@ public class ClassesContentProvider {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IJavaProject[] projects = JavaCore.create(root).getJavaProjects();
 		for (IJavaProject javaProject : projects) {
-			getProjectClasses(javaProject);
+			if (ScriptingProjectNature.hasNature(javaProject.getProject()) ) {
+				getProjectClasses(javaProject);
+			}
 		}
 	}
 

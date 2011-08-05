@@ -20,136 +20,159 @@
 
 package com.ecmdeveloper.plugin.scripting.wizard;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.StringButtonFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 
+import com.ecmdeveloper.plugin.scripting.ScriptingProjectNature;
 import com.ecmdeveloper.plugin.scripting.dialogs.MethodSelectionDialog;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class ConfigureScriptWizardPage extends WizardPage {
+public class ConfigureScriptWizardPage extends AbstractFieldEditorWizardPage {
 
-	private static final String TITLE = "Configure Script";
-	private CLabel scriptMethod;
-	private CLabel scriptClass;
-	private IMethod method;
-	private JavaElementLabelProvider javaElementLabelProvider;
+	private static final String LAUNCH_METHOD_RPEF_KEY = "LaunchMethod";
+	private static final String LAUNCH_DEBUG_PREF_KEY = "LaunchDebug";
 	
-	protected ConfigureScriptWizardPage() {
-		super(TITLE);
+	private static final String NO_SCRIPTING_PROJECTS_MESSAGE = "The Workspace does not contain open scripting projects. Use the \r\nNew Project wizard to create a new Content Engine Scripting Project.";
+	private static final String TITLE = "Configure Script";
+
+	private JavaElementLabelProvider javaElementLabelProvider;
+	private StringButtonFieldEditor methodEditor;
+
+	private IMethod method;
+	private boolean debug = false;
+	
+	protected ConfigureScriptWizardPage(IPreferenceStore preferenceStore) {
+		super(TITLE, preferenceStore);
 		setTitle(TITLE);
-		setDescription("Select the script class and method and configure the launching options");
-		javaElementLabelProvider = new JavaElementLabelProvider();
+		setDescription("Select the launch method and configure the launching options");
+		javaElementLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT);
 	}
 
 	@Override
-	public void createControl(Composite parent) {
-		
-		Composite container = createContainer(parent);
-		
-		try {
-			
-
-			Group group = new Group(container, SWT.SHADOW_IN  );
-			GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false );
-			group.setLayoutData( gd );
-			
-			final GridLayout gridLayout = new GridLayout();
-			gridLayout.numColumns = 2;
-			group.setLayout(gridLayout);
-			group.setText("Script");
-			scriptMethod = createJavaElementRow(group, "Method:" );
-			scriptClass = createJavaElementRow(group, "Class:" );
-			createSelectButton(group);
-			
-
-//			GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false );
-//			group.setLayoutData( gd );
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	protected void createFieldEditors(Composite container) {
+		createMethodEditor(container);
+		createDebugButton(container);
+		initializeFields();
+		updateControls();
+		setErrorMessage(null);
+	}
+	
+	private void initializeFields() {
+		String launchMethodHandle = getPreferenceStore().getString(LAUNCH_METHOD_RPEF_KEY);
+		if ( !launchMethodHandle.isEmpty()) {
+			method = (IMethod) JavaCore.create(launchMethodHandle, null );
+			if ( method != null ) {
+				methodEditor.setStringValue( javaElementLabelProvider.getText(method) );				
+			}
 		}
-		
-		
 	}
 
-	private void createSelectButton(Composite container) {
-		Button button = new Button(container, SWT.PUSH );
-		button.setText( "Select Method" );
-		button.addSelectionListener( new SelectionAdapter() {
-
+	private void createMethodEditor(Composite container) {
+		methodEditor = new StringButtonFieldEditor("", "Method:",container ) {
+	
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectMethod();
-			}} 
-		);
-	}
-
-	private CLabel createJavaElementRow(Composite container, String name) {
-
-		Label namelabel = new Label(container, SWT.NONE);
-		namelabel.setLayoutData( new GridData(GridData.BEGINNING) );
-		namelabel.setText( name );
+			protected String changePressed() {
+				return selectMethod();
+			}
+		};
 		
-		CLabel label = new CLabel(container, SWT.FLAT);
-        GridData gd = new GridData();
-        gd.grabExcessHorizontalSpace = true;
-        gd.horizontalAlignment = GridData.FILL;
-        label.setLayoutData(gd);
-        label.setText("<not selected>");
-        return label;
+		methodEditor.getTextControl(container).setEditable(false);
+		methodEditor.setChangeButtonText("Select");
 	}
 
-	protected void selectMethod() {
-		MethodSelectionDialog methodSelectionDialog = createMethodSelectionDialog();
-		if ( methodSelectionDialog.open() == Dialog.OK ) {
-			method = (IMethod) methodSelectionDialog.getFirstResult();
-			updateScriptMethodLabel();
-			updateScriptClassLabel();
+	private void createDebugButton(Composite container) {
+		BooleanFieldEditor editor = new BooleanFieldEditor(LAUNCH_DEBUG_PREF_KEY,"Launch in Debug mode", container ) {
+			@Override
+			public int getNumberOfControls() {
+				return ConfigureScriptWizardPage.this.getNumberOfControls();
+			}
+		};
+		editor.setPropertyChangeListener( new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				debug = (Boolean) event.getNewValue();
+			}
+		});
+		
+		addFieldEditor(editor);
+	}
+
+	protected String selectMethod() {
+		
+		if ( hasScriptingProjects()) {
+			MethodSelectionDialog methodSelectionDialog = createMethodSelectionDialog();
+			if ( methodSelectionDialog.open() == Dialog.OK ) {
+				method = (IMethod) methodSelectionDialog.getFirstResult();
+			}
+		} else {
+			MessageDialog.openError(getShell(), TITLE, NO_SCRIPTING_PROJECTS_MESSAGE);
 		}
+
+		updateControls();
+		
+		return javaElementLabelProvider.getText(method);
 	}
 
-	private void updateScriptMethodLabel() {
-		scriptMethod.setImage( javaElementLabelProvider.getImage(method) );
-		scriptMethod.setText( javaElementLabelProvider.getText(method) );
+	private void updateControls() {
+		if ( method == null ) {
+			setPageComplete(false);
+			setErrorMessage("No method selected");
+			return;
+		}
+		
+		setPageComplete(true);
+		setErrorMessage(null);
 	}
-
-	private void updateScriptClassLabel() {
-		IJavaElement compilationUnit = method.getParent();
-		scriptClass.setImage( javaElementLabelProvider.getImage(compilationUnit) );
-		scriptClass.setText( javaElementLabelProvider.getText(compilationUnit) );
+	
+	private boolean hasScriptingProjects() {
+		
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for ( IProject project : root.getProjects() ) {
+			if ( project.isOpen() ) {
+				if ( ScriptingProjectNature.hasNature(project) ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
-
+	
 	private MethodSelectionDialog createMethodSelectionDialog() {
 		MethodSelectionDialog methodSelectionDialog = new MethodSelectionDialog(getShell());
 		methodSelectionDialog.setInitialPattern("**");
 		return methodSelectionDialog;
 	}
 
-	private Composite createContainer(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-		container.setLayout(gridLayout);
-		setControl(container);
-		return container;
+	public void store() {
+		super.store();
+		getPreferenceStore().setValue(LAUNCH_METHOD_RPEF_KEY, method.getHandleIdentifier() );
+	}
+	
+	public IMethod getMethod() {
+		return method;
 	}
 
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public int getNumberOfControls() {
+		return 3;
+	}
 }

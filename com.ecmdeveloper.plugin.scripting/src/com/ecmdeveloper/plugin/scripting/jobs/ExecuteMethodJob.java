@@ -20,23 +20,34 @@
 
 package com.ecmdeveloper.plugin.scripting.jobs;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Method;
-import java.util.concurrent.ExecutionException;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION;
 
+import java.util.Collection;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.ExecuteMethodTask;
-import com.ecmdeveloper.plugin.scripting.engine.ScriptEngine;
+import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.scripting.Activator;
+import com.ecmdeveloper.plugin.scripting.engine.MethodRunner;
+import com.ecmdeveloper.plugin.scripting.engine.ScriptingContext;
 import com.ecmdeveloper.plugin.scripting.util.PluginMessage;
-import com.ecmdeveloper.scripting.MethodRunner;
 
 /**
  * @author ricardo.belfor
@@ -46,57 +57,70 @@ public class ExecuteMethodJob extends Job {
 
 	private static final String JOB_NAME = "Execute Method";
 	
-	private final Method method;
-	private final ObjectStoreItem[] objectStoreItems;
-	private final Class<?> methodClass;
-	private final Writer writer;
+	private final IMethod method;
+	private final Collection<IObjectStoreItem> objectStoreItems;
+	private final boolean debug;
 
-	public ExecuteMethodJob(Class<?>  methodClass, Method method, ObjectStoreItem[] objectStoreItems, Writer writer) {
+	private final String username;
+	private final String password;
+
+	public ExecuteMethodJob(IMethod method, Collection<IObjectStoreItem> objectStoreItems, String username, String password, boolean debug) {
 		super(JOB_NAME);
-		this.methodClass = methodClass;
 		this.method = method;
 		this.objectStoreItems = objectStoreItems;
-		this.writer = writer;
+		this.username = username;
+		this.password = password;
+		this.debug = debug;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-	    try
-		{
-	    	ObjectStoreItem objectStoreItem =  objectStoreItems[0];
-	    	ScriptEngine.getScriptEngine().execute(objectStoreItem, methodClass.getClassLoader() );
-//	    	ContentEngineConnection connection = objectStoreItem.getObjectStore().getConnection();
-//	    	System.out.println( methodClass.getClassLoader().getClass().getName() );
-////	    	System.out.println( MethodRunner.class.getCanonicalName() );
-//	    	Class<?> methodRunnerClass = methodClass.getClassLoader().loadClass( "com.ecmdeveloper.scripting.MethodRunner" );
-//
-//			System.out.println( System.getProperty("java.security.auth.login.config" ) );
-//
-//	    	Object methodRunner = methodRunnerClass.newInstance();
-//	    	String username = connection.getUsername();
-//			String password = connection.getPassword();
-//			String url = connection.getUrl();
-//			
-//			Method connectMethod = methodRunnerClass.getMethod("connect", new Class[] {String.class, String.class, String.class });
-//			connectMethod.invoke( methodRunner, username, password, url);
-			
-//			methodRunner.connect(username, password, url);
-	    	
-//	    	for ( ObjectStoreItem objectStoreItem : objectStoreItems) {
-//	    		executeMethod(objectStoreItem);
-//	    	}
+		
+	    try {
+			ScriptingContext scriptingContext = getScriptingContext(objectStoreItems);
+			String filename = Activator.getDefault().getScriptingContextSerializer().serialize(scriptingContext);
+			executeMethod(filename);
 		} catch (Exception e) {
-			e.printStackTrace();
 			PluginMessage.openErrorFromThread(getName(), e.getLocalizedMessage(), e);
+			return Status.CANCEL_STATUS;
 		} 
 		return Status.OK_STATUS;
 	}
 
-	private void executeMethod(ObjectStoreItem objectStoreItem) throws ExecutionException,
-			InstantiationException, IllegalAccessException, IOException {
-		Object target = methodClass.newInstance();
-		ExecuteMethodTask task = new ExecuteMethodTask(objectStoreItem, method, target, writer);
-		ObjectStoresManager.getManager().executeTaskSync(task);
-		writer.flush();
+	private ScriptingContext getScriptingContext(Collection<IObjectStoreItem> objectStoreItems) {
+
+		ScriptingContext scriptingContext = null;
+		for ( IObjectStoreItem objectStoreItem : objectStoreItems) {
+			if ( scriptingContext == null ) {
+				ObjectStore objectStore = objectStoreItem.getObjectStore();
+				ContentEngineConnection connection = objectStore.getConnection();
+				scriptingContext = new ScriptingContext(username, password, connection.getUrl(),
+						objectStore.getName());
+			}
+			scriptingContext.addObject(objectStoreItem.getId(), objectStoreItem.getClassName() );
+		}
+		
+		scriptingContext.setScriptMethodName(method.getElementName());
+		scriptingContext.setScriptClassName(method.getDeclaringType().getFullyQualifiedName());
+		
+		return scriptingContext;
+	}
+
+	private void executeMethod(String filename) throws CoreException {
+
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType launchConfigurationType = launchManager.getLaunchConfigurationType(ID_JAVA_APPLICATION);
+		
+		ILaunchConfigurationWorkingCopy workingCopy = launchConfigurationType.newInstance(null, getLaunchName() );
+		workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, MethodRunner.class.getName() );
+		workingCopy.setAttribute(ATTR_PROJECT_NAME, method.getJavaProject().getElementName() );
+		workingCopy.setAttribute(ATTR_PROGRAM_ARGUMENTS, "\"" + filename + "\"" );
+		ILaunchConfiguration launchConfiguration = workingCopy.doSave();
+		DebugUITools.launch(launchConfiguration, debug? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE);
+	}
+
+	private String getLaunchName() {
+		IType declaringType = method.getDeclaringType();
+		return declaringType.getFullyQualifiedName('.') + "." + method.getElementName();
 	}
 }

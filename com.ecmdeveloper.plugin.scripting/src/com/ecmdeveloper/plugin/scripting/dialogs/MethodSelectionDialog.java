@@ -23,8 +23,10 @@ package com.ecmdeveloper.plugin.scripting.dialogs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,19 +65,26 @@ public class MethodSelectionDialog extends FilteredItemsSelectionDialog {
 	private ClassesContentProvider classesContentProvider;
 	private TableViewer methodsTable;
 	private IMethod selectedMethod;
+	private Set<String> signatures;
 	
 	public MethodSelectionDialog(Shell shell) {
 		super(shell);
 		setTitle("Script Selection");
-		setListLabelProvider( new JavaElementLabelProvider() );
+		setListLabelProvider(new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT | 
+				JavaElementLabelProvider.SHOW_ROOT) );
 
 		setDetailsLabelProvider( createDetailsLabelProvider());
 		classesContentProvider = new ClassesContentProvider();
+
+		signatures = new HashSet<String>();
+		signatures.add( "(QObject;)V" );
+		signatures.add( "(Qjava.lang.Object;)V" );	
 	}
 
 
 	private JavaElementLabelProvider createDetailsLabelProvider() {
-		return new JavaElementLabelProvider() {
+		return new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT | 
+				JavaElementLabelProvider.SHOW_ROOT ) {
 
 			@Override
 			public Image getImage(Object element) {
@@ -217,17 +226,20 @@ public class MethodSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-
 	private ArrayList<IMethod> getFilteredMethods(IJavaElement child) throws JavaModelException {
 		ArrayList<IMethod> filteredMethods = new ArrayList<IMethod>();
 		
 		IMethod[] methods = ((IType)child).getMethods();
 		for ( IMethod method : methods ) {
-			System.out.println( method.getElementName() );
-			if ( Flags.isPublic(method.getFlags() ) ) {
+			System.out.println( method.getSignature() );
+			if ( isCorrectMethod(method) ) {
 				filteredMethods.add(method);
 			}
 		}
 		return filteredMethods;
+	}
+
+	private boolean isCorrectMethod(IMethod method) throws JavaModelException {
+		return Flags.isPublic(method.getFlags() ) && signatures.contains(method.getSignature() );
 	}
 }
