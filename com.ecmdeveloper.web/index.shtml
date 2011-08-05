@@ -87,7 +87,9 @@
 		<div id="secondaryContent">
 
 			<h2>News</h2>
-
+			<p><strong>[7/5/2011]</strong><p>Version 1.5.0 of the ECM Developer plug-in is available for download. New in this 
+			version is the ability to search objects. The full list of changes can be found here <a href='version_history.shtml'>here</a>.<br/></p>
+			
 			<p><strong>[2/6/2011]</strong><p>Version 1.4.0 of the ECM Developer plug-in is available for download. New in this 
 			version is the ability to create objects, a simplified code module editor and a favorites view. 
 			The full list of changes can be found here <a href='version_history.shtml'>here</a>.<br/></p>
