@@ -22,8 +22,6 @@ package com.ecmdeveloper.plugin.search.ui.wizard;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream.GetField;
-import java.text.MessageFormat;
 import java.util.Collection;
 
 import org.eclipse.core.filesystem.EFS;
