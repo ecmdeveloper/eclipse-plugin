@@ -30,10 +30,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 
 import com.ecmdeveloper.plugin.search.model.AndContainer;
+import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
-import com.ecmdeveloper.plugin.search.model.QueryContainer;
-import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 
 /**

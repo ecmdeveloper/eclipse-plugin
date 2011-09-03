@@ -28,8 +28,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
@@ -66,20 +67,20 @@ public abstract class AbstractTrackedFileJob extends Job {
 	}
 	protected Document getDocument(IProgressMonitor monitor) throws ExecutionException {
 		
-		ObjectStore objectStore = getObjectStore(monitor);
+		IObjectStore objectStore = getObjectStore(monitor);
 		String message = MessageFormat.format(FETCHING_DOCUMENT_TASK, trackedFile.getName());
 		monitor.beginTask(message, IProgressMonitor.UNKNOWN );
 		FetchObjectTask task = new FetchObjectTask(objectStore, trackedFile.getId(), trackedFile
 				.getClassName(), "Document");
-		Document document = (Document) ObjectStoresManager.getManager().executeTaskSync(task);
+		Document document = (Document) TaskManager.getInstance().executeTaskSync(task);
 		monitor.done();
 		return document;
 	}
 
-	private ObjectStore getObjectStore(IProgressMonitor monitor) throws ExecutionException {
+	private IObjectStore getObjectStore(IProgressMonitor monitor) throws ExecutionException {
 		String objectStoreName = trackedFile.getObjectStoreName();
 		String connectionName = trackedFile.getConnectionName();
-		ObjectStore objectStore = ObjectStoresManager.getManager().getObjectStore(connectionName , objectStoreName );
+		IObjectStore objectStore = ObjectStoresManager.getManager().getObjectStore(connectionName , objectStoreName );
 		if ( ! objectStore.isConnected() ) {
 			ObjectStoresManager.getManager().connectConnection(objectStore.getConnection(), monitor );
 		}

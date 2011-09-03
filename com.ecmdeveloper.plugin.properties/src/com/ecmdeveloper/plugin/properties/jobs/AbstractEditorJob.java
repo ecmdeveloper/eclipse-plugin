@@ -20,8 +20,6 @@
 
 package com.ecmdeveloper.plugin.properties.jobs;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

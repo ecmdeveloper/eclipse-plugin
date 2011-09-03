@@ -25,7 +25,6 @@ import java.beans.PropertyChangeSupport;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Ricardo.Belfor

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.model.SavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;

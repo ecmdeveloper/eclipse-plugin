@@ -33,7 +33,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.Placeholder;
 import com.ecmdeveloper.plugin.ui.jobs.GetParentJob;

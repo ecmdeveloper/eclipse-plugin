@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteCustomObject;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteDocument;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteFolder;
@@ -96,7 +97,7 @@ public class FetchFavoritesJob extends Job {
 		String objectType = getFavoriteObjectType(favorite);
 		FetchObjectTask task = new FetchObjectTask(objectStore, favorite.getId(), favorite.getClassName(), objectType );
 		try {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) objectStoresManager.executeTaskSync(task);
+			ObjectStoreItem objectStoreItem = (ObjectStoreItem) TaskManager.getInstance().executeTaskSync(task);
 			objectStoreItems.add(objectStoreItem);
 			favorite.setName( objectStoreItem.getDisplayName() );
 		} catch (ExecutionException e) {

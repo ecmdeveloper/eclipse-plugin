@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.search.util;
 
 import java.io.FileWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 

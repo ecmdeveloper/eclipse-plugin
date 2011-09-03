@@ -30,11 +30,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.content.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.SaveTask;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -70,7 +70,7 @@ public class SaveJob extends Job {
 			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
 
 			DocumentTask task = new SaveTask(document, content, mimeType);
-			ObjectStoresManager.getManager().executeTaskSync(task);
+			TaskManager.getInstance().executeTaskSync(task);
 			
 			monitor.done();
 			return Status.OK_STATUS;

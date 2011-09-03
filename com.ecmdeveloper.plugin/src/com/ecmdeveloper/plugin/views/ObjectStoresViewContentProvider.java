@@ -20,28 +20,27 @@
 package com.ecmdeveloper.plugin.views;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 
 public class ObjectStoresViewContentProvider implements
-		IStructuredContentProvider, ITreeContentProvider, ObjectStoresManagerListener {
+		IStructuredContentProvider, ITreeContentProvider, ITaskManagerListener {
 
-	private ObjectStoresManager manager;
-	private ObjectStores invisibleRoot;
+	private ITaskManager taskManager;
+	private IObjectStores invisibleRoot;
 	private TreeViewer viewer;
 	private Object[] rootElements;
 
@@ -49,14 +48,14 @@ public class ObjectStoresViewContentProvider implements
 		
 		this.viewer = (TreeViewer) viewer;
 		
-		if (manager != null) {
-			manager.removeObjectStoresManagerListener(this);
+		if (taskManager != null) {
+			taskManager.removeTaskManagerListener(this);
 		}
 		
-		manager = (ObjectStoresManager) newInput;
+		taskManager = (ITaskManager) newInput;
 		
-		if (manager != null) {
-			manager.addObjectStoresManagerListener(this);
+		if (taskManager != null) {
+			taskManager.addTaskManagerListener(this);
 		}
 	}
 	
@@ -123,8 +122,7 @@ public class ObjectStoresViewContentProvider implements
 	}
 	
 	private void initialize() {
-
-		invisibleRoot = manager.getObjectStores();		
+		invisibleRoot = ObjectStoresManager.getManager().getObjectStores();		
 	}
 
 	@Override

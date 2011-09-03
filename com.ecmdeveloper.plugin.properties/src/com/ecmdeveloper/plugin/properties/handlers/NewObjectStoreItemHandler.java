@@ -29,7 +29,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.properties.wizard.NewDocumentWizard;
 import com.ecmdeveloper.plugin.properties.wizard.NewObjectStoreItemWizard;
 
 /**

@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
@@ -33,7 +36,7 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  * @author Ricardo Belfor
  *
  */
-public class Folder extends ObjectStoreItem {
+public class Folder extends ObjectStoreItem implements IFolder {
 
 	private Collection<IObjectStoreItem> children;
 	protected com.filenet.api.core.Folder folder;
@@ -119,7 +122,7 @@ public class Folder extends ObjectStoreItem {
 			children.add( new Placeholder(Placeholder.Type.LOADING) );
 
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
-			ObjectStoresManager.getManager().executeTaskASync(loadChildrenTask);
+			TaskManager.getInstance().executeTaskASync(loadChildrenTask);
 		}
 		
 		return children;
@@ -129,7 +132,7 @@ public class Folder extends ObjectStoreItem {
 		if ( children == null )	{
 			children = new ArrayList<IObjectStoreItem>();
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
-			ObjectStoresManager.getManager().executeTaskSync(loadChildrenTask);
+			TaskManager.getInstance().executeTaskSync(loadChildrenTask);
 		}
 		
 		return children;

@@ -19,13 +19,6 @@
  */
 package com.ecmdeveloper.plugin.codemodule.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,22 +26,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.XMLMemento;
-
-import com.ecmdeveloper.plugin.codemodule.Activator;
-import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
-import com.ecmdeveloper.plugin.codemodule.util.PluginTagNames;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Action;
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.model.tasks.CreateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.tasks.GetCodeModuleActionsTask;
 import com.ecmdeveloper.plugin.model.tasks.GetCodeModulesTask;
@@ -62,18 +51,18 @@ import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
  * @author Ricardo.Belfor
  * 
  */
-public class CodeModulesManager implements ObjectStoresManagerListener {
+public class CodeModulesManager implements ITaskManagerListener {
 
 	private static CodeModulesManager codeModulesManager;
 	protected Collection<CodeModuleFile> codeModulefiles;
-	protected ObjectStoresManager objectStoresManager;
+	protected ITaskManager taskManager;
 	private CodeModuleFileStore codeModuleFileStore;
 	
 	private List<CodeModulesManagerListener> listeners = new ArrayList<CodeModulesManagerListener>();
 	
 	private CodeModulesManager() {
 		codeModuleFileStore = new CodeModuleFileStore();
-		getObjectStoresManager();
+		getTaskManager();
 		getCodeModuleFiles();	
 	}
 	
@@ -85,13 +74,13 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		return codeModulesManager;
 	}
 
-	private ObjectStoresManager getObjectStoresManager() {
+	private ITaskManager getTaskManager() {
 
-		if ( objectStoresManager == null ) {
-			objectStoresManager = ObjectStoresManager.getManager();
-			objectStoresManager.addObjectStoresManagerListener(this);
+		if ( taskManager == null ) {
+			taskManager = TaskManager.getInstance();
+			taskManager.addTaskManagerListener(this);
 		}
-		return objectStoresManager;
+		return taskManager;
 	}
 	
 	public static void shutdown() {
@@ -104,7 +93,7 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 
 		GetCodeModulesTask task = new GetCodeModulesTask( objectStore );
 		Collection<CodeModule> codeModules = 
-			(Collection<CodeModule>) getObjectStoresManager().executeTaskSync(task);
+			(Collection<CodeModule>) getTaskManager().executeTaskSync(task);
 
 		ArrayList<CodeModule> newCodeModules = new ArrayList<CodeModule>();
 		
@@ -192,13 +181,13 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 
 	public void saveNewCodeModuleFile(CodeModuleFile codeModuleFile) throws Exception {
 
-		ObjectStore objectStore = getObjectStore(codeModuleFile);
+		IObjectStore objectStore = getObjectStore(codeModuleFile);
 		ObjectStore.assertConnected(objectStore);
 		
 		CreateCodeModuleTask task = new CreateCodeModuleTask(codeModuleFile
 				.getName(), codeModuleFile.getContentElementFiles(), objectStore );
 		
-		CodeModule codeModule = (CodeModule) getObjectStoresManager().executeTaskSync(task);
+		CodeModule codeModule = (CodeModule) getTaskManager().executeTaskSync(task);
 		codeModuleFile.setId( codeModule.getId() );
 		
 		saveCodeModuleFile(codeModuleFile, true);
@@ -207,10 +196,10 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 		codeModulefiles.add(codeModuleFile);
 	}
 
-	private ObjectStore getObjectStore(CodeModuleFile codeModuleFile) {
+	private IObjectStore getObjectStore(CodeModuleFile codeModuleFile) {
 
 		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
-		ObjectStore objectStore = objectStoresManager.getObjectStore(
+		IObjectStore objectStore = objectStoresManager.getObjectStore(
 				codeModuleFile.getConnectionName(), codeModuleFile
 						.getObjectStoreName());
 		
@@ -224,27 +213,27 @@ public class CodeModulesManager implements ObjectStoresManagerListener {
 	@SuppressWarnings("unchecked")
 	public Collection<Action> getCodeModuleActions( CodeModuleFile codeModuleFile ) throws ExecutionException {
 		
-		ObjectStore objectStore = getObjectStore(codeModuleFile);
+		IObjectStore objectStore = getObjectStore(codeModuleFile);
 		ObjectStore.assertConnected(objectStore);
 		GetCodeModuleActionsTask task = new GetCodeModuleActionsTask(codeModuleFile.getId(), objectStore );
-		return (Collection<Action>) getObjectStoresManager().executeTaskSync(task);
+		return (Collection<Action>) getTaskManager().executeTaskSync(task);
 	}
 	
 	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws Exception {
 		
-		ObjectStore objectStore = getObjectStore(codeModuleFile);
+		IObjectStore objectStore = getObjectStore(codeModuleFile);
 		ObjectStore.assertConnected(objectStore);
 		UpdateCodeModuleTask task = new UpdateCodeModuleTask(codeModuleFile
 				.getId(), codeModuleFile.getName(), codeModuleFile.getContentElementFiles(),
 				objectStore);
 		
-		CodeModule codeModule = (CodeModule) getObjectStoresManager().executeTaskSync(task);
+		CodeModule codeModule = (CodeModule) getTaskManager().executeTaskSync(task);
 
 		for ( Object objectStoreItem : selectedActions ) {
 			if (objectStoreItem instanceof Action ) {
 				((Action) objectStoreItem).setCodeModule( codeModule );
 				UpdateTask updateTask = new UpdateTask((IObjectStoreItem) objectStoreItem );
-				getObjectStoresManager().executeTaskSync(updateTask);
+				getTaskManager().executeTaskSync(updateTask);
 			}
 		}
 		

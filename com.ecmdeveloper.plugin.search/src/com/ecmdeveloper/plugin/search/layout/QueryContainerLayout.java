@@ -22,7 +22,6 @@ package com.ecmdeveloper.plugin.search.layout;
 
 import java.util.List;
 
-import org.eclipse.draw2d.AbstractLayout;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;

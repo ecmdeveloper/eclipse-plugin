@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.properties.input;
 
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.filenet.api.admin.PropertyDefinitionBoolean;
 import com.filenet.api.constants.Cardinality;
 import com.filenet.api.constants.PropertySettability;
 import com.filenet.api.meta.PropertyDescriptionBoolean;

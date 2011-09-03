@@ -26,9 +26,9 @@ import java.util.Collection;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.jobs.DeleteJob;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 /**
  * @author ricardo.belfor

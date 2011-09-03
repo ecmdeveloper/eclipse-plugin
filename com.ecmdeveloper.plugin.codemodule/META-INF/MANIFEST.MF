@@ -10,10 +10,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide;bundle-version="3.4.2",
  org.eclipse.ui.forms;bundle-version="3.3.103",
  org.eclipse.core.filesystem;bundle-version="1.2.0",
- com.ecmdeveloper.plugin;bundle-version="1.0.0",
  org.eclipse.core.expressions;bundle-version="3.4.1",
  org.eclipse.jdt.core;bundle-version="3.4.4",
  org.eclipse.core.resources;bundle-version="3.4.2",
- org.eclipse.jdt.ui;bundle-version="3.4.2"
+ org.eclipse.jdt.ui;bundle-version="3.4.2",
+ com.ecmdeveloper.plugin.core;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

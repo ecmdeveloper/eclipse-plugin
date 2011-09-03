@@ -20,26 +20,16 @@
 
 package com.ecmdeveloper.plugin.diagrams.wizards;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import java.io.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramFile;
 import com.ecmdeveloper.plugin.diagrams.util.PluginMessage;
-import com.ecmdeveloper.plugin.diagrams.util.PluginTagNames;
 
 /**
  * 

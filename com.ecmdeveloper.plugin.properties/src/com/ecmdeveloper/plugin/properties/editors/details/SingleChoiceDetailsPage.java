@@ -23,20 +23,9 @@ package com.ecmdeveloper.plugin.properties.editors.details;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import com.ecmdeveloper.plugin.classes.model.Choice;
-import com.ecmdeveloper.plugin.properties.choices.ChoicesContentProvider;
-import com.ecmdeveloper.plugin.properties.choices.ChoicesLabelProvider;
 import com.ecmdeveloper.plugin.properties.editors.details.input.ChoiceFormInput;
 import com.ecmdeveloper.plugin.properties.model.Property;
 

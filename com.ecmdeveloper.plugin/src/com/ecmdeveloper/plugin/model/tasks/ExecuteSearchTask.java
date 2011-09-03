@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.SearchResultRow;
@@ -43,9 +44,9 @@ public class ExecuteSearchTask extends BaseTask {
 	private String query;
 	private ArrayList<SearchResultRow> searchResultList;
 	
-	public ExecuteSearchTask(String query, ObjectStore objectStore) {
+	public ExecuteSearchTask(String query, IObjectStore objectStore2) {
 		this.query = query;
-		this.objectStore = objectStore;
+		this.objectStore = (ObjectStore) objectStore2;
 		searchResultList = new ArrayList<SearchResultRow>(); 
 	}
 	

@@ -24,6 +24,9 @@ import java.util.Iterator;
 
 import javax.security.auth.Subject;
 
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.collection.ObjectStoreSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Connection;
@@ -38,7 +41,7 @@ import com.filenet.api.util.UserContext;
  * @author Ricardo Belfor
  *
  */
-public class ContentEngineConnection 
+public class ContentEngineConnection implements IConnection
 {
 	private String url;
 	private String username;
@@ -104,11 +107,11 @@ public class ContentEngineConnection
 	}
 
 	@SuppressWarnings("unchecked")
-	public ObjectStore[] getObjectStores(IObjectStoreItem parent )
+	public IObjectStore[] getObjectStores(IObjectStoreItem parent )
 	{
 		ObjectStoreSet objectStores = domain.get_ObjectStores();
 		Iterator iterator = objectStores.iterator();
-		ArrayList<ObjectStore> objectStoreList = new ArrayList<ObjectStore>();
+		ArrayList<IObjectStore> objectStoreList = new ArrayList<IObjectStore>();
 		
 		while (iterator.hasNext()) 
 		{
@@ -120,7 +123,7 @@ public class ContentEngineConnection
 			objectStoreList.add( os ); 
 		}
 
-		return objectStoreList.toArray( new ObjectStore[0] );
+		return objectStoreList.toArray( new IObjectStore[0] );
 	}
 	
 	public void connect() {

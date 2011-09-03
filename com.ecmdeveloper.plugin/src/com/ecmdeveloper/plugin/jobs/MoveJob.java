@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.MoveTask;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
@@ -78,7 +78,7 @@ public class MoveJob extends Job {
 
 		try {
 			MoveTask moveTask = new MoveTask( new IObjectStoreItem[] { objectStoreItem }, destination );
-			ObjectStoresManager.getManager().executeTaskSync( moveTask);
+			TaskManager.getInstance().executeTaskSync( moveTask);
 		} catch(final Exception e ) {
 			Display.getDefault().syncExec(new Runnable() {
 				@Override

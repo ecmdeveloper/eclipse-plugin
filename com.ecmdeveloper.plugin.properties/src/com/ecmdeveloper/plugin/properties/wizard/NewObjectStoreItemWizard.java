@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.INewWizard;
@@ -38,10 +37,10 @@ import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
@@ -191,7 +190,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 		private void getDefaultClassDescription(final ObjectStore objectStore) {
 			try {
 				GetClassDescriptionTask task = new GetClassDescriptionTask( className, objectStore );
-				ObjectStoresManager.getManager().executeTaskSync(task);
+				TaskManager.getInstance().executeTaskSync(task);
 				defaultClassDescription = task.getClassDescription();
 			} catch (ExecutionException e) {
 				PluginMessage.openErrorFromThread(getShell(), getWindowTitle(),

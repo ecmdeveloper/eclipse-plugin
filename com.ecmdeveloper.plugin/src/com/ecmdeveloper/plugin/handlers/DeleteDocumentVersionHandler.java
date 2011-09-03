@@ -28,10 +28,10 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.jobs.DeleteJob;
 import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 /**
  * @author Ricardo.Belfor

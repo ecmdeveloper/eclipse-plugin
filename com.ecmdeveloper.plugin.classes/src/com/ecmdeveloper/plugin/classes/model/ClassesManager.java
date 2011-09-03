@@ -28,26 +28,29 @@ import java.util.Set;
 import com.ecmdeveloper.plugin.classes.model.task.GetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.model.task.RefreshClassDescriptionTask;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskCompleteEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskListener;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
-import com.ecmdeveloper.plugin.model.tasks.TaskCompleteEvent;
-import com.ecmdeveloper.plugin.model.tasks.TaskListener;
 
 /**
  * 
  * @author Ricardo Belfor
  *
  */
-public class ClassesManager implements ObjectStoresManagerListener, TaskListener {
+public class ClassesManager implements ITaskManagerListener, TaskListener {
 
 	private static ClassesManager classesManager;
-	protected ObjectStoresManager objectStoresManager;
+	private ObjectStoresManager objectStoresManager;
+	private ITaskManager taskManager; 
 	private List<ClassesManagerListener> listeners = new ArrayList<ClassesManagerListener>();
 
 	public static ClassesManager getManager()
@@ -63,7 +66,7 @@ public class ClassesManager implements ObjectStoresManagerListener, TaskListener
 		getObjectStoresManager();	
 	}
 
-	public ObjectStores getObjectStores() {
+	public IObjectStores getObjectStores() {
 		return objectStoresManager.getObjectStores();
 	}
 
@@ -71,7 +74,8 @@ public class ClassesManager implements ObjectStoresManagerListener, TaskListener
 
 		if ( objectStoresManager == null ) {
 			objectStoresManager = ObjectStoresManager.getManager();
-			objectStoresManager.addObjectStoresManagerListener(this);
+			taskManager = TaskManager.getInstance();
+			taskManager.addTaskManagerListener(this);
 		}
 		return objectStoresManager;
 	}
@@ -156,12 +160,12 @@ public class ClassesManager implements ObjectStoresManagerListener, TaskListener
 
 	public void executeTaskASync(BaseTask task) {
 		task.addTaskListener(this);
-		objectStoresManager.executeTaskASync(task);
+		taskManager.executeTaskASync(task);
 	}
 
 	public Object executeTaskSync(BaseTask task) throws Exception {
 		task.addTaskListener(this);
-		return objectStoresManager.executeTaskSync(task);
+		return taskManager.executeTaskSync(task);
 	}
 
 	@Override

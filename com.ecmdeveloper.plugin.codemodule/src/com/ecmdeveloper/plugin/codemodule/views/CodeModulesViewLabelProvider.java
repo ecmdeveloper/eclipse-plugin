@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import com.ecmdeveloper.plugin.codemodule.Activator;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.IconFiles;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 
@@ -67,7 +67,7 @@ public class CodeModulesViewLabelProvider extends ObjectStoreItemLabelProvider i
 		case TYPE_COLUMN:
 			return Activator.getImage( IconFiles.ICON_CODEMODULE );
 		case LOCATION_COLUMN:
-			ObjectStore objectStore = getObjectStore(element);
+			IObjectStore objectStore = getObjectStore(element);
 			if ( objectStore == null ) {
 				return Activator.getImage( IconFiles.ICON_DATABASE_ERROR );
 			}
@@ -85,7 +85,7 @@ public class CodeModulesViewLabelProvider extends ObjectStoreItemLabelProvider i
 		case NAME_COLUMN:
 			return ((CodeModuleFile) element).getName();
 		case LOCATION_COLUMN:
-			ObjectStore objectStore = getObjectStore(element);
+			IObjectStore objectStore = getObjectStore(element);
 			if ( objectStore == null ) {
 				return MessageFormat.format("Object Store \"{0}:{1}\" is not configured", 
 						((CodeModuleFile) element).getConnectionName(),
@@ -97,9 +97,9 @@ public class CodeModulesViewLabelProvider extends ObjectStoreItemLabelProvider i
 		}
 	}
 
-	private ObjectStore getObjectStore(Object element) {
+	private IObjectStore getObjectStore(Object element) {
 		CodeModuleFile codeModuleFile = (CodeModuleFile) element; 
-		ObjectStore objectStore = objectStoresManager.getObjectStore(codeModuleFile.getConnectionName(), codeModuleFile.getObjectStoreName() );
+		IObjectStore objectStore = objectStoresManager.getObjectStore(codeModuleFile.getConnectionName(), codeModuleFile.getObjectStoreName() );
 		return objectStore;
 	}
 }

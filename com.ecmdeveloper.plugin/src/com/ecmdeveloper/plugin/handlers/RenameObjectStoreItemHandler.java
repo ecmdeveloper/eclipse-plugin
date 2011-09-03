@@ -27,28 +27,19 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.jobs.RenameJob;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.util.Messages;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * 

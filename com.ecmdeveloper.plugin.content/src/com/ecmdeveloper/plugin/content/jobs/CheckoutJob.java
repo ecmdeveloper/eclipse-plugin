@@ -29,10 +29,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.CheckoutTask;
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.tasks.CheckoutTask;
 
 /**
  * @author Ricardo.Belfor
@@ -88,7 +88,7 @@ public class CheckoutJob extends Job {
 
 	private Document checkoutDocument() throws ExecutionException {
 		CheckoutTask task = new CheckoutTask(document);
-		ObjectStoresManager.getManager().executeTaskSync(task);
+		TaskManager.getInstance().executeTaskSync(task);
 		return task.getCheckoutDocument();
 	}
 

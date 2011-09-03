@@ -23,7 +23,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -32,18 +31,11 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.part.IShowInTarget;
-import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.util.PluginLog;
 
 /**
@@ -78,7 +70,7 @@ public class ObjectStoresView extends ViewPart {
 		contentProvider = new ObjectStoresViewContentProvider();
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObjectStoreItemLabelProvider());
-		viewer.setInput( ObjectStoresManager.getManager() );
+		viewer.setInput( TaskManager.getInstance() );
 		viewer.setSorter( new ObjectStoresViewSorter() );
 		hookContextMenu();
 		hookMouse();

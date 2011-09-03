@@ -24,10 +24,11 @@ import java.util.Collection;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.VirtualFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
-import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 
 /**
  * 
@@ -43,14 +44,14 @@ public class GetClassDescriptionTask extends BaseTask {
 	private Collection<Object> oldChildren;
 	private ArrayList<ClassDescription> children;
 
-	public GetClassDescriptionTask(String name, ObjectStore objectStore) {
+	public GetClassDescriptionTask(String name, IObjectStore objectStore) {
 		this(name, null, objectStore);
 	}
 	
-	public GetClassDescriptionTask(String name, Object parent, ObjectStore objectStore) {
+	public GetClassDescriptionTask(String name, Object parent, IObjectStore objectStore) {
 		super();
 		this.name = name;
-		this.objectStore = objectStore;
+		this.objectStore = (ObjectStore) objectStore;
 		this.parent = parent;
 	}
 

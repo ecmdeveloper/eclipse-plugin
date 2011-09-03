@@ -32,9 +32,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 
 /**
  * @author Ricardo.Belfor

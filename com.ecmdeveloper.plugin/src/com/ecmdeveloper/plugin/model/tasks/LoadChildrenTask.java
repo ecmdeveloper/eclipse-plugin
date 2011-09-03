@@ -22,11 +22,12 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.ILoadChildrenTask;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
@@ -41,7 +42,7 @@ import com.filenet.api.core.ReferentialContainmentRelationship;
  * @author Ricardo Belfor
  *
  */
-public class LoadChildrenTask extends BaseTask {
+public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 
 	private ObjectStoreItem objectStoreItem;
 	private ArrayList<IObjectStoreItem> children;
@@ -56,10 +57,12 @@ public class LoadChildrenTask extends BaseTask {
 		this.objectStoreItem = objectStoreItem;
 	}
 
+	@Override
 	public ObjectStoreItem getObjectStoreItem() {
 		return objectStoreItem;
 	}
 
+	@Override
 	public ArrayList<IObjectStoreItem> getChildren() {
 		return children;
 	}

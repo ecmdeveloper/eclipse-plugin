@@ -34,9 +34,9 @@ import com.ecmdeveloper.plugin.classes.model.ClassesManagerListener;
 import com.ecmdeveloper.plugin.classes.model.VirtualFolder;
 import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.model.constants.VirtualFolderType;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStores;
 
 /**
  * 
@@ -47,7 +47,7 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 		ITreeContentProvider, ClassesManagerListener {
 
 	private ClassesManager manager;
-	private ObjectStores classesRoot;
+	private IObjectStores classesRoot;
 	private TreeViewer viewer;
 	private ClassType classesFilter;
 	private VirtualFolder rootVirtualFolder;

@@ -19,33 +19,13 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-
 import javax.security.auth.Subject;
 
+import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.filenet.api.util.UserContext;
 
-
-public abstract class BaseTask implements Callable<Object>{
-
-	protected List<TaskListener> listeners = new ArrayList<TaskListener>();
-	
-	public void addTaskListener(TaskListener taskListener) {
-		if ( ! listeners.contains( taskListener ) ) {
-			listeners.add(taskListener);
-		}
-	} 
-	
-	protected void fireTaskCompleteEvent(TaskResult taskResult) {
-		for (TaskListener taskListener : listeners) {
-			TaskCompleteEvent taskCompleteEvent = new TaskCompleteEvent(this,taskResult);
-			taskListener.onTaskComplete(taskCompleteEvent );
-		}
-		listeners.clear();
-	}
+public abstract class BaseTask extends AbstractTask {
 
 	@Override
 	public final Object call() throws Exception {

@@ -30,7 +30,6 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
 
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramElement;
 import com.ecmdeveloper.plugin.diagrams.policies.ClassDiagramComponentEditPolicy;
 

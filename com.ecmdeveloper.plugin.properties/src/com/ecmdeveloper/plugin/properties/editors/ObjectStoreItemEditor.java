@@ -36,12 +36,12 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
@@ -51,7 +51,7 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
  * @author Ricardo.Belfor
  *
  */
-public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener, ObjectStoresManagerListener {
+public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener, ITaskManagerListener {
 
 	private static final String SAVE_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveProperties";
 	private static final String SAVE_NEW_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveNewProperties";
@@ -74,7 +74,7 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 		
 			updateTitle();
 			
-			ObjectStoresManager.getManager().addObjectStoresManagerListener(this);
+			TaskManager.getInstance().addTaskManagerListener(this);
 			
 		} catch (PartInitException e) {
 			PluginLog.error( e );
@@ -238,6 +238,6 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	@Override
 	public void dispose() {
 		super.dispose();
-		ObjectStoresManager.getManager().removeObjectStoresManagerListener(this);
+		TaskManager.getInstance().removeTaskManagerListener(this);
 	}
 }

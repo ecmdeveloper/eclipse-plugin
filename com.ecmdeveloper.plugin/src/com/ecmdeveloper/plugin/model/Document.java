@@ -21,6 +21,8 @@ package com.ecmdeveloper.plugin.model;
 
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.core.VersionSeries;
@@ -29,7 +31,7 @@ import com.filenet.api.core.VersionSeries;
  * @author Ricardo Belfor
  *
  */
-public class Document extends ObjectStoreItem {
+public class Document extends ObjectStoreItem implements IDocument {
 
 	protected com.filenet.api.core.Document document;
 	protected String versionSeriesId;

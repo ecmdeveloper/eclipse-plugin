@@ -20,9 +20,10 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.RefreshMode;
@@ -131,6 +132,6 @@ public class DeleteTask extends BaseTask {
 		if ( objectStoreItems.length == 0) {
 			throw new IllegalArgumentException();
 		}
-		return objectStoreItems[0].getObjectStore().getConnection();
+		return (ContentEngineConnection) objectStoreItems[0].getObjectStore().getConnection();
 	}
 }

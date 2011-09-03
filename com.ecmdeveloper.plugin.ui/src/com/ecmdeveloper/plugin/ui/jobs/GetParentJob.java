@@ -30,10 +30,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.GetParentTask;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
@@ -62,7 +62,7 @@ public class GetParentJob extends Job {
 			String message = MessageFormat.format(JOB_MESSAGE, objectStoreItem.getDisplayName());
 			monitor.beginTask(message, IProgressMonitor.UNKNOWN );
 			GetParentTask task = new GetParentTask( (ObjectStoreItem) objectStoreItem );
-			ObjectStoresManager.getManager().executeTaskSync(task);
+			TaskManager.getInstance().executeTaskSync(task);
 			parents = task.getParents();
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(shell, JOB_NAME, e.getLocalizedMessage(), e);

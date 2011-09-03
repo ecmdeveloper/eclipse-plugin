@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model;
 
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Document;
 import com.filenet.api.core.IndependentlyPersistableObject;

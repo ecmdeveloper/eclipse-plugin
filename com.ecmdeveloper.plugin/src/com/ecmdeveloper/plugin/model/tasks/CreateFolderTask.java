@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;

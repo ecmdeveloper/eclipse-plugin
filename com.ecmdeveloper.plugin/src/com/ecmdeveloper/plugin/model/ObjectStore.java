@@ -23,6 +23,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.filenet.api.constants.PropertyNames;
@@ -33,8 +38,8 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  * @author Ricardo Belfor
  *
  */
-public class ObjectStore extends ObjectStoreItem 
-{
+public class ObjectStore extends ObjectStoreItem implements IObjectStore {
+	
 	private static final String NOT_CONNECTED_MESSAGE = Messages.ObjectStore_NotConnectedMessage;
 	protected ContentEngineConnection connection;
 	protected com.filenet.api.core.ObjectStore objectStore;
@@ -81,7 +86,7 @@ public class ObjectStore extends ObjectStoreItem
 			children.add( new Placeholder( Placeholder.Type.LOADING ) );
 			
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
-			ObjectStoresManager.getManager().executeTaskASync(loadChildrenTask);
+			TaskManager.getInstance().executeTaskASync(loadChildrenTask);
 		}
 		return children;
 	}
@@ -134,8 +139,8 @@ public class ObjectStore extends ObjectStoreItem
 		return connection;
 	}
 
-	public void setConnection(ContentEngineConnection connection) {
-		this.connection = connection;
+	public void setConnection(IConnection connection) {
+		this.connection = (ContentEngineConnection) connection;
 	}
 	
 	@Override
@@ -153,12 +158,12 @@ public class ObjectStore extends ObjectStoreItem
 		}
 	}
 
-	public static void assertConnected(ObjectStore objectStore) {
+	public static void assertConnected(IObjectStore objectStore2) {
 
-		if ( ! objectStore.isConnected() ) {
+		if ( ! objectStore2.isConnected() ) {
 			throw new RuntimeException(MessageFormat.format(
-					NOT_CONNECTED_MESSAGE, objectStore.getConnection()
-							.toString(), objectStore.getName()));
+					NOT_CONNECTED_MESSAGE, objectStore2.getConnection()
+							.toString(), objectStore2.getName()));
 		}
 	}
 

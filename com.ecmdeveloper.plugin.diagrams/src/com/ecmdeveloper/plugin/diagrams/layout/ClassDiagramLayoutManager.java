@@ -26,7 +26,6 @@ import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
-import com.ecmdeveloper.plugin.diagrams.model.AttributeRelationship;
 import com.ecmdeveloper.plugin.diagrams.parts.AttributeRelationshipEditPart;
 import com.ecmdeveloper.plugin.diagrams.parts.ClassDiagramEditPart;
 

@@ -20,7 +20,6 @@
 package com.ecmdeveloper.plugin.wizard;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
@@ -33,10 +32,11 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
@@ -55,7 +55,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	@Override
 	public void addPages() {
 		
-		Collection<ContentEngineConnection> connections = ObjectStoresManager
+		Collection<IConnection> connections = ObjectStoresManager
 		.getManager().getConnections();
 
 		if ( ! connections.isEmpty() ) {
@@ -194,9 +194,9 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	      }
 	}
 	
-	public ObjectStore[] getObjectStores() {
+	public IObjectStore[] getObjectStores() {
 		
-		ObjectStore[] objectStores = new ObjectStore[0];
+		IObjectStore[] objectStores = new IObjectStore[0];
 
 		try {
 			NewObjectstoreNamesRunnable runnable = new NewObjectstoreNamesRunnable(
@@ -230,7 +230,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 	class NewObjectstoreNamesRunnable implements IRunnableWithProgress {
 
 		private String connectionName;
-		private ObjectStore[] objectStores = new ObjectStore[0];
+		private IObjectStore[] objectStores = new ObjectStore[0];
 		
 		public NewObjectstoreNamesRunnable(String connectionName ) {
 			this.connectionName = connectionName;
@@ -249,7 +249,7 @@ public class ImportObjectStoreWizard extends Wizard implements IImportWizard {
 			monitor.done();
 		}
 
-		public ObjectStore[] getObjectStores() {
+		public IObjectStore[] getObjectStores() {
 			return objectStores;
 		}
 	}

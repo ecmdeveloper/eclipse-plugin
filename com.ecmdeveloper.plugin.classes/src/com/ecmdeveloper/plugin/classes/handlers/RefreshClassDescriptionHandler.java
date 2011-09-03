@@ -34,9 +34,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.ClassesManager;
 import com.ecmdeveloper.plugin.classes.model.task.RefreshClassDescriptionTask;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 
 /**
  * @author Ricardo.Belfor

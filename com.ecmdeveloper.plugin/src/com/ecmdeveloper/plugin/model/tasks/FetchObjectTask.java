@@ -22,11 +22,8 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.text.MessageFormat;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectNotFoundException;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
@@ -51,9 +48,9 @@ public class FetchObjectTask extends BaseTask {
 	private String className;
 	private String objectType;
 	
-	public FetchObjectTask(ObjectStore objectStore, String id, String className, String objectType ) {
+	public FetchObjectTask(IObjectStore objectStore2, String id, String className, String objectType ) {
 		super();
-		this.objectStore = objectStore;
+		this.objectStore = (ObjectStore) objectStore2;
 		this.id = id;
 		this.className = className;
 		this.objectType = objectType;

@@ -33,10 +33,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.GetContentTask;
 import com.ecmdeveloper.plugin.content.util.PluginLog;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.tasks.GetContentTask;
 
 /**
  * @author Ricardo.Belfor
@@ -58,7 +58,7 @@ public class DocumentCompareItem implements IStreamContentAccessor, ITypedElemen
 		if ( contentIndex >= 0 ) {
 			GetContentTask task = new GetContentTask(document,contentIndex);
 			try {
-				ObjectStoresManager.getManager().executeTaskSync(task);
+				TaskManager.getInstance().executeTaskSync(task);
 				return task.getContentStream();
 			} catch (ExecutionException e) {
 				throw new CoreException( PluginLog.createStatus(Status.ERROR, Status.ERROR, e.getLocalizedMessage(), e) );

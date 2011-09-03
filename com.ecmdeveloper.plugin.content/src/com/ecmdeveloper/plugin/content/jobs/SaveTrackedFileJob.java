@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
 import com.ecmdeveloper.plugin.model.tasks.SaveTask;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
@@ -78,7 +78,7 @@ public class SaveTrackedFileJob extends AbstractTrackedFileJob {
 		Collection<Object> files = new ArrayList<Object>();
 		files.add( getFile() );
 		DocumentTask task = new SaveTask( document, files, mimeType);
-		ObjectStoresManager.getManager().executeTaskSync(task);
+		TaskManager.getInstance().executeTaskSync(task);
 		
 		monitor.done();
 	}

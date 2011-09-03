@@ -19,8 +19,9 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 /**
@@ -60,6 +61,6 @@ public class UpdateTask extends BaseTask {
 		if ( objectStoreItems.length == 0) {
 			throw new IllegalArgumentException();
 		}
-		return objectStoreItems[0].getObjectStore().getConnection();
+		return (ContentEngineConnection) objectStoreItems[0].getObjectStore().getConnection();
 	}
 }

@@ -23,7 +23,6 @@ package com.ecmdeveloper.plugin.properties.input;
 import org.eclipse.swt.widgets.Composite;
 
 import com.ecmdeveloper.plugin.properties.renderer.StringInputRenderer;
-import com.filenet.api.meta.PropertyDescription;
 import com.filenet.api.meta.PropertyDescriptionInteger32;
 
 /**
