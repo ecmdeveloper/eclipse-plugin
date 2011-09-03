@@ -41,9 +41,9 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.scripting.Activator;
 import com.ecmdeveloper.plugin.scripting.engine.MethodRunner;
 import com.ecmdeveloper.plugin.scripting.engine.ScriptingContext;
@@ -92,8 +92,8 @@ public class ExecuteMethodJob extends Job {
 		ScriptingContext scriptingContext = null;
 		for ( IObjectStoreItem objectStoreItem : objectStoreItems) {
 			if ( scriptingContext == null ) {
-				ObjectStore objectStore = objectStoreItem.getObjectStore();
-				ContentEngineConnection connection = objectStore.getConnection();
+				IObjectStore objectStore = objectStoreItem.getObjectStore();
+				IConnection connection = objectStore.getConnection();
 				scriptingContext = new ScriptingContext(username, password, connection.getUrl(),
 						objectStore.getName());
 			}

@@ -24,6 +24,7 @@ import java.util.Collection;
 import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.util.IconFiles;
 import com.filenet.api.core.IndependentlyPersistableObject;
 
@@ -32,7 +33,7 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  * @author Ricardo.Belfor
  *
  */
-public class Placeholder extends ObjectStoreItem implements IObjectStoreItem{
+public class Placeholder extends ObjectStoreItem implements IObjectStoreItem {
 
 	private final Type type;
 

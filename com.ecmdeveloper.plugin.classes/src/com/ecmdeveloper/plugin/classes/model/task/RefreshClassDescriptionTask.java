@@ -22,9 +22,9 @@ package com.ecmdeveloper.plugin.classes.model.task;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.util.PluginLog;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
-import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 
 /**
  * @author Ricardo.Belfor

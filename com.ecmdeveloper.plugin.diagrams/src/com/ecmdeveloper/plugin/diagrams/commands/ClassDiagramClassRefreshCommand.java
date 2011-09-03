@@ -34,10 +34,11 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 /**
@@ -63,12 +64,12 @@ public class ClassDiagramClassRefreshCommand extends Command {
 		redo();
 	}
 
-	private ObjectStore getObjectStore(Shell activeShell) {
+	private IObjectStore getObjectStore(Shell activeShell) {
 		String connectionName = classDiagramClass.getConnectionName();
 		String objectStoreName = classDiagramClass.getObjectStoreName();
 		final ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
 		
-		final ObjectStore objectStore = objectStoresManager.getObjectStore(connectionName, objectStoreName);
+		final IObjectStore objectStore = objectStoresManager.getObjectStore(connectionName, objectStoreName);
 		
 		if ( ! objectStore.isConnected() ) {
 			String message = MessageFormat.format(OBJECT_STORE_NOT_CONNECTED_MESSAGE, objectStore
@@ -81,7 +82,7 @@ public class ClassDiagramClassRefreshCommand extends Command {
 	public void redo() {
 
 		final Shell activeShell = Display.getCurrent().getActiveShell();
-		final ObjectStore objectStore = getObjectStore(activeShell);
+		final IObjectStore objectStore = getObjectStore(activeShell);
 		if ( ! objectStore.isConnected() ) {
 			return;
 		}
@@ -114,9 +115,9 @@ public class ClassDiagramClassRefreshCommand extends Command {
 					refreshedClassDiagramClass.setParentClassId( classDiagramClass.getParentClassId() );
 				}
 
-				private ClassDescription getClassDescription(final ObjectStore objectStore ) throws Exception {
+				private ClassDescription getClassDescription(final IObjectStore objectStore ) throws Exception {
 					GetClassDescriptionTask task = new GetClassDescriptionTask( classDiagramClass.getName(), objectStore);
-					objectStoresManager.executeTaskSync(task);
+					TaskManager.getInstance().executeTaskSync(task);
 					ClassDescription classDescription = task.getClassDescription();
 					return classDescription;
 				}

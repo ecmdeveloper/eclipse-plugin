@@ -2,8 +2,8 @@ package com.ecmdeveloper.plugin.codemodule.handlers.util;
 
 import java.text.MessageFormat;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.Action;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 
 public class CodeModuleActionLabelProvider extends ObjectStoreItemLabelProvider {

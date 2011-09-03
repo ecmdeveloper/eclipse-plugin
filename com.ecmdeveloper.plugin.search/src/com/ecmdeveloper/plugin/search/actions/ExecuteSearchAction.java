@@ -20,16 +20,9 @@
 
 package com.ecmdeveloper.plugin.search.actions;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.ui.actions.SelectionAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;

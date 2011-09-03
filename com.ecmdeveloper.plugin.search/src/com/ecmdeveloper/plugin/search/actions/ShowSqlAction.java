@@ -21,8 +21,6 @@
 package com.ecmdeveloper.plugin.search.actions;
 
 import org.eclipse.gef.ui.actions.SelectionAction;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 

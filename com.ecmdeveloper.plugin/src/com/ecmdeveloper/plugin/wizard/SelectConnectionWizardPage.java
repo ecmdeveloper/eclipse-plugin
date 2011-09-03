@@ -39,17 +39,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 
 public class SelectConnectionWizardPage extends WizardPage {
 
-	private Collection<ContentEngineConnection> connections;
+	private Collection<IConnection> connections;
 	private Button newConnectionButton;
 	private Button existingConnectionButton;
 	private ComboViewer connectionsCombo;
 	private Button connectButton;
 
-	protected SelectConnectionWizardPage(Collection<ContentEngineConnection> connections ) {
+	protected SelectConnectionWizardPage(Collection<IConnection> connections ) {
 		super("selectConnection");
 		this.connections = connections;
 		setTitle("Select Connection");
@@ -136,7 +137,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 	}
 
 	private void createConnectionsCombo(Composite container,
-			Collection<ContentEngineConnection> connections) {
+			Collection<IConnection> connections) {
 
 		connectionsCombo = new ComboViewer(container, SWT.VERTICAL
 				| SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);

@@ -31,6 +31,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
 import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.ecmdeveloper.plugin.util.PluginTagNames;
 
@@ -42,7 +45,7 @@ public class ObjectStoresStore {
 
 	private static final int CURRENT_FILE_VERSION = 1;
 
-	public void load(ObjectStores objectStores, Map<String, ContentEngineConnection> connections) {
+	public void load(IObjectStores objectStores, Map<String, IConnection> connections) {
 
 		FileReader reader = null;
 		try {
@@ -65,7 +68,7 @@ public class ObjectStoresStore {
 		}
 	}
 
-	private void loadConnections(XMLMemento memento, Map<String, ContentEngineConnection> connections) {
+	private void loadConnections(XMLMemento memento, Map<String,IConnection> connections) {
 		IMemento connectionsChild = memento.getChild(PluginTagNames.CONNECTIONS_TAG);
 		if ( connectionsChild != null ) {
 			for ( IMemento connectionChild : connectionsChild.getChildren(PluginTagNames.CONNECTION_TAG) ) {
@@ -75,8 +78,8 @@ public class ObjectStoresStore {
 		}
 	}
 
-	private void loadObjectStores(XMLMemento memento, ObjectStores objectStores,
-			Map<String, ContentEngineConnection> connections) {
+	private void loadObjectStores(XMLMemento memento, IObjectStores objectStores,
+			Map<String, IConnection> connections) {
 		IMemento objectStoresChild = memento.getChild(PluginTagNames.OBJECT_STORES_TAG);
 		if ( objectStoresChild != null )
 		{
@@ -87,8 +90,8 @@ public class ObjectStoresStore {
 		}
 	}
 
-	private void loadObjectStore(IMemento objectStoreChild, ObjectStores objectStores,
-			Map<String, ContentEngineConnection> connections) {
+	private void loadObjectStore(IMemento objectStoreChild, IObjectStores objectStores,
+			Map<String, IConnection> connections) {
 		String name = objectStoreChild.getString( PluginTagNames.NAME_TAG );
 		String displayName = objectStoreChild.getString( PluginTagNames.DISPLAY_NAME_TAG );
 		ObjectStore objectStore = new ObjectStore( name, displayName, objectStores );
@@ -110,7 +113,7 @@ public class ObjectStoresStore {
 		return contentEngineConnection;
 	}
 
-	public void save(ObjectStores objectStores, Map<String, ContentEngineConnection> connections)
+	public void save(IObjectStores objectStores, Map<String, IConnection> connections)
 	{
 		if (connections == null) {
 			return;
@@ -144,7 +147,7 @@ public class ObjectStoresStore {
 		return Activator.getDefault().getStateLocation().append("objectstores.xml").toFile();
 	}
 
-	private void saveObjectStores(XMLMemento memento, ObjectStores objectStores) {
+	private void saveObjectStores(XMLMemento memento, IObjectStores objectStores) {
 		IMemento objectStoresChild = memento.createChild(PluginTagNames.OBJECT_STORES_TAG); 
 		
 		for ( IObjectStoreItem objectStore : objectStores.getChildren()) {
@@ -152,12 +155,12 @@ public class ObjectStoresStore {
 		}
 	}
 
-	private void saveConnections(XMLMemento memento, Map<String, ContentEngineConnection> connections) {
+	private void saveConnections(XMLMemento memento, Map<String, IConnection> connections) {
 
 		IMemento connectionsChild = memento.createChild(PluginTagNames.CONNECTIONS_TAG); 
 		
-		for ( ContentEngineConnection contentEngineConnection : connections.values() ) {
-			saveConnection(connectionsChild, contentEngineConnection);
+		for ( IConnection contentEngineConnection : connections.values() ) {
+			saveConnection(connectionsChild, (ContentEngineConnection) contentEngineConnection);
 		}
 	}
 

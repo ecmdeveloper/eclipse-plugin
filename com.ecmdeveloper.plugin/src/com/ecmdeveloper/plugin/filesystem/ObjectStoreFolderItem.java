@@ -32,10 +32,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.util.PluginLog;
 
@@ -98,7 +98,7 @@ public class ObjectStoreFolderItem extends ObjectStoreFileStore {
 				// TODO use the monitor
 				
 				LoadChildrenTask loadChildrenTask = new LoadChildrenTask( objectStoreItem );
-				ObjectStoresManager.getManager().executeTaskSync(loadChildrenTask);
+				TaskManager.getInstance().executeTaskSync(loadChildrenTask);
 			
 				children = folder.getChildren();
 			} catch (ExecutionException e) {

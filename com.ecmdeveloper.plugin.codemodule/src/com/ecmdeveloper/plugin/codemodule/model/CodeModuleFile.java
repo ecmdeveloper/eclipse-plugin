@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaModelException;
 
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ObjectStore;

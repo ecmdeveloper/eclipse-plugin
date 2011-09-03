@@ -39,7 +39,6 @@ import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorInput;
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorUtils;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
-import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
 
 /**

@@ -20,10 +20,7 @@ import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gef.requests.GroupRequest;
 
 import com.ecmdeveloper.plugin.search.commands.OrphanChildCommand;
-import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
-import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
-import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 
 public class AbstractContainerEditPolicy extends ContainerEditPolicy {

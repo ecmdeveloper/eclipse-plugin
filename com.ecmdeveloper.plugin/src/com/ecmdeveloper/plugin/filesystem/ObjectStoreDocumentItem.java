@@ -35,8 +35,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.GetContentTask;
 import com.ecmdeveloper.plugin.util.PluginLog;
 
@@ -63,7 +63,7 @@ public class ObjectStoreDocumentItem extends ObjectStoreFileStore {
 			throws CoreException {
 		try {
 			GetContentTask task = new GetContentTask( document );
-			InputStream contentStream = (InputStream) ObjectStoresManager.getManager().executeTaskSync(task);
+			InputStream contentStream = (InputStream) TaskManager.getInstance().executeTaskSync(task);
 			String filename = "c:/temp/content";
 			copyStreamToFile(contentStream, filename );
 			return new FileInputStream( filename);

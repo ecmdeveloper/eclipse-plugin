@@ -28,10 +28,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.GetCurrentVersionTask;
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.tasks.GetCurrentVersionTask;
 
 /**
  * 
@@ -67,7 +67,7 @@ public abstract class AbstractCurrentDocumentJob extends Job {
 		
 		GetCurrentVersionTask task = new GetCurrentVersionTask(document);
 		try {
-			ObjectStoresManager.getManager().executeTaskSync(task);
+			TaskManager.getInstance().executeTaskSync(task);
 			currentVersionDocument = task.getCurrentVersionDocument();
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(window.getShell(), getName(),

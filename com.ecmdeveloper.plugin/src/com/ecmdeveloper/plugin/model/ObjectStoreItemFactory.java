@@ -19,6 +19,9 @@
  */
 package com.ecmdeveloper.plugin.model;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
+
 
 /**
  * @author Ricardo.Belfor

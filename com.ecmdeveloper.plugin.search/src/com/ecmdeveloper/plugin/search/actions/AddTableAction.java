@@ -26,11 +26,9 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
-import com.ecmdeveloper.plugin.search.model.QueryTable2;
 import com.ecmdeveloper.plugin.search.wizards.TableSelectionWizard;
 
 /**

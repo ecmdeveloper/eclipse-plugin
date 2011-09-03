@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.io.File;
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -39,10 +40,10 @@ public class CreateCodeModuleTask extends CodeModuleTask {
 	protected Collection<File> files;
 	protected ObjectStore objectStore;
 	
-	public CreateCodeModuleTask( String name, Collection<File> files, ObjectStore objectStore ) {
+	public CreateCodeModuleTask( String name, Collection<File> files, IObjectStore objectStore2 ) {
 		this.name = name;
 		this.files = files;
-		this.objectStore = objectStore;
+		this.objectStore = (ObjectStore) objectStore2;
 	}
 
 	@Override

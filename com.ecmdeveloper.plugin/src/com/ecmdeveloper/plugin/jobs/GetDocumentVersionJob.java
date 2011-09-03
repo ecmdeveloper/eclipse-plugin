@@ -39,8 +39,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
 import com.ecmdeveloper.plugin.model.tasks.GetDocumentVersionsTask;
 import com.ecmdeveloper.plugin.util.PluginMessage;
@@ -108,14 +108,14 @@ public class GetDocumentVersionJob extends Job {
 
 		for ( Document documentVersion : versions) {
 			FetchPropertiesTask task = new FetchPropertiesTask(documentVersion, propertyNames );
-			ObjectStoresManager.getManager().executeTaskSync(task);
+			TaskManager.getInstance().executeTaskSync(task);
 			monitor.worked(1);
 		}
 	}
 
 	private List<Document> getDocumentVersions() throws ExecutionException {
 		GetDocumentVersionsTask task = new GetDocumentVersionsTask(document);
-		ObjectStoresManager.getManager().executeTaskSync(task);
+		TaskManager.getInstance().executeTaskSync(task);
 		List<Document> versions = task.getVersions();
 		return versions;
 	}

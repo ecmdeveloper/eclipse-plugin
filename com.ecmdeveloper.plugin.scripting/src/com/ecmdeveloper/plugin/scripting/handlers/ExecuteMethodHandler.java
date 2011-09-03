@@ -34,9 +34,9 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.scripting.jobs.ExecuteMethodJob;
 import com.ecmdeveloper.plugin.scripting.wizard.LaunchScriptWizard;
 
@@ -76,8 +76,8 @@ public class ExecuteMethodHandler  extends AbstractHandler implements IHandler {
 		String password;
 
 		if ( wizard.isUseExistingCredentials() ) {
-			ObjectStore objectStore = objectStoreItems.get(0).getObjectStore();
-			ContentEngineConnection connection = objectStore.getConnection();
+			IObjectStore objectStore = objectStoreItems.get(0).getObjectStore();
+			IConnection connection = objectStore.getConnection();
 			username = connection.getUsername();
 			password = connection.getPassword();
 		} else {

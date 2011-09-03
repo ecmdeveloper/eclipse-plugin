@@ -27,9 +27,9 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
 import com.ecmdeveloper.plugin.model.tasks.CreateCustomObjectTask;
 import com.ecmdeveloper.plugin.model.tasks.CreateDocumentTask;
@@ -81,7 +81,7 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		NewObjectStoreItemEditorInput editorInput = (NewObjectStoreItemEditorInput) getEditorInput();
 		
 		CreateTask task = createCreateTask(editorInput);
-		ObjectStoresManager.getManager().executeTaskSync(task);
+		TaskManager.getInstance().executeTaskSync(task);
 		editorInput.setObjectStoreItem( task.getNewObjectStoreItem() );
 		
 		if ( editorInput instanceof NewDocumentEditorInput ) {
@@ -92,7 +92,7 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		}
 		
 		RefreshTask refreshTask = new RefreshTask( task.getNewObjectStoreItem() );
-		ObjectStoresManager.getManager().executeTaskSync(refreshTask);
+		TaskManager.getInstance().executeTaskSync(refreshTask);
 	}
 
 	private CreateTask createCreateTask(NewObjectStoreItemEditorInput editorInput) {
@@ -115,10 +115,10 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		NewDocumentEditorInput newDocumentEditorInput = (NewDocumentEditorInput) editorInput;
 		
 		SaveTask saveTask = createSaveTask(objectStoreItem, newDocumentEditorInput);
-		ObjectStoresManager.getManager().executeTaskSync(saveTask);
+		TaskManager.getInstance().executeTaskSync(saveTask);
 
 		CheckinTask checkinTask = createCheckinTask(saveTask.getReservationDocument(), newDocumentEditorInput);
-		ObjectStoresManager.getManager().executeTaskSync(checkinTask);
+		TaskManager.getInstance().executeTaskSync(checkinTask);
 		
 		return checkinTask.getDocument();
 	}

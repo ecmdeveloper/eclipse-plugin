@@ -27,9 +27,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
-import com.ecmdeveloper.plugin.search.parts.QueryComponentEditPart;
 import com.ecmdeveloper.plugin.search.parts.QueryEditPart;
 
 /**

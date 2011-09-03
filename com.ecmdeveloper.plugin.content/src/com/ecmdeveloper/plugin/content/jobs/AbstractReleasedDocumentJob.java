@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.GetReleasedVersionTask;
 
 /**
@@ -67,7 +67,7 @@ public abstract class AbstractReleasedDocumentJob extends Job {
 		
 		GetReleasedVersionTask task = new GetReleasedVersionTask(document);
 		try {
-			ObjectStoresManager.getManager().executeTaskSync(task);
+			TaskManager.getInstance().executeTaskSync(task);
 			releasedVersionDocument = task.getReleasedVersionDocument();
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(window.getShell(), getName(),

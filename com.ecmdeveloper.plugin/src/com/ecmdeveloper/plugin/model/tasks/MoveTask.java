@@ -24,9 +24,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.filenet.api.collection.ReferentialContainmentRelationshipSet;
@@ -171,6 +172,6 @@ public class MoveTask extends BaseTask {
 
 	@Override
 	protected ContentEngineConnection getContentEngineConnection() {
-		return destination.getObjectStore().getConnection();
+		return (ContentEngineConnection) destination.getObjectStore().getConnection();
 	}
 }

@@ -24,20 +24,21 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SearchResultContentProvider implements IStructuredContentProvider, ObjectStoresManagerListener {
+public class SearchResultContentProvider implements IStructuredContentProvider, ITaskManagerListener {
 
 	private QuerySearchResult searchResult; 
 	private TableViewer viewer;
-	private ObjectStoresManager manager;
+	private ITaskManager manager;
 	
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -48,13 +49,13 @@ public class SearchResultContentProvider implements IStructuredContentProvider, 
 			searchResult = (QuerySearchResult) newInput;
 			
 			if ( manager == null ) {
-				manager = ObjectStoresManager.getManager();
-				manager.addObjectStoresManagerListener(this);
+				manager = TaskManager.getInstance();
+				manager.addTaskManagerListener(this);
 			}
 		}
 		
 		if ( newInput == null && manager != null ) {
-			manager.removeObjectStoresManagerListener(this);
+			manager.removeTaskManagerListener(this);
 			manager = null;
 		}
 	}

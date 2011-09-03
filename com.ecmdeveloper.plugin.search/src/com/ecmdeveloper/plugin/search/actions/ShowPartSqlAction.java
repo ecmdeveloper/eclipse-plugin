@@ -24,8 +24,6 @@ import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
-import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.parts.QueryEditPart;
 import com.ecmdeveloper.plugin.search.ui.ShowQueryDialog;

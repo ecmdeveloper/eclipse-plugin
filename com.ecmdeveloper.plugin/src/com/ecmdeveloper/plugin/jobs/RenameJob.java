@@ -10,9 +10,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginMessage;
@@ -58,7 +58,7 @@ public class RenameJob extends Job {
 
 		try {
 			UpdateTask updateTask = new UpdateTask( itemsRenamed.toArray( new ObjectStoreItem[ itemsRenamed.size() ] ) );
-			ObjectStoresManager.getManager().executeTaskSync( updateTask );
+			TaskManager.getInstance().executeTaskSync( updateTask );
 		} catch(final Exception e ) {
 			Display.getDefault().syncExec(new Runnable() {
 				@Override

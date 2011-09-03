@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 
 /**

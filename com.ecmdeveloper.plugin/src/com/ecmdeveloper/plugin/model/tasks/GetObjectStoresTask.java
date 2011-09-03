@@ -1,5 +1,5 @@
 /**
- * Copyright 2010, Ricardo Belfor
+ * Copyright 2011, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -20,11 +20,33 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
+import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
+
 /**
- * @author Ricardo.Belfor
+ * @author ricardo.belfor
  *
  */
-public interface TaskListener {
+public class GetObjectStoresTask extends AbstractTask {
 
-	public void onTaskComplete( TaskCompleteEvent taskCompleteEvent );
+	private IConnection connection;
+	private IObjectStores objectStores;
+	private IObjectStore[] objectStoresArray;
+	
+	public GetObjectStoresTask(IConnection connection, IObjectStores objectStores) {
+		this.connection = connection;
+		this.objectStores = objectStores;
+	}
+
+	@Override
+	public Object call() throws Exception {
+		objectStoresArray = connection.getObjectStores(objectStores);
+		return null;
+	}
+
+	public IObjectStore[] getObjectStores() {
+		return objectStoresArray;
+	}
 }

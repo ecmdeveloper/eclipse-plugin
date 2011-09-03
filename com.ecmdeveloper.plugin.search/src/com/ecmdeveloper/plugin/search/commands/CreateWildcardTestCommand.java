@@ -25,7 +25,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 import com.ecmdeveloper.plugin.search.wizards.WildcardTestWizard;
 

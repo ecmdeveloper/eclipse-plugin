@@ -23,11 +23,11 @@ package com.ecmdeveloper.plugin.favorites.decorators;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.decorators.ObjectStoreItemDecorator;
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.favorites.util.IconFiles;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**

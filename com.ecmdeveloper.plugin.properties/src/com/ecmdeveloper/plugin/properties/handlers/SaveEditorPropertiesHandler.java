@@ -32,7 +32,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
 import com.ecmdeveloper.plugin.properties.jobs.EditorSchedulingRule;
-import com.ecmdeveloper.plugin.properties.jobs.RefreshEditorPropertiesJob;
 import com.ecmdeveloper.plugin.properties.jobs.SaveEditorPropertiesJob;
 
 /**

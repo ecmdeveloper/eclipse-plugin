@@ -19,6 +19,43 @@
  */
 package com.ecmdeveloper.plugin.model;
 
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
+
 public interface IObjectStoresManager {
+
+	Collection<? extends IConnection> getConnections();
+
+	String createConnection(String url, String username, String password, IProgressMonitor monitor)
+			throws ExecutionException;
+
+	void connectConnection(IConnection connection, IProgressMonitor monitor)
+			throws ExecutionException;
+
+	void addObjectStore(ObjectStore objectStore);
+
+	/**
+	 * Removes the Object Store from the list of configured Object Stores. If
+	 * there are no more Object Stores using the same connection then the
+	 * connection is also removed.
+	 * 
+	 * @param objectStore the object store
+	 */
+	void removeObjectStore(IObjectStore objectStore);
+
+	void connectObjectStore(IObjectStore objectStore, IProgressMonitor monitor)
+			throws ExecutionException;
+
+	IObjectStores getObjectStores();
+
+	IObjectStore[] getNewObjectstores(String connectionName);
+
+	IObjectStore getObjectStore(String connectionName, String objectStoreName);
 
 }

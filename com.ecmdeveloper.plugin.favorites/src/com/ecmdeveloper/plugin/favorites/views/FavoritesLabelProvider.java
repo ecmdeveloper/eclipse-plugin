@@ -20,10 +20,7 @@
 
 package com.ecmdeveloper.plugin.favorites.views;
 
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IDecoratorManager;
-import org.eclipse.ui.PlatformUI;
 
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;

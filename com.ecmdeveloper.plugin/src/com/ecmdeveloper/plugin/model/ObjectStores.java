@@ -22,13 +22,16 @@ package com.ecmdeveloper.plugin.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.filenet.api.core.IndependentlyPersistableObject;
 
 /**
  * @author Ricardo Belfor
  *
  */
-public class ObjectStores extends ObjectStoreItem {
+public class ObjectStores extends ObjectStoreItem implements IObjectStores {
 
 	private ArrayList<IObjectStoreItem> children;
 	
@@ -42,19 +45,16 @@ public class ObjectStores extends ObjectStoreItem {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ecmdeveloper.plugin.model.IObjectStoreItem#getChildren()
-	 */
 	@Override
 	public Collection<IObjectStoreItem> getChildren() {
 		return children;
 	}
 	
-	public void add( ObjectStore objectStore ) {
+	public void add( IObjectStore objectStore ) {
 		children.add( objectStore );
 	}
 
-	public void remove(ObjectStore objectStore) {
+	public void remove(IObjectStore objectStore) {
 		children.remove(objectStore);
 	}
 

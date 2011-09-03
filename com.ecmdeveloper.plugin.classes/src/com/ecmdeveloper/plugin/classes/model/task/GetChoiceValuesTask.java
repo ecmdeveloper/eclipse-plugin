@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.classes.model.Choice;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
-import com.ecmdeveloper.plugin.model.tasks.TaskResult;
 import com.filenet.api.admin.ChoiceList;
 
 /**

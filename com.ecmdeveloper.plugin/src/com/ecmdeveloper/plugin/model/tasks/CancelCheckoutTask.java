@@ -20,7 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.constants.RefreshMode;
 

@@ -23,15 +23,9 @@ package com.ecmdeveloper.plugin.properties.jobs;
 import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
 
@@ -74,7 +68,7 @@ public class SaveEditorPropertiesJob extends AbstractEditorJob {
 
 	private void update() throws ExecutionException {
 		UpdateTask task = new UpdateTask(objectStoreItem);
-		ObjectStoresManager.getManager().executeTaskSync(task);
+		TaskManager.getInstance().executeTaskSync(task);
 
 		window.getShell().getDisplay().syncExec( new Runnable() {
 			@Override

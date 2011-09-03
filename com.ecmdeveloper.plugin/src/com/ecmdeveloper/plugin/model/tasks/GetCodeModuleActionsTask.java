@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.model.Action;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -41,10 +42,10 @@ public class GetCodeModuleActionsTask extends BaseTask {
 	protected String codeModuleId;
 	protected ObjectStore objectStore;
 
-	public GetCodeModuleActionsTask(String codeModuleId, ObjectStore objectStore ) {
+	public GetCodeModuleActionsTask(String codeModuleId, IObjectStore objectStore2 ) {
 		super();
 		this.codeModuleId = codeModuleId;
-		this.objectStore = objectStore;
+		this.objectStore = (ObjectStore) objectStore2;
 	}
 
 	@Override

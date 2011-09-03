@@ -27,6 +27,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.Platform;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.property.Properties;

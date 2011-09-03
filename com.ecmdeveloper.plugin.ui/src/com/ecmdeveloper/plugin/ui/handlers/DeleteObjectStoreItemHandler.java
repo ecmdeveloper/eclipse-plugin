@@ -33,7 +33,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.ui.wizard.DeleteWizard;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;

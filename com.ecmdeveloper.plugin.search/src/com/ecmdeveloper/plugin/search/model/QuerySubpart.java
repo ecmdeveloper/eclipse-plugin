@@ -30,9 +30,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import com.ecmdeveloper.plugin.search.Activator;
-import com.ecmdeveloper.plugin.search.editor.QueryIcons;
-
 public abstract class QuerySubpart extends QueryElement {
 
 	private String id;

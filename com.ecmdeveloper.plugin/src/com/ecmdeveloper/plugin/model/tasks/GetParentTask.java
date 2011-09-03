@@ -31,7 +31,6 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.collection.ReferentialContainmentRelationshipSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Containable;
-import com.filenet.api.core.IndependentObject;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.core.ReferentialContainmentRelationship;
 import com.filenet.api.property.FilterElement;

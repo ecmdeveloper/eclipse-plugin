@@ -36,7 +36,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFileListener;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 /**
  * @author ricardo.belfor

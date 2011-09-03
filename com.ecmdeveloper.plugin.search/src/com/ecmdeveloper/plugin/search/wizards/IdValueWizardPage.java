@@ -20,9 +20,6 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author ricardo.belfor

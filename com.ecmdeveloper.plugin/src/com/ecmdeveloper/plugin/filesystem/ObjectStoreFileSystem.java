@@ -31,10 +31,11 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
 
@@ -75,13 +76,13 @@ public class ObjectStoreFileSystem extends FileSystem {
 		Map<String,String> queryMap = getQueryMap( uri.getQuery() );
 		
 		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
-		ObjectStore objectStore = objectStoresManager.getObjectStore(connectionName, objectStoreName);
+		IObjectStore objectStore = objectStoresManager.getObjectStore(connectionName, objectStoreName);
 		String className = queryMap.get(CLASS_NAME_PARAMETER);
 		String objectType = queryMap.get(OBJECT_TYPE_PARAMETER);
 		FetchObjectTask task = new FetchObjectTask(objectStore,path,className, objectType );
 		
 		try {
-			IObjectStoreItem object = (IObjectStoreItem) objectStoresManager.executeTaskSync(task);
+			IObjectStoreItem object = (IObjectStoreItem) TaskManager.getInstance().executeTaskSync(task);
 			if ( object instanceof Document ) {
 				int lastPathSeparatorIndex = path.lastIndexOf("/");
 				((Document)object).setParentPath( path.substring(0, lastPathSeparatorIndex ) );

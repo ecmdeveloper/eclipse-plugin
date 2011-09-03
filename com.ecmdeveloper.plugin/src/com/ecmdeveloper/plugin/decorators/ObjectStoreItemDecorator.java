@@ -28,27 +28,26 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerListener;
-import com.ecmdeveloper.plugin.model.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 
 /**
  * @author Ricardo.Belfor
  *
  */
 public abstract class ObjectStoreItemDecorator implements ILightweightLabelDecorator,
-		ObjectStoresManagerListener {
+		ITaskManagerListener {
 
-	private final ObjectStoresManager manager = ObjectStoresManager.getManager();
+	private final ITaskManager manager = TaskManager.getInstance();
 	private final List<ILabelProviderListener> listenerList = new ArrayList<ILabelProviderListener>();
 
 	public ObjectStoreItemDecorator() {
 		super();
-		manager.addObjectStoresManagerListener(this);
+		manager.addTaskManagerListener(this);
 	}
 
 	/**
@@ -70,7 +69,7 @@ public abstract class ObjectStoreItemDecorator implements ILightweightLabelDecor
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		manager.removeObjectStoresManagerListener(this);
+		manager.removeTaskManagerListener(this);
 	}
 
 	/**

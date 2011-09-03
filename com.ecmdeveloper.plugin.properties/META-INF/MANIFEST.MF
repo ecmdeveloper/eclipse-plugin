@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.ui.ide,
  org.eclipse.core.resources,
- com.ecmdeveloper.plugin.content;bundle-version="1.0.0"
+ com.ecmdeveloper.plugin.content;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

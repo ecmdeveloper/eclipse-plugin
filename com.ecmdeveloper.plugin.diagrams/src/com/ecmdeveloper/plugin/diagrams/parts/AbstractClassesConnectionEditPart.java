@@ -20,7 +20,6 @@
 
 package com.ecmdeveloper.plugin.diagrams.parts;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;

@@ -21,9 +21,6 @@
 package com.ecmdeveloper.plugin.properties.input;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 import com.ecmdeveloper.plugin.properties.renderer.ReadOnlyInputRenderer;
 import com.filenet.api.meta.PropertyDescription;

@@ -19,7 +19,6 @@
  */
 package com.ecmdeveloper.plugin.handlers;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,29 +28,23 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.jobs.MoveJob;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.model.tasks.MoveTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
@@ -80,7 +73,7 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 			return null;
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		Set<ObjectStore> elementObjectStores = new HashSet<ObjectStore>();
+		Set<IObjectStore> elementObjectStores = new HashSet<IObjectStore>();
 
 		while ( iterator.hasNext() ) {
 			IObjectStoreItem elem = (IObjectStoreItem) iterator.next();
@@ -133,9 +126,9 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 	
 	class MoveTargetFilter extends ViewerFilter
 	{
-		final private ObjectStore objectStore;
+		final private IObjectStore objectStore;
 		
-		public MoveTargetFilter(ObjectStore objectStoreName ) {
+		public MoveTargetFilter(IObjectStore objectStoreName ) {
 			this.objectStore = objectStoreName;
 		}
 		

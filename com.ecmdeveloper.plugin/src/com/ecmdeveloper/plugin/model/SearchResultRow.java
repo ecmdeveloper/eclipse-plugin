@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.EngineObject;
@@ -99,7 +100,7 @@ public class SearchResultRow {
 			if ( objectType != null ) {
 				String id = objectStoreObject.getProperties().getIdValue(PropertyNames.ID ).toString();
 				FetchObjectTask task = new FetchObjectTask(objectStore, id, objectStoreObject.getClassName(), objectType );
-				objectStoreItem = (IObjectStoreItem) ObjectStoresManager.getManager().executeTaskSync(task);
+				objectStoreItem = (IObjectStoreItem) TaskManager.getInstance().executeTaskSync(task);
 			}
 		}
 		return objectStoreItem; 

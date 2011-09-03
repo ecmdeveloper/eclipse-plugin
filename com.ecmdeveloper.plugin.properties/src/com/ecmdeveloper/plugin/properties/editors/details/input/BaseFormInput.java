@@ -1,6 +1,5 @@
 package com.ecmdeveloper.plugin.properties.editors.details.input;
 
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;

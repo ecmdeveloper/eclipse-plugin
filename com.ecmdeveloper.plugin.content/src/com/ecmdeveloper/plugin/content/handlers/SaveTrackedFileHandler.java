@@ -25,7 +25,6 @@ import java.net.URLConnection;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.jobs.SaveTrackedFileJob;

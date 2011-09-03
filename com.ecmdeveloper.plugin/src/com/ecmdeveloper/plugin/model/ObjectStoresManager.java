@@ -23,18 +23,21 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.model.tasks.ConnectConnectionTask;
+import com.ecmdeveloper.plugin.model.tasks.CreateConnectionTask;
+import com.ecmdeveloper.plugin.model.tasks.GetObjectStoresTask;
 
 /**
  * This class manages the connections to the Object Stores. It is also
@@ -49,19 +52,14 @@ public class ObjectStoresManager implements IObjectStoresManager
 
 	private static ObjectStoresManager objectStoresManager;
 	
-	protected Map<String,ContentEngineConnection> connections;
-	protected ObjectStores objectStores;
-
-	private List<ObjectStoresManagerListener> listeners = new ArrayList<ObjectStoresManagerListener>();
-	
-	private ExecutorService executorService;
+	private Map<String,IConnection> connections;
+	private IObjectStores objectStores;
 	private ObjectStoresStore objectStoresStore;
-	private ObjectStoreItemsModelController modelController;
+	private ITaskManager taskManager;
 	
 	private ObjectStoresManager() {
-		executorService = Executors.newSingleThreadExecutor();
 		objectStoresStore = new ObjectStoresStore();
-		modelController = new ObjectStoreItemsModelController();
+		taskManager = (ITaskManager) Activator.getDefault().getWorkbench().getService(ITaskManager.class);
 	}
 	
 	public static ObjectStoresManager getManager()
@@ -73,7 +71,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return objectStoresManager;
 	}
 
-	public Collection<ContentEngineConnection> getConnections() {
+	@Override
+	public Collection<IConnection> getConnections() {
 
 		if ( connections == null) {
 			loadObjectStores();
@@ -83,7 +82,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 	}
 	
 	private void loadObjectStores() {
-		connections = new HashMap<String, ContentEngineConnection>();
+		connections = new HashMap<String, IConnection>();
 		objectStores = new ObjectStores();
 		objectStoresStore.load(objectStores, connections);
 	}
@@ -92,6 +91,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		objectStoresStore.save(objectStores, connections);
 	}
 
+	@Override
 	public String createConnection(String url, String username, String password, IProgressMonitor monitor ) throws ExecutionException 
 	{
 		try {
@@ -104,13 +104,13 @@ public class ObjectStoresManager implements IObjectStoresManager
 				loadObjectStores();
 			}
 
-			CreateConnectionTask createConnection = new CreateConnectionTask(url, username, password );
-			
-			try {
-				return executorService.submit(createConnection).get();
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
+			CreateConnectionTask task = new CreateConnectionTask(url, username, password );
+
+			taskManager.executeTaskSync(task);
+			ContentEngineConnection objectStoreConnection = task.getObjectStoreConnection();
+			connections.put( objectStoreConnection.getName(), objectStoreConnection);
+			return objectStoreConnection.getName();
+
 		} finally {
 			if ( monitor != null ) {
 				monitor.done();
@@ -118,7 +118,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 	}
 	
-	public void connectConnection( ContentEngineConnection connection,IProgressMonitor monitor ) throws ExecutionException {
+	@Override
+	public void connectConnection( IConnection connection,IProgressMonitor monitor ) throws ExecutionException {
 
 		try {
 			
@@ -128,14 +129,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 			}
 	
 			if ( connections.containsKey( connectionName ) ) {
-	
-				ConnectConnectionTask callable = new ConnectConnectionTask(connectionName);
-				try {
-					executorService.submit(callable).get();
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
-				}
-				
+				ConnectConnectionTask task = new ConnectConnectionTask(connectionName, connections, objectStores );
+				taskManager.executeTaskSync(task);
 			} else {
 				throw new UnsupportedOperationException( "Invalid connection name '" + connectionName + "'" );
 			}
@@ -146,6 +141,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		}
 	}
 	
+	@Override
 	public void addObjectStore( final ObjectStore objectStore )
 	{
 		if ( objectStores == null) {
@@ -158,22 +154,16 @@ public class ObjectStoresManager implements IObjectStoresManager
 			public Object call() throws Exception {
 				objectStore.connect();
 				objectStores.add(objectStore);
-				modelController.fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
+				taskManager.fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
 				return null;
 			}
 		};
 		
-		executorService.submit(callable);
+		taskManager.executeTaskASync(callable);
 	}
 
-	/**
-	 * Removes the Object Store from the list of configured Object Stores. If
-	 * there are no more Object Stores using the same connection then the
-	 * connection is also removed.
-	 * 
-	 * @param objectStore the object store
-	 */
-	public void removeObjectStore(ObjectStore objectStore) 
+	@Override
+	public void removeObjectStore(IObjectStore objectStore) 
 	{
 		if ( objectStores == null) {
 			loadObjectStores();
@@ -195,10 +185,11 @@ public class ObjectStoresManager implements IObjectStoresManager
 			connections.remove( connectionName );
 		}
 
-		modelController.fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
+		taskManager.fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
 	}
 
-	public void connectObjectStore(ObjectStore objectStore, IProgressMonitor monitor ) throws ExecutionException
+	@Override
+	public void connectObjectStore(IObjectStore objectStore, IProgressMonitor monitor ) throws ExecutionException
 	{
 		if ( objectStore == null) {
 			return;
@@ -211,7 +202,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 		connectConnection(objectStore.getConnection(), monitor );
 	}
 
-	public ObjectStores getObjectStores()
+	@Override
+	public IObjectStores getObjectStores()
 	{
 		if ( objectStores == null) {
 			loadObjectStores();
@@ -219,12 +211,13 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return objectStores;
 	}
 
-	public ObjectStore[] getNewObjectstores( String connectionName ) {
+	@Override
+	public IObjectStore[] getNewObjectstores( String connectionName ) {
 
-		ObjectStore[] objectStores2 = getObjectStores(connectionName);
-		ArrayList<ObjectStore> newObjectStores = new ArrayList<ObjectStore>();
+		IObjectStore[] objectStores2 = getObjectStores(connectionName);
+		ArrayList<IObjectStore> newObjectStores = new ArrayList<IObjectStore>();
 
-		for (ObjectStore objectStore2 : objectStores2 ) {
+		for (IObjectStore objectStore2 : objectStores2 ) {
 		
 			boolean found = false;
 
@@ -246,7 +239,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 		return newObjectStores.toArray( new ObjectStore[0] );
 	}
 	
-	public ObjectStore[] getObjectStores(String connectionName )
+	private IObjectStore[] getObjectStores(String connectionName )
 	{
 		if ( objectStores == null) {
 			loadObjectStores();
@@ -257,25 +250,19 @@ public class ObjectStoresManager implements IObjectStoresManager
 			return new ObjectStore[0];
 		}
 		
-		final ContentEngineConnection connection = connections.get( connectionName );
-
-		Callable<ObjectStore[]> a = new Callable<ObjectStore[]>(){
-
-			@Override
-			public ObjectStore[] call() throws Exception {
-				return connection.getObjectStores(objectStores);			}
-		};
+		final IConnection connection = connections.get( connectionName );
+		GetObjectStoresTask task = new GetObjectStoresTask(connection, objectStores);
 		
 		try {
-			return executorService.submit( a ).get();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			taskManager.executeTaskSync( task );
+			return task.getObjectStores();
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public ObjectStore getObjectStore(String connectionName, String objectStoreName) {
+	@Override
+	public IObjectStore getObjectStore(String connectionName, String objectStoreName) {
 
 		if ( objectStores == null) {
 			loadObjectStores();
@@ -291,107 +278,5 @@ public class ObjectStoresManager implements IObjectStoresManager
 			}
 		}
 		return null;
-	}
-
-	public Object executeTaskSync( Callable<Object> task ) throws ExecutionException
-	{
-		try {
-			if ( task instanceof BaseTask ) {
-				((BaseTask)task).addTaskListener(modelController);
-			}
-			return executorService.submit(task).get();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} 
-	}
-
-	public void executeTaskASync( Callable<Object> task )
-	{
-		if ( task instanceof BaseTask ) {
-			((BaseTask)task).addTaskListener(modelController);
-		}
-		executorService.submit(task);
-	}
-	
-	public void moveObjectStoreItems( IObjectStoreItem[] objectStoreItems, IObjectStoreItem destination )
-	{
-		modelController.fireObjectStoreItemsChanged(null, objectStoreItems, null );
-
-		Set<IObjectStoreItem> updateSet = new HashSet<IObjectStoreItem>();
-		for (IObjectStoreItem objectStoreItem : objectStoreItems) {
-			if ( objectStoreItem.getParent() != null ) {
-				objectStoreItem.getParent().refresh();
-				updateSet.add( objectStoreItem.getParent() );
-			}
-		}
-
-		destination.refresh();
-		updateSet.add( destination );
-		
-		modelController.fireObjectStoreItemsChanged(null, null, updateSet.toArray( new IObjectStoreItem[0]) );
-	}
-	
-	public void addObjectStoresManagerListener( ObjectStoresManagerListener listener) {
-		modelController.addObjectStoresManagerListener(listener);
-	}
-
-	public void removeObjectStoresManagerListener( ObjectStoresManagerListener listener) {
-		modelController.removeObjectStoresManagerListener(listener);
-	}
-
-	class ConnectConnectionTask implements Callable<Object> {
-		private Object connectionName;
-
-		public ConnectConnectionTask(Object connectionName) {
-			super();
-			this.connectionName = connectionName;
-		}
-
-		@Override
-		public Object call() throws Exception {
-			connections.get( connectionName ).connect();
-			ArrayList<IObjectStoreItem> connectionObjectStores = new ArrayList<IObjectStoreItem>();
-			
-			for ( IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
-				
-				ObjectStore objectStore = (ObjectStore) objectStoreItem;
-				if ( objectStore.getConnection().getName().equals(connectionName)) {
-					objectStore.connect();
-					connectionObjectStores.add( objectStore );
-				}
-			}
-
-			modelController.fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
-			return null;
-		}
-	}
-	
-	class CreateConnectionTask implements Callable<String> {
-
-		private String url;
-		private String username;
-		private String password;
-
-		public CreateConnectionTask(String url, String username, String password) {
-			super();
-			this.url = url;
-			this.username = username;
-			this.password = password;
-		}
-
-		@Override
-		public String call() throws Exception {
-
-			ContentEngineConnection objectStoreConnection = new ContentEngineConnection();
-			
-			objectStoreConnection.setUrl(url);
-			objectStoreConnection.setUsername(username);
-			objectStoreConnection.setPassword(password);
-			objectStoreConnection.connect();
-	
-			connections.put( objectStoreConnection.getName(), objectStoreConnection);
-			
-			return objectStoreConnection.getName();
-		}
 	}
 }
