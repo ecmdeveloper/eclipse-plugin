@@ -26,7 +26,6 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Enumeration;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -83,7 +82,6 @@ public class Activator extends Plugin {
 		return fileUrl.getFile();
 	}
 
-	@SuppressWarnings("unchecked")
 	public String[] getLibraries() throws IOException {
 		
 		String[] pathParts = getPathParts();
