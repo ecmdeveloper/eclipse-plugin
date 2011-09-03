@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECM Developer Core Plug-in
+Bundle-SymbolicName: com.ecmdeveloper.plugin.core;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: com.ecmdeveloper.plugin.core.Activator
+Bundle-Vendor: ECMDEVELOPER
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: com.ecmdeveloper.plugin.core.model,
+ com.ecmdeveloper.plugin.core.model.tasks
