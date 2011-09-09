@@ -32,8 +32,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.util.Messages;
 
 /**
@@ -75,7 +75,7 @@ public class RemoveObjectStoreHandler extends AbstractHandler implements
 						REMOVE_OBJECT_STORE_MESSAGE, objecStoreName));
 				if ( answerTrue )
 				{
-					ObjectStoresManager.getManager().removeObjectStore( (ObjectStore)selectedObject );
+					Activator.getDefault().getObjectStoresManager().removeObjectStore( (ObjectStore)selectedObject );
 				}
 			}
 		}

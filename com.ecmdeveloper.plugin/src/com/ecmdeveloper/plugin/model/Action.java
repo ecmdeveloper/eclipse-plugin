@@ -21,6 +21,7 @@ package com.ecmdeveloper.plugin.model;
 
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.IAction;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
@@ -32,7 +33,7 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  * @author Ricardo.Belfor
  * 
  */
-public class Action extends ObjectStoreItem {
+public class Action extends ObjectStoreItem implements IAction {
 
 	com.filenet.api.events.Action action;
 	protected String codeModuleVersion;

@@ -44,11 +44,6 @@ public class CreateConnectionTask extends AbstractTask {
 	@Override
 	public String call() throws Exception {
 
-		objectStoreConnection = new ContentEngineConnection();
-		
-		objectStoreConnection.setUrl(url);
-		objectStoreConnection.setUsername(username);
-		objectStoreConnection.setPassword(password);
 		objectStoreConnection.connect();
 		return null;
 	}

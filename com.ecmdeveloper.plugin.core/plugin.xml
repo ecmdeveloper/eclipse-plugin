@@ -4,9 +4,12 @@
    <extension
          point="org.eclipse.ui.services">
       <serviceFactory
-            factoryClass="com.ecmdeveloper.plugin.core.model.impl.TaskServiceFactory">
+            factoryClass="com.ecmdeveloper.plugin.core.model.impl.ServiceFactory">
          <service
                serviceClass="com.ecmdeveloper.plugin.core.model.tasks.ITaskManager"></service>
+         <service
+               serviceClass="com.ecmdeveloper.plugin.core.model.IObjectStoresManager">
+         </service>
       </serviceFactory>
    </extension>
 

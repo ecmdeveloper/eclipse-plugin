@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
@@ -122,17 +122,18 @@ public class Folder extends ObjectStoreItem implements IFolder {
 			children.add( new Placeholder(Placeholder.Type.LOADING) );
 
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
-			TaskManager.getInstance().executeTaskASync(loadChildrenTask);
+			Activator.getDefault().getTaskManager().executeTaskASync(loadChildrenTask);
 		}
 		
 		return children;
 	}
 
-	public Collection<IObjectStoreItem> getChildrenSync() throws ExecutionException {
+	@Override
+	public Collection<? extends IObjectStoreItem> getChildrenSync() throws ExecutionException {
 		if ( children == null )	{
 			children = new ArrayList<IObjectStoreItem>();
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
-			TaskManager.getInstance().executeTaskSync(loadChildrenTask);
+			Activator.getDefault().getTaskManager().executeTaskSync(loadChildrenTask);
 		}
 		
 		return children;
@@ -146,6 +147,7 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	 * 
 	 * @see com.ecmdeveloper.plugin.model.ObjectStoreItem#removeChild(com.ecmdeveloper.plugin.model.IObjectStoreItem)
 	 */
+	@Override
 	public void removeChild(IObjectStoreItem childItem ) {
 		if (children != null) {
 			if ( children.contains( childItem ) ) {
@@ -234,10 +236,12 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	 * 
 	 * @return true, if is contained
 	 */
+	@Override
 	public boolean isContained() {
 		return contained;
 	}
 
+	@Override
 	public String getPathName() {
 		return pathName;
 	}

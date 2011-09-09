@@ -40,8 +40,8 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
@@ -74,7 +74,7 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 		
 			updateTitle();
 			
-			TaskManager.getInstance().addTaskManagerListener(this);
+			Activator.getDefault().getTaskManager().addTaskManagerListener(this);
 			
 		} catch (PartInitException e) {
 			PluginLog.error( e );
@@ -238,6 +238,6 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	@Override
 	public void dispose() {
 		super.dispose();
-		TaskManager.getInstance().removeTaskManagerListener(this);
+		Activator.getDefault().getTaskManager().removeTaskManagerListener(this);
 	}
 }

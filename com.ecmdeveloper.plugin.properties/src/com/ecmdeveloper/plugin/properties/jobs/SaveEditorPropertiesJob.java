@@ -25,8 +25,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
+import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
 
 /**
@@ -68,7 +68,7 @@ public class SaveEditorPropertiesJob extends AbstractEditorJob {
 
 	private void update() throws ExecutionException {
 		UpdateTask task = new UpdateTask(objectStoreItem);
-		TaskManager.getInstance().executeTaskSync(task);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 
 		window.getShell().getDisplay().syncExec( new Runnable() {
 			@Override

@@ -26,9 +26,8 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
  * @author ricardo.belfor
  *
  */
-public interface DeleteTask extends IBaseTask {
+public interface IUpdateTask extends IBaseTask {
 
 	IObjectStoreItem[] getObjectStoreItems();
-	boolean isDeleteAllVersions();
 
 }

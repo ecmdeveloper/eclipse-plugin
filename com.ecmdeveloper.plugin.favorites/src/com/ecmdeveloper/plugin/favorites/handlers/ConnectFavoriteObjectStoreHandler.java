@@ -36,9 +36,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
@@ -88,7 +88,7 @@ public class ConnectFavoriteObjectStoreHandler extends AbstractHandler implement
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
-				ObjectStoresManager.getManager().connectObjectStore( objectStore, monitor );
+				Activator.getDefault().getObjectStoresManager().connectObjectStore( objectStore, monitor );
 			} catch (Exception e ) {
 				PluginMessage.openErrorFromThread(shell, getName(), e.getLocalizedMessage(), e );
 			}

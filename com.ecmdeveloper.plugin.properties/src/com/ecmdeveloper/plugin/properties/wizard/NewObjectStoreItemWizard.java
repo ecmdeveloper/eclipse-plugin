@@ -37,10 +37,10 @@ import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
@@ -190,7 +190,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 		private void getDefaultClassDescription(final ObjectStore objectStore) {
 			try {
 				GetClassDescriptionTask task = new GetClassDescriptionTask( className, objectStore );
-				TaskManager.getInstance().executeTaskSync(task);
+				Activator.getDefault().getTaskManager().executeTaskSync(task);
 				defaultClassDescription = task.getClassDescription();
 			} catch (ExecutionException e) {
 				PluginMessage.openErrorFromThread(getShell(), getWindowTitle(),

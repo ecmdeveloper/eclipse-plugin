@@ -27,6 +27,7 @@ import javax.security.auth.Subject;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.filenet.api.collection.ObjectStoreSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Connection;
@@ -98,6 +99,7 @@ public class ContentEngineConnection implements IConnection
 		this.password = password;
 	}
 	
+	@Override
 	public boolean isConnected() {
 		return connected;
 	}
@@ -107,7 +109,7 @@ public class ContentEngineConnection implements IConnection
 	}
 
 	@SuppressWarnings("unchecked")
-	public IObjectStore[] getObjectStores(IObjectStoreItem parent )
+	public IObjectStore[] getObjectStores(IObjectStores parent )
 	{
 		ObjectStoreSet objectStores = domain.get_ObjectStores();
 		Iterator iterator = objectStores.iterator();
@@ -118,7 +120,7 @@ public class ContentEngineConnection implements IConnection
 			com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) iterator.next();
 
 			objectStore.fetchProperties( new String[] { PropertyNames.SYMBOLIC_NAME, PropertyNames.DISPLAY_NAME } );
-			ObjectStore os =  new ObjectStore(objectStore.get_SymbolicName(), objectStore.get_DisplayName(), parent );
+			ObjectStore os =  new ObjectStore(objectStore.get_SymbolicName(), objectStore.get_DisplayName() );
 			os.setConnection( this );
 			objectStoreList.add( os ); 
 		}
@@ -126,6 +128,7 @@ public class ContentEngineConnection implements IConnection
 		return objectStoreList.toArray( new IObjectStore[0] );
 	}
 	
+	@Override
 	public void connect() {
 		
 		if ( ! connected ) {

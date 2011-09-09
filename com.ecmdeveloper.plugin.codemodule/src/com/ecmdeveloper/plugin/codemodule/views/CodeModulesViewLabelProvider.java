@@ -29,7 +29,7 @@ import com.ecmdeveloper.plugin.codemodule.Activator;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.IconFiles;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 
 /**
@@ -42,12 +42,12 @@ public class CodeModulesViewLabelProvider extends ObjectStoreItemLabelProvider i
 	private static final int NAME_COLUMN = 1;
 	private static final int LOCATION_COLUMN = 2;
 //	private ObjectStoreItemLabelProvider objectStoreItemLabelProvider;
-	private ObjectStoresManager objectStoresManager;
+	private IObjectStoresManager objectStoresManager;
 	
 	public CodeModulesViewLabelProvider() {
 		super();
 //		objectStoreItemLabelProvider = new ObjectStoreItemLabelProvider();
-		objectStoresManager = ObjectStoresManager.getManager();
+		objectStoresManager = Activator.getDefault().getObjectStoresManager();
 	}
 
 //	public void addListener(ILabelProviderListener listener) {

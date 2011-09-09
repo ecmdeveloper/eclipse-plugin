@@ -17,27 +17,30 @@
  * <http://www.gnu.org/licenses/>.
  * 
  */
-package com.ecmdeveloper.plugin.model;
+package com.ecmdeveloper.plugin.core.model.impl;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.core.Activator;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresStore;
+import com.ecmdeveloper.plugin.core.model.tasks.IAddObjectStoreTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
-import com.ecmdeveloper.plugin.model.tasks.ConnectConnectionTask;
-import com.ecmdeveloper.plugin.model.tasks.CreateConnectionTask;
-import com.ecmdeveloper.plugin.model.tasks.GetObjectStoresTask;
+import com.ecmdeveloper.plugin.core.model.tasks.impl.AddObjectStoreTask;
+import com.ecmdeveloper.plugin.core.model.tasks.impl.ConnectConnectionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.impl.ConnectNewConnectionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.impl.GetObjectStoresTask;
 
 /**
  * This class manages the connections to the Object Stores. It is also
@@ -54,12 +57,14 @@ public class ObjectStoresManager implements IObjectStoresManager
 	
 	private Map<String,IConnection> connections;
 	private IObjectStores objectStores;
-	private ObjectStoresStore objectStoresStore;
+	private Collection<IObjectStoresStore> objectStoresStoreList;
 	private ITaskManager taskManager;
 	
 	private ObjectStoresManager() {
-		objectStoresStore = new ObjectStoresStore();
+		objectStoresStoreList = new ArrayList<IObjectStoresStore>();
+		objectStores = new ObjectStores();
 		taskManager = (ITaskManager) Activator.getDefault().getWorkbench().getService(ITaskManager.class);
+		connections = new HashMap<String, IConnection>();
 	}
 	
 	public static ObjectStoresManager getManager()
@@ -73,43 +78,29 @@ public class ObjectStoresManager implements IObjectStoresManager
 
 	@Override
 	public Collection<IConnection> getConnections() {
-
-		if ( connections == null) {
-			loadObjectStores();
-		}
-		
 		return connections.values();
 	}
 	
-	private void loadObjectStores() {
-		connections = new HashMap<String, IConnection>();
-		objectStores = new ObjectStores();
-		objectStoresStore.load(objectStores, connections);
-	}
-
 	public void saveObjectStores() {
-		objectStoresStore.save(objectStores, connections);
+		for ( IObjectStoresStore objectStoresStore : objectStoresStoreList) {
+			objectStoresStore.save(objectStores, connections);
+		}
 	}
 
 	@Override
-	public String createConnection(String url, String username, String password, IProgressMonitor monitor ) throws ExecutionException 
+	public String connectNewConnection(IConnection connection, IProgressMonitor monitor ) throws ExecutionException 
 	{
 		try {
 			
 			if ( monitor != null ) {
-	    		monitor.beginTask( MessageFormat.format( CONNECT_MESSAGE, url ), IProgressMonitor.UNKNOWN);
+	    		monitor.beginTask( MessageFormat.format( CONNECT_MESSAGE, connection.getUrl() ), IProgressMonitor.UNKNOWN);
 			}
 			
-			if ( connections == null) {
-				loadObjectStores();
-			}
-
-			CreateConnectionTask task = new CreateConnectionTask(url, username, password );
+			ConnectNewConnectionTask task = new ConnectNewConnectionTask(connection);
 
 			taskManager.executeTaskSync(task);
-			ContentEngineConnection objectStoreConnection = task.getObjectStoreConnection();
-			connections.put( objectStoreConnection.getName(), objectStoreConnection);
-			return objectStoreConnection.getName();
+			connections.put( connection.getName(), connection);
+			return connection.getName();
 
 		} finally {
 			if ( monitor != null ) {
@@ -142,39 +133,23 @@ public class ObjectStoresManager implements IObjectStoresManager
 	}
 	
 	@Override
-	public void addObjectStore( final ObjectStore objectStore )
+	public void addObjectStore( IObjectStore objectStore )
 	{
-		if ( objectStores == null) {
-			loadObjectStores();
-		}
-		
-		Callable<Object> callable = new Callable<Object>(){
-
-			@Override
-			public Object call() throws Exception {
-				objectStore.connect();
-				objectStores.add(objectStore);
-				taskManager.fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
-				return null;
-			}
-		};
-		
-		taskManager.executeTaskASync(callable);
+		objectStores.add(objectStore);
+		saveObjectStores();
+		IAddObjectStoreTask task = new AddObjectStoreTask(objectStore);
+		taskManager.executeTaskASync(task);
 	}
 
 	@Override
 	public void removeObjectStore(IObjectStore objectStore) 
 	{
-		if ( objectStores == null) {
-			loadObjectStores();
-		}
-		
 		objectStores.remove( objectStore );
 		
 		String connectionName = objectStore.getConnection().getName();
 		boolean found = false;
-		for (IObjectStoreItem objectStoreItem : objectStores.getChildren() ) {
-			String objectStoreConnectionName = ((ObjectStore)objectStoreItem).getConnection().getName();
+		for (IObjectStore childObjectStore : objectStores.getChildren() ) {
+			String objectStoreConnectionName = childObjectStore.getConnection().getName();
 			if ( objectStoreConnectionName.equals(connectionName ) ) {
 				found = true;
 				break;
@@ -185,6 +160,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 			connections.remove( connectionName );
 		}
 
+		saveObjectStores();
+		
 		taskManager.fireObjectStoreItemsChanged( null, new IObjectStoreItem[] { objectStore }, null );
 	}
 
@@ -203,11 +180,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 	}
 
 	@Override
-	public IObjectStores getObjectStores()
-	{
-		if ( objectStores == null) {
-			loadObjectStores();
-		}
+	public IObjectStores getObjectStores() {
 		return objectStores;
 	}
 
@@ -224,7 +197,7 @@ public class ObjectStoresManager implements IObjectStoresManager
 			for ( IObjectStoreItem objectStore : objectStores.getChildren() ) {
 			
 				if (objectStore.getName().equals( objectStore2.getName() )
-						&& ((ObjectStore) objectStore).getConnection()
+						&& ((IObjectStore) objectStore).getConnection()
 								.getName().equals(connectionName)) {
 					found = true;
 					break;
@@ -236,18 +209,14 @@ public class ObjectStoresManager implements IObjectStoresManager
 			}
 		}
 		
-		return newObjectStores.toArray( new ObjectStore[0] );
+		return newObjectStores.toArray( new IObjectStore[0] );
 	}
 	
 	private IObjectStore[] getObjectStores(String connectionName )
 	{
-		if ( objectStores == null) {
-			loadObjectStores();
-		}
-		
 		if ( ! connections.containsKey( connectionName ) )
 		{
-			return new ObjectStore[0];
+			return new IObjectStore[0];
 		}
 		
 		final IConnection connection = connections.get( connectionName );
@@ -264,13 +233,8 @@ public class ObjectStoresManager implements IObjectStoresManager
 	@Override
 	public IObjectStore getObjectStore(String connectionName, String objectStoreName) {
 
-		if ( objectStores == null) {
-			loadObjectStores();
-		}
-		
-		for (IObjectStoreItem objectStoreItem : objectStores.getChildren() )
+		for (IObjectStore objectStore : objectStores.getChildren() )
 		{
-			ObjectStore objectStore = (ObjectStore) objectStoreItem;
 			if ( objectStore.getName().equals(objectStoreName) &&
 					objectStore.getConnection().getName().equals(connectionName ) )
 			{
@@ -278,5 +242,18 @@ public class ObjectStoresManager implements IObjectStoresManager
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void deregisterObjectStoresStore(IObjectStoresStore objectStoresStore) {
+		objectStoresStoreList.remove(objectStoresStore);
+	}
+
+	@Override
+	public void registerObjectStoresStore(IObjectStoresStore objectStoresStore) {
+		objectStoresStoreList.add(objectStoresStore);
+		objectStoresStore.load(objectStores, connections);
+		IObjectStoreItem[] itemsAdded = objectStores.getChildren().toArray( new IObjectStoreItem[0] );
+		taskManager.fireObjectStoreItemsChanged(itemsAdded , null, null);
 	}
 }

@@ -23,6 +23,8 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.IAdaptable;
 
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+
 /**
  * 
  * @author Ricardo Belfor
@@ -63,4 +65,6 @@ public interface IObjectStoreItem extends IAdaptable {
 	public void setValue(String propertyName, Object value ) throws Exception;
 	
 	public boolean isSimilarObject(IObjectStoreItem otherItem);
+	
+	public ITaskFactory getTaskFactory();
 }

@@ -29,9 +29,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.GetCurrentVersionTask;
+import com.ecmdeveloper.plugin.content.Activator;
 
 /**
  * 
@@ -67,7 +67,7 @@ public abstract class AbstractCurrentDocumentJob extends Job {
 		
 		GetCurrentVersionTask task = new GetCurrentVersionTask(document);
 		try {
-			TaskManager.getInstance().executeTaskSync(task);
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			currentVersionDocument = task.getCurrentVersionDocument();
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(window.getShell(), getName(),

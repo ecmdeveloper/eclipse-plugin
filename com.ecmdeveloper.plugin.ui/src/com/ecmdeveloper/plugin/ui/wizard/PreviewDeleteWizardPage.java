@@ -32,12 +32,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import com.ecmdeveloper.plugin.core.model.ICustomObject;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
-import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
+import com.ecmdeveloper.plugin.ui.Activator;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
 
 /**
  * @author ricardo.belfor
@@ -80,7 +80,7 @@ public class PreviewDeleteWizardPage extends WizardPage {
 		viewer.setLabelProvider( new ObjectStoreItemLabelProvider() );
 		contentProvider = new ObjectStoresViewContentProvider();
 		viewer.setContentProvider( contentProvider );
-		viewer.setInput(ObjectStoresManager.getManager());
+		viewer.setInput( Activator.getDefault().getTaskManager() );
 	}
 
 	@Override
@@ -183,8 +183,8 @@ public class PreviewDeleteWizardPage extends WizardPage {
 		}
 
 		private boolean isFilteredType(Object element) {
-			return (filterDocuments && element instanceof Document)
-					|| (element instanceof CustomObject && filterCustomObjects);
+			return (filterDocuments && element instanceof IDocument)
+					|| (element instanceof ICustomObject && filterCustomObjects);
 		}
 	};
 }

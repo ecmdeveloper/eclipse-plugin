@@ -30,12 +30,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.tasks.GetParentTask;
-import com.ecmdeveloper.plugin.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
+import com.ecmdeveloper.plugin.ui.Activator;
 
 /**
  * @author ricardo.belfor
@@ -47,7 +46,7 @@ public class GetParentJob extends Job {
 	private static final String JOB_NAME = "Get Parent";
 	private final IObjectStoreItem objectStoreItem;
 	private final Shell shell;
-	private Collection<Folder> parents;
+	private Collection<IFolder> parents;
 
 	public GetParentJob(IObjectStoreItem objectStoreItem, Shell shell ) {
 		super(JOB_NAME);
@@ -61,8 +60,8 @@ public class GetParentJob extends Job {
 		try {
 			String message = MessageFormat.format(JOB_MESSAGE, objectStoreItem.getDisplayName());
 			monitor.beginTask(message, IProgressMonitor.UNKNOWN );
-			GetParentTask task = new GetParentTask( (ObjectStoreItem) objectStoreItem );
-			TaskManager.getInstance().executeTaskSync(task);
+			IGetParentTask task = objectStoreItem.getTaskFactory().getGetParentTask( objectStoreItem );
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			parents = task.getParents();
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(shell, JOB_NAME, e.getLocalizedMessage(), e);
@@ -72,7 +71,7 @@ public class GetParentJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	public Collection<Folder> getParents() {
+	public Collection<IFolder> getParents() {
 		return parents;
 	}
 }

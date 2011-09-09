@@ -26,18 +26,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import com.ecmdeveloper.plugin.codemodule.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Action;
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.CreateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.tasks.GetCodeModuleActionsTask;
 import com.ecmdeveloper.plugin.model.tasks.GetCodeModulesTask;
@@ -77,7 +77,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 	private ITaskManager getTaskManager() {
 
 		if ( taskManager == null ) {
-			taskManager = TaskManager.getInstance();
+			taskManager = Activator.getDefault().getTaskManager();
 			taskManager.addTaskManagerListener(this);
 		}
 		return taskManager;
@@ -198,7 +198,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 
 	private IObjectStore getObjectStore(CodeModuleFile codeModuleFile) {
 
-		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
+		IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager();
 		IObjectStore objectStore = objectStoresManager.getObjectStore(
 				codeModuleFile.getConnectionName(), codeModuleFile
 						.getObjectStoreName());

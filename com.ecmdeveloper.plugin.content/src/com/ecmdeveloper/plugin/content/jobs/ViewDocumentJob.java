@@ -39,7 +39,6 @@ import org.eclipse.ui.ide.IDE;
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.util.ContentCache;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.GetContentAsFileTask;
 
@@ -120,7 +119,7 @@ public class ViewDocumentJob extends AbstractDocumentContentJob {
 		GetContentAsFileTask task = new GetContentAsFileTask((Document) document, tempFolderPath
 				.toOSString(), index);
 		task.setFilePrefix(filePrefix);
-		String outputFile = (String) TaskManager.getInstance().executeTaskSync(task);
+		String outputFile = (String) Activator.getDefault().getTaskManager().executeTaskSync(task);
 		if ( outputFile == null ) {
 			return null;
 		}

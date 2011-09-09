@@ -38,10 +38,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.compare.DocumentVersionCompareEditorInput;
 import com.ecmdeveloper.plugin.content.constants.PropertyNames;
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.GetContentInfoTask;
 
@@ -157,7 +157,7 @@ public class CompareDocumentsJob extends Job {
 	
 	private Map<String,Integer> getContentElementsMap(Document document) throws Exception {
 		GetContentInfoTask task = new GetContentInfoTask(document);
-		TaskManager.getInstance().executeTaskSync(task);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		Map<String,Integer> contentElementsMap = task.getContentElementsMap();
 		return contentElementsMap;
 	}

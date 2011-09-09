@@ -28,8 +28,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.GetReleasedVersionTask;
 
@@ -67,7 +67,7 @@ public abstract class AbstractReleasedDocumentJob extends Job {
 		
 		GetReleasedVersionTask task = new GetReleasedVersionTask(document);
 		try {
-			TaskManager.getInstance().executeTaskSync(task);
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			releasedVersionDocument = task.getReleasedVersionDocument();
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(window.getShell(), getName(),

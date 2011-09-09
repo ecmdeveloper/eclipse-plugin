@@ -30,7 +30,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteCustomObject;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteDocument;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteFolder;
@@ -40,7 +41,6 @@ import com.ecmdeveloper.plugin.favorites.util.PluginMessage;
 import com.ecmdeveloper.plugin.model.ObjectNotFoundException;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
 
 /**
@@ -82,7 +82,7 @@ public class FetchFavoritesJob extends Job {
 	}
 
 	private IStatus fetchFavorites(IProgressMonitor monitor) {
-		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager(); 
+		IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager(); 
 		for (FavoriteObjectStoreItem favorite : favorites ) {
 			fetchFavorite(objectStoresManager, favorite);
 			if ( monitor.isCanceled() ) {
@@ -93,11 +93,11 @@ public class FetchFavoritesJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private void fetchFavorite(ObjectStoresManager objectStoresManager, FavoriteObjectStoreItem favorite) {
+	private void fetchFavorite(IObjectStoresManager objectStoresManager, FavoriteObjectStoreItem favorite) {
 		String objectType = getFavoriteObjectType(favorite);
 		FetchObjectTask task = new FetchObjectTask(objectStore, favorite.getId(), favorite.getClassName(), objectType );
 		try {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) TaskManager.getInstance().executeTaskSync(task);
+			ObjectStoreItem objectStoreItem = (ObjectStoreItem) Activator.getDefault().getTaskManager().executeTaskSync(task);
 			objectStoreItems.add(objectStoreItem);
 			favorite.setName( objectStoreItem.getDisplayName() );
 		} catch (ExecutionException e) {

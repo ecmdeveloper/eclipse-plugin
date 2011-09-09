@@ -39,7 +39,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
 import com.ecmdeveloper.plugin.model.tasks.GetDocumentVersionsTask;
@@ -78,7 +79,7 @@ public class GetDocumentVersionJob extends Job {
 
 		try {
 			monitor.beginTask( MONITOR_MESSAGE, IProgressMonitor.UNKNOWN );
-			final List<Document> versions = getDocumentVersions();
+			final List<IDocument> versions = getDocumentVersions();
 			monitor.done();
 
 			monitor.beginTask("Getting version properties", versions.size() );
@@ -101,26 +102,26 @@ public class GetDocumentVersionJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private void getDocumentVersionsProperties(final List<Document> versions, IProgressMonitor monitor)
+	private void getDocumentVersionsProperties(final List<IDocument> versions, IProgressMonitor monitor)
 			throws ExecutionException {
 
 		String[] propertyNames = { PropertyNames.MAJOR_VERSION_NUMBER, PropertyNames.MINOR_VERSION_NUMBER };
 
-		for ( Document documentVersion : versions) {
+		for ( IDocument documentVersion : versions) {
 			FetchPropertiesTask task = new FetchPropertiesTask(documentVersion, propertyNames );
-			TaskManager.getInstance().executeTaskSync(task);
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			monitor.worked(1);
 		}
 	}
 
-	private List<Document> getDocumentVersions() throws ExecutionException {
+	private List<IDocument> getDocumentVersions() throws ExecutionException {
 		GetDocumentVersionsTask task = new GetDocumentVersionsTask(document);
-		TaskManager.getInstance().executeTaskSync(task);
-		List<Document> versions = task.getVersions();
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
+		List<IDocument> versions = task.getVersions();
 		return versions;
 	}
 
-	private IStatus selectDocumentVersion(List<Document> versions) {
+	private IStatus selectDocumentVersion(List<IDocument> versions) {
 		
 		ListSelectionDialog dialog = createSelectionDialog(versions);
 
@@ -136,7 +137,7 @@ public class GetDocumentVersionJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private ListSelectionDialog createSelectionDialog(List<Document> versions) {
+	private ListSelectionDialog createSelectionDialog(List<IDocument> versions) {
 		LabelProvider labelProvider = new DocumentVersionLabelProvider();
 		ListSelectionDialog dialog = new ListSelectionDialog(shell, versions.toArray(),
 				new ArrayContentProvider(), labelProvider, SELECTION_MESSAGE);

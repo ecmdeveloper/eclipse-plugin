@@ -30,8 +30,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 
 /**
@@ -66,7 +66,7 @@ public class RefreshObjectStoreItemHandler extends AbstractHandler  {
 		}
 
 		RefreshTask refreshTask = new RefreshTask( elementsRefreshed.toArray(new IObjectStoreItem[0] ), true );
-		TaskManager.getInstance().executeTaskASync(refreshTask);
+		Activator.getDefault().getTaskManager().executeTaskASync(refreshTask);
 		
 		return null;
 	}

@@ -35,11 +35,11 @@ import org.eclipse.search.ui.ISearchResult;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.SearchResultRow;
 import com.ecmdeveloper.plugin.model.tasks.ExecuteSearchTask;
+import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.util.PluginMessage;
@@ -142,17 +142,17 @@ public class SearchQuery implements ISearchQuery {
 	}
 
 	private ArrayList<SearchResultRow> executeSearch() throws Exception {
-		ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
+		IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager();
 		IObjectStore objectStore = getObjectStore(objectStoresManager);
 		ObjectStore.assertConnected(objectStore);
 		ExecuteSearchTask task = new ExecuteSearchTask(query.toSQL(), objectStore);
-		TaskManager.getInstance().executeTaskSync(task);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		
 		ArrayList<SearchResultRow> searchResultRows = task.getSearchResult();
 		return searchResultRows;
 	}
 
-	private IObjectStore getObjectStore(ObjectStoresManager objectStoresManager) {
+	private IObjectStore getObjectStore(IObjectStoresManager objectStoresManager) {
 		Collection<IQueryTable> queryTables = query.getQueryTables();
 		IQueryTable queryTable = queryTables.iterator().next();
 		String connectionName = queryTable.getConnectionName();

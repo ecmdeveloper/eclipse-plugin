@@ -25,20 +25,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.ecmdeveloper.plugin.classes.Activator;
 import com.ecmdeveloper.plugin.classes.model.task.GetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.model.task.RefreshClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskListener;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 
 /**
@@ -49,7 +49,7 @@ import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 public class ClassesManager implements ITaskManagerListener, TaskListener {
 
 	private static ClassesManager classesManager;
-	private ObjectStoresManager objectStoresManager;
+	private IObjectStoresManager objectStoresManager;
 	private ITaskManager taskManager; 
 	private List<ClassesManagerListener> listeners = new ArrayList<ClassesManagerListener>();
 
@@ -70,11 +70,11 @@ public class ClassesManager implements ITaskManagerListener, TaskListener {
 		return objectStoresManager.getObjectStores();
 	}
 
-	private ObjectStoresManager getObjectStoresManager() {
+	private IObjectStoresManager getObjectStoresManager() {
 
 		if ( objectStoresManager == null ) {
-			objectStoresManager = ObjectStoresManager.getManager();
-			taskManager = TaskManager.getInstance();
+			objectStoresManager = Activator.getDefault().getObjectStoresManager();
+			taskManager = Activator.getDefault().getTaskManager();
 			taskManager.addTaskManagerListener(this);
 		}
 		return objectStoresManager;

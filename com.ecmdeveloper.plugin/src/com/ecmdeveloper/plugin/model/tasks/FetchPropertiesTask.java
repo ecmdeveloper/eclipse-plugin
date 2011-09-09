@@ -19,6 +19,8 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.filenet.api.core.IndependentlyPersistableObject;
@@ -27,13 +29,13 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  * @author Ricardo Belfor
  *
  */
-public class FetchPropertiesTask extends BaseTask {
+public class FetchPropertiesTask extends BaseTask implements IFetchPropertiesTask {
 
 	private ObjectStoreItem objectStoreItem; 
 	private String propertyNames[];
 	
-	public FetchPropertiesTask(ObjectStoreItem objectStoreItem, String[] propertyNames) {
-		this.objectStoreItem = objectStoreItem;
+	public FetchPropertiesTask(IObjectStoreItem objectStoreItem, String[] propertyNames) {
+		this.objectStoreItem = (ObjectStoreItem) objectStoreItem;
 		this.propertyNames = propertyNames;
 	}
 

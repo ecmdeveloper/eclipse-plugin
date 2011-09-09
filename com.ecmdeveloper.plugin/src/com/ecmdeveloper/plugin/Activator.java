@@ -1,5 +1,5 @@
 /**
- * Copyright 2009,2010, Ricardo Belfor
+ * Copyright 2009-2011, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -19,17 +19,18 @@
  */
 package com.ecmdeveloper.plugin;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresStore;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.model.ObjectStoresStore;
 import com.ecmdeveloper.plugin.util.ImageCache;
 
-/**
- * The activator class controls the plug-in life cycle
- */
 public class Activator extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin";
@@ -42,10 +43,13 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		IObjectStoresStore objectStoresStore = new ObjectStoresStore();
+		getObjectStoresManager().registerObjectStoresStore(objectStoresStore);
+		
+		Platform.getPlugin("com.ecmdeveloper.plugin.cmis");
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		ObjectStoresManager.getManager().saveObjectStores();
 		plugin = null;
 		imageCache.dispose();
 		
@@ -74,5 +78,13 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static Image getImage( String path ) {
 		return imageCache.getImage( getImageDescriptor( path ) );		
+	}
+
+	public IObjectStoresManager getObjectStoresManager() {
+		return (IObjectStoresManager) getWorkbench().getService(IObjectStoresManager.class);		
+	}
+
+	public ITaskManager getTaskManager() {
+		return (ITaskManager) getWorkbench().getService(ITaskManager.class);		
 	}
 }

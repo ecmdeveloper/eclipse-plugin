@@ -17,7 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  * 
  */
-package com.ecmdeveloper.plugin.model;
+package com.ecmdeveloper.plugin.core.model;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
@@ -30,15 +30,15 @@ import com.ecmdeveloper.plugin.core.model.IObjectStores;
 
 public interface IObjectStoresManager {
 
-	Collection<? extends IConnection> getConnections();
-
-	String createConnection(String url, String username, String password, IProgressMonitor monitor)
-			throws ExecutionException;
+	Collection<IConnection> getConnections();
 
 	void connectConnection(IConnection connection, IProgressMonitor monitor)
 			throws ExecutionException;
 
-	void addObjectStore(ObjectStore objectStore);
+	String connectNewConnection(IConnection connection, IProgressMonitor monitor)
+	throws ExecutionException;
+
+	void addObjectStore(IObjectStore objectStore);
 
 	/**
 	 * Removes the Object Store from the list of configured Object Stores. If
@@ -57,5 +57,8 @@ public interface IObjectStoresManager {
 	IObjectStore[] getNewObjectstores(String connectionName);
 
 	IObjectStore getObjectStore(String connectionName, String objectStoreName);
+	
+	void registerObjectStoresStore(IObjectStoresStore objectStoresStore);
 
+	void deregisterObjectStoresStore(IObjectStoresStore objectStoresStore);
 }

@@ -26,9 +26,9 @@ import java.util.Collection;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.jobs.DeleteJob;
-import com.ecmdeveloper.plugin.model.Folder;
+import com.ecmdeveloper.plugin.ui.jobs.DeleteJob;
 
 /**
  * @author ricardo.belfor
@@ -66,7 +66,7 @@ public class DeleteWizard extends Wizard {
 
 	public boolean isFolderDeleted() {
 		for ( IObjectStoreItem objectStoreItem : itemsDeleted ) {
-			if ( objectStoreItem instanceof Folder) {
+			if ( objectStoreItem instanceof IFolder) {
 				return true;
 			}
 		}
@@ -101,7 +101,7 @@ public class DeleteWizard extends Wizard {
 		return false;
 	}
 
-	private DeleteJob createDeleteJob() {
+	private com.ecmdeveloper.plugin.ui.jobs.DeleteJob createDeleteJob() {
 		DeleteJob deleteJob = new DeleteJob(itemsDeleted );
 		deleteJob.setDeleteContainedDocuments(isDeleteContainedDocuments() );
 		deleteJob.setDeleteContainedCustomObjects(isDeleteContainedCustomObjects() );

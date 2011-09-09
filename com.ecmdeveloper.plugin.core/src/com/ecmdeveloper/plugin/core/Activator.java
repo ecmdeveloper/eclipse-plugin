@@ -1,50 +1,44 @@
 package com.ecmdeveloper.plugin.core;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-/**
- * The activator class controls the plug-in life cycle
- */
+import com.ecmdeveloper.plugin.core.model.impl.ObjectStoresManager;
+import com.ecmdeveloper.plugin.core.util.ImageCache;
+
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin.core";
 
-	// The shared instance
 	private static Activator plugin;
+	private static final ImageCache imageCache = new ImageCache();
 	
-	/**
-	 * The constructor
-	 */
 	public Activator() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
+		ObjectStoresManager.getManager().saveObjectStores();
 		plugin = null;
+		imageCache.dispose();
 		super.stop(context);
 	}
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
 
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	public static Image getImage( String path ) {
+		return imageCache.getImage( getImageDescriptor( path ) );		
+	}
 }

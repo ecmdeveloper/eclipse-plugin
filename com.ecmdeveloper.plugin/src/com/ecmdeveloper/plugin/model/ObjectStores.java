@@ -23,30 +23,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
-import com.filenet.api.core.IndependentlyPersistableObject;
 
 /**
  * @author Ricardo Belfor
  *
  */
-public class ObjectStores extends ObjectStoreItem implements IObjectStores {
+public class ObjectStores /*extends ObjectStoreItem*/ implements IObjectStores {
 
-	private ArrayList<IObjectStoreItem> children;
+	private ArrayList<IObjectStore> children;
 	
 	public ObjectStores() {
-		super(null,null);
-		children = new ArrayList<IObjectStoreItem>();
+		children = new ArrayList<IObjectStore>();
 	}
 
 	@Override
-	public IndependentlyPersistableObject getObjectStoreObject() {
-		return null;
-	}
-
-	@Override
-	public Collection<IObjectStoreItem> getChildren() {
+	public Collection<IObjectStore> getChildren() {
 		return children;
 	}
 	
@@ -56,22 +48,5 @@ public class ObjectStores extends ObjectStoreItem implements IObjectStores {
 
 	public void remove(IObjectStore objectStore) {
 		children.remove(objectStore);
-	}
-
-	@Override
-	public void setName(String name) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getClassName() {
-
-		return null;
 	}
 }

@@ -26,6 +26,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
@@ -34,7 +36,6 @@ import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 public class ObjectStoresViewContentProvider implements
 		IStructuredContentProvider, ITreeContentProvider, ITaskManagerListener {
@@ -99,6 +100,12 @@ public class ObjectStoresViewContentProvider implements
 				Object[] childrenArray = getChildrenAsArray(children);
 				return childrenArray;
 			}
+		} else if ( parent instanceof IObjectStores ) {
+			Collection<IObjectStore> children = ((IObjectStores)parent).getChildren();
+			if ( children != null ) {
+				return children.toArray();
+			}
+			
 		}
 		return new Object[0];
 	}
@@ -122,7 +129,7 @@ public class ObjectStoresViewContentProvider implements
 	}
 	
 	private void initialize() {
-		invisibleRoot = ObjectStoresManager.getManager().getObjectStores();		
+		invisibleRoot = Activator.getDefault().getObjectStoresManager().getObjectStores();		
 	}
 
 	@Override

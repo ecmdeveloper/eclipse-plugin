@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model;
 
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Document;
@@ -33,7 +34,7 @@ import com.filenet.api.core.VersionSeries;
  * @author Ricardo Belfor
  *
  */
-public class CodeModule extends ObjectStoreItem{
+public class CodeModule extends ObjectStoreItem implements ICodeModule {
 
 	protected VersionSeries versionSeries;
 	protected Document document;

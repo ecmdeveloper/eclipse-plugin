@@ -22,13 +22,12 @@ package com.ecmdeveloper.plugin.core.model.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * @author ricardo.belfor
  *
  */
-public abstract class AbstractTask implements Callable<Object>, IBaseTask {
+public abstract class AbstractTask implements IBaseTask {
 
 	protected List<TaskListener> listeners = new ArrayList<TaskListener>();
 	

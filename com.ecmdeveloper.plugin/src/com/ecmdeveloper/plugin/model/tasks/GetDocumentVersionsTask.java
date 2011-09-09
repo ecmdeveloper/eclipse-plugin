@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetDocumentVersionsTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -40,16 +42,17 @@ import com.filenet.api.util.Id;
  * @author Ricardo.Belfor
  *
  */
-public class GetDocumentVersionsTask extends BaseTask {
+public class GetDocumentVersionsTask extends BaseTask implements IGetDocumentVersionsTask {
 
 	private Document document;
-	private List<Document> versionsList;
+	private List<IDocument> versionsList;
 	
-	public GetDocumentVersionsTask(Document document) {
-		this.document = document;
+	public GetDocumentVersionsTask(IDocument document) {
+		this.document = (Document) document;
 	}
 
-	public List<Document> getVersions() {
+	@Override
+	public List<IDocument> getVersions() {
 		return versionsList;
 	}
 
@@ -67,7 +70,7 @@ public class GetDocumentVersionsTask extends BaseTask {
 		VersionableSet versions = versionSeries.get_Versions();
 		Iterator<?> versionsIterator = versions.iterator();
 
-		versionsList = new ArrayList<Document>();
+		versionsList = new ArrayList<IDocument>();
 		
 		while ( versionsIterator.hasNext() ) {
 			

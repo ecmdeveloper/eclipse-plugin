@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 
 /**
@@ -45,7 +45,7 @@ public class RefreshJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		RefreshTask refreshTask = new RefreshTask( objectStoreItems, true );
-		TaskManager.getInstance().executeTaskASync(refreshTask);
+		Activator.getDefault().getTaskManager().executeTaskASync(refreshTask);
 		return null;
 	}
 }

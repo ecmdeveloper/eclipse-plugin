@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
@@ -98,14 +98,14 @@ public class CheckinJob extends Job {
 		if ( content != null ) {
 			monitor.subTask( SAVING_CONTENT_SUBTASK_NAME );
 			DocumentTask task = new SaveTask(document, content, mimeType);
-			TaskManager.getInstance().executeTaskSync(task);
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 		}
 	}
 
 	private void checkinDocument(IProgressMonitor monitor) throws ExecutionException {
 		monitor.subTask( CHECKIN_DOCUMENT_SUBTASK_NAME );
 		CheckinTask task  = new CheckinTask(document, majorVersion, false );
-		TaskManager.getInstance().executeTaskSync(task);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 	}
 
 	private void showError(final Exception e) {

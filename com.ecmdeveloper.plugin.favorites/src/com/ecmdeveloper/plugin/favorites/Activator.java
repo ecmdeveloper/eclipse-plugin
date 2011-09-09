@@ -5,6 +5,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.util.ImageCache;
 
 /**
@@ -37,5 +39,13 @@ public class Activator extends AbstractUIPlugin {
 
 	public static Image getImage( String path ) {
 		return imageCache.getImage( getImageDescriptor( path ) );		
+	}
+
+	public IObjectStoresManager getObjectStoresManager() {
+		return (IObjectStoresManager) getWorkbench().getService(IObjectStoresManager.class);		
+	}
+
+	public ITaskManager getTaskManager() {
+		return (ITaskManager) getWorkbench().getService(ITaskManager.class);		
 	}
 }

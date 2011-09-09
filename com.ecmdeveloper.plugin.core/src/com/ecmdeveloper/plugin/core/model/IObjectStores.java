@@ -20,16 +20,20 @@
 
 package com.ecmdeveloper.plugin.core.model;
 
+import java.util.Collection;
+
 
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IObjectStores extends IObjectStoreItem {
+public interface IObjectStores {
 
 	void add(IObjectStore objectStore);
 
 	void remove(IObjectStore objectStore);
+
+	Collection<IObjectStore> getChildren();
 
 }
