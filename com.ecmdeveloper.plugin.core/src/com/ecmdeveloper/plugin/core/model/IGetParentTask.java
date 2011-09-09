@@ -18,31 +18,18 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model.impl;
+package com.ecmdeveloper.plugin.core.model;
 
-import org.eclipse.ui.services.AbstractServiceFactory;
-import org.eclipse.ui.services.IServiceLocator;
+import java.util.Collection;
 
-import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class TaskServiceFactory extends AbstractServiceFactory {
+public interface IGetParentTask extends IBaseTask {
 
-	public TaskServiceFactory() {
-	}
+	Collection<IFolder> getParents();
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object create(Class serviceInterface, IServiceLocator parentLocator,
-			IServiceLocator locator) {
-		if( serviceInterface == ITaskManager.class ) 
-		{	
-			return TaskManager.getInstance();
-		}
-		return null;
-	}
 }

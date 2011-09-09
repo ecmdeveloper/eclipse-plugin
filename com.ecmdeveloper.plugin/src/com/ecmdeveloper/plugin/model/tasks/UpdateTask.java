@@ -20,6 +20,7 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
@@ -28,7 +29,7 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItem;
  * @author Ricardo.Belfor
  *
  */
-public class UpdateTask extends BaseTask {
+public class UpdateTask extends BaseTask implements IUpdateTask {
 
 	protected IObjectStoreItem[] objectStoreItems;
 	

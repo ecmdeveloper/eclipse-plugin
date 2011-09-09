@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.util.PluginLog;
 import com.ecmdeveloper.plugin.views.ObjectStoresViewSorter;
 
@@ -55,7 +55,7 @@ public class FavoritesView extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new FavoritesContentProvider());
 		viewer.setLabelProvider(new FavoritesLabelProvider());
-		viewer.setInput( TaskManager.getInstance() );
+		viewer.setInput( Activator.getDefault().getTaskManager() );
 		viewer.setSorter( new ObjectStoresViewSorter() );
 		hookContextMenu();
 		hookMouse();

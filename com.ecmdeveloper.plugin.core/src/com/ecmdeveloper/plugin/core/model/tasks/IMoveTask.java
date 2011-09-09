@@ -26,8 +26,9 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
  * @author ricardo.belfor
  *
  */
-public interface UpdateTask extends IBaseTask {
+public interface IMoveTask extends IBaseTask {
 
 	IObjectStoreItem[] getObjectStoreItems();
+	IObjectStoreItem[] getUpdatedObjectStoreItems();
 
 }

@@ -34,11 +34,9 @@ import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.Placeholder;
+import com.ecmdeveloper.plugin.core.model.Placeholder;
 import com.ecmdeveloper.plugin.ui.jobs.GetParentJob;
-import com.ecmdeveloper.plugin.util.PluginMessage;
-import com.ecmdeveloper.plugin.views.ObjectStoresView;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -67,7 +65,7 @@ public class ParentFolderView extends ObjectStoresView implements IShowInTarget 
 	}
 
 	private void runGetParentJob(final IObjectStoreItem objectStoreItem) {
-		GetParentJob job = new GetParentJob((ObjectStoreItem) objectStoreItem , getSite().getShell() );
+		GetParentJob job = new GetParentJob( objectStoreItem , getSite().getShell() );
 		job.setUser(true);
 		job.addJobChangeListener( new JobChangeAdapter() {
 

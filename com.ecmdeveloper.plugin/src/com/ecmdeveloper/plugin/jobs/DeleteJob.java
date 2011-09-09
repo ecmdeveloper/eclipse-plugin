@@ -31,8 +31,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
@@ -178,11 +178,6 @@ public class DeleteJob extends Job {
 		String message = MessageFormat.format( DELETE_SUBTASK_MESSAGE, objectStoreItem.getDisplayName() );
 		monitor.subTask( message );
 		DeleteTask deleteTask = new DeleteTask(new IObjectStoreItem[] { objectStoreItem }, deleteAllVersions);
-		TaskManager.getInstance().executeTaskSync(deleteTask);
-		System.out.println( message );
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//		}
+		Activator.getDefault().getTaskManager().executeTaskSync(deleteTask);
 	}
 }

@@ -26,21 +26,23 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
 import com.ecmdeveloper.plugin.core.model.tasks.CreateTask;
-import com.ecmdeveloper.plugin.core.model.tasks.DeleteTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IDeleteTask;
 import com.ecmdeveloper.plugin.core.model.tasks.DocumentTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IAddObjectStoreTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IConnectConnectionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ILoadChildrenTask;
-import com.ecmdeveloper.plugin.core.model.tasks.MoveTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IMoveTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.core.model.tasks.RefreshTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IRefreshTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskListener;
-import com.ecmdeveloper.plugin.core.model.tasks.UpdateTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
 
 /**
  * @author ricardo.belfor
@@ -63,21 +65,29 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	private void handleTaskCompleteEvent(TaskCompleteEvent taskCompleteEvent) {
 		if ( isTaskSourceInstanceOf(taskCompleteEvent, IConnectConnectionTask.class) ) {
 			handleConnectConnectionTask(taskCompleteEvent);
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, DeleteTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IDeleteTask.class) ) {
 			handleDeleteTaskCompleted( taskCompleteEvent );
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, ILoadChildrenTask.class) ) {
 			handleLoadChildrenTaskCompleted( taskCompleteEvent );
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, RefreshTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IRefreshTask.class) ) {
 			handleRefreshTaskCompleted( taskCompleteEvent );
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, MoveTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IMoveTask.class) ) {
 			handleMoveTaskCompleted( taskCompleteEvent );
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, UpdateTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IUpdateTask.class) ) {
 			handleUpdateTaskCompleted(taskCompleteEvent);
 		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CreateTask.class) ) {
 			handleCreateTaskCompleted(taskCompleteEvent);
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, DocumentTask.class) ) {
 			handleDocumentTaskCompleted(taskCompleteEvent);
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IAddObjectStoreTask.class) ) {
+			handleAddObjectStoreTask(taskCompleteEvent);
 		}
+	}
+
+	private void handleAddObjectStoreTask(TaskCompleteEvent taskCompleteEvent) {
+		IAddObjectStoreTask task = (IAddObjectStoreTask) taskCompleteEvent.getSource();
+		IObjectStore objectStore = task.getObjectStore();
+		fireObjectStoreItemsChanged( new IObjectStoreItem[] { objectStore }, null, null );
 	}
 
 	private void handleConnectConnectionTask(TaskCompleteEvent taskCompleteEvent) {
@@ -105,7 +115,7 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	}
 
 	private void handleUpdateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		UpdateTask updateTask = (UpdateTask) taskCompleteEvent.getSource();
+		IUpdateTask updateTask = (IUpdateTask) taskCompleteEvent.getSource();
 		refreshUpdatedItems(updateTask.getObjectStoreItems());
 	}
 
@@ -118,7 +128,7 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	}
 
 	private void handleDeleteTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		DeleteTask deleteTask = (DeleteTask) taskCompleteEvent.getSource();
+		IDeleteTask deleteTask = (IDeleteTask) taskCompleteEvent.getSource();
 		IObjectStoreItem[] objectStoreItems = deleteTask.getObjectStoreItems();
 		Collection<IObjectStoreItem> collection = toCollection(objectStoreItems);
 		Collection<IObjectStoreItem> updatedItems = new ArrayList<IObjectStoreItem>();
@@ -152,14 +162,14 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	}
 
 	private void handleRefreshTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		RefreshTask refreshTask = (RefreshTask)taskCompleteEvent.getSource();
+		IRefreshTask refreshTask = (IRefreshTask)taskCompleteEvent.getSource();
 		IObjectStoreItem[] objectStoreItems = refreshTask.getObjectStoreItems();
 		fireObjectStoreItemsChanged(null, null, objectStoreItems );
 //		fireObjectStoreItemsRefreshed( objectStoreItems );
 	}
 
 	private void handleMoveTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		MoveTask moveTask = (MoveTask) taskCompleteEvent.getSource();
+		IMoveTask moveTask = (IMoveTask) taskCompleteEvent.getSource();
 		fireObjectStoreItemsChanged(null, moveTask.getObjectStoreItems(), moveTask.getUpdatedObjectStoreItems() );
 	}
 

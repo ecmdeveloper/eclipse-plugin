@@ -28,8 +28,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
+import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
 
 /**
@@ -59,7 +59,7 @@ public class RefreshEditorPropertiesJob extends AbstractEditorJob {
 		
 		if ( propertyNames.length != 0 ) {
 			FetchPropertiesTask task = new FetchPropertiesTask(objectStoreItem, propertyNames);
-			TaskManager.getInstance().executeTaskSync(task);
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 		}
 	}
 	

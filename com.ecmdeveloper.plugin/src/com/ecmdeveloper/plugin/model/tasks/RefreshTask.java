@@ -20,6 +20,7 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.IRefreshTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.util.PluginLog;
@@ -28,7 +29,7 @@ import com.ecmdeveloper.plugin.util.PluginLog;
  * @author Ricardo.Belfor
  *
  */
-public class RefreshTask extends BaseTask {
+public class RefreshTask extends BaseTask implements IRefreshTask {
 
 	private IObjectStoreItem[] objectStoreItems;
 	private boolean notifyListeners;

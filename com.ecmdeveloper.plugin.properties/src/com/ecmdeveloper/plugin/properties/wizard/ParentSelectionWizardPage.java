@@ -46,7 +46,6 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
@@ -153,8 +152,8 @@ public class ParentSelectionWizardPage extends WizardPage {
 		ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
 		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, contentProvider );
-		dialog.setInput( ObjectStoresManager.getManager() );
-		contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
+		dialog.setInput( Activator.getDefault().getObjectStoresManager() );
+		contentProvider.inputChanged( null, null, Activator.getDefault().getObjectStoresManager() );
 		dialog.setTitle( getTitle() );
 		dialog.setMessage( getDescription() );
 		dialog.addFilter( new ParentTargetFilter() );

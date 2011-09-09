@@ -28,6 +28,8 @@ import java.util.Collection;
 import org.eclipse.core.runtime.Platform;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.model.tasks.TaskFactory;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.property.Properties;
@@ -52,7 +54,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		this.objectStore = objectStore;
 		this.saved = saved;
 	}
-
+	
 	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore) {
 		this(parent, objectStore, true );
 	}
@@ -234,5 +236,10 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public ITaskFactory getTaskFactory() {
+		return TaskFactory.getInstance();
 	}
 }

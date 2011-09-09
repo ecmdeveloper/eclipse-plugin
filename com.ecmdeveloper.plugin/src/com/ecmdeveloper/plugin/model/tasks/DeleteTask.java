@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.IDeleteTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
@@ -36,7 +37,7 @@ import com.filenet.api.core.VersionSeries;
  * @author Ricardo Belfor
  *
  */
-public class DeleteTask extends BaseTask {
+public class DeleteTask extends BaseTask implements IDeleteTask {
 
 	private IObjectStoreItem[] objectStoreItems;
 	private boolean deleteAllVersions;

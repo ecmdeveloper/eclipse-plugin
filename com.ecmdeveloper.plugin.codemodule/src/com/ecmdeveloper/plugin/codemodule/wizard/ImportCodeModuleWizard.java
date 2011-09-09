@@ -35,15 +35,16 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
+import com.ecmdeveloper.plugin.codemodule.Activator;
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditor;
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorInput;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 /**
  * 
@@ -56,12 +57,12 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 	private SelectCodeModuleWizardPage selectCodeModuleWizardPage;
 	private ObjectStore objectStore;
 	private CodeModule codeModule;
-	private	ObjectStoresManager objectStoresManager;
+	private	IObjectStoresManager objectStoresManager;
 	private IWorkbenchPage activePage;
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		objectStoresManager = ObjectStoresManager.getManager();
+		objectStoresManager = Activator.getDefault().getObjectStoresManager();
 		activePage = workbench.getActiveWorkbenchWindow().getActivePage();
 	}
 

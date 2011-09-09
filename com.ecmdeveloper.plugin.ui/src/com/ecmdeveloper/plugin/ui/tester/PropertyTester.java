@@ -17,9 +17,9 @@
  * <http://www.gnu.org/licenses/>.
  * 
  */
-package com.ecmdeveloper.plugin.tester;
+package com.ecmdeveloper.plugin.ui.tester;
 
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 
 /**
  * @author Ricardo.Belfor
@@ -34,19 +34,19 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		
-		if ( ! ( receiver instanceof ObjectStore ) )
+		if ( ! ( receiver instanceof IObjectStore ) )
 		{
 			return false;
 		}
 		
 		if ( "isConnected".equals(property) ) {
 			
-			return ((ObjectStore)receiver).isConnected();
+			return ((IObjectStore)receiver).isConnected();
 		}
 
 		if ( "notConnected".equals(property) ) {
 			
-			return ! ((ObjectStore)receiver).isConnected();
+			return ! ((IObjectStore)receiver).isConnected();
 		}
 		
 		return false;

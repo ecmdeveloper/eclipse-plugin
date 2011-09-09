@@ -32,7 +32,8 @@ public interface IConnection {
 	String getPassword();
 	String getUrl();
 	void connect();
-	IObjectStore[] getObjectStores(IObjectStoreItem parent);
+	IObjectStore[] getObjectStores(IObjectStores parent);
 	Object getDisplayName();
+	boolean isConnected();
 
 }

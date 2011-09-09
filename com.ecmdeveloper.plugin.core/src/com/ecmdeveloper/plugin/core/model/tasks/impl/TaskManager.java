@@ -18,7 +18,7 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model.tasks;
+package com.ecmdeveloper.plugin.core.model.tasks.impl;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -27,6 +27,9 @@ import java.util.concurrent.Executors;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.impl.ObjectStoreItemsModelController;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 
 /**
  * @author ricardo.belfor

@@ -18,17 +18,12 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model.tasks;
-
-import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+package com.ecmdeveloper.plugin.core.model;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface MoveTask extends IBaseTask {
-
-	IObjectStoreItem[] getObjectStoreItems();
-	IObjectStoreItem[] getUpdatedObjectStoreItems();
+public interface ICustomObject extends IObjectStoreItem {
 
 }

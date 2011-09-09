@@ -17,7 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  * 
  */
-package com.ecmdeveloper.plugin.wizard;
+package com.ecmdeveloper.plugin.ui.wizard;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import com.ecmdeveloper.plugin.core.model.IConnection;
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 
 public class SelectConnectionWizardPage extends WizardPage {
 
@@ -81,11 +80,11 @@ public class SelectConnectionWizardPage extends WizardPage {
 		return existingConnectionButton.getSelection();
 	}
 
-	public ContentEngineConnection getSelectedContentEngineConnection() {
+	public IConnection getSelectedContentEngineConnection() {
 		ISelection selection = connectionsCombo.getSelection();
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		if ( iterator.hasNext() ) {
-			return (ContentEngineConnection) iterator.next();
+			return (IConnection) iterator.next();
 		} else {
 			return null;
 		}
@@ -167,9 +166,9 @@ public class SelectConnectionWizardPage extends WizardPage {
 			ISelection selection = connectionsCombo.getSelection();
 			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 			if ( iterator.hasNext() ) {
-				ContentEngineConnection connection = (ContentEngineConnection) iterator.next();
+				IConnection connection = (IConnection) iterator.next();
 				enabled = ! connection.isConnected();
-				((ImportObjectStoreWizard) getWizard()).setConnection( connection );
+				((AbstractImportObjectStoreWizard) getWizard()).setConnection( connection );
 			}
 		} 
 		
@@ -194,7 +193,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 			setPageComplete( true );
 			return;
 		} else if ( isExistingConnection() ) {
-			ContentEngineConnection connection = getSelectedContentEngineConnection();
+			IConnection connection = getSelectedContentEngineConnection();
 			setPageComplete( connection != null && connection.isConnected() );
 			return;
 		}
@@ -203,10 +202,10 @@ public class SelectConnectionWizardPage extends WizardPage {
 	}
 
 	protected void performConnect() {
-		ContentEngineConnection connection = getSelectedContentEngineConnection();
+		IConnection connection = getSelectedContentEngineConnection();
 		
 		if ( connection != null ) {
-			((ImportObjectStoreWizard) getWizard()).connect( connection );
+			((AbstractImportObjectStoreWizard) getWizard()).connect( connection );
 		} else {
 			throw new UnsupportedOperationException( "Connection is null" );
 		}

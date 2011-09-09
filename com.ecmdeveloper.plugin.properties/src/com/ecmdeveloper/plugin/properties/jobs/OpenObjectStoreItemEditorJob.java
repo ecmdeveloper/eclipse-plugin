@@ -36,9 +36,9 @@ import org.eclipse.ui.ide.IDE;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
+import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.input.ObjectStoreItemEditorInput;
 import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
@@ -97,7 +97,7 @@ public class OpenObjectStoreItemEditorJob extends Job {
 		
 		if ( propertyNames.length != 0 ) {
 			FetchPropertiesTask task = new FetchPropertiesTask(objectStoreItem, propertyNames);
-			TaskManager.getInstance().executeTaskSync(task);
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class OpenObjectStoreItemEditorJob extends Job {
 
 		GetClassDescriptionTask task = new GetClassDescriptionTask(objectStoreItem.getClassName(),
 				objectStoreItem.getObjectStore());
-		ClassDescription classDescription = (ClassDescription) TaskManager.getInstance()
+		ClassDescription classDescription = (ClassDescription) Activator.getDefault().getTaskManager()
 				.executeTaskSync(task);
 		return classDescription;
 	}

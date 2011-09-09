@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.util.PluginLog;
 
 /**
@@ -70,7 +70,7 @@ public class ObjectStoresView extends ViewPart {
 		contentProvider = new ObjectStoresViewContentProvider();
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObjectStoreItemLabelProvider());
-		viewer.setInput( TaskManager.getInstance() );
+		viewer.setInput( Activator.getDefault().getTaskManager() );
 		viewer.setSorter( new ObjectStoresViewSorter() );
 		hookContextMenu();
 		hookMouse();

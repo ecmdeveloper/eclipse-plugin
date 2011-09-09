@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.IMoveTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Folder;
@@ -45,7 +46,7 @@ import com.filenet.api.property.PropertyFilter;
  * @author Ricardo Belfor
  *
  */
-public class MoveTask extends BaseTask {
+public class MoveTask extends BaseTask implements IMoveTask {
 
 	protected IObjectStoreItem[] objectStoreItems;
 	protected IObjectStoreItem destination;
@@ -104,10 +105,12 @@ public class MoveTask extends BaseTask {
 		return null;
 	}
 
+	@Override
 	public IObjectStoreItem[] getObjectStoreItems() {
 		return objectStoreItems;
 	}
 
+	@Override
 	public IObjectStoreItem[] getUpdatedObjectStoreItems() {
 		return updateSet.toArray( new IObjectStoreItem[0]);
 	}

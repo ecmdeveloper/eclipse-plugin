@@ -35,8 +35,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.ui.wizard.DeleteWizard;
-import com.ecmdeveloper.plugin.util.Messages;
-import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
+import com.ecmdeveloper.plugin.ui.util.Messages;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
 
 /**
  * 

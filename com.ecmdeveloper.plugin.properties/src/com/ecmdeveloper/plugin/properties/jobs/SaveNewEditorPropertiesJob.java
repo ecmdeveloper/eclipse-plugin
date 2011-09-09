@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
@@ -37,6 +36,7 @@ import com.ecmdeveloper.plugin.model.tasks.CreateFolderTask;
 import com.ecmdeveloper.plugin.model.tasks.CreateTask;
 import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
 import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
 import com.ecmdeveloper.plugin.properties.editors.input.NewCustomObjectEditorInput;
 import com.ecmdeveloper.plugin.properties.editors.input.NewDocumentEditorInput;
@@ -81,7 +81,7 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		NewObjectStoreItemEditorInput editorInput = (NewObjectStoreItemEditorInput) getEditorInput();
 		
 		CreateTask task = createCreateTask(editorInput);
-		TaskManager.getInstance().executeTaskSync(task);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		editorInput.setObjectStoreItem( task.getNewObjectStoreItem() );
 		
 		if ( editorInput instanceof NewDocumentEditorInput ) {
@@ -92,7 +92,7 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		}
 		
 		RefreshTask refreshTask = new RefreshTask( task.getNewObjectStoreItem() );
-		TaskManager.getInstance().executeTaskSync(refreshTask);
+		Activator.getDefault().getTaskManager().executeTaskSync(refreshTask);
 	}
 
 	private CreateTask createCreateTask(NewObjectStoreItemEditorInput editorInput) {
@@ -115,10 +115,10 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		NewDocumentEditorInput newDocumentEditorInput = (NewDocumentEditorInput) editorInput;
 		
 		SaveTask saveTask = createSaveTask(objectStoreItem, newDocumentEditorInput);
-		TaskManager.getInstance().executeTaskSync(saveTask);
+		Activator.getDefault().getTaskManager().executeTaskSync(saveTask);
 
 		CheckinTask checkinTask = createCheckinTask(saveTask.getReservationDocument(), newDocumentEditorInput);
-		TaskManager.getInstance().executeTaskSync(checkinTask);
+		Activator.getDefault().getTaskManager().executeTaskSync(checkinTask);
 		
 		return checkinTask.getDocument();
 	}

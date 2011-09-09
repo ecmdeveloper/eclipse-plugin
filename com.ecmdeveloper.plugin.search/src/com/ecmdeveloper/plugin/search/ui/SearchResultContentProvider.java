@@ -28,7 +28,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.search.Activator;
 
 /**
  * @author ricardo.belfor
@@ -49,7 +49,7 @@ public class SearchResultContentProvider implements IStructuredContentProvider, 
 			searchResult = (QuerySearchResult) newInput;
 			
 			if ( manager == null ) {
-				manager = TaskManager.getInstance();
+				manager = Activator.getDefault().getTaskManager();
 				manager.addTaskManagerListener(this);
 			}
 		}

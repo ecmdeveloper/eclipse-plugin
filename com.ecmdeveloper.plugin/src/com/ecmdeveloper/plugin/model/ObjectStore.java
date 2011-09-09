@@ -23,11 +23,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.filenet.api.constants.PropertyNames;
@@ -47,6 +47,10 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	private Collection<IObjectStoreItem> children;
 	private String displayName;
 
+	protected ObjectStore(String objectStoreName, String displayName ) {
+		this(objectStoreName, displayName, null);
+	}
+	
 	protected ObjectStore(String objectStoreName, String displayName, IObjectStoreItem parent) {
 
 		super(parent, null);
@@ -86,7 +90,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 			children.add( new Placeholder( Placeholder.Type.LOADING ) );
 			
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
-			TaskManager.getInstance().executeTaskASync(loadChildrenTask);
+			Activator.getDefault().getTaskManager().executeTaskASync(loadChildrenTask);
 		}
 		return children;
 	}

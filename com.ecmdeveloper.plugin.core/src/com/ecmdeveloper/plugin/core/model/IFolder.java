@@ -20,10 +20,18 @@
 
 package com.ecmdeveloper.plugin.core.model;
 
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+
 /**
  * @author ricardo.belfor
  *
  */
 public interface IFolder extends IObjectStoreItem {
 
+	boolean isContained();
+
+	Collection<? extends IObjectStoreItem> getChildrenSync() throws ExecutionException;
+
+	String getPathName();
 }

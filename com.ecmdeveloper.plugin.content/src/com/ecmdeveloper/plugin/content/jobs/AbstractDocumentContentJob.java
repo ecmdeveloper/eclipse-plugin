@@ -37,8 +37,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
+import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.GetContentInfoTask;
 import com.ecmdeveloper.plugin.model.tasks.GetContentTask;
@@ -92,7 +92,7 @@ public abstract class AbstractDocumentContentJob extends Job {
 
 	private Map<String,Integer> getContentElementsMap() throws ExecutionException {
 		GetContentInfoTask task = new GetContentInfoTask(document);
-		TaskManager.getInstance().executeTaskSync(task);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		Map<String,Integer> contentElementsMap = task.getContentElementsMap();
 		return contentElementsMap;
 	}
@@ -177,7 +177,7 @@ public abstract class AbstractDocumentContentJob extends Job {
 		monitor.subTask( subTask );
 
 		GetContentTask task = new GetContentTask((Document) document, contentElement );
-		TaskManager.getInstance().executeTaskSync(task);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		
 		InputStream contentStream = task.getContentStream();
 		return contentStream;

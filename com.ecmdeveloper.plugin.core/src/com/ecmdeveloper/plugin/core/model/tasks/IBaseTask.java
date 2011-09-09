@@ -20,13 +20,15 @@
 
 package com.ecmdeveloper.plugin.core.model.tasks;
 
+import java.util.concurrent.Callable;
+
 import com.ecmdeveloper.plugin.core.model.tasks.TaskListener;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IBaseTask {
+public interface IBaseTask extends Callable<Object> {
 
 	public void addTaskListener(TaskListener taskListener);
 }

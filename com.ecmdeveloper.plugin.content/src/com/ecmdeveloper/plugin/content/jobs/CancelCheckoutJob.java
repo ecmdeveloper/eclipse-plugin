@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
 import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
@@ -66,7 +66,7 @@ public class CancelCheckoutJob extends Job {
 			String message = MessageFormat.format( CANCELING_CHECKOUT_TASK, document.getName() );
 			monitor.beginTask( message, IProgressMonitor.UNKNOWN );
 			DocumentTask task = new CancelCheckoutTask(document);
-			TaskManager.getInstance().executeTaskSync(task);
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			removeFromFilesTracker();
 			return Status.OK_STATUS;
 		} catch (Exception e) {

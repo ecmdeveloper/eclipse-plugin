@@ -38,7 +38,6 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
 import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
@@ -158,9 +157,9 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 				return errorStatus;
 			}
 		});
-		dialog.setInput( ObjectStoresManager.getManager() );
+		dialog.setInput( Activator.getDefault().getObjectStoresManager() );
 		
-		contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
+		contentProvider.inputChanged( null, null, Activator.getDefault().getObjectStoresManager() );
 		dialog.setTitle(TITLE);
 		dialog.setMessage( "Select an object" );
 		addFolderFilter(dialog);

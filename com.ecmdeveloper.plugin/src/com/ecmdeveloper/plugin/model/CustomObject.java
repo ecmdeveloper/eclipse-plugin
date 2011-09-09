@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model;
 
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.ICustomObject;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
@@ -30,7 +31,7 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  * @author Ricardo Belfor
  *
  */
-public class CustomObject extends ObjectStoreItem {
+public class CustomObject extends ObjectStoreItem implements ICustomObject {
 
 	protected com.filenet.api.core.CustomObject customObject;
 	

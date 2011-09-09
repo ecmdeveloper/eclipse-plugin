@@ -35,11 +35,11 @@ import org.eclipse.swt.widgets.Shell;
 import com.ecmdeveloper.plugin.classes.model.ClassDescription;
 import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.diagrams.Activator;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 import com.ecmdeveloper.plugin.diagrams.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 
 /**
  * @author Ricardo.Belfor
@@ -67,8 +67,7 @@ public class ClassDiagramClassRefreshCommand extends Command {
 	private IObjectStore getObjectStore(Shell activeShell) {
 		String connectionName = classDiagramClass.getConnectionName();
 		String objectStoreName = classDiagramClass.getObjectStoreName();
-		final ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
-		
+		final IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager();
 		final IObjectStore objectStore = objectStoresManager.getObjectStore(connectionName, objectStoreName);
 		
 		if ( ! objectStore.isConnected() ) {
@@ -86,8 +85,7 @@ public class ClassDiagramClassRefreshCommand extends Command {
 		if ( ! objectStore.isConnected() ) {
 			return;
 		}
-
-		final ObjectStoresManager objectStoresManager = ObjectStoresManager.getManager();
+		
 		IRunnableContext context = new ProgressMonitorDialog(activeShell);
 		try {
 			context.run(true, true, new IRunnableWithProgress() {
@@ -117,7 +115,7 @@ public class ClassDiagramClassRefreshCommand extends Command {
 
 				private ClassDescription getClassDescription(final IObjectStore objectStore ) throws Exception {
 					GetClassDescriptionTask task = new GetClassDescriptionTask( classDiagramClass.getName(), objectStore);
-					TaskManager.getInstance().executeTaskSync(task);
+					Activator.getDefault().getTaskManager().executeTaskSync(task);
 					ClassDescription classDescription = task.getClassDescription();
 					return classDescription;
 				}

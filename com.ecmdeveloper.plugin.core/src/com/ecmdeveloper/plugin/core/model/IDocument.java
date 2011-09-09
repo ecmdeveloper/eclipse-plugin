@@ -28,4 +28,14 @@ public interface IDocument extends IObjectStoreItem {
 
 	String getVersionSeriesId();
 
+	String getParentPath();
+
+	String getContainmentName();
+
+	String getMimeType();
+
+	String getPathName();
+
+	boolean isCheckedOut();
+
 }

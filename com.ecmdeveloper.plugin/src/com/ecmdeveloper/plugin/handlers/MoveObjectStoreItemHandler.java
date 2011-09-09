@@ -38,13 +38,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.jobs.MoveJob;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoresManager;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.ecmdeveloper.plugin.util.PluginMessage;
 import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
@@ -91,10 +91,10 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 		ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
 		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
-		dialog.setInput( ObjectStoresManager.getManager() );
+		dialog.setInput( Activator.getDefault().getObjectStoresManager() );
 		
 		dialog.addFilter( new MoveTargetFilter( elementObjectStores.iterator().next() ) );
-		contentProvider.inputChanged( null, null, ObjectStoresManager.getManager() );
+		contentProvider.inputChanged( null, null, Activator.getDefault().getObjectStoresManager() );
 		dialog.setTitle(HANDLER_NAME);
 		dialog.setMessage( CHOOSE_DESTINATION_MESSAGE );
 		

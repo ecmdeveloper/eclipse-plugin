@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IGetParentTask;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
@@ -40,17 +43,18 @@ import com.filenet.api.property.PropertyFilter;
  * @author ricardo.belfor
  *
  */
-public class GetParentTask extends BaseTask {
+public class GetParentTask extends BaseTask implements IGetParentTask {
 
 	private final ObjectStoreItem child;
-	private final Collection<Folder> parents;
+	private final Collection<IFolder> parents;
 	
-	public GetParentTask(ObjectStoreItem child) {
-		this.child = child;
-		parents = new ArrayList<Folder>();
+	public GetParentTask(IObjectStoreItem child) {
+		this.child = (ObjectStoreItem) child;
+		parents = new ArrayList<IFolder>();
 	}
 
-	public Collection<Folder> getParents() {
+	@Override
+	public Collection<IFolder> getParents() {
 		return parents;
 	}
 

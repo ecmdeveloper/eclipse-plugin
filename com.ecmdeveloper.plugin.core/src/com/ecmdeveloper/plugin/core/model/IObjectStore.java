@@ -30,4 +30,6 @@ public interface IObjectStore extends IObjectStoreItem {
 
 	boolean isConnected();
 
+	void connect();
+
 }

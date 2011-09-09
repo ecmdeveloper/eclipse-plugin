@@ -9,6 +9,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.ecmdeveloper.plugin.content.util.ContentCache;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -63,5 +65,13 @@ public class Activator extends AbstractUIPlugin {
 		} else if ( resource instanceof IFile ) {
 			Activator.selectionRoot = ((IFile) resource).getParent();
 		}
+	}
+	
+	public ITaskManager getTaskManager() {
+		return (ITaskManager) getWorkbench().getService(ITaskManager.class);		
+	}
+
+	public IObjectStoresManager getObjectStoresManager() {
+		return (IObjectStoresManager) getWorkbench().getService(IObjectStoresManager.class);		
 	}
 }

@@ -102,6 +102,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		this.document.getProperties().putValue( "DocumentTitle", name);
 	}
 
+	@Override
 	public String getVersionSeriesId() {
 		return versionSeriesId;
 	}
@@ -110,6 +111,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		this.versionSeriesId = versionSeriesId;
 	}
 
+	@Override
 	public String getParentPath() {
 		return parentPath;
 	}
@@ -118,6 +120,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		this.parentPath = parentPath;
 	}
 
+	@Override
 	public String getContainmentName() {
 		return containmentName;
 	}
@@ -126,6 +129,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		this.containmentName = containmentName;
 	}
 
+	@Override
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -134,6 +138,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		this.mimeType = mimeType;
 	}
 
+	@Override
 	public String getPathName() {
 		return getParentPath() + "/" + getContainmentName();
 	}
@@ -146,6 +151,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		return null;
 	}
 
+	@Override
 	public boolean isCheckedOut() {
 		return reserved;
 	}

@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
+import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.tasks.TaskManager;
 import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.EngineObject;
@@ -100,7 +100,7 @@ public class SearchResultRow {
 			if ( objectType != null ) {
 				String id = objectStoreObject.getProperties().getIdValue(PropertyNames.ID ).toString();
 				FetchObjectTask task = new FetchObjectTask(objectStore, id, objectStoreObject.getClassName(), objectType );
-				objectStoreItem = (IObjectStoreItem) TaskManager.getInstance().executeTaskSync(task);
+				objectStoreItem = (IObjectStoreItem) Activator.getDefault().getTaskManager().executeTaskSync(task);
 			}
 		}
 		return objectStoreItem; 
