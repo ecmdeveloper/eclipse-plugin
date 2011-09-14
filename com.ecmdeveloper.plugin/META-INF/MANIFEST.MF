@@ -18,8 +18,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.dialogs,
  org.eclipse.ui.ide
-Export-Package: com.ecmdeveloper.plugin.decorators,
- com.ecmdeveloper.plugin.dialogs,
+Export-Package: com.ecmdeveloper.plugin.dialogs,
  com.ecmdeveloper.plugin.handlers,
  com.ecmdeveloper.plugin.jobs,
  com.ecmdeveloper.plugin.model,

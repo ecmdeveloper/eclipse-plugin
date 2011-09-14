@@ -30,6 +30,7 @@ import java.util.Collection;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.collection.ContentElementList;
@@ -41,7 +42,7 @@ import com.filenet.api.core.Factory;
  * @author Ricardo.Belfor
  *
  */
-public class SaveTask extends DocumentTask {
+public class SaveTask extends DocumentTask implements ISaveTask{
 
 	private Collection<Object> contents;
 	private String mimeType;

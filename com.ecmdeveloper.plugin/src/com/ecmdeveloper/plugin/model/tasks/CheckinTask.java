@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.constants.AutoClassify;
@@ -30,7 +31,7 @@ import com.filenet.api.constants.RefreshMode;
  * @author Ricardo.Belfor
  *
  */
-public class CheckinTask extends DocumentTask {
+public class CheckinTask extends DocumentTask implements ICheckinTask {
 
 	private boolean majorVersion;
 	private boolean autoClassify;

@@ -173,4 +173,9 @@ public class Document extends ObjectStoreItem implements IDocument {
 		return otherItem instanceof Document && updatedItem instanceof Document && 
 				((Document)otherItem).getVersionSeriesId().equalsIgnoreCase( ((Document)updatedItem).getVersionSeriesId() );
 	}
+
+	@Override
+	public boolean canCheckOut() {
+		return true;
+	}
 }

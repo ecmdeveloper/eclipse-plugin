@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.text.MessageFormat;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.IFetchObjectTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectNotFoundException;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -35,11 +36,7 @@ import com.filenet.api.exception.ExceptionCode;
  * @author Ricardo Belfor
  *
  */
-public class FetchObjectTask extends BaseTask {
-
-	public static final String FOLDER_OBJECT_TYPE = "Folder";
-	public static final String DOCUMENT_OBJECT_TYPE = "Document";
-	public static final String CUSTOM_OBJECT_TYPE = "Custom Object";
+public class FetchObjectTask extends BaseTask implements IFetchObjectTask {
 	
 	private static final String UNSUPPORTED_OBJECT_TYPE_MESSAGE = "Objects of type {0} are not yet supported";
 	

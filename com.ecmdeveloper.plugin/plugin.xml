@@ -100,47 +100,6 @@
       </page>
    </extension>
    <extension
-         point="org.eclipse.ui.decorators">
-      <decorator
-            adaptable="true"
-            class="com.ecmdeveloper.plugin.decorators.ObjectStoreDecorator"
-            id="com.ecmdeveloper.plugin.decorators.ObjectStoreDecorator"
-            label="Object Store Decorator"
-            lightweight="true"
-            state="true">
-         <enablement>
-            <objectClass
-                  name="com.ecmdeveloper.plugin.model.ObjectStore">
-            </objectClass>
-         </enablement>
-      </decorator>
-      <decorator
-            adaptable="true"
-            class="com.ecmdeveloper.plugin.decorators.DocumentDecorator"
-            id="com.ecmdeveloper.plugin.decorators.documentDecorator"
-            label="Document Decorator"
-            lightweight="true"
-            state="true">
-         <enablement>
-            <objectClass
-                  name="com.ecmdeveloper.plugin.model.Document">
-            </objectClass>
-         </enablement>
-      </decorator>
-      <decorator
-            class="com.ecmdeveloper.plugin.decorators.SearchResultRowDecorator"
-            id="com.ecmdeveloper.plugin.decorators.SearchResultRow"
-            label="Search Result Row"
-            lightweight="true"
-            state="true">
-         <enablement>
-            <objectClass
-                  name="com.ecmdeveloper.plugin.model.SearchResultRow">
-            </objectClass>
-         </enablement>
-      </decorator>
-   </extension>
-   <extension
          point="org.eclipse.core.filesystem.filesystems">
       <filesystem
             scheme="objectstorefile">

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentAsFileTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
@@ -37,7 +38,7 @@ import com.filenet.api.core.ContentTransfer;
  * @author Ricardo.Belfor
  *
  */
-public class GetContentAsFileTask extends BaseTask {
+public class GetContentAsFileTask extends BaseTask implements IGetContentAsFileTask{
 
 	private Document document;
 	private int index;
@@ -59,6 +60,7 @@ public class GetContentAsFileTask extends BaseTask {
 		return filePrefix;
 	}
 
+	@Override
 	public void setFilePrefix(String filePrefix) {
 		this.filePrefix = filePrefix;
 	}
