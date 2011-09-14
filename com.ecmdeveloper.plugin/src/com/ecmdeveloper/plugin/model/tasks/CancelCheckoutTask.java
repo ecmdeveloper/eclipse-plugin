@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.constants.RefreshMode;
@@ -28,7 +29,7 @@ import com.filenet.api.constants.RefreshMode;
  * @author Ricardo.Belfor
  *
  */
-public class CancelCheckoutTask extends DocumentTask {
+public class CancelCheckoutTask extends DocumentTask implements ICancelCheckoutTask {
 
 	public CancelCheckoutTask(Document document) {
 		super(document);

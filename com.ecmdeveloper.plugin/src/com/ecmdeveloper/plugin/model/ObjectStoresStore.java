@@ -25,6 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.ui.IMemento;
@@ -58,19 +60,19 @@ public class ObjectStoresStore implements IObjectStoresStore {
 	}
 
 	@Override
-	public void load(IObjectStores objectStores, Map<String, IConnection> connections) {
+	public Collection<IObjectStore> load(Map<String, IConnection> connections) {
 
 		FileReader reader = null;
 		try {
 			reader = new FileReader(getObjectStoresFile());
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			loadConnections(memento, connections);
-			loadObjectStores(memento, objectStores, connections);
+			return loadObjectStores(memento, connections);
 		} catch (FileNotFoundException e) {
-			// Ignored... no object store items exist yet.
+			return new ArrayList<IObjectStore>();
 		} catch (Exception e) {
-			// Log the exception and move on.
 			PluginLog.error(e);
+			return new ArrayList<IObjectStore>();
 		} finally {
 			try {
 				if (reader != null)
@@ -91,19 +93,22 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		}
 	}
 
-	private void loadObjectStores(XMLMemento memento, IObjectStores objectStores,
+	private Collection<IObjectStore> loadObjectStores(XMLMemento memento,
 			Map<String, IConnection> connections) {
 		IMemento objectStoresChild = memento.getChild(PluginTagNames.OBJECT_STORES_TAG);
+		Collection<IObjectStore> objectStoresList = new ArrayList<IObjectStore>();
 		if ( objectStoresChild != null )
 		{
 			for ( IMemento objectStoreChild : objectStoresChild.getChildren( PluginTagNames.OBJECT_STORE_TAG ) )
 			{
-				loadObjectStore(objectStoreChild, objectStores, connections);
+				objectStoresList.add( loadObjectStore(objectStoreChild, connections) );
 			}
 		}
+		
+		return objectStoresList;
 	}
 
-	private void loadObjectStore(IMemento objectStoreChild, IObjectStores objectStores,
+	private IObjectStore loadObjectStore(IMemento objectStoreChild,
 			Map<String, IConnection> connections) {
 		String name = objectStoreChild.getString( PluginTagNames.NAME_TAG );
 		String displayName = objectStoreChild.getString( PluginTagNames.DISPLAY_NAME_TAG );
@@ -112,7 +117,7 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		String connectionName = objectStoreChild.getString( PluginTagNames.CONNECTION_NAME_TAG );
 		objectStore.setConnection( connections.get( connectionName ) );
 		
-		objectStores.add( objectStore );
+		return objectStore;
 	}
 
 	private ContentEngineConnection loadConnection(IMemento connectionChild) {

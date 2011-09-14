@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentInfoTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
@@ -33,7 +34,7 @@ import com.filenet.api.core.ContentTransfer;
  * @author Ricardo.Belfor
  *
  */
-public class GetContentInfoTask  extends BaseTask {
+public class GetContentInfoTask  extends BaseTask implements IGetContentInfoTask {
 
 	private Document document;
 	private Map<String,Integer> contentElementsMap;
@@ -67,6 +68,7 @@ public class GetContentInfoTask  extends BaseTask {
 		}
 	}
 
+	@Override
 	public Map<String,Integer> getContentElementsMap() {
 		return contentElementsMap;
 	}

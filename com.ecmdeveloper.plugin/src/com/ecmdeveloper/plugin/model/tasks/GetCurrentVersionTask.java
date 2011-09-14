@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.tasks.IGetCurrentVersionTask;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 
@@ -27,16 +28,17 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
  * @author Ricardo.Belfor
  *
  */
-public class GetCurrentVersionTask extends DocumentTask {
+public class GetCurrentVersionTask extends DocumentTask implements IGetCurrentVersionTask {
 
 	private Document currentVersionDocument;
 
-	public Document getCurrentVersionDocument() {
-		return currentVersionDocument;
-	}
-
 	public GetCurrentVersionTask(Document document) {
 		super(document);
+	}
+
+	@Override
+	public Document getCurrentVersionDocument() {
+		return currentVersionDocument;
 	}
 
 	@Override

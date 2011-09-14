@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.tasks.ICheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
@@ -30,7 +31,7 @@ import com.filenet.api.constants.ReservationType;
  * @author Ricardo.Belfor
  *
  */
-public class CheckoutTask extends DocumentTask {
+public class CheckoutTask extends DocumentTask implements ICheckoutTask {
 	
 	private Document checkoutDocument;
 

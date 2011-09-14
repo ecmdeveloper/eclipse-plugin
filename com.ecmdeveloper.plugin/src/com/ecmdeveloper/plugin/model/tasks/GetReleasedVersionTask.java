@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.tasks.IGetReleasedVersionTask;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 
@@ -27,7 +28,7 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
  * @author Ricardo.Belfor
  *
  */
-public class GetReleasedVersionTask extends DocumentTask {
+public class GetReleasedVersionTask extends DocumentTask implements IGetReleasedVersionTask {
 
 	private Document releasedVersionDocument;
 

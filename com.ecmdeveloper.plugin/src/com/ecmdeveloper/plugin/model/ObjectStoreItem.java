@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.Platform;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.constants.Feature;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.model.tasks.TaskFactory;
 import com.filenet.api.constants.RefreshMode;
@@ -87,6 +88,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return id;
 	}
 
+	@Override
+	public boolean isSupportedFeature(Feature feature) {
+		return true;
+	}
+	
 	@Override
 	public IObjectStoreItem getParent() {
 		return parent;

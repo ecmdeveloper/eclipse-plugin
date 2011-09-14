@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.EngineObject;
@@ -43,7 +44,7 @@ import com.filenet.api.query.RepositoryRow;
  * @author ricardo.belfor
  *
  */
-public class SearchResultRow {
+public class SearchResultRow implements ISearchResultRow {
 
 	private static final String THIS_PROPERTY_NAME = "This";
 	private HashMap<String, Object> values = new HashMap<String, Object>();
@@ -85,14 +86,17 @@ public class SearchResultRow {
 		return engineObjectValue.toString();
 	}
 	
+	@Override
 	public Object getValue(String name) {
 		return values.get(name);
 	}
 
+	@Override
 	public boolean isHasObjectValue() {
 		return hasObjectValue;
 	}
 
+	@Override
 	public IObjectStoreItem loadObjectValue() throws ExecutionException {
 		if ( hasObjectValue && objectStoreItem == null ) {
 			IndependentlyPersistableObject objectStoreObject = (IndependentlyPersistableObject) values.get(THIS_PROPERTY_NAME);
@@ -106,6 +110,7 @@ public class SearchResultRow {
 		return objectStoreItem; 
 	}
 
+	@Override
 	public ArrayList<String> getValueNames() {
 		ArrayList<String> valueNames = new ArrayList<String>();
 
@@ -128,6 +133,7 @@ public class SearchResultRow {
 		return valueNames;
 	}
 	
+	@Override
 	public IObjectStoreItem getObjectValue() {
 		return objectStoreItem;
 	}

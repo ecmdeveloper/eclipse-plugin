@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.io.InputStream;
 
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.Document;
 import com.filenet.api.collection.ContentElementList;
@@ -32,7 +33,7 @@ import com.filenet.api.core.ContentTransfer;
  * @author Ricardo.Belfor
  *
  */
-public class GetContentTask extends BaseTask {
+public class GetContentTask extends BaseTask implements IGetContentTask {
 
 	private Document document;
 	private int index;
@@ -48,6 +49,7 @@ public class GetContentTask extends BaseTask {
 		this(document, 0 );
 	}
 	
+	@Override
 	public InputStream getContentStream() {
 		return contentStream;
 	}
