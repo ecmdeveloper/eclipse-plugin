@@ -28,10 +28,10 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import com.ecmdeveloper.plugin.content.jobs.CompareDocumentsJob;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.handlers.AbstractDocumentVersionHandler;
-import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
+import com.ecmdeveloper.plugin.ui.handlers.AbstractDocumentVersionHandler;
+import com.ecmdeveloper.plugin.ui.jobs.GetDocumentVersionJob;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -40,7 +40,7 @@ import com.ecmdeveloper.plugin.model.Document;
 public class CompareDocumentVersionsHandler extends AbstractDocumentVersionHandler {
 
 	@Override
-	protected IJobChangeListener getJobChangeListener(Document document) {
+	protected IJobChangeListener getJobChangeListener(IDocument document) {
 		return new ComparedDocumentVersionsJobListener();
 	}
 	
@@ -63,7 +63,7 @@ public class CompareDocumentVersionsHandler extends AbstractDocumentVersionHandl
 				return;
 			}
 			
-			Collection<Document> selectedVersions = job.getSelectedVersions();
+			Collection<IDocument> selectedVersions = job.getSelectedVersions();
 			CompareDocumentsJob job2 = new CompareDocumentsJob(selectedVersions, window );
 			job2.setShowVersionLabels(true);
 			job2.setUser(true);

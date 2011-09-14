@@ -31,10 +31,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
-import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IDocumentTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -46,12 +46,12 @@ public class SaveJob extends Job {
 	private static final String FAILED_MESSAGE = "Saving \"{0}\" failed";
 	private static final String TASK_MESSAGE = "Saving document \"{0}\"";
 
-	private Document document;
+	private IDocument document;
 	private Shell shell;
 	private Collection<Object> content;
 	private String mimeType;
 
-	public SaveJob(Document document, Shell shell, Collection<Object> content, String mimeType ) {
+	public SaveJob(IDocument document, Shell shell, Collection<Object> content, String mimeType ) {
 		super(HANDLER_NAME);
 		this.document = document;
 		this.shell = shell;
@@ -59,7 +59,7 @@ public class SaveJob extends Job {
 		this.mimeType = mimeType;
 	}
 
-	public Document getDocument() {
+	public IDocument getDocument() {
 		return document;
 	}
 	
@@ -69,7 +69,8 @@ public class SaveJob extends Job {
 			String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
 			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
 
-			DocumentTask task = new SaveTask(document, content, mimeType);
+			ITaskFactory taskFactory = document.getTaskFactory();
+			IDocumentTask task = taskFactory.getSaveTask(document, content, mimeType);
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			
 			monitor.done();

@@ -28,10 +28,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.GetCurrentVersionTask;
 import com.ecmdeveloper.plugin.content.Activator;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetCurrentVersionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * 
@@ -40,17 +41,17 @@ import com.ecmdeveloper.plugin.content.Activator;
  */
 public abstract class AbstractCurrentDocumentJob extends Job {
 
-	private Document currentVersionDocument;
-	private Document document;
+	private IDocument currentVersionDocument;
+	private IDocument document;
 	private IWorkbenchWindow window;
 
-	public AbstractCurrentDocumentJob(String name, Document document, IWorkbenchWindow window) {
+	public AbstractCurrentDocumentJob(String name, IDocument document, IWorkbenchWindow window) {
 		super(name);
 		this.document = document;
 		this.window = window;
 	}
 
-	public Document getCurrentVersionDocument() {
+	public IDocument getCurrentVersionDocument() {
 		return currentVersionDocument;
 	}
 
@@ -65,7 +66,8 @@ public abstract class AbstractCurrentDocumentJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		
-		GetCurrentVersionTask task = new GetCurrentVersionTask(document);
+		ITaskFactory taskFactory = document.getTaskFactory();
+		IGetCurrentVersionTask task = taskFactory.getGetCurrentVersionTask(document);
 		try {
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			currentVersionDocument = task.getCurrentVersionDocument();

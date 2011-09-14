@@ -22,8 +22,8 @@ package com.ecmdeveloper.plugin.favorites.tester;
 
 import org.eclipse.core.expressions.PropertyTester;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 /**
  * @author ricardo.belfor
@@ -35,13 +35,13 @@ public class FavoritesTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if ( ! ( receiver instanceof ObjectStoreItem ) )
+		if ( ! ( receiver instanceof IObjectStoreItem ) )
 		{
 			return false;
 		}
 
 		if ( IS_FAVORITE_PROPERTY.equals(property) ) {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) receiver;
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) receiver;
 			return FavoritesManager.getInstance().isFavorite(objectStoreItem);
 		}
 		

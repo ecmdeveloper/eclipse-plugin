@@ -30,9 +30,9 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.constants.PropertyNames;
 import com.ecmdeveloper.plugin.content.jobs.ViewDocumentJob;
-import com.ecmdeveloper.plugin.handlers.AbstractDocumentVersionHandler;
-import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.ui.handlers.AbstractDocumentVersionHandler;
+import com.ecmdeveloper.plugin.ui.jobs.GetDocumentVersionJob;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -41,7 +41,7 @@ import com.ecmdeveloper.plugin.model.Document;
 public class ViewDocumentVersionHandler extends AbstractDocumentVersionHandler {
 
 	@Override
-	protected IJobChangeListener getJobChangeListener(Document document) {
+	protected IJobChangeListener getJobChangeListener(IDocument document) {
 		return new GetDocumentVersionJobListener();
 	}
 	
@@ -57,14 +57,14 @@ public class ViewDocumentVersionHandler extends AbstractDocumentVersionHandler {
 			}
 
 			GetDocumentVersionJob job = (GetDocumentVersionJob) event.getJob();
-			for ( Document document : job.getSelectedVersions() ) {
+			for ( IDocument document : job.getSelectedVersions() ) {
 				viewDocument(document);
 			}
 			
 			Activator.getDefault().getContentCache().registerAsListener(window);
 		}
 
-		private void viewDocument(Document document) {
+		private void viewDocument(IDocument document) {
 			 				
 			Object majorVersionNumber = document.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
 			Object minorVersionNumber = document.getValue( PropertyNames.MINOR_VERSION_NUMBER );

@@ -1,5 +1,5 @@
 /**
- * Copyright 2009, Ricardo Belfor
+ * Copyright 2009,2011, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in is
  * free software: you can redistribute it and/or modify it under the terms of
@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.ui.tester;
 
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 
 /**
@@ -27,26 +28,25 @@ import com.ecmdeveloper.plugin.core.model.IObjectStore;
  */
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		
-		if ( ! ( receiver instanceof IObjectStore ) )
+		if ( receiver instanceof IObjectStore  )
 		{
-			return false;
-		}
-		
-		if ( "isConnected".equals(property) ) {
-			
-			return ((IObjectStore)receiver).isConnected();
-		}
-
-		if ( "notConnected".equals(property) ) {
-			
-			return ! ((IObjectStore)receiver).isConnected();
+			if ( "isConnected".equals(property) ) {
+				
+				return ((IObjectStore)receiver).isConnected();
+			}
+	
+			if ( "notConnected".equals(property) ) {
+				
+				return ! ((IObjectStore)receiver).isConnected();
+			}
+		} else if ( receiver instanceof IDocument ) {
+			if ( "canCheckout".equals(property) ) {
+				return ((IDocument)receiver).canCheckOut();
+			}
 		}
 		
 		return false;

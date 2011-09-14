@@ -20,9 +20,9 @@
 
 package com.ecmdeveloper.plugin.favorites.model;
 
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 
 /**
  * @author ricardo.belfor
@@ -65,9 +65,9 @@ public abstract class FavoriteObjectStoreItem {
 		return objectStoreName;
 	}
 
-	public boolean isFavoriteOf(ObjectStoreItem objectStoreItem) {
-		ObjectStore objectStore = objectStoreItem.getObjectStore();
-		ContentEngineConnection connection = objectStore.getConnection();
+	public boolean isFavoriteOf(IObjectStoreItem objectStoreItem) {
+		IObjectStore objectStore = objectStoreItem.getObjectStore();
+		IConnection connection = objectStore.getConnection();
 		return id.equalsIgnoreCase(objectStoreItem.getId())
 				&& objectStoreName.equals(objectStore.getName())
 				&& connectionName.equals(connection.getName());

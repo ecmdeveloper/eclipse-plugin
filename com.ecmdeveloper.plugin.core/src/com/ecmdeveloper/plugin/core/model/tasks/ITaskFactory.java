@@ -20,8 +20,11 @@
 
 package com.ecmdeveloper.plugin.core.model.tasks;
 
+import java.util.Collection;
+
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 
 /**
@@ -46,4 +49,23 @@ public interface ITaskFactory {
 	
 	IMoveTask getMoveTask(IObjectStoreItem[] objectStoreItems, IObjectStoreItem destination );
 
+	IFetchObjectTask getFetchObjectTask(IObjectStore objectStore, String id, String className, String objectType );
+
+	IGetContentTask getGetContentTask(IDocument document, int contentIndex);
+
+	ISaveTask getSaveTask(IDocument document, Collection<Object> content, String mimeType);
+
+	IGetContentInfoTask getGetContentInfoTask(IDocument document);
+
+	IGetReleasedVersionTask getGetReleasedVersionTask(IDocument document);
+
+	IGetCurrentVersionTask getGetCurrentVersionTask(IDocument document);
+
+	IGetContentAsFileTask getGetContentAsFileTask(IDocument document, String outputPath, int index);
+
+	ICancelCheckoutTask getCancelCheckoutTask(IDocument document);
+
+	ICheckoutTask getCheckoutTask(IDocument document);
+
+	ICheckinTask getCheckinTask(IDocument document, boolean majorVersion, boolean autoClassify);
 }

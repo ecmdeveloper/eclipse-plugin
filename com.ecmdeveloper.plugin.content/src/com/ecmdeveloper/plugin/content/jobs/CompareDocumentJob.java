@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.compare.DocumentCompareEditorInput;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -47,7 +47,7 @@ public class CompareDocumentJob extends AbstractDocumentContentJob {
 	private static final String FAILED_MESSAGE = "Comparing \"{0}\" failed";
 	private IFile compareFile;
 	
-	public CompareDocumentJob(Document document, IWorkbenchWindow window, IFile compareFile) {
+	public CompareDocumentJob(IDocument document, IWorkbenchWindow window, IFile compareFile) {
 		super(HANDLER_NAME, document, window);
 		this.compareFile = compareFile;
 	}

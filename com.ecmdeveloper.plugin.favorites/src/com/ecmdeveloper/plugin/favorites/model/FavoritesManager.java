@@ -31,19 +31,17 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
+import com.ecmdeveloper.plugin.core.model.ICustomObject;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.jobs.FetchFavoritesJob;
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 
 /**
@@ -72,6 +70,7 @@ public class FavoritesManager implements ITaskManagerListener {
 		taskManager = Activator.getDefault().getTaskManager();
 		taskManager.addTaskManagerListener(this);
 		// TODO find a place to remove this object as listener
+		favoriteObjectStores = new ArrayList<FavoriteObjectStore>();
 	}
 
 	private void initializeFavorites() {
@@ -95,7 +94,7 @@ public class FavoritesManager implements ITaskManagerListener {
 
 	private boolean isFavoriteObjectStoreFavorite(FavoriteObjectStore favoriteObjectStore, FavoriteObjectStoreItem favorite) {
 
-		ObjectStore objectStore = favoriteObjectStore.getObjectStore();
+		IObjectStore objectStore = favoriteObjectStore.getObjectStore();
 		String objectStoreName = objectStore.getName();
 		String connectionName = objectStore.getConnection().getName();
 		return favorite.getObjectStoreName().equals( objectStoreName ) && 
@@ -103,13 +102,6 @@ public class FavoritesManager implements ITaskManagerListener {
 	}
 	
 	public Collection<FavoriteObjectStore> getFavoriteObjectStores() {
-		if ( favoriteObjectStores == null) {
-			favoriteObjectStores = new ArrayList<FavoriteObjectStore>();
-			IObjectStores objectStores = Activator.getDefault().getObjectStoresManager().getObjectStores();
-			for ( IObjectStoreItem objectStore : objectStores.getChildren() ) {
-				favoriteObjectStores.add( new FavoriteObjectStore((ObjectStore) objectStore) );
-			}
-		}
 		return favoriteObjectStores;
 	}
 	
@@ -135,7 +127,7 @@ public class FavoritesManager implements ITaskManagerListener {
 		job.schedule();
 	}
 
-	public void addFavorite(ObjectStoreItem objectStoreItem) {
+	public void addFavorite(IObjectStoreItem objectStoreItem) {
 
 		initializeFavorites();
 		
@@ -145,7 +137,7 @@ public class FavoritesManager implements ITaskManagerListener {
 		addFavoriteToFavoriteObjectStore(favorite, objectStoreItem );
 	}
 
-	private void addFavoriteToFavoriteObjectStore(FavoriteObjectStoreItem favorite, ObjectStoreItem objectStoreItem) {
+	private void addFavoriteToFavoriteObjectStore(FavoriteObjectStoreItem favorite, IObjectStoreItem objectStoreItem) {
 		
 		FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(favorite);
 		if ( favoriteObjectStore != null ) {
@@ -176,8 +168,8 @@ public class FavoritesManager implements ITaskManagerListener {
 		return null;
 	}
 
-	private FavoriteObjectStoreItem createFavoriteObjectStoreItem(ObjectStoreItem objectStoreItem) {
-		ObjectStore objectStore = objectStoreItem.getObjectStore();
+	private FavoriteObjectStoreItem createFavoriteObjectStoreItem(IObjectStoreItem objectStoreItem) {
+		IObjectStore objectStore = objectStoreItem.getObjectStore();
 		String objectStoreName = objectStore.getName();
 		String connectionName = objectStore.getConnection().getName();
 		String className = objectStoreItem.getClassName();
@@ -186,11 +178,11 @@ public class FavoritesManager implements ITaskManagerListener {
 		
 		FavoriteObjectStoreItem favorite;
 		
-		if ( objectStoreItem instanceof Folder ) {
+		if ( objectStoreItem instanceof IFolder ) {
 			favorite = new FavoriteFolder(id, name, className, connectionName, objectStoreName );
-		} else if ( objectStoreItem instanceof Document ) {
+		} else if ( objectStoreItem instanceof IDocument ) {
 			favorite = new FavoriteDocument(id, name, className, connectionName, objectStoreName );
-		} else if ( objectStoreItem instanceof CustomObject ) {
+		} else if ( objectStoreItem instanceof ICustomObject ) {
 			favorite = new FavoriteCustomObject(id, name, className, connectionName, objectStoreName );
 		} else {
 			throw new UnsupportedOperationException();
@@ -198,11 +190,11 @@ public class FavoritesManager implements ITaskManagerListener {
 		return favorite;
 	}
 
-	public void removeFavorite(ObjectStoreItem objectStoreItem) {
+	public void removeFavorite(IObjectStoreItem objectStoreItem) {
 		removeFavorite(objectStoreItem, true );
 	}
 
-	private void removeFavorite(ObjectStoreItem objectStoreItem, boolean notify) {
+	private void removeFavorite(IObjectStoreItem objectStoreItem, boolean notify) {
 	
 		FavoriteObjectStoreItem favorite = getObjectStoreItemFavorite(objectStoreItem);
 		if ( favorite == null ) {
@@ -225,7 +217,7 @@ public class FavoritesManager implements ITaskManagerListener {
 		favoritesStore.saveFavorites(favorites);
 	}
 
-	private FavoriteObjectStoreItem getObjectStoreItemFavorite(ObjectStoreItem objectStoreItem) {
+	private FavoriteObjectStoreItem getObjectStoreItemFavorite(IObjectStoreItem objectStoreItem) {
 		for (FavoriteObjectStoreItem favorite  : favorites) {
 			if ( favorite.isFavoriteOf(objectStoreItem)) {
 				return favorite;
@@ -244,7 +236,7 @@ public class FavoritesManager implements ITaskManagerListener {
 		listeners.remove(listener);
 	}
 
-	public boolean isFavorite(ObjectStoreItem objectStoreItem) {
+	public boolean isFavorite(IObjectStoreItem objectStoreItem) {
 
 		initializeFavorites();
 		
@@ -260,12 +252,11 @@ public class FavoritesManager implements ITaskManagerListener {
 	@Override
 	public void objectStoreItemsChanged(ObjectStoresManagerEvent event) {
 		if ( event.getItemsRemoved() != null) {
-// FIXME			
-//			for ( IObjectStoreItem objectStoreItem : event.getItemsRemoved() ) {
-//				if ( isFavorite((ObjectStoreItem) objectStoreItem)) {
-//					removeFavorite((ObjectStoreItem) objectStoreItem, false );
-//				}
-//			}
+			for ( IObjectStoreItem objectStoreItem : event.getItemsRemoved() ) {
+				if ( isFavorite( objectStoreItem)) {
+					removeFavorite( objectStoreItem, false );
+				}
+			}
 		}
 		
 		notifyUpdatedFavoriteObjectStores(event);		
@@ -274,8 +265,8 @@ public class FavoritesManager implements ITaskManagerListener {
 	}
 
 	private void notifyUpdatedFavoriteObjectStores(ObjectStoresManagerEvent event) {
-		Collection<ObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsUpdated());
-		for ( ObjectStore objectStore : objectStoreItems) {
+		Collection<IObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsUpdated());
+		for ( IObjectStore objectStore : objectStoreItems) {
 			FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(objectStore);
 			if ( favoriteObjectStore != null ) {
 				fireFavoriteObjectStoreChanged(favoriteObjectStore);
@@ -284,8 +275,8 @@ public class FavoritesManager implements ITaskManagerListener {
 	}
 
 	private void notifyRemovedFavoriteObjectStores(ObjectStoresManagerEvent event) {
-		Collection<ObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsRemoved());
-		for ( ObjectStore objectStore : objectStoreItems) {
+		Collection<IObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsRemoved());
+		for ( IObjectStore objectStore : objectStoreItems) {
 			FavoriteObjectStore favoriteObjectStore = getFavoriteObjectStore(objectStore);
 			if ( favoriteObjectStore != null ) {
 				favoriteObjectStores.remove(favoriteObjectStore);
@@ -296,8 +287,8 @@ public class FavoritesManager implements ITaskManagerListener {
 
 	private void notifyAddFavoriteObjectStores(ObjectStoresManagerEvent event) {
 		if ( favoriteObjectStores != null ) {
-			Collection<ObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsAdded());
-			for ( ObjectStore objectStore : objectStoreItems) {
+			Collection<IObjectStore> objectStoreItems = getObjectStoreItems(event.getItemsAdded());
+			for ( IObjectStore objectStore : objectStoreItems) {
 				FavoriteObjectStore favoriteObjectStore = new FavoriteObjectStore(objectStore);
 				favoriteObjectStores.add( favoriteObjectStore );
 				fireFavoriteObjectStoreChanged(favoriteObjectStore);
@@ -305,7 +296,7 @@ public class FavoritesManager implements ITaskManagerListener {
 		}
 	}
 	
-	private FavoriteObjectStore getFavoriteObjectStore(ObjectStore objectStore) {
+	private FavoriteObjectStore getFavoriteObjectStore(IObjectStore objectStore) {
 		for (FavoriteObjectStore  favoriteObjectStore : getFavoriteObjectStores() ) {
 			if ( favoriteObjectStore.isObjectStoreOf(objectStore) ) {
 				return favoriteObjectStore;
@@ -315,13 +306,13 @@ public class FavoritesManager implements ITaskManagerListener {
 	}
 
 	
-	private Collection<ObjectStore> getObjectStoreItems(IObjectStoreItem[] objectStoreItems ) {
-		Set<ObjectStore> objectStores = new HashSet<ObjectStore>();
+	private Collection<IObjectStore> getObjectStoreItems(IObjectStoreItem[] objectStoreItems ) {
+		Set<IObjectStore> objectStores = new HashSet<IObjectStore>();
 
 		if ( objectStoreItems != null ) {
 			for (IObjectStoreItem objectStoreItem : objectStoreItems ) {
-				if (objectStoreItem instanceof ObjectStore) {
-					objectStores.add((ObjectStore) objectStoreItem);
+				if (objectStoreItem instanceof IObjectStore) {
+					objectStores.add((IObjectStore) objectStoreItem);
 				}
 			}
 		}

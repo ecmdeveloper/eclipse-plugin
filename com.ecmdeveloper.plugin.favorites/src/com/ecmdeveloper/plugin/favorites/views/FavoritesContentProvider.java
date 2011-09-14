@@ -26,8 +26,8 @@ import org.eclipse.jface.viewers.Viewer;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManagerListener;
-import com.ecmdeveloper.plugin.model.ObjectStores;
-import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
 
 /**
  * @author ricardo.belfor
@@ -60,7 +60,7 @@ public class FavoritesContentProvider extends ObjectStoresViewContentProvider im
 	@Override
 	public Object[] getChildren(Object parent) {
 		
-		if (parent instanceof ObjectStores ) {
+		if (parent instanceof IObjectStores ) {
 			return FavoritesManager.getInstance().getFavoriteObjectStores().toArray();
 		} else if ( parent instanceof FavoriteObjectStore ) {
 			FavoriteObjectStore favoriteObjectStore = (FavoriteObjectStore) parent;

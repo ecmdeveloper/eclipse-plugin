@@ -37,5 +37,7 @@ public interface IDocument extends IObjectStoreItem {
 	String getPathName();
 
 	boolean isCheckedOut();
+	
+	boolean canCheckOut();
 
 }

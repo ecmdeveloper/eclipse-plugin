@@ -12,4 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: com.ecmdeveloper.plugin.ui.wizard
+Export-Package: com.ecmdeveloper.plugin.ui.decorators,
+ com.ecmdeveloper.plugin.ui.handlers,
+ com.ecmdeveloper.plugin.ui.jobs,
+ com.ecmdeveloper.plugin.ui.views,
+ com.ecmdeveloper.plugin.ui.wizard

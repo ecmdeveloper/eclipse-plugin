@@ -30,18 +30,19 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.ObjectNotFoundException;
+import com.ecmdeveloper.plugin.core.model.tasks.IFetchObjectTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteCustomObject;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteDocument;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteFolder;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStoreItem;
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
-import com.ecmdeveloper.plugin.favorites.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.ObjectNotFoundException;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
 
 /**
  * @author ricardo.belfor
@@ -54,11 +55,11 @@ public class FetchFavoritesJob extends Job {
 	private static final String FAILED_MESSAGE = "Fething favorites failed";
 	private static final String JOB_NAME = "Loading Favorites";
 	private Collection<FavoriteObjectStoreItem> favorites;
-	private ObjectStore objectStore;
-	private Collection<ObjectStoreItem> objectStoreItems;
+	private IObjectStore objectStore;
+	private Collection<IObjectStoreItem> objectStoreItems;
 	
 	
-	public FetchFavoritesJob(Collection<FavoriteObjectStoreItem> favoriteFolders, ObjectStore objectStore) {
+	public FetchFavoritesJob(Collection<FavoriteObjectStoreItem> favoriteFolders, IObjectStore objectStore) {
 		super(JOB_NAME);
 		this.favorites = favoriteFolders;
 		this.objectStore = objectStore;
@@ -67,7 +68,7 @@ public class FetchFavoritesJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		
-		objectStoreItems = new ArrayList<ObjectStoreItem>();
+		objectStoreItems = new ArrayList<IObjectStoreItem>();
 
 		if ( ! objectStore.isConnected() ) {
 			String message = MessageFormat.format( OBJECT_STORE_NOT_CONNECTED_MESSAGE, objectStore.getDisplayName() );
@@ -95,9 +96,10 @@ public class FetchFavoritesJob extends Job {
 
 	private void fetchFavorite(IObjectStoresManager objectStoresManager, FavoriteObjectStoreItem favorite) {
 		String objectType = getFavoriteObjectType(favorite);
-		FetchObjectTask task = new FetchObjectTask(objectStore, favorite.getId(), favorite.getClassName(), objectType );
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IFetchObjectTask task = taskFactory.getFetchObjectTask(objectStore, favorite.getId(), favorite.getClassName(), objectType );
 		try {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) Activator.getDefault().getTaskManager().executeTaskSync(task);
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) Activator.getDefault().getTaskManager().executeTaskSync(task);
 			objectStoreItems.add(objectStoreItem);
 			favorite.setName( objectStoreItem.getDisplayName() );
 		} catch (ExecutionException e) {
@@ -119,18 +121,18 @@ public class FetchFavoritesJob extends Job {
 	private String getFavoriteObjectType(FavoriteObjectStoreItem favorite) {
 		String objectType;
 		if ( favorite instanceof FavoriteDocument ) {
-			objectType = FetchObjectTask.DOCUMENT_OBJECT_TYPE;
+			objectType = IFetchObjectTask.DOCUMENT_OBJECT_TYPE;
 		} else if ( favorite instanceof FavoriteFolder ) {
-			objectType = FetchObjectTask.FOLDER_OBJECT_TYPE;
+			objectType = IFetchObjectTask.FOLDER_OBJECT_TYPE;
 		} else if ( favorite instanceof FavoriteCustomObject ) {
-			objectType = FetchObjectTask.CUSTOM_OBJECT_TYPE;
+			objectType = IFetchObjectTask.CUSTOM_OBJECT_TYPE;
 		} else {
 			throw new UnsupportedOperationException();
 		}
 		return objectType;
 	}
 
-	public Collection<ObjectStoreItem> getObjectStoreItems() {
+	public Collection<IObjectStoreItem> getObjectStoreItems() {
 		return objectStoreItems;
 	}
 }

@@ -39,9 +39,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.jobs.CompareDocumentJob;
-import com.ecmdeveloper.plugin.handlers.AbstractDocumentVersionHandler;
-import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.ui.jobs.GetDocumentVersionJob;
+import com.ecmdeveloper.plugin.ui.handlers.AbstractDocumentVersionHandler;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -53,7 +53,7 @@ public class CompareDocumentVersionWithLocalFileHandler extends AbstractDocument
 	private static final String SELECT_FILE_MESSAGE = "Select file to compare version of document \"{0}\" to:";
 
 	@Override
-	protected IJobChangeListener getJobChangeListener(Document document) {
+	protected IJobChangeListener getJobChangeListener(IDocument document) {
 		
 		IFile compareFile = getCompareFile(window, document);
 		if ( compareFile != null ) {
@@ -63,7 +63,7 @@ public class CompareDocumentVersionWithLocalFileHandler extends AbstractDocument
 		}
 	}
 
-	private IFile getCompareFile(IWorkbenchWindow window, Document document) {
+	private IFile getCompareFile(IWorkbenchWindow window, IDocument document) {
 		
 		SelectionDialog fileSelectionDialog = getFileSelectionDialog(document, window.getShell());
 		fileSelectionDialog.open();
@@ -81,7 +81,7 @@ public class CompareDocumentVersionWithLocalFileHandler extends AbstractDocument
 		return result != null && result.length > 0 && result[0] instanceof IFile;
 	}
 
-	private SelectionDialog getFileSelectionDialog(Document document, Shell shell) {
+	private SelectionDialog getFileSelectionDialog(IDocument document, Shell shell) {
 		
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
 				new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
@@ -115,7 +115,7 @@ public class CompareDocumentVersionWithLocalFileHandler extends AbstractDocument
 				return;
 			}
 
-			for ( Document document : job.getSelectedVersions() ) {
+			for ( IDocument document : job.getSelectedVersions() ) {
 				Job downloadJob = new CompareDocumentJob(document, window, compareFile );
 				downloadJob.setUser(true);
 				downloadJob.schedule();

@@ -29,9 +29,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.GetReleasedVersionTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetReleasedVersionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * 
@@ -40,17 +41,17 @@ import com.ecmdeveloper.plugin.model.tasks.GetReleasedVersionTask;
  */
 public abstract class AbstractReleasedDocumentJob extends Job {
 
-	private Document releasedVersionDocument;
-	private Document document;
+	private IDocument releasedVersionDocument;
+	private IDocument document;
 	private IWorkbenchWindow window;
 
-	public AbstractReleasedDocumentJob(String name, Document document, IWorkbenchWindow window) {
+	public AbstractReleasedDocumentJob(String name, IDocument document, IWorkbenchWindow window) {
 		super(name);
 		this.document = document;
 		this.window = window;
 	}
 
-	public Document getReleasedVersionDocument() {
+	public IDocument getReleasedVersionDocument() {
 		return releasedVersionDocument;
 	}
 
@@ -65,7 +66,8 @@ public abstract class AbstractReleasedDocumentJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		
-		GetReleasedVersionTask task = new GetReleasedVersionTask(document);
+		ITaskFactory taskFactory = document.getTaskFactory();
+		IGetReleasedVersionTask task = taskFactory.getGetReleasedVersionTask(document);
 		try {
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			releasedVersionDocument = task.getReleasedVersionDocument();

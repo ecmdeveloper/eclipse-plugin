@@ -13,8 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide;bundle-version="3.4.2",
  org.eclipse.core.expressions,
  com.ecmdeveloper.plugin.core;bundle-version="1.0.0",
- com.ecmdeveloper.plugin;bundle-version="1.2.0",
- com.ecmdeveloper.plugin.tracker;bundle-version="1.0.0"
+ com.ecmdeveloper.plugin.tracker;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin.ui;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: com.ecmdeveloper.plugin.content.wizard

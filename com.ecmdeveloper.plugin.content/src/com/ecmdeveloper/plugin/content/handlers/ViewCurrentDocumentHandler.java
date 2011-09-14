@@ -21,7 +21,7 @@
 package com.ecmdeveloper.plugin.content.handlers;
 
 import com.ecmdeveloper.plugin.content.jobs.ViewCurrentDocumentJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -30,7 +30,7 @@ import com.ecmdeveloper.plugin.model.Document;
 public class ViewCurrentDocumentHandler extends AbstractDocumentHandler {
 
 	@Override
-	protected void handleDocument(Document document) {
+	protected void handleDocument(IDocument document) {
 		ViewCurrentDocumentJob job = new ViewCurrentDocumentJob(document, getWorkbenchWindow() );
 		job.setUser(true);
 		job.schedule();

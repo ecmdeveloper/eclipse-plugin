@@ -29,9 +29,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.Activator;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.FetchObjectTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IFetchObjectTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
@@ -64,14 +65,15 @@ public abstract class AbstractTrackedFileJob extends Job {
 	protected String getMimeType() {
 		return trackedFile.getMimeType();
 	}
-	protected Document getDocument(IProgressMonitor monitor) throws ExecutionException {
+	protected IDocument getDocument(IProgressMonitor monitor) throws ExecutionException {
 		
 		IObjectStore objectStore = getObjectStore(monitor);
 		String message = MessageFormat.format(FETCHING_DOCUMENT_TASK, trackedFile.getName());
 		monitor.beginTask(message, IProgressMonitor.UNKNOWN );
-		FetchObjectTask task = new FetchObjectTask(objectStore, trackedFile.getId(), trackedFile
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IFetchObjectTask task = taskFactory.getFetchObjectTask(objectStore, trackedFile.getId(), trackedFile
 				.getClassName(), "Document");
-		Document document = (Document) Activator.getDefault().getTaskManager().executeTaskSync(task);
+		IDocument document = (IDocument) Activator.getDefault().getTaskManager().executeTaskSync(task);
 		monitor.done();
 		return document;
 	}

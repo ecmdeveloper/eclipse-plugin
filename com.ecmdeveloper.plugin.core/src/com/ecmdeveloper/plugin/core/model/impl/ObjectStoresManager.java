@@ -252,8 +252,11 @@ public class ObjectStoresManager implements IObjectStoresManager
 	@Override
 	public void registerObjectStoresStore(IObjectStoresStore objectStoresStore) {
 		objectStoresStoreList.add(objectStoresStore);
-		objectStoresStore.load(objectStores, connections);
-		IObjectStoreItem[] itemsAdded = objectStores.getChildren().toArray( new IObjectStoreItem[0] );
+		Collection<IObjectStore> loadedObjectStores = objectStoresStore.load(connections);
+		for ( IObjectStore objectStore : loadedObjectStores ) {
+			objectStores.add(objectStore);
+		}
+		IObjectStoreItem[] itemsAdded = loadedObjectStores.toArray( new IObjectStoreItem[0] );
 		taskManager.fireObjectStoreItemsChanged(itemsAdded , null, null);
 	}
 }

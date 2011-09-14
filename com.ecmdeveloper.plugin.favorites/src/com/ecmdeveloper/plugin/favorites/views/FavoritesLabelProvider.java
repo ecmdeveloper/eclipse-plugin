@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
 
 /**
  * @author ricardo.belfor

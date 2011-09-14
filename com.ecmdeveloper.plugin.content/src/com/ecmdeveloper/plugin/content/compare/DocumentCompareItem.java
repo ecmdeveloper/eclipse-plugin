@@ -35,8 +35,9 @@ import org.eclipse.ui.PlatformUI;
 
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.util.PluginLog;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.GetContentTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 
 /**
  * @author Ricardo.Belfor
@@ -44,10 +45,10 @@ import com.ecmdeveloper.plugin.model.tasks.GetContentTask;
  */
 public class DocumentCompareItem implements IStreamContentAccessor, ITypedElement, IModificationDate {
 
-	protected Document document;
+	protected IDocument document;
 	protected int contentIndex;
 	
-	public DocumentCompareItem(Document document, int contentIndex ) {
+	public DocumentCompareItem(IDocument document, int contentIndex ) {
 		this.document = document;
 		this.contentIndex = contentIndex;
 	}
@@ -56,7 +57,8 @@ public class DocumentCompareItem implements IStreamContentAccessor, ITypedElemen
 	public InputStream getContents() throws CoreException {
 
 		if ( contentIndex >= 0 ) {
-			GetContentTask task = new GetContentTask(document,contentIndex);
+			ITaskFactory taskFactory = document.getTaskFactory();
+			IGetContentTask task = taskFactory.getGetContentTask(document,contentIndex);
 			try {
 				Activator.getDefault().getTaskManager().executeTaskSync(task);
 				return task.getContentStream();

@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.core.model;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 public interface IObjectStoresStore {
 
-	void load(IObjectStores objectStores, Map<String, IConnection> connections);
+	Collection<IObjectStore> load(Map<String, IConnection> connections);
 
 	void save(IObjectStores objectStores, Map<String, IConnection> connections);
 

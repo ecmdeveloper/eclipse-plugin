@@ -25,7 +25,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -36,7 +36,7 @@ public class ViewReleasedDocumentJob extends AbstractReleasedDocumentJob {
 	private static final String JOB_NAME = "View Released Document";
 	private static final String TASK_NAME = "Viewing Released Document \"{0}\"";
 
-	public ViewReleasedDocumentJob(Document document, IWorkbenchWindow window) {
+	public ViewReleasedDocumentJob(IDocument document, IWorkbenchWindow window) {
 		super(JOB_NAME, document, window);
 	}
 

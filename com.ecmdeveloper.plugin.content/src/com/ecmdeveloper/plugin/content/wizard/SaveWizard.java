@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 
 import com.ecmdeveloper.plugin.content.jobs.SaveJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -38,9 +38,9 @@ public class SaveWizard extends Wizard {
 	private static final String WINDOW_TITLE_MESSAGE = "Save Document {0}";
 
 	private ContentSelectionWizardPage page;
-	private Document document;
+	private IDocument document;
 
-	public SaveWizard(Document document) {
+	public SaveWizard(IDocument document) {
 		super();
 		this.document = document;
 		String title = MessageFormat.format( WINDOW_TITLE_MESSAGE, document.getName() );

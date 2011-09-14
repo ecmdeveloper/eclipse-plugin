@@ -23,10 +23,10 @@ package com.ecmdeveloper.plugin.favorites.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.Placeholder;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.Placeholder;
 
 /**
  * @author ricardo.belfor
@@ -34,22 +34,22 @@ import com.ecmdeveloper.plugin.model.Placeholder;
  */
 public class FavoriteObjectStore {
 
-	private ObjectStore objectStore;
-	private Collection<ObjectStoreItem> children;
+	private IObjectStore objectStore;
+	private Collection<IObjectStoreItem> children;
 
-	public FavoriteObjectStore(ObjectStore objectStore) {
+	public FavoriteObjectStore(IObjectStore objectStore) {
 		this.objectStore = objectStore;
 	}
 
-	public ObjectStore getObjectStore() {
+	public IObjectStore getObjectStore() {
 		return objectStore;
 	}
 
-	public Collection<ObjectStoreItem> getChildren() 
+	public Collection<IObjectStoreItem> getChildren() 
 	{
 		if ( children == null )
 		{
-			children = new ArrayList<ObjectStoreItem>();
+			children = new ArrayList<IObjectStoreItem>();
 			children.add( new Placeholder( Placeholder.Type.LOADING ) );
 
 			FavoritesManager.getInstance().fetchFavorites(this);
@@ -57,7 +57,7 @@ public class FavoriteObjectStore {
 		return children;
 	}
 
-	public void refreshChildren(Collection<ObjectStoreItem> children) {
+	public void refreshChildren(Collection<IObjectStoreItem> children) {
 		this.children.clear();
 		this.children.addAll( children );
 	}
@@ -72,19 +72,19 @@ public class FavoriteObjectStore {
 		return children.size() > 0;
 	}
 
-	public void addChild(ObjectStoreItem objectStoreItem) {
+	public void addChild(IObjectStoreItem objectStoreItem) {
 		if (children == null ) {
-			children = new ArrayList<ObjectStoreItem>();
+			children = new ArrayList<IObjectStoreItem>();
 		}
 		children.add(objectStoreItem);
 	}
 
-	public void removeChild(ObjectStoreItem objectStoreItem) {
+	public void removeChild(IObjectStoreItem objectStoreItem) {
 		if ( children == null ) {
 			return;
 		}
 		
-		for ( ObjectStoreItem child : children ) {
+		for ( IObjectStoreItem child : children ) {
 			if ( child.equals(objectStoreItem) || child.isSimilarObject(objectStoreItem) ) {
 				children.remove(child);
 				return;
@@ -92,8 +92,8 @@ public class FavoriteObjectStore {
 		}
 	}
 	
-	public boolean isObjectStoreOf(ObjectStore objectStore) {
-		ContentEngineConnection connection = objectStore.getConnection();
+	public boolean isObjectStoreOf(IObjectStore objectStore) {
+		IConnection connection = objectStore.getConnection();
 		String objectStoreName = this.objectStore.getName();
 		String connectionName = this.objectStore.getConnection().getName();
 		return objectStoreName.equals(objectStore.getName())

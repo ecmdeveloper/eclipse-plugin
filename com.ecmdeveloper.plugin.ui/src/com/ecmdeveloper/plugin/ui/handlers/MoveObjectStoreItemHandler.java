@@ -90,10 +90,10 @@ public class MoveObjectStoreItemHandler extends AbstractHandler implements IHand
 		ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
 		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
-		dialog.setInput( Activator.getDefault().getObjectStoresManager() );
+		dialog.setInput( Activator.getDefault().getTaskManager() );
 		
 		dialog.addFilter( new MoveTargetFilter( elementObjectStores.iterator().next() ) );
-		contentProvider.inputChanged( null, null, Activator.getDefault().getObjectStoresManager() );
+		contentProvider.inputChanged( null, null, Activator.getDefault().getTaskManager() );
 		dialog.setTitle(HANDLER_NAME);
 		dialog.setMessage( CHOOSE_DESTINATION_MESSAGE );
 		

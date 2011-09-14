@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
-import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
-import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 
 /**
@@ -50,13 +50,13 @@ public class CheckinJob extends Job {
 	private static final String HANDLER_NAME = "Checkin";
 	private static final String FAILED_MESSAGE = "Checkin \"{0}\" failed";
 
-	private Document document;
+	private IDocument document;
 	private Shell shell;
 	private Collection<Object> content;
 	private String mimeType;
 	private boolean majorVersion;
 	
-	public CheckinJob(Document document, Shell shell, Collection<Object> content, String mimeType, boolean majorVersion ) {
+	public CheckinJob(IDocument document, Shell shell, Collection<Object> content, String mimeType, boolean majorVersion ) {
 		super(HANDLER_NAME);
 		this.document = document;
 		this.shell = shell;
@@ -65,7 +65,7 @@ public class CheckinJob extends Job {
 		this.majorVersion = majorVersion;
 	}
 
-	public Document getDocument() {
+	public IDocument getDocument() {
 		return document;
 	}
 
@@ -97,14 +97,16 @@ public class CheckinJob extends Job {
 	private void saveContent(IProgressMonitor monitor) throws ExecutionException {
 		if ( content != null ) {
 			monitor.subTask( SAVING_CONTENT_SUBTASK_NAME );
-			DocumentTask task = new SaveTask(document, content, mimeType);
+			ITaskFactory taskFactory = document.getTaskFactory();
+			ISaveTask task = taskFactory.getSaveTask(document, content, mimeType);
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 		}
 	}
 
 	private void checkinDocument(IProgressMonitor monitor) throws ExecutionException {
 		monitor.subTask( CHECKIN_DOCUMENT_SUBTASK_NAME );
-		CheckinTask task  = new CheckinTask(document, majorVersion, false );
+		ITaskFactory taskFactory = document.getTaskFactory();
+		ICheckinTask task  = taskFactory.getCheckinTask(document, majorVersion, false );
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 	}
 

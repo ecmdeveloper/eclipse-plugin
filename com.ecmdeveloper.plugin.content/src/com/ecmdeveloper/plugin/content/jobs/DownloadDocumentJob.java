@@ -30,9 +30,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.content.wizard.DownloadDocumentWizard;
 
@@ -49,11 +49,11 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 	private boolean openEditor;
 	private boolean trackFile;
 
-	public DownloadDocumentJob(Document document, IWorkbenchWindow window ) {
+	public DownloadDocumentJob(IDocument document, IWorkbenchWindow window ) {
 		this(document, window, false, false);
 	}
 	
-	public DownloadDocumentJob(Document document, IWorkbenchWindow window, boolean openEditor, boolean trackFile ) {
+	public DownloadDocumentJob(IDocument document, IWorkbenchWindow window, boolean openEditor, boolean trackFile ) {
 		super(HANDLER_NAME, document, window);
 		this.openEditor = openEditor;
 		this.trackFile = trackFile;
@@ -112,11 +112,11 @@ public class DownloadDocumentJob  extends AbstractDocumentContentJob {
 		String className = document.getClassName();
 		String mimeType = document.getMimeType();
 
-		ObjectStore objectStore = document.getObjectStore();
+		IObjectStore objectStore = document.getObjectStore();
 		String objectStoreName = objectStore.getName();
 		String objectStoreDisplayName = objectStore.getDisplayName();
 
-		ContentEngineConnection connection = objectStore.getConnection();
+		IConnection connection = objectStore.getConnection();
 		String connectionName = connection.getName();
 		String connectionDisplayName = connection.getDisplayName();
 		

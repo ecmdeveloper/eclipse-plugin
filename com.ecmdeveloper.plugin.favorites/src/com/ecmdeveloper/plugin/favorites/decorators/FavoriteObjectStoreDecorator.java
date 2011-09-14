@@ -24,11 +24,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.decorators.ObjectStoreItemDecorator;
+import com.ecmdeveloper.plugin.ui.decorators.ObjectStoreItemDecorator;
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.favorites.util.IconFiles;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 
 /**
  * @author ricardo.belfor
@@ -39,7 +39,7 @@ public class FavoriteObjectStoreDecorator extends ObjectStoreItemDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		FavoriteObjectStore favoriteObjectStore = (FavoriteObjectStore) element;
-		ObjectStore objectStore = favoriteObjectStore.getObjectStore();
+		IObjectStore objectStore = favoriteObjectStore.getObjectStore();
 
 		ImageDescriptor descriptor = null;
 		if ( objectStore.isConnected() ) {

@@ -28,7 +28,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -36,12 +36,12 @@ import com.ecmdeveloper.plugin.model.Document;
  */
 public class DocumentCompareEditorInput extends CompareEditorInput {
 
-	private Document document;
+	private IDocument document;
 	private int contentIndex;
 	private IFile compareFile;
 	
 	public DocumentCompareEditorInput(CompareConfiguration configuration,
-			Document document, int contentIndex, IFile compareFile ) {
+			IDocument document, int contentIndex, IFile compareFile ) {
 		super(configuration);
 		this.document = document;
 		this.contentIndex = contentIndex;

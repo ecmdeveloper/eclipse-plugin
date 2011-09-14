@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.content.handlers;
 
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.jobs.ViewDocumentJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -33,7 +33,7 @@ public class ViewDocumentHandler extends AbstractDocumentHandler {
 	public static final String ID = "com.ecmdeveloper.plugin.viewDocument";
 	
 	@Override
-	protected void handleDocument(Document document) {
+	protected void handleDocument(IDocument document) {
 		ViewDocumentJob job = new ViewDocumentJob(document, null, getWorkbenchWindow() );
 		job.setUser(true);
 		job.schedule();

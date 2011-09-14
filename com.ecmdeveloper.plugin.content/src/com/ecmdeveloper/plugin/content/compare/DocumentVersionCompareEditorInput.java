@@ -27,7 +27,7 @@ import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -35,14 +35,14 @@ import com.ecmdeveloper.plugin.model.Document;
  */
 public class DocumentVersionCompareEditorInput extends CompareEditorInput {
 
-	private Document document1;
-	private Document document2;
+	private IDocument document1;
+	private IDocument document2;
 	private int contentIndex1;
 	private int contentIndex2;
 	private boolean showVersionLabels;
 	
 	public DocumentVersionCompareEditorInput(CompareConfiguration configuration,
-			Document document1, int contentIndex1, Document document2, int contentIndex2, boolean showVersionLabels) {
+			IDocument document1, int contentIndex1, IDocument document2, int contentIndex2, boolean showVersionLabels) {
 		super(configuration);
 		this.document1 = document1;
 		this.document2 = document2;

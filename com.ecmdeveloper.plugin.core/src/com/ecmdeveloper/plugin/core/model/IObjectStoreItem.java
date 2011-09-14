@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.IAdaptable;
 
+import com.ecmdeveloper.plugin.core.model.constants.Feature;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 
 /**
@@ -39,6 +40,8 @@ public interface IObjectStoreItem extends IAdaptable {
 	public String getDisplayName();
 
 	public String getId();
+
+	public boolean isSupportedFeature(Feature feature);
 	
 	public IObjectStoreItem getParent();
 	

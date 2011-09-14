@@ -397,9 +397,13 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test></and>
                      </or>
                   </iterate>
                </with>
@@ -776,9 +780,50 @@
             class="com.ecmdeveloper.plugin.ui.tester.PropertyTester"
             id="com.ecmdeveloper.plugin.propertyTester"
             namespace="com.ecmdeveloper.plugin"
-            properties="isConnected,notConnected"
+            properties="isConnected,notConnected,canCheckout"
             type="java.lang.Object">
       </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            class="com.ecmdeveloper.plugin.ui.decorators.ObjectStoreDecorator"
+            id="com.ecmdeveloper.plugin.decorators.ObjectStoreDecorator"
+            label="Object Store Decorator"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="com.ecmdeveloper.plugin.core.model.IObjectStore">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
+            adaptable="true"
+            class="com.ecmdeveloper.plugin.ui.decorators.DocumentDecorator"
+            id="com.ecmdeveloper.plugin.decorators.documentDecorator"
+            label="Document Decorator"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="com.ecmdeveloper.plugin.core.model.IDocument">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
+            class="com.ecmdeveloper.plugin.ui.decorators.SearchResultRowDecorator"
+            id="com.ecmdeveloper.plugin.decorators.SearchResultRow"
+            label="Search Result Row"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="com.ecmdeveloper.plugin.core.model.ISearchResultRow">
+            </objectClass>
+         </enablement>
+      </decorator>
    </extension>
 
 </plugin>

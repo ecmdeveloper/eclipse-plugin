@@ -38,9 +38,10 @@ import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.util.ContentCache;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.GetContentAsFileTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentAsFileTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 
 /**
  * 
@@ -56,11 +57,11 @@ public class ViewDocumentJob extends AbstractDocumentContentJob {
 
 	private String filePrefix;
 	
-	public ViewDocumentJob(Document document, IWorkbenchWindow window ) {
+	public ViewDocumentJob(IDocument document, IWorkbenchWindow window ) {
 		this(document, null, window);
 	}
 
-	public ViewDocumentJob(Document document, String filePrefix, IWorkbenchWindow window ) {
+	public ViewDocumentJob(IDocument document, String filePrefix, IWorkbenchWindow window ) {
 		super( HANDLER_NAME, document, window );
 		this.filePrefix = filePrefix;
 	}
@@ -116,7 +117,8 @@ public class ViewDocumentJob extends AbstractDocumentContentJob {
 
 		IPath tempFolderPath = getTempFolderPath(document);
 
-		GetContentAsFileTask task = new GetContentAsFileTask((Document) document, tempFolderPath
+		ITaskFactory taskFactory = document.getTaskFactory();
+		IGetContentAsFileTask task = taskFactory.getGetContentAsFileTask((IDocument) document, tempFolderPath
 				.toOSString(), index);
 		task.setFilePrefix(filePrefix);
 		String outputFile = (String) Activator.getDefault().getTaskManager().executeTaskSync(task);

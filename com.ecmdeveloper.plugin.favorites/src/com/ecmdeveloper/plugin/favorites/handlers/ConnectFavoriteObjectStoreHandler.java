@@ -38,8 +38,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -77,9 +77,9 @@ public class ConnectFavoriteObjectStoreHandler extends AbstractHandler implement
 	class ConnectObjectStoreJob extends Job {
 
 		private Shell shell;
-		private ObjectStore objectStore;
+		private IObjectStore objectStore;
 
-		public ConnectObjectStoreJob(ObjectStore objectStore, Shell shell) {
+		public ConnectObjectStoreJob(IObjectStore objectStore, Shell shell) {
 			super("Connect Object Store");
 			this.objectStore = objectStore;
 			this.shell = shell;

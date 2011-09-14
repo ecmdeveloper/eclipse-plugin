@@ -7,7 +7,7 @@ import org.osgi.framework.BundleContext;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
-import com.ecmdeveloper.plugin.util.ImageCache;
+import com.ecmdeveloper.plugin.core.util.ImageCache;
 
 /**
  * The activator class controls the plug-in life cycle
