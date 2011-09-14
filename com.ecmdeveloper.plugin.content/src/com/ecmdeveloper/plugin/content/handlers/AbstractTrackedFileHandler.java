@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
@@ -72,8 +72,8 @@ public abstract class AbstractTrackedFileHandler extends AbstractHandler impleme
 		} else if ( selectedObject instanceof TrackedFile ) {
 			trackedFile = (TrackedFile) selectedObject;
 			file = trackedFile.getFile();
-		} else if ( selectedObject instanceof Document ) { 
-			Document document = (Document) selectedObject;
+		} else if ( selectedObject instanceof IDocument ) { 
+			IDocument document = (IDocument) selectedObject;
 			trackedFile = FilesTracker.getInstance().getVersionSeriesTrackedFile( document.getVersionSeriesId() );
 			if ( trackedFile != null ) {
 				file = trackedFile.getFile();

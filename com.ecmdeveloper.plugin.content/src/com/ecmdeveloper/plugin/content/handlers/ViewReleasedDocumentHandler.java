@@ -21,7 +21,7 @@
 package com.ecmdeveloper.plugin.content.handlers;
 
 import com.ecmdeveloper.plugin.content.jobs.ViewReleasedDocumentJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -30,7 +30,7 @@ import com.ecmdeveloper.plugin.model.Document;
 public class ViewReleasedDocumentHandler extends AbstractDocumentHandler {
 
 	@Override
-	protected void handleDocument(Document document) {
+	protected void handleDocument(IDocument document) {
 		ViewReleasedDocumentJob job = new ViewReleasedDocumentJob(document, getWorkbenchWindow() );
 		job.setUser(true);
 		job.schedule();

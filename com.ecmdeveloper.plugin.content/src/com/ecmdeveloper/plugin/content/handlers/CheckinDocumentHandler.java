@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.content.handlers;
 
 import org.eclipse.jface.wizard.WizardDialog;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.content.wizard.CheckinWizard;
 
 /**
@@ -32,11 +32,11 @@ import com.ecmdeveloper.plugin.content.wizard.CheckinWizard;
 public class CheckinDocumentHandler extends AbstractDocumentHandler {
 
 	@Override
-	protected void handleDocument(Document objectStoreItem) {
-		openCheckinWizard((Document) objectStoreItem);
+	protected void handleDocument(IDocument objectStoreItem) {
+		openCheckinWizard((IDocument) objectStoreItem);
 	}
 
-	private void openCheckinWizard(Document document) {
+	private void openCheckinWizard(IDocument document) {
 		CheckinWizard wizard = new CheckinWizard( document, false );
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();

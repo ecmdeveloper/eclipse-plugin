@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
 import com.ecmdeveloper.plugin.favorites.util.IconFiles;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 
 /**
  * @author ricardo.belfor
@@ -39,7 +39,7 @@ public class FavoriteDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
-		ObjectStoreItem objectStoreItem = (ObjectStoreItem) element;
+		IObjectStoreItem objectStoreItem = (IObjectStoreItem) element;
 
 		if ( FavoritesManager.getInstance().isFavorite(objectStoreItem) ) {
 			ImageDescriptor descriptor = Activator.getImageDescriptor(IconFiles.FAVORITE_DECORATOR_IMAGE);

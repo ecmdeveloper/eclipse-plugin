@@ -30,10 +30,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
-import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 
 /**
@@ -46,16 +46,16 @@ public class CancelCheckoutJob extends Job {
 	private static final String HANDLER_NAME = "Cancel Checkout";
 	private static final String FAILED_MESSAGE = "Canceling Checkout \"{0}\" failed";
 
-	private Document document;
+	private IDocument document;
 	private Shell shell;
 	
-	public CancelCheckoutJob(Document document, Shell shell) {
+	public CancelCheckoutJob(IDocument document, Shell shell) {
 		super(HANDLER_NAME);
 		this.document = document;
 		this.shell = shell;
 	}
 
-	public Document getDocument() {
+	public IDocument getDocument() {
 		return document;
 	}
 
@@ -65,7 +65,8 @@ public class CancelCheckoutJob extends Job {
 		try {
 			String message = MessageFormat.format( CANCELING_CHECKOUT_TASK, document.getName() );
 			monitor.beginTask( message, IProgressMonitor.UNKNOWN );
-			DocumentTask task = new CancelCheckoutTask(document);
+			ITaskFactory taskFactory = document.getTaskFactory();
+			ICancelCheckoutTask task = taskFactory.getCancelCheckoutTask(document);
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			removeFromFilesTracker();
 			return Status.OK_STATUS;

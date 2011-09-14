@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.content.tester;
 
 import org.eclipse.core.expressions.PropertyTester;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 
 /**
@@ -36,13 +36,13 @@ public class TrackedDocumentTester extends PropertyTester {
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		
-		if ( ! ( receiver instanceof Document ) )
+		if ( ! ( receiver instanceof IDocument ) )
 		{
 			return false;
 		}
 
 		if ( IS_TRACKED_PROPERTY.equals(property) ) {
-			Document document = (Document) receiver;
+			IDocument document = (IDocument) receiver;
 			String versionSeriesId = document.getVersionSeriesId();
 			boolean tracked = FilesTracker.getInstance().isVersionSeriesTracked(versionSeriesId);
 			return tracked;

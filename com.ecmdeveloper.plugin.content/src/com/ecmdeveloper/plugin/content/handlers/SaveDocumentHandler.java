@@ -21,7 +21,7 @@ package com.ecmdeveloper.plugin.content.handlers;
 
 import org.eclipse.jface.wizard.WizardDialog;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.content.wizard.SaveWizard;
 
 /**
@@ -32,11 +32,11 @@ import com.ecmdeveloper.plugin.content.wizard.SaveWizard;
 public class SaveDocumentHandler extends AbstractDocumentHandler  {
 
 	@Override
-	protected void handleDocument(Document document) {
+	protected void handleDocument(IDocument document) {
 		openSaveWizard( document );
 	}
 
-	private void openSaveWizard(Document document) {
+	private void openSaveWizard(IDocument document) {
 		SaveWizard wizard = new SaveWizard( document );
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();

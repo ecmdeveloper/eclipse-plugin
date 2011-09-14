@@ -71,7 +71,10 @@ public class ObjectStoreItemsModel {
 		if (objectStoreItem instanceof IObjectStore ) {
 			return objectStoreItem.getName();
 		} else if ( objectStoreItem instanceof IDocument ) {
-			return ((IDocument)objectStoreItem).getVersionSeriesId();
+			String versionSeriesId = ((IDocument)objectStoreItem).getVersionSeriesId();
+			if ( versionSeriesId != null ) {
+				return versionSeriesId;
+			}
 		}
 		String objectStoreItemKey = objectStoreItem.getId();
 		return objectStoreItemKey;

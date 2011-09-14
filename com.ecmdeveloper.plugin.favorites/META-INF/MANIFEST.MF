@@ -7,8 +7,8 @@ Bundle-Activator: com.ecmdeveloper.plugin.favorites.Activator
 Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.ecmdeveloper.plugin;bundle-version="1.3.0",
  org.eclipse.core.expressions;bundle-version="3.4.1",
- com.ecmdeveloper.plugin.core;bundle-version="1.0.0"
+ com.ecmdeveloper.plugin.core;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin.ui;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

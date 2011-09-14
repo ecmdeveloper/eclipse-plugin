@@ -33,7 +33,7 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.ecmdeveloper.plugin.content.jobs.CompareDocumentJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -45,7 +45,7 @@ public class CompareDocumentWithLocalFileHandler extends AbstractDocumentHandler
 	private static final String FILE_SELECTION_TITLE = "File Selection";
 
 	@Override
-	protected void handleDocument(Document document) {
+	protected void handleDocument(IDocument document) {
 		IFile compareFile = getCompareFile(getWorkbenchWindow(), document);
 		if (compareFile != null) {
 			CompareDocumentJob job = new CompareDocumentJob(document, getWorkbenchWindow(),
@@ -55,7 +55,7 @@ public class CompareDocumentWithLocalFileHandler extends AbstractDocumentHandler
 		}
 	}
 
-	private IFile getCompareFile(IWorkbenchWindow window, Document document) {
+	private IFile getCompareFile(IWorkbenchWindow window, IDocument document) {
 		
 		SelectionDialog fileSelectionDialog = getFileSelectionDialog(document, window.getShell());
 		fileSelectionDialog.open();
@@ -71,7 +71,7 @@ public class CompareDocumentWithLocalFileHandler extends AbstractDocumentHandler
 		return result != null && result.length > 0 && result[0] instanceof IFile;
 	}
 
-	private SelectionDialog getFileSelectionDialog(Document document, Shell shell) {
+	private SelectionDialog getFileSelectionDialog(IDocument document, Shell shell) {
 		
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
 				new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());

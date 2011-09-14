@@ -34,7 +34,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.content.jobs.CompareDocumentsJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -57,9 +57,9 @@ public class CompareDocumentsWithEachOtherHandler extends AbstractHandler implem
 			return null;
 		}
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		Collection<Document> documents = new ArrayList<Document>();
-		documents.add( (Document) iterator.next() );
-		documents.add( (Document) iterator.next() );
+		Collection<IDocument> documents = new ArrayList<IDocument>();
+		documents.add( (IDocument) iterator.next() );
+		documents.add( (IDocument) iterator.next() );
 
 		CompareDocumentsJob job = new CompareDocumentsJob(documents, window );
 		job.setUser(true);

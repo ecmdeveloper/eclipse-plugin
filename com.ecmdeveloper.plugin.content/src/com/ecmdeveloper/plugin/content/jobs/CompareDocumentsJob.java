@@ -41,9 +41,10 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.compare.DocumentVersionCompareEditorInput;
 import com.ecmdeveloper.plugin.content.constants.PropertyNames;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.GetContentInfoTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentInfoTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -57,11 +58,11 @@ public class CompareDocumentsJob extends Job {
 	private static final String COMPARE_TITLE_FORMAT = "Compare(''{0}'' - ''{1}'')";
 	private static final String VERSION_NAME_FORMAT = "Version {1}.{2} {0}";
 
-	private Collection<Document> documents;
+	private Collection<IDocument> documents;
 	private IWorkbenchWindow window;
 	private boolean showVersionLabels;
 	
-	public CompareDocumentsJob(Collection<Document> documents, IWorkbenchWindow window) {
+	public CompareDocumentsJob(Collection<IDocument> documents, IWorkbenchWindow window) {
 		super("Compare Documents");
 		this.documents = documents;
 		this.window = window;
@@ -101,14 +102,14 @@ public class CompareDocumentsJob extends Job {
 	}
 
 	private DocumentVersionCompareEditorInput createCompareEditorInput(
-			Collection<Document> selectedVersions) throws Exception {
+			Collection<IDocument> selectedVersions) throws Exception {
 
-		Iterator<Document> iterator = selectedVersions.iterator();
+		Iterator<IDocument> iterator = selectedVersions.iterator();
 		
-		Document document1 = iterator.next();
+		IDocument document1 = iterator.next();
 		int contentIndex1 = getDocumentContentIndex(document1);
 		
-		Document document2 = iterator.next();
+		IDocument document2 = iterator.next();
 		int contentIndex2 = getDocumentContentIndex(document2);
 		
 		CompareConfiguration configuration = new CompareConfiguration();
@@ -125,7 +126,7 @@ public class CompareDocumentsJob extends Job {
 		return editorInput;
 	}
 
-	private int getDocumentContentIndex(Document document ) throws Exception {
+	private int getDocumentContentIndex(IDocument document ) throws Exception {
 		final Map<String, Integer> contentElementsMap = getContentElementsMap(document);
 
 		if ( contentElementsMap.size() == 1 ) {
@@ -155,14 +156,15 @@ public class CompareDocumentsJob extends Job {
 		return -1;
 	}
 	
-	private Map<String,Integer> getContentElementsMap(Document document) throws Exception {
-		GetContentInfoTask task = new GetContentInfoTask(document);
+	private Map<String,Integer> getContentElementsMap(IDocument document) throws Exception {
+		ITaskFactory taskFactory = document.getTaskFactory();
+		IGetContentInfoTask task = taskFactory.getGetContentInfoTask(document);
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		Map<String,Integer> contentElementsMap = task.getContentElementsMap();
 		return contentElementsMap;
 	}
 
-	private String getDocumentLabel(Document document) {
+	private String getDocumentLabel(IDocument document) {
 		
 		if ( showVersionLabels ) {
 			Object majorVersionNumber = document.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
@@ -174,7 +176,7 @@ public class CompareDocumentsJob extends Job {
 		}
 	}
 
-	private ElementListSelectionDialog getContentSelectionDialog( Map<String, Integer> contentElementsMap, Document document) {
+	private ElementListSelectionDialog getContentSelectionDialog( Map<String, Integer> contentElementsMap, IDocument document) {
 		
 		LabelProvider labelProvider = new LabelProvider();
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(window.getShell(), labelProvider );

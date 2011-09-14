@@ -33,8 +33,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.util.PluginLog;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.favorites.util.PluginLog;
 
 /**
  * @author ricardo.belfor
@@ -79,7 +79,7 @@ public class FavoritesViewDoubleClickHandler extends AbstractHandler  {
 
 	private void executeCommand(Object selectedObject) throws CommandException  {
 		IHandlerService handlerService = (IHandlerService) window.getService(IHandlerService.class);
-		if ( selectedObject instanceof Document) {
+		if ( selectedObject instanceof IDocument) {
 			handlerService.executeCommand(VIEW_DOCUMENT_COMMAND_ID, null );
 		} else if ( selectedObject instanceof FavoriteObjectStore) {
 			if ( ! ((FavoriteObjectStore)selectedObject).getObjectStore().isConnected() ) {

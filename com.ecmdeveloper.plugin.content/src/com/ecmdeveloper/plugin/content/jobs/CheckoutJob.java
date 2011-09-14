@@ -30,9 +30,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.CheckoutTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.ICheckoutTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -44,13 +45,13 @@ public class CheckoutJob extends Job {
 	private static final String FAILED_MESSAGE = "Checkin out \"{0}\" failed";
 	private static final String TASK_MESSAGE = "Checking out document \"{0}\"";
 
-	private Document document;
+	private IDocument document;
 	private boolean download;
 	private boolean openEditor;
 	private boolean trackFile;
 	private IWorkbenchWindow window;
 	
-	public CheckoutJob(Document document, IWorkbenchWindow window, boolean download, boolean openEditor, boolean trackFile ) {
+	public CheckoutJob(IDocument document, IWorkbenchWindow window, boolean download, boolean openEditor, boolean trackFile ) {
 		super(HANDLER_NAME);
 		this.document = document;
 		this.window = window;
@@ -59,7 +60,7 @@ public class CheckoutJob extends Job {
 		this.trackFile = trackFile;
 	}
 
-	public Document getDocument() {
+	public IDocument getDocument() {
 		return document;
 	}
 
@@ -69,7 +70,7 @@ public class CheckoutJob extends Job {
 		try {
 			String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
 			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
-			Document checkoutDocument = checkoutDocument();
+			IDocument checkoutDocument = checkoutDocument();
 			if ( download ) {
 				scheduleDownloadDocumentJob(checkoutDocument, monitor);
 			}
@@ -86,13 +87,14 @@ public class CheckoutJob extends Job {
 		PluginMessage.openErrorFromThread( window.getShell(), HANDLER_NAME, message, e);
 	}
 
-	private Document checkoutDocument() throws ExecutionException {
-		CheckoutTask task = new CheckoutTask(document);
+	private IDocument checkoutDocument() throws ExecutionException {
+		ITaskFactory taskFactory = document.getTaskFactory();
+		ICheckoutTask task = taskFactory.getCheckoutTask(document);
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		return task.getCheckoutDocument();
 	}
 
-	private void scheduleDownloadDocumentJob(Document checkoutDocument, IProgressMonitor monitor) {
+	private void scheduleDownloadDocumentJob(IDocument checkoutDocument, IProgressMonitor monitor) {
 		DownloadDocumentJob downloadJob = new DownloadDocumentJob(checkoutDocument, window, openEditor,
 				trackFile);
 		downloadJob.setRule( new ChainedJobsSchedulingRule(2) );

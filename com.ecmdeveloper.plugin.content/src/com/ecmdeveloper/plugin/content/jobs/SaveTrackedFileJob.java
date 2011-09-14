@@ -33,10 +33,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
-import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IDocumentTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
@@ -60,7 +60,7 @@ public class SaveTrackedFileJob extends AbstractTrackedFileJob {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			Document document = getDocument(monitor);
+			IDocument document = getDocument(monitor);
 			saveDocument(document, monitor);
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
@@ -70,14 +70,15 @@ public class SaveTrackedFileJob extends AbstractTrackedFileJob {
 		return Status.CANCEL_STATUS;
 	}
 
-	private void saveDocument(Document document, IProgressMonitor monitor) throws ExecutionException {
+	private void saveDocument(IDocument document, IProgressMonitor monitor) throws ExecutionException {
 		
 		String taskName = MessageFormat.format( TASK_MESSAGE, document.getName() );
 		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN );
 		
 		Collection<Object> files = new ArrayList<Object>();
 		files.add( getFile() );
-		DocumentTask task = new SaveTask( document, files, mimeType);
+		ITaskFactory taskFactory = document.getTaskFactory();
+		IDocumentTask task = taskFactory.getSaveTask( document, files, mimeType);
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		
 		monitor.done();

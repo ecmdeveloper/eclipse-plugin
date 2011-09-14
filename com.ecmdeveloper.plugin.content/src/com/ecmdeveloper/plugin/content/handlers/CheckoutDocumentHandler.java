@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.content.handlers;
 
 import org.eclipse.jface.wizard.WizardDialog;
 
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.content.wizard.CheckoutWizard;
 
 /**
@@ -31,7 +31,7 @@ import com.ecmdeveloper.plugin.content.wizard.CheckoutWizard;
  */
 public class CheckoutDocumentHandler extends AbstractDocumentHandler {
 
-	private void openCheckoutWizard(Document document) {
+	private void openCheckoutWizard(IDocument document) {
 		CheckoutWizard wizard = new CheckoutWizard( document );
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		wizard.init(getWorkbenchWindow());
@@ -40,7 +40,7 @@ public class CheckoutDocumentHandler extends AbstractDocumentHandler {
 	}
 
 	@Override
-	protected void handleDocument(Document document) {
+	protected void handleDocument(IDocument document) {
 		openCheckoutWizard(document);		
 	}
 }

@@ -23,7 +23,7 @@ package com.ecmdeveloper.plugin.content.compare;
 import java.text.MessageFormat;
 
 import com.ecmdeveloper.plugin.content.constants.PropertyNames;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -33,7 +33,7 @@ public class DocumentVersionCompareItem extends DocumentCompareItem {
 
 	private static final String VERSION_NAME_FORMAT = "Version {1}.{2} ({0})";
 
-	public DocumentVersionCompareItem(Document document, int contentIndex ) {
+	public DocumentVersionCompareItem(IDocument document, int contentIndex ) {
 		super(document, contentIndex);
 	}
 

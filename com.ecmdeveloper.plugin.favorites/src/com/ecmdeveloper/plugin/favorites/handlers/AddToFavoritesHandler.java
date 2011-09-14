@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 
 /**
  * @author ricardo.belfor
@@ -60,13 +60,13 @@ public class AddToFavoritesHandler extends AbstractHandler implements IHandler {
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) iterator.next();
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
 			addToFavorites(objectStoreItem, event);
 		}
 		return null;
 	}
 
-	private void addToFavorites(ObjectStoreItem objectStoreItem, ExecutionEvent event) {
+	private void addToFavorites(IObjectStoreItem objectStoreItem, ExecutionEvent event) {
 		FavoritesManager favoritesManager = FavoritesManager.getInstance();
 		if ( ! favoritesManager.isFavorite(objectStoreItem)) {
 			favoritesManager.addFavorite( objectStoreItem );

@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import com.ecmdeveloper.plugin.content.jobs.DownloadDocumentJob;
-import com.ecmdeveloper.plugin.handlers.AbstractDocumentVersionHandler;
-import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.ui.handlers.AbstractDocumentVersionHandler;
+import com.ecmdeveloper.plugin.ui.jobs.GetDocumentVersionJob;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -38,7 +38,7 @@ import com.ecmdeveloper.plugin.model.Document;
 public class DownloadDocumentVersionHandler extends AbstractDocumentVersionHandler {
 
 	@Override
-	protected IJobChangeListener getJobChangeListener(Document document) {
+	protected IJobChangeListener getJobChangeListener(IDocument document) {
 		return new DownloadDocumentVersionsJobListener();
 	}
 
@@ -57,7 +57,7 @@ public class DownloadDocumentVersionHandler extends AbstractDocumentVersionHandl
 				return;
 			}
 			
-			for ( Document document : job.getSelectedVersions() ) {
+			for ( IDocument document : job.getSelectedVersions() ) {
 				Job downloadJob = new DownloadDocumentJob(document, window );
 				downloadJob.setUser(true);
 				downloadJob.schedule();

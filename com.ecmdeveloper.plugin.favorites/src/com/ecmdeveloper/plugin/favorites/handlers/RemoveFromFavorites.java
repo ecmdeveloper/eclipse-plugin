@@ -31,8 +31,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.favorites.model.FavoritesManager;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 /**
  * @author ricardo.belfor
@@ -52,7 +52,7 @@ public class RemoveFromFavorites  extends AbstractHandler implements IHandler {
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) iterator.next();
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
 			FavoritesManager.getInstance().removeFavorite( objectStoreItem );
 		}
 		return null;

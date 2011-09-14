@@ -38,10 +38,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.GetContentInfoTask;
-import com.ecmdeveloper.plugin.model.tasks.GetContentTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentInfoTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IGetContentTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -56,11 +57,11 @@ public abstract class AbstractDocumentContentJob extends Job {
 	private static final String FAILED_MESSAGE = "Gettting content of document \"{0}\" failed";
 	private static final String GETTING_CONTENT_ELEMENT_MESSAGE = "Getting content for document \"{0}\" content element {1}";
 	
-	protected Document document;
+	protected IDocument document;
 	protected IWorkbenchWindow window;
 	protected Map<String, Integer> contentElementsMap;
 
-	public AbstractDocumentContentJob(String name, Document document, IWorkbenchWindow window ) {
+	public AbstractDocumentContentJob(String name, IDocument document, IWorkbenchWindow window ) {
 		super(name);
 		this.document = document;
 		this.window = window;
@@ -91,7 +92,8 @@ public abstract class AbstractDocumentContentJob extends Job {
 	}
 
 	private Map<String,Integer> getContentElementsMap() throws ExecutionException {
-		GetContentInfoTask task = new GetContentInfoTask(document);
+		ITaskFactory taskFactory = document.getTaskFactory();
+		IGetContentInfoTask task = taskFactory.getGetContentInfoTask(document);
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		Map<String,Integer> contentElementsMap = task.getContentElementsMap();
 		return contentElementsMap;
@@ -176,7 +178,8 @@ public abstract class AbstractDocumentContentJob extends Job {
 		String subTask = MessageFormat.format( GETTING_CONTENT_ELEMENT_MESSAGE, document.getName(), contentElement );
 		monitor.subTask( subTask );
 
-		GetContentTask task = new GetContentTask((Document) document, contentElement );
+		ITaskFactory taskFactory = document.getTaskFactory();
+		IGetContentTask task = taskFactory.getGetContentTask((IDocument) document, contentElement );
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		
 		InputStream contentStream = task.getContentStream();

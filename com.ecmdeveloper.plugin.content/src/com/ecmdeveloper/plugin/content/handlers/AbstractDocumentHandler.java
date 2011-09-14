@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -58,8 +58,8 @@ public abstract class AbstractDocumentHandler extends AbstractHandler implements
 		
 		while ( iterator.hasNext() ) {
 			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			if (objectStoreItem instanceof Document) {
-				handleDocument((Document) objectStoreItem );
+			if (objectStoreItem instanceof IDocument) {
+				handleDocument((IDocument) objectStoreItem );
 			}
 		}
 
@@ -79,5 +79,5 @@ public abstract class AbstractDocumentHandler extends AbstractHandler implements
 		return window.getShell();
 	}
 
-	protected abstract void handleDocument(Document document);
+	protected abstract void handleDocument(IDocument document);
 }

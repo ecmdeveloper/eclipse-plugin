@@ -21,7 +21,7 @@
 package com.ecmdeveloper.plugin.content.handlers;
 
 import com.ecmdeveloper.plugin.content.jobs.DownloadReleasedDocumentJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -30,7 +30,7 @@ import com.ecmdeveloper.plugin.model.Document;
 public class DownloadReleasedDocumentHandler extends AbstractDocumentHandler {
 
 	@Override
-	protected void handleDocument(Document document) {
+	protected void handleDocument(IDocument document) {
 		DownloadReleasedDocumentJob job = new DownloadReleasedDocumentJob(document, getWorkbenchWindow() );
 		job.setUser(true);
 		job.schedule();

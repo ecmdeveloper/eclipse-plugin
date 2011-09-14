@@ -37,7 +37,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.util.PluginLog;
-import com.ecmdeveloper.plugin.views.ObjectStoresViewSorter;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewSorter;
 
 /**
  * @author ricardo.belfor

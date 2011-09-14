@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.jobs.ChainedJobsSchedulingRule;
 import com.ecmdeveloper.plugin.content.jobs.CheckoutJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -38,10 +38,10 @@ public class CheckoutWizard extends Wizard {
 	private static final String WINDOW_TITLE_MESSAGE = "Checkout Document {0}";
 
 	private ConfigureCheckoutWizardPage page;
-	private Document document;
+	private IDocument document;
 	private IWorkbenchWindow window;
 
-	public CheckoutWizard(Document document) {
+	public CheckoutWizard(IDocument document) {
 		super();
 		this.document = document;
 		String title = MessageFormat.format( WINDOW_TITLE_MESSAGE, document.getName() );

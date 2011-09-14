@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.core.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.constants.Feature;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.util.IconFiles;
 
@@ -167,5 +168,10 @@ public class Placeholder implements IObjectStoreItem {
 	@Override
 	public ITaskFactory getTaskFactory() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isSupportedFeature(Feature feature) {
+		return false;
 	}
 }

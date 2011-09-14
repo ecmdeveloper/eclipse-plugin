@@ -33,7 +33,7 @@ public interface IConnection {
 	String getUrl();
 	void connect();
 	IObjectStore[] getObjectStores(IObjectStores parent);
-	Object getDisplayName();
+	String getDisplayName();
 	boolean isConnected();
 
 }

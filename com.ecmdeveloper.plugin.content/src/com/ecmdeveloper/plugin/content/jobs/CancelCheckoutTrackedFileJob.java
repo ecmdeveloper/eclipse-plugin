@@ -29,10 +29,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.tasks.CancelCheckoutTask;
-import com.ecmdeveloper.plugin.model.tasks.DocumentTask;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
@@ -53,10 +53,11 @@ public class CancelCheckoutTrackedFileJob extends AbstractTrackedFileJob {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			Document document = getDocument(monitor);
+			IDocument document = getDocument(monitor);
 			String message = MessageFormat.format( CANCELING_CHECKOUT_TASK, document.getName() );
 			monitor.beginTask( message, IProgressMonitor.UNKNOWN );
-			DocumentTask task = new CancelCheckoutTask(document);
+			ITaskFactory taskFactory = document.getTaskFactory();
+			ICancelCheckoutTask task = taskFactory.getCancelCheckoutTask(document);
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			removeFromFilesTracker(document.getVersionSeriesId());
 			return Status.OK_STATUS;

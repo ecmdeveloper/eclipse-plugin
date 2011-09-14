@@ -30,7 +30,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import com.ecmdeveloper.plugin.content.jobs.CheckinJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -42,12 +42,12 @@ public class CheckinWizard extends Wizard {
 
 	private ConfigureCheckinWizardPage configureCheckinPage;
 	private ContentSelectionWizardPage contentSelectionPage;
-	private Document document;
+	private IDocument document;
 	private IFile initialContent;
 	private String initialMimeType;
 	private boolean isTrackedDocument;
 	
-	public CheckinWizard(Document document, boolean isTrackedDocument ) {
+	public CheckinWizard(IDocument document, boolean isTrackedDocument ) {
 		this.document = document;
 		String title = MessageFormat.format( WINDOW_TITLE_MESSAGE, document.getName() );
 		setWindowTitle(title);

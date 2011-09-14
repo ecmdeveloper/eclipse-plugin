@@ -29,9 +29,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.content.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.content.wizard.CheckinWizard;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
@@ -60,7 +60,7 @@ public class CheckinTrackedFileJob extends AbstractTrackedFileJob {
 		return Status.OK_STATUS;
 	}
 
-	private void openCheckinWizard(Document document) {
+	private void openCheckinWizard(IDocument document) {
 		CheckinWizard wizard = new CheckinWizard( document, true );
 		wizard.setInitialContent(getFile(), getMimeType() );
 
