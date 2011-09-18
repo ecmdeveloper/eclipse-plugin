@@ -42,7 +42,7 @@ import com.filenet.api.core.Factory;
  * @author Ricardo.Belfor
  *
  */
-public class SaveTask extends DocumentTask implements ISaveTask{
+public class SaveTask extends DocumentTask implements ISaveTask {
 
 	private Collection<Object> contents;
 	private String mimeType;
