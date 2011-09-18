@@ -47,6 +47,18 @@ public class ImportObjectStoreWizard extends AbstractImportObjectStoreWizard
 				
 				return objectStoreConnection;
 			}
+
+			@Override
+			protected boolean isConnectionFieldsSet() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			protected boolean validateInput() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 			
 		};
 	}
