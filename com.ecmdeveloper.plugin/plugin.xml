@@ -77,16 +77,6 @@
       </handler>
    </extension>
    <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="com.ecmdeveloper.plugin.tester.DocumentPropertyTester"
-            id="com.ecmdeveloper.plugin.documentPropertyTester"
-            namespace="com.ecmdeveloper.plugin"
-            properties="isCheckedOut"
-            type="java.lang.Object">
-      </propertyTester>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="com.ecmdeveloper.plugin.properties.ObjectStoreItemPropertyPage"
