@@ -26,7 +26,7 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
  * @author ricardo.belfor
  *
  */
-public interface ICheckoutTask extends IBaseTask {
+public interface ICheckoutTask extends IDocumentTask {
 
 	IDocument getCheckoutDocument();
 

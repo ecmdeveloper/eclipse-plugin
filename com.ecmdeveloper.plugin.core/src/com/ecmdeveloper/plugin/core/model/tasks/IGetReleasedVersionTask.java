@@ -26,7 +26,7 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
  * @author ricardo.belfor
  *
  */
-public interface IGetReleasedVersionTask extends IBaseTask {
+public interface IGetReleasedVersionTask extends IDocumentTask {
 
 	IDocument getReleasedVersionDocument();
 

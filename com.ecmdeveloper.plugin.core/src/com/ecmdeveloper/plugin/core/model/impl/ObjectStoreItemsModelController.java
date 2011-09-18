@@ -31,7 +31,7 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
 import com.ecmdeveloper.plugin.core.model.tasks.CreateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDeleteTask;
-import com.ecmdeveloper.plugin.core.model.tasks.DocumentTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IDocumentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IAddObjectStoreTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IConnectConnectionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
@@ -77,7 +77,7 @@ public class ObjectStoreItemsModelController implements TaskListener {
 			handleUpdateTaskCompleted(taskCompleteEvent);
 		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CreateTask.class) ) {
 			handleCreateTaskCompleted(taskCompleteEvent);
-		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, DocumentTask.class) ) {
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IDocumentTask.class) ) {
 			handleDocumentTaskCompleted(taskCompleteEvent);
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IAddObjectStoreTask.class) ) {
 			handleAddObjectStoreTask(taskCompleteEvent);
@@ -174,7 +174,7 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	}
 
 	private void handleDocumentTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		DocumentTask documentTask = (DocumentTask) taskCompleteEvent.getSource();
+		IDocumentTask documentTask = (IDocumentTask) taskCompleteEvent.getSource();
 		IObjectStoreItem objectStoreItem = documentTask.getDocument();
  		fireObjectStoreItemsChanged(null, null, new IObjectStoreItem[] { objectStoreItem } );
 		refreshSimilarObjects(objectStoreItem);

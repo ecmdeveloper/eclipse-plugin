@@ -24,6 +24,6 @@ package com.ecmdeveloper.plugin.core.model.tasks;
  * @author ricardo.belfor
  *
  */
-public interface ICheckinTask extends IBaseTask {
+public interface ICheckinTask extends IDocumentTask {
 
 }
