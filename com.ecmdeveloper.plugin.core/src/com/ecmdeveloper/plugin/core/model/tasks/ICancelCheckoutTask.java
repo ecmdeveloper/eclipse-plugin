@@ -24,6 +24,6 @@ package com.ecmdeveloper.plugin.core.model.tasks;
  * @author ricardo.belfor
  *
  */
-public interface ICancelCheckoutTask extends IBaseTask {
+public interface ICancelCheckoutTask extends IDocumentTask {
 
 }

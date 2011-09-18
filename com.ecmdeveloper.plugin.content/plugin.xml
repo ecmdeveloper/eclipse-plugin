@@ -532,6 +532,33 @@
                </visibleWhen>
             </command>
          </menu>
+         <command
+               commandId="com.ecmdeveloper.plugin.downloadThisDocument"
+               icon="icons/page_save.png"
+               label="Download"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
          <menu
                icon="icons/page_save.png"
                label="Download">
