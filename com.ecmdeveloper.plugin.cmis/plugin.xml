@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="com.ecmdeveloper.plugin.cmis.views.RepositoryView"
+            id="com.ecmdeveloper.plugin.cmis.repositoryView"
+            name="Repository View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            id="com.ecmdeveloper.plugin.cmis.category"
+            name="CMIS">
+      </category>
+      <wizard
+            category="com.ecmdeveloper.plugin.cmis.category"
+            class="com.ecmdeveloper.plugin.cmis.wizard.ImportRepositoryWizard"
+            icon="icons/database.png"
+            id="com.ecmdeveloper.plugin.cmis.wizard.importRepository"
+            name="Repository">
+         <description>
+            Import a CMIS Repository
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:com.ecmdeveloper.plugin.ui.importObjectStore">
+         <command
+               commandId="com.ecmdeveloper.plugin.cmis.importRepository"
+               style="push"
+               tooltip="Imports an Repository">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Import Repository"
+            id="com.ecmdeveloper.plugin.cmis.importRepository"
+            name="Import CMIS Repository">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.ecmdeveloper.plugin.cmis.handlers.ImportRepositoryHandler"
+            commandId="com.ecmdeveloper.plugin.cmis.importRepository">
+      </handler>
+   </extension>
+
+</plugin>
