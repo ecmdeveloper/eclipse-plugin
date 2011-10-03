@@ -22,8 +22,8 @@ package com.ecmdeveloper.plugin.properties.input;
 
 import org.eclipse.swt.widgets.Composite;
 
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.properties.renderer.StringInputRenderer;
-import com.filenet.api.meta.PropertyDescriptionInteger32;
 
 /**
  * @author Ricardo.Belfor
@@ -33,11 +33,11 @@ public class IntegerPropertyInput extends PropertyInputBase {
 
 	private StringInputRenderer inputRenderer;
 
-	public IntegerPropertyInput(PropertyDescriptionInteger32 propertyDescription) {
+	public IntegerPropertyInput(IPropertyDescription propertyDescription) {
 		super(propertyDescription);
 		
-		String displayName = propertyDescription.get_DisplayName();
-		String descriptiveText = propertyDescription.get_DescriptiveText();
+		String displayName = propertyDescription.getDisplayName();
+		String descriptiveText = propertyDescription.getDescriptiveText();
 		inputRenderer = new StringInputRenderer(displayName, descriptiveText, null );
 	}
 

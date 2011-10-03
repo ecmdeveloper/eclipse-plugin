@@ -29,8 +29,8 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.properties.editors.input.ObjectStoreItemEditorInput;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.Property;
@@ -42,7 +42,7 @@ import com.ecmdeveloper.plugin.properties.model.Property;
 public class PropertyContentProvider implements IStructuredContentProvider, PropertyChangeListener {
 
 	private static final String PROPERTY_NOT_FOUND_MESSAGE = "Property {0} not found in properties collection";
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 	private PropertiesObject propertiesObject;
 	private TableViewer viewer;
 	private ArrayList<Property> properties;
@@ -57,7 +57,7 @@ public class PropertyContentProvider implements IStructuredContentProvider, Prop
 
 		properties = new ArrayList<Property>();
 		
-		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
+		for ( IPropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
 			properties.add( new Property( propertiesObject, propertyDescription ) );
 		}
 		return properties;

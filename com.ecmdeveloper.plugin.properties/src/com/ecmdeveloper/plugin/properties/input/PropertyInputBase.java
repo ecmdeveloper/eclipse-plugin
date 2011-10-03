@@ -1,12 +1,12 @@
 package com.ecmdeveloper.plugin.properties.input;
 
-import com.filenet.api.meta.PropertyDescription;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 
 public abstract class PropertyInputBase implements IPropertyInput {
 
-	protected PropertyDescription propertyDescription;
+	protected IPropertyDescription propertyDescription;
 	
-	public PropertyInputBase( PropertyDescription propertyDescription ) {
+	public PropertyInputBase( IPropertyDescription propertyDescription ) {
 		this.propertyDescription = propertyDescription;
 	}
 }

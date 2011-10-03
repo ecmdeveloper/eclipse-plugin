@@ -20,6 +20,11 @@
 
 package com.ecmdeveloper.plugin.core.model;
 
+import java.util.Collection;
+
+import com.ecmdeveloper.plugin.core.model.constants.ClassDescriptionFolderType;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
+
 /**
  * @author ricardo.belfor
  *
@@ -32,4 +37,9 @@ public interface IObjectStore extends IObjectStoreItem {
 
 	void connect();
 
+	Collection<IClassDescriptionFolder> getClassDescriptionFolders();
+
+	IClassDescriptionFolder getClassDescriptionFolder( ClassDescriptionFolderType classDescriptionFolderType);
+
+	String getDefaultClassName(ClassType classType);
 }

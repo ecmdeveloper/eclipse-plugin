@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
@@ -39,12 +40,15 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 
+import com.ecmdeveloper.plugin.cmis.model.tasks.GetChoiceValuesTask;
 import com.ecmdeveloper.plugin.core.model.ChoicePlaceholder;
+import com.ecmdeveloper.plugin.core.model.ClassesManager;
 import com.ecmdeveloper.plugin.core.model.IChoice;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskListener;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChoiceValuesTask;
 
 
 /**
@@ -95,9 +99,13 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 		this.objectStore = objectStore;
 		this.propertyDescription = internalPropertyDescription;
 		name = propertyDescription.getQueryName();
-		displayName = propertyDescription.getDisplayName();
+		displayName = propertyDescription.getDisplayName() != null ? propertyDescription
+				.getDisplayName() : name;
 		propertyType = fromTypeID(propertyDescription.getPropertyType() );
 		choiceList = propertyDescription.getChoices();
+		if ( choiceList != null && !choiceList.isEmpty() ) {
+			System.out.println( choiceList );
+		}
 		required = propertyDescription.isRequired();
 		multivalue = !propertyDescription.getCardinality().equals( org.apache.chemistry.opencmis.commons.enums.Cardinality.SINGLE );
 		systemOwned = false; // TODO: propertyDescription.getUpdatability().get_IsSystemOwned();
@@ -265,34 +273,34 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 
 	@Override
 	public boolean hasChoices() {
-		return choiceList != null;
+		return choiceList != null && !choiceList.isEmpty();
 	}
 	
 	@Override
 	public Collection<IChoice> getChoices() {
-		if ( choiceList == null ) {
+		if ( choiceList == null || choiceList.isEmpty() ) {
 			return null;
 		}
 		
 		if ( choices == null ) {
+
 			choices = new ArrayList<IChoice>();
 			choices.add( new ChoicePlaceholder() );
 
-// FIXME			
-//			GetChoiceValuesTask task = new GetChoiceValuesTask(choiceList, objectStore);
-//			task.addTaskListener(this);
-//			ClassesManager.getManager().executeTaskASync(task);
+			IGetChoiceValuesTask task = new GetChoiceValuesTask(choiceList, objectStore);
+			task.addTaskListener(this);
+			ClassesManager.getManager().executeTaskASync(task);
 		}
 		return choices;
 	}
 
 	@Override
 	public void onTaskComplete(TaskCompleteEvent taskCompleteEvent) {
-//		if ( taskCompleteEvent.getSource().getClass().equals(GetChoiceValuesTask.class) ) {
-//			GetChoiceValuesTask task = (GetChoiceValuesTask) taskCompleteEvent.getSource();
-//			choices = task.getChoices();
-//			firePropertyChange("Choices", null, null);
-//		}
+		if ( taskCompleteEvent.getSource().getClass().equals(GetChoiceValuesTask.class) ) {
+			GetChoiceValuesTask task = (GetChoiceValuesTask) taskCompleteEvent.getSource();
+			choices = task.getChoices();
+			firePropertyChange("Choices", null, null);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -332,12 +340,15 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 	private StringBuffer getGeneralPropertyDescription() {
 		
 		StringBuffer description = new StringBuffer();
-		description.append( propertyDescription.getDescription() );
-		if ( propertyDescription.getDescription().trim().length() != 0 && 
-				! propertyDescription.getDescription().trim().endsWith(".") ) {
-			description.append(".");
+		String description2 = propertyDescription.getDescription();
+		if ( description2 != null) {
+			description.append( description2 );
+			if ( propertyDescription.getDescription().trim().length() != 0 && 
+					! propertyDescription.getDescription().trim().endsWith(".") ) {
+				description.append(".");
+			}
 		}
-
+		
 		description.append(MessageFormat.format(PROPERTY_TYPE_TEXT,
 				(required ? "" : NOT_TEXT), propertyType.toString() ));
 

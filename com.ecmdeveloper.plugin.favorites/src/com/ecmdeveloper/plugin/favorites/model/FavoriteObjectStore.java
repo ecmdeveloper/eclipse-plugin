@@ -27,6 +27,7 @@ import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.Placeholder;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 
 /**
  * @author ricardo.belfor
@@ -50,7 +51,7 @@ public class FavoriteObjectStore {
 		if ( children == null )
 		{
 			children = new ArrayList<IObjectStoreItem>();
-			children.add( new Placeholder( Placeholder.Type.LOADING ) );
+			children.add( new Placeholder( PlaceholderType.LOADING ) );
 
 			FavoritesManager.getInstance().fetchFavorites(this);
 		}		

@@ -24,8 +24,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.SavedPropertiesObject;
@@ -38,11 +38,11 @@ import com.ecmdeveloper.plugin.properties.util.IconFiles;
  */
 public class ObjectStoreItemEditorInput implements IEditorInput {
 
-	protected ObjectStoreItem objectStoreItem;
-	private ClassDescription classDescription;
+	protected IObjectStoreItem objectStoreItem;
+	private IClassDescription classDescription;
 	protected PropertiesObject propertiesObject;
 	
-	public ObjectStoreItemEditorInput(ObjectStoreItem objectStoreItem, ClassDescription classDescription) {
+	public ObjectStoreItemEditorInput(IObjectStoreItem objectStoreItem, IClassDescription classDescription) {
 		this.objectStoreItem = objectStoreItem;
 		this.classDescription = classDescription;
 
@@ -57,7 +57,7 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 		return propertiesObject;
 	}
 
-	public ClassDescription getClassDescription() {
+	public IClassDescription getClassDescription() {
 		return classDescription;
 	}
 
@@ -89,9 +89,9 @@ public class ObjectStoreItemEditorInput implements IEditorInput {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
-		if ( adapter.equals( ObjectStoreItem.class) ) {
+		if ( adapter.equals( IObjectStoreItem.class) ) {
 			return objectStoreItem;
-		} else if ( adapter.equals( ClassDescription.class ) ) {
+		} else if ( adapter.equals( IClassDescription.class ) ) {
 			return classDescription;
 		} else if ( adapter.equals( PropertiesObject.class ) ) {
 			return propertiesObject;

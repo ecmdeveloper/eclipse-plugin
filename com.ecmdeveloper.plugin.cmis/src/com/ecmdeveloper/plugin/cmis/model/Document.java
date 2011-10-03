@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.cmis.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 
 	private Map<String,Object> properties;
 
-	private List<Property<?>> documentProperties;
+	private Map<String,Property<?>> documentProperties;
 
 	private String className;
 	
@@ -118,8 +119,24 @@ public class Document extends ObjectStoreItem implements IDocument {
 
 	@Override
 	public Object getValue(String propertyName) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		if ( !saved ) {
+			return null;
+		}
+
+		Property<?> property = documentProperties.get(propertyName);
+		Object objectValue = null;
+		if ( property != null ) {
+			objectValue = property.getValue();
+		}
+//		if ( objectValue instanceof Collection ) {
+//			ArrayList<?> values = new ArrayList( (Collection) objectValue );
+//			return values.toArray();
+//		} else if ( objectValue instanceof IndependentlyPersistableObject ) {
+//			return "TODO";
+//		}
+		return objectValue;
+		
 	}
 
 	@Override
@@ -162,13 +179,13 @@ public class Document extends ObjectStoreItem implements IDocument {
 		}
 		
 		versionLabel = document.getPropertyValue("cmis:versionLabel");
-		documentProperties = document.getProperties();
+		documentProperties = new HashMap<String, Property<?>>();
 		
-		for ( Property<?> propery : documentProperties ) {
-			System.out.println( propery.toString() );
+		for ( Property<?> propery : document.getProperties() ) {
+			documentProperties.put(propery.getId(), propery );
 		}
 	}
-
+	
 	@Override
 	public void setName(String name) {
 		this.name = name;
@@ -177,8 +194,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 
 	@Override
 	public void setValue(String propertyName, Object value) throws Exception {
-		// TODO Auto-generated method stub
-		
+		properties.put(PropertyIds.NAME, name );
 	}
 
 	@Override

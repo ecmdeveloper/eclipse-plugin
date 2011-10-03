@@ -33,14 +33,15 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.input.ObjectStoreItemEditorInput;
-import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -54,11 +55,11 @@ public class OpenObjectStoreItemEditorJob extends Job {
 	private static final String MONITOR_MESSAGE = "Opening Editor";
 	private static final String FAILED_MESSAGE = "Opening Editor for \"{0}\" failed";
 	
-	private ObjectStoreItem objectStoreItem;
+	private IObjectStoreItem objectStoreItem;
 	private IWorkbenchWindow window;
 	private String editorId;
 	
-	public OpenObjectStoreItemEditorJob(ObjectStoreItem objectStoreItem, String editorId, IWorkbenchWindow window) {
+	public OpenObjectStoreItemEditorJob(IObjectStoreItem objectStoreItem, String editorId, IWorkbenchWindow window) {
 		super(JOB_NAME);
 		this.objectStoreItem = objectStoreItem;
 		this.window = window;
@@ -81,41 +82,43 @@ public class OpenObjectStoreItemEditorJob extends Job {
 	private void openNewEditor(IProgressMonitor monitor) throws Exception {
 		
 		monitor.setTaskName( FETCHING_CLASS_DESCRIPTIONS_TASK_MESSAGE );
-		ClassDescription classDescription = getClassDescription();
+		IClassDescription classDescription = getClassDescription();
 		monitor.worked(1);
 		
 		monitor.setTaskName(FETCHING_PROPERTY_VALUES_TASK_MESSAGE );
 		fetchProperties(classDescription);
 		monitor.worked(1);
 
-		IEditorInput input = new ObjectStoreItemEditorInput( (ObjectStoreItem) objectStoreItem, classDescription );
+		IEditorInput input = new ObjectStoreItemEditorInput( objectStoreItem, classDescription );
 		openEditorWindow(input, editorId);
 	}
 
-	private void fetchProperties(ClassDescription classDescription) throws Exception {
+	private void fetchProperties(IClassDescription classDescription) throws Exception {
 		String[] propertyNames = getPropertyNames(classDescription);
 		
 		if ( propertyNames.length != 0 ) {
-			FetchPropertiesTask task = new FetchPropertiesTask(objectStoreItem, propertyNames);
+			ITaskFactory taskFactory = objectStoreItem.getTaskFactory();
+			IFetchPropertiesTask task = taskFactory.getFetchPropertiesTask(objectStoreItem, propertyNames);
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 		}
 	}
 
-	private String[] getPropertyNames(ClassDescription classDescription) {
+	private String[] getPropertyNames(IClassDescription classDescription) {
 
 		Set<String> propertyNames = new HashSet<String>();
-		for (PropertyDescription propertyDescription : classDescription.getPropertyDescriptions()) {
+		for (IPropertyDescription propertyDescription : classDescription.getPropertyDescriptions()) {
 			propertyNames.add(propertyDescription.getName());
 		}
 
 		return propertyNames.toArray(new String[0]);
 	}
 
-	private ClassDescription getClassDescription() throws Exception {
+	private IClassDescription getClassDescription() throws Exception {
 
-		GetClassDescriptionTask task = new GetClassDescriptionTask(objectStoreItem.getClassName(),
+		ITaskFactory taskFactory = objectStoreItem.getTaskFactory();
+		IGetClassDescriptionTask task = taskFactory.getGetClassDescriptionTask(objectStoreItem.getClassName(),
 				objectStoreItem.getObjectStore());
-		ClassDescription classDescription = (ClassDescription) Activator.getDefault().getTaskManager()
+		IClassDescription classDescription = (IClassDescription) Activator.getDefault().getTaskManager()
 				.executeTaskSync(task);
 		return classDescription;
 	}

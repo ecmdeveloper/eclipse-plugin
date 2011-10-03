@@ -40,4 +40,5 @@ public interface IDocument extends IObjectStoreItem {
 	
 	boolean canCheckOut();
 
+	String getVersionLabel();	
 }

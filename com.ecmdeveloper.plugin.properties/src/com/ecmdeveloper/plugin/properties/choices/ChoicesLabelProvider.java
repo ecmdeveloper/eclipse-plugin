@@ -22,8 +22,8 @@ package com.ecmdeveloper.plugin.properties.choices;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import com.ecmdeveloper.plugin.classes.model.Choice;
-import com.ecmdeveloper.plugin.classes.model.ChoicePlaceholder;
+import com.ecmdeveloper.plugin.core.model.ChoicePlaceholder;
+import com.ecmdeveloper.plugin.core.model.IChoice;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
 
@@ -34,7 +34,7 @@ public class ChoicesLabelProvider extends LabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		Choice choice = (Choice) element;
+		IChoice choice = (IChoice) element;
 		if ( choice instanceof ChoicePlaceholder ) {
 			return Activator.getImage( IconFiles.CHOICES_PLACEHOLDER );
 		}
@@ -46,7 +46,7 @@ public class ChoicesLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		Choice choice = (Choice) element;
+		IChoice choice = (IChoice) element;
 		if ( choice.isSelectable() ) {
 			return getSelectableChoiceText(choice);
 		} else {
@@ -54,7 +54,7 @@ public class ChoicesLabelProvider extends LabelProvider {
 		}
 	}
 
-	private String getSelectableChoiceText(Choice choice) {
+	private String getSelectableChoiceText(IChoice choice) {
 		if ( choice.getValue().toString().equals( choice.getDisplayName() ) ) {
 			return choice.getDisplayName();
 		} else {
@@ -63,7 +63,7 @@ public class ChoicesLabelProvider extends LabelProvider {
 		}
 	}
 
-	private StringBuffer getDisplayNameAndValue(Choice choice) {
+	private StringBuffer getDisplayNameAndValue(IChoice choice) {
 		StringBuffer text = new StringBuffer();
 		text.append( choice.getDisplayName() );
 		text.append( CHOICE_VALUE_PREFIX );

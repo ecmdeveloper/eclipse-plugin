@@ -33,15 +33,16 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
-import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.properties.Activator;
-import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -55,7 +56,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	private IWorkbench workbench;
 	private ClassSelectionWizardPage classSelectionPage;
 	private ParentSelectionWizardPage parentSelectionWizardPage;
-	private ClassDescription defaultClassDescription;
+	private IClassDescription defaultClassDescription;
 	
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -76,26 +77,26 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	protected abstract ClassType getClassType();
 
 	public String getParentObjectStoreId() {
-		ObjectStoreItem parent = getParent();
+		IObjectStoreItem parent = getParent();
 		if ( parent != null ) {
 			return parent.getObjectStore().getId();
 		}
 		return null;
 	}
 
-	public ObjectStore getParentObjectStore() {
-		ObjectStoreItem parent = getParent();
+	public IObjectStore getParentObjectStore() {
+		IObjectStoreItem parent = getParent();
 		if ( parent != null ) {
 			return parent.getObjectStore();
 		}
 		return null;
 	}
 	
-	private ObjectStoreItem getInitialSelection() {
+	private IObjectStoreItem getInitialSelection() {
 		if ( selection != null && selection.size() == 1 ) {
 			Object object = selection.iterator().next();
-			if ( object instanceof Folder || object instanceof ObjectStore ) {
-				return (ObjectStoreItem) object;
+			if ( object instanceof IFolder || object instanceof IObjectStore ) {
+				return (IObjectStoreItem) object;
 			} 
 		}
 		return null;
@@ -104,7 +105,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	@Override
 	public boolean performFinish() {
 		
-		final ObjectStoreItem parent = getParent();
+		final IObjectStoreItem parent = getParent();
 		if ( parent == null ) {
 			return false;
 		}
@@ -124,7 +125,7 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 
 	protected abstract IEditorInput getEditorInput();
 
-	public void fetchDefaultClassDescription(final ObjectStore objectStore) {
+	public void fetchDefaultClassDescription(final IObjectStore objectStore) {
 
 		if ( defaultClassDescription == null && objectStore != null) {
 			try {
@@ -138,21 +139,21 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 
 	protected abstract String getDefaultClassName();
 	
-	protected ClassDescription getClassDescription() {
-		ClassDescription classDescription = classSelectionPage.getClassDescription();
+	protected IClassDescription getClassDescription() {
+		IClassDescription classDescription = classSelectionPage.getClassDescription();
 		if ( classDescription == null ) {
 			return defaultClassDescription;
 		}
 		return classDescription;
 	}
 
-	public ClassDescription getDefaultClassDescription() {
+	public IClassDescription getDefaultClassDescription() {
 		fetchDefaultClassDescription( getParentObjectStore() );
 		return defaultClassDescription;
 	}
 
-	protected ObjectStoreItem getParent() {
-		ObjectStoreItem parent = parentSelectionWizardPage.getSelection();
+	protected IObjectStoreItem getParent() {
+		IObjectStoreItem parent = parentSelectionWizardPage.getSelection();
 		return parent;
 	}
 
@@ -171,10 +172,10 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 	
 	class GetDefaultClassDescriptionRunner implements IRunnableWithProgress {
 
-		private ObjectStore objectStore;
+		private IObjectStore objectStore;
 		private String className;
 		
-		public GetDefaultClassDescriptionRunner(ObjectStore objectStore, String className) {
+		public GetDefaultClassDescriptionRunner(IObjectStore objectStore, String className) {
 			this.objectStore = objectStore;
 			this.className = className;
 		}
@@ -187,9 +188,10 @@ public abstract class NewObjectStoreItemWizard extends Wizard implements INewWiz
 			monitor.done();
 		}
 
-		private void getDefaultClassDescription(final ObjectStore objectStore) {
+		private void getDefaultClassDescription(final IObjectStore objectStore) {
 			try {
-				GetClassDescriptionTask task = new GetClassDescriptionTask( className, objectStore );
+				ITaskFactory taskFactory = objectStore.getTaskFactory();
+				IGetClassDescriptionTask task = taskFactory.getGetClassDescriptionTask( className, objectStore );
 				Activator.getDefault().getTaskManager().executeTaskSync(task);
 				defaultClassDescription = task.getClassDescription();
 			} catch (ExecutionException e) {

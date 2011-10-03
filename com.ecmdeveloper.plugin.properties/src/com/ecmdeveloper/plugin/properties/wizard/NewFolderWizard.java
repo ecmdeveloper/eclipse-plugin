@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbench;
 
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
 import com.ecmdeveloper.plugin.properties.editors.input.NewFolderEditorInput;
 
@@ -35,7 +35,6 @@ import com.ecmdeveloper.plugin.properties.editors.input.NewFolderEditorInput;
 public class NewFolderWizard extends NewObjectStoreItemWizard {
 
 	private static final String WINDOW_TITLE = "New Folder";
-	private static final String DEFAULT_CLASS_NAME = "Folder";
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -59,6 +58,6 @@ public class NewFolderWizard extends NewObjectStoreItemWizard {
 
 	@Override
 	protected String getDefaultClassName() {
-		return DEFAULT_CLASS_NAME;
+		return getParentObjectStore().getDefaultClassName(ClassType.FOLDER_CLASSES);
 	}
 }

@@ -31,9 +31,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.ClassesManager;
-import com.ecmdeveloper.plugin.classes.model.task.RefreshClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.ClassesManager;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
 
 /**
  * @author Ricardo.Belfor
@@ -52,21 +53,24 @@ public class RefreshClassDescriptionHandler extends AbstractHandler {
 			return null;
 		}
 
-		ArrayList<ClassDescription> elementsRefreshed = getSelectedClassDescriptions(selection);
+		ArrayList<IClassDescription> elementsRefreshed = getSelectedClassDescriptions(selection);
 
-		RefreshClassDescriptionTask refreshTask = new RefreshClassDescriptionTask( elementsRefreshed.toArray(new ClassDescription[0] ) );
-		ClassesManager.getManager().executeTaskASync(refreshTask);
+		if ( elementsRefreshed.size() > 0) {
+			ITaskFactory taskFactory = elementsRefreshed.get(0).getObjectStore().getTaskFactory();
+			IRefreshClassDescriptionTask refreshTask = taskFactory.getRefreshClassDescriptionTask( elementsRefreshed.toArray(new IClassDescription[0] ) );
+			ClassesManager.getManager().executeTaskASync(refreshTask);
+		}
 		
 		return null;
 	}
 
-	private ArrayList<ClassDescription> getSelectedClassDescriptions(ISelection selection) {
+	private ArrayList<IClassDescription> getSelectedClassDescriptions(ISelection selection) {
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		
-		ArrayList<ClassDescription> selectedClassDescriptions = new ArrayList<ClassDescription>();
+		ArrayList<IClassDescription> selectedClassDescriptions = new ArrayList<IClassDescription>();
 		
 		while (iterator.hasNext()) {
-			ClassDescription selectedObject = (ClassDescription) iterator.next();
+			IClassDescription selectedObject = (IClassDescription) iterator.next();
 			selectedClassDescriptions.add( selectedObject );
 		}
 		return selectedClassDescriptions;

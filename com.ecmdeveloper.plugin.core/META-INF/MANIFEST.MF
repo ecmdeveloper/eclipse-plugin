@@ -12,4 +12,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: com.ecmdeveloper.plugin.core.model,
  com.ecmdeveloper.plugin.core.model.constants,
  com.ecmdeveloper.plugin.core.model.tasks,
+ com.ecmdeveloper.plugin.core.model.tasks.classes,
  com.ecmdeveloper.plugin.core.util

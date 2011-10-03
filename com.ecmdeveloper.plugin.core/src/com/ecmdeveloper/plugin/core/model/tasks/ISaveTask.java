@@ -20,10 +20,14 @@
 
 package com.ecmdeveloper.plugin.core.model.tasks;
 
+import com.ecmdeveloper.plugin.core.model.IDocument;
+
 /**
  * @author ricardo.belfor
  *
  */
 public interface ISaveTask extends IDocumentTask {
+
+	IDocument getReservationDocument();
 
 }

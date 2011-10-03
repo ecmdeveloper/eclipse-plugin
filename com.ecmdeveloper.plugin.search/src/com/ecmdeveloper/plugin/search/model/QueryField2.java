@@ -20,7 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.model;
 
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 
 /**
  * @author ricardo.belfor
@@ -45,7 +45,7 @@ public class QueryField2 implements IQueryField {
 	private boolean selected;
 	private String alias;
 
-	public QueryField2(PropertyDescription propertyDescription, IQueryTable queryTable) {
+	public QueryField2(IPropertyDescription propertyDescription, IQueryTable queryTable) {
 		this.queryTable = queryTable;
 		this.name = propertyDescription.getName();
 		this.displayName = propertyDescription.getDisplayName();
@@ -70,7 +70,7 @@ public class QueryField2 implements IQueryField {
 		this.searchable = searchable;
 	}
 
-	private QueryFieldType getQueryFieldType(PropertyDescription propertyDescription) {
+	private QueryFieldType getQueryFieldType(IPropertyDescription propertyDescription) {
 		switch ( propertyDescription.getPropertyType() ) {
 		case BINARY: return QueryFieldType.BINARY;
 		case BOOLEAN: return QueryFieldType.BOOLEAN;

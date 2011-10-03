@@ -22,8 +22,8 @@ package com.ecmdeveloper.plugin.properties.input;
 
 import org.eclipse.swt.widgets.Composite;
 
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.properties.renderer.ReadOnlyInputRenderer;
-import com.filenet.api.meta.PropertyDescription;
 
 /**
  * @author Ricardo.Belfor
@@ -33,11 +33,11 @@ public class ReadOnlyPropertyInput extends PropertyInputBase {
 
 	private ReadOnlyInputRenderer inputRenderer;
 	
-	public ReadOnlyPropertyInput(PropertyDescription propertyDescription) {
+	public ReadOnlyPropertyInput(IPropertyDescription propertyDescription) {
 		super(propertyDescription);
 	
-		String displayName = propertyDescription.get_DisplayName();
-		String descriptiveText = propertyDescription.get_DescriptiveText();
+		String displayName = propertyDescription.getDisplayName();
+		String descriptiveText = propertyDescription.getDescriptiveText();
 		inputRenderer = new ReadOnlyInputRenderer(displayName, descriptiveText );
 	}
 

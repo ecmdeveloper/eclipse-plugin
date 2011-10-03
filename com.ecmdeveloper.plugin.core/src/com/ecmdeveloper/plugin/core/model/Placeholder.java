@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.core.model;
 
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import org.eclipse.swt.graphics.Image;
@@ -26,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 import com.ecmdeveloper.plugin.core.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.constants.Feature;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.util.IconFiles;
 
@@ -34,22 +36,14 @@ import com.ecmdeveloper.plugin.core.util.IconFiles;
  * @author Ricardo.Belfor
  *
  */
-public class Placeholder implements IObjectStoreItem {
+public class Placeholder extends AbstractPlaceholder implements IObjectStoreItem {
 
-	private final Type type;
-	private String name;
-	
-	public enum Type {
-		LOADING,
-		ERROR,
-		MESSAGE
+	public Placeholder() {
+		super();
 	}
-	
-	public Placeholder(Placeholder.Type type) {
-		this.type = type;
-		if ( type.equals(Type.LOADING) ) {
-			this.name = "Loading...";
-		}
+
+	public Placeholder(PlaceholderType type) {
+		super(type);
 	}
 
 	@Override
@@ -62,18 +56,8 @@ public class Placeholder implements IObjectStoreItem {
 	}
 
 	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
 	public String getDisplayName() {
-		return name;
+		return getName();
 	}
 
 	@Override
@@ -81,18 +65,6 @@ public class Placeholder implements IObjectStoreItem {
 		return null;
 	}
 	
-	public Image getImage() {
-		switch (type) {
-		case ERROR:
-			return Activator.getImage( IconFiles.ERROR );
-		case LOADING:
-			return Activator.getImage( IconFiles.HOURGLASS );
-		case MESSAGE:
-			return Activator.getImage( IconFiles.MESSAGE );		
-		}
-		throw new IllegalArgumentException();
-	}
-
 	@Override
 	public void addChild(IObjectStoreItem objectStoreItem) {
 		// TODO Auto-generated method stub
@@ -155,13 +127,10 @@ public class Placeholder implements IObjectStoreItem {
 
 	@Override
 	public void setValue(String propertyName, Object value) throws Exception {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -173,5 +142,13 @@ public class Placeholder implements IObjectStoreItem {
 	@Override
 	public boolean isSupportedFeature(Feature feature) {
 		return false;
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
 	}
 }

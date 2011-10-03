@@ -41,15 +41,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.ICustomObject;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.util.IconFiles;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
-import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
 
 /**
  * @author Ricardo.Belfor
@@ -64,13 +64,13 @@ public class ParentSelectionWizardPage extends WizardPage {
 	private static final String PAGE_NAME = "selectParentPage";
 
 	private TreeViewer viewer;
-	private ObjectStoreItem selection;
+	private IObjectStoreItem selection;
 	
-	public ObjectStoreItem getSelection() {
+	public IObjectStoreItem getSelection() {
 		return selection;
 	}
 
-	public void setSelection(ObjectStoreItem folder) {
+	public void setSelection(IObjectStoreItem folder) {
 		this.selection = folder;
 	}
 
@@ -139,8 +139,8 @@ public class ParentSelectionWizardPage extends WizardPage {
 
 		if ( dialog.open() == ElementTreeSelectionDialog.OK ) {
 			Object result = dialog.getFirstResult();
-			if ( result instanceof Folder || result instanceof ObjectStore ) {
-				selection = (ObjectStoreItem) result;
+			if ( result instanceof IFolder || result instanceof IObjectStore ) {
+				selection = (IObjectStoreItem) result;
 				setViewerInput();
 			}
 			return;
@@ -177,8 +177,8 @@ public class ParentSelectionWizardPage extends WizardPage {
 
 	private String getSelectionPathName() {
 		String pathName;
-		if ( selection instanceof Folder ) {
-			pathName = ((Folder) selection).getPathName();
+		if ( selection instanceof IFolder ) {
+			pathName = ((IFolder) selection).getPathName();
 		} else {
 			pathName = "";
 		}
@@ -189,7 +189,7 @@ public class ParentSelectionWizardPage extends WizardPage {
 	{
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if ( ( element instanceof Document || element instanceof CustomObject  ) ) {
+			if ( ( element instanceof IDocument || element instanceof ICustomObject  ) ) {
 				return false;
 			}
 			return true;

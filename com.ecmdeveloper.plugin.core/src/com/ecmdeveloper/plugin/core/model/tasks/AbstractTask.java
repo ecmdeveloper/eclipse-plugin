@@ -30,6 +30,7 @@ import java.util.List;
 public abstract class AbstractTask implements IBaseTask {
 
 	protected List<TaskListener> listeners = new ArrayList<TaskListener>();
+	private boolean asynchronous;
 	
 	@Override
 	public void addTaskListener(TaskListener taskListener) {
@@ -45,4 +46,15 @@ public abstract class AbstractTask implements IBaseTask {
 		}
 		listeners.clear();
 	}
+
+	@Override
+	public boolean isAsynchronous() {
+		return asynchronous;
+	}
+
+	@Override
+	public void setAsynchronous(boolean asynchronous) {
+		this.asynchronous = asynchronous;
+	}
+	
 }

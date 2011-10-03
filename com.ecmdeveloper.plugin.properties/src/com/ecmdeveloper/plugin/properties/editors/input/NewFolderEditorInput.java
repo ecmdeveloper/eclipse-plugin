@@ -22,8 +22,8 @@ package com.ecmdeveloper.plugin.properties.editors.input;
 
 import java.text.MessageFormat;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
 /**
@@ -37,7 +37,7 @@ public class NewFolderEditorInput extends NewObjectStoreItemEditorInput {
 
 	private static int newFolderIndex = 0;
 	
-	public NewFolderEditorInput(ClassDescription classDescription, ObjectStoreItem parent) {
+	public NewFolderEditorInput(IClassDescription classDescription, IObjectStoreItem parent) {
 		super(classDescription, parent);
 		
 		try {

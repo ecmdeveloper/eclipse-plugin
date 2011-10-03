@@ -26,8 +26,8 @@ import java.util.Map;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
 /**
@@ -87,7 +87,7 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 	@Override
 	public Object getPageKey(Object object) {
 		Property property = (Property) object;
-		PropertyDescription propertyDescription = property.getPropertyDescription();
+		IPropertyDescription propertyDescription = property.getPropertyDescription();
 		return PropertiesInputDetailsPageProvider.getPageKey(propertyDescription.getPropertyType(),
 				propertyDescription.hasChoices(), property.isMultivalue(), !property.isSettableOnEdit() );
 	}

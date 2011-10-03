@@ -32,13 +32,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.ClassesManager;
-import com.ecmdeveloper.plugin.classes.model.Placeholder;
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.views.ClassesViewContentProvider;
 import com.ecmdeveloper.plugin.classes.views.ClassesViewLabelProvider;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.ClassesManager;
+import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 
 /**
  * @author Ricardo.Belfor
@@ -60,7 +60,7 @@ public class ClassSelectionWizardPage extends WizardPage {
 		this.classType = classType;
 	}
 
-	public ClassDescription getClassDescription() {
+	public IClassDescription getClassDescription() {
 		
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		if ( selection.isEmpty() ) {
@@ -68,8 +68,8 @@ public class ClassSelectionWizardPage extends WizardPage {
 		}
 		
 		Object selectedObject = selection.iterator().next();
-		if ( selectedObject instanceof ClassDescription && ! (selectedObject instanceof Placeholder) ) {
-			return (ClassDescription) selectedObject;
+		if ( selectedObject instanceof IClassDescription && ! (selectedObject instanceof ClassesPlaceholder) ) {
+			return (IClassDescription) selectedObject;
 		}
 		return null;
 	}
@@ -101,7 +101,7 @@ public class ClassSelectionWizardPage extends WizardPage {
 		setPageComplete( getClassDescription() != null );
 	}
 
-	public void setDefaultClassDescription( ClassDescription classDescription ) {
+	public void setDefaultClassDescription( IClassDescription classDescription ) {
 		classesViewContentProvider.setRootClassDescription(classDescription);
 		viewer.refresh();
 	}
@@ -120,8 +120,8 @@ public class ClassSelectionWizardPage extends WizardPage {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if ( element instanceof ObjectStore ) {
-				return objectStoreId.equalsIgnoreCase( ((ObjectStore) element).getId() );
+			if ( element instanceof IObjectStore ) {
+				return objectStoreId.equalsIgnoreCase( ((IObjectStore) element).getId() );
 			}
 			return true;
 		}

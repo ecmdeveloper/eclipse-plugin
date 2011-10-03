@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.QueryTable2;
 import com.ecmdeveloper.plugin.util.PluginMessage;
@@ -60,7 +60,7 @@ public class TableSelectionWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
-		final ClassDescription classDescription = classSelectionPage.getClassDescription();
+		final IClassDescription classDescription = classSelectionPage.getClassDescription();
 		if ( classDescription != null) {
 			getShell().getDisplay().syncExec( new Runnable() {
 				@Override
@@ -74,7 +74,7 @@ public class TableSelectionWizard extends Wizard {
 									Collection<Object> children = classDescription.getChildren(true);
 									for ( Object childClassDescription : children ) {
 										
-										ClassDescription childClassDescription2 = (ClassDescription) childClassDescription;
+										IClassDescription childClassDescription2 = (IClassDescription) childClassDescription;
 										monitor.subTask( "Initializing table " + childClassDescription2.getDisplayName() );
 										IQueryTable childTable = new QueryTable2( childClassDescription2 );
 										queryTable.addChildQueryTable( childTable );

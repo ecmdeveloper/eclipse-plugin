@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 
-import com.ecmdeveloper.plugin.classes.model.ClassesManager;
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.model.ClassesManager;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 
 /**
  * @author Ricardo Belfor

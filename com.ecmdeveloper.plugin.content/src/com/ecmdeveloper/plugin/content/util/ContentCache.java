@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IEditorInput;
@@ -41,6 +43,12 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 public class ContentCache implements IPartListener2 {
 
 	private static final String CONTENT_CACHE_FOLDER = "content_cache";
+	
+	/** 
+	 * Filters out the following characters:  / \ [ ] : ; | = , + * ? < > \ " 
+	 */
+	private static Pattern pattern = Pattern.compile("[/\\\\\\[\\]+*:;|=,><\"]"); 
+
 	private Set<IPartService> partServicesListeningTo = new HashSet<IPartService>();
 	private Map<String,String> cacheFiles = new HashMap<String,String>();
 	private IPath parentPath;
@@ -105,7 +113,10 @@ public class ContentCache implements IPartListener2 {
 		path.append( "_" );
 		path.append( objectStoreItem.getId() );
 		
-		return path.toString();
+		String pathString = path.toString();
+
+		Matcher matcher = pattern.matcher(pathString); 
+		return matcher.replaceAll( "-" );
 	}
 	
 	public void registerAsListener(IWorkbenchWindow window ) {

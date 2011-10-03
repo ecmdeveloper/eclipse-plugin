@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.ecmdeveloper.plugin.cmis.model.Document;
+import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
@@ -185,8 +186,7 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public ICreateFolderTask getCreateFolderTask(IObjectStoreItem parent, String className,
 			Map<String, Object> propertiesMap) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CreateFolderTask((ObjectStoreItem) parent, className, propertiesMap);
 	}
 
 	@Override
@@ -217,8 +217,6 @@ public class TaskFactory implements ITaskFactory {
 
 	@Override
 	public IRefreshTask getRefreshTask(IObjectStoreItem objectStoreItem) {
-		// TODO Auto-generated method stub
-		return null;
+		return new RefreshTask(objectStoreItem);
 	}
-
 }

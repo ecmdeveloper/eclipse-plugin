@@ -43,7 +43,8 @@ import com.ecmdeveloper.plugin.ui.util.PluginLog;
  */
 public class ObjectStoresViewDoubleClickHandler extends AbstractHandler  {
 
-	public static final String VIEW_DOCUMENT_COMMAND_ID = "com.ecmdeveloper.plugin.viewReleasedDocument";
+	public static final String VIEW_RELEASED_DOCUMENT_COMMAND_ID = "com.ecmdeveloper.plugin.viewReleasedDocument";
+	public static final String VIEW_THIS_DOCUMENT_COMMAND_ID = "com.ecmdeveloper.plugin.viewThisDocument";
 	public static final String CONNECT_OBJECT_STORE_COMMAND_ID = "com.ecmdeveloper.plugin.connectObjectStore";
 	
 	private IWorkbenchWindow window;
@@ -82,7 +83,11 @@ public class ObjectStoresViewDoubleClickHandler extends AbstractHandler  {
 	private void executeCommand(IObjectStoreItem selectedObject) throws CommandException  {
 		IHandlerService handlerService = (IHandlerService) window.getService(IHandlerService.class);
 		if ( selectedObject instanceof IDocument) {
-			handlerService.executeCommand(VIEW_DOCUMENT_COMMAND_ID, null );
+			if ( ((IDocument) selectedObject).canCheckOut() ) {
+				handlerService.executeCommand(VIEW_RELEASED_DOCUMENT_COMMAND_ID, null );
+			} else {
+				handlerService.executeCommand(VIEW_THIS_DOCUMENT_COMMAND_ID, null );
+			}
 		} else if ( selectedObject instanceof IObjectStore) {
 			if ( ! ((IObjectStore)selectedObject).isConnected() ) {
 				handlerService.executeCommand(CONNECT_OBJECT_STORE_COMMAND_ID, null );

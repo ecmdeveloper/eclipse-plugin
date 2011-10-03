@@ -30,5 +30,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.TaskListener;
  */
 public interface IBaseTask extends Callable<Object> {
 
+	public boolean isAsynchronous();
+	public void setAsynchronous(boolean asynchronous);
 	public void addTaskListener(TaskListener taskListener);
 }

@@ -132,13 +132,9 @@ public class ClassDescription implements IClassDescription {
 		return objectType;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.ecmdeveloper.plugin.core.model.IClassDescription#getCBREnabled()
-	 */
 	@Override
 	public Boolean getCBREnabled() {
-		// TODO Auto-generated method stub
-		return null;
+		return objectType.isFulltextIndexed();
 	}
 
 	/* (non-Javadoc)
@@ -172,8 +168,10 @@ public class ClassDescription implements IClassDescription {
 		if ( propertyDescriptions == null ) {
 			propertyDescriptions = new ArrayList<IPropertyDescription>();
 			Map<String, PropertyDefinition<?>> propertyDefinitions = objectType.getPropertyDefinitions();
-			for ( PropertyDefinition<?> propertyDefinition : propertyDefinitions.values() ) {
-				propertyDescriptions.add( new PropertyDescription(propertyDefinition, (ObjectStore) objectStore) );
+			if ( propertyDefinitions != null && !propertyDefinitions.isEmpty() ) {
+				for ( PropertyDefinition<?> propertyDefinition : propertyDefinitions.values() ) {
+					propertyDescriptions.add( new PropertyDescription(propertyDefinition, (ObjectStore) objectStore) );
+				}
 			}
 		}
 	}

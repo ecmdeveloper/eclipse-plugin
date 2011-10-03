@@ -40,7 +40,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.content.compare.DocumentVersionCompareEditorInput;
-import com.ecmdeveloper.plugin.content.constants.PropertyNames;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.tasks.IGetContentInfoTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
@@ -56,7 +55,7 @@ public class CompareDocumentsJob extends Job {
 	private static final String SELECT_CONTENT_ELEMENT_TITLE = "Select Content Element";
 	private static final String SELECT_CONTENT_ELEMENT_MESSAGE = "Select the content elements of the document \"{0}\" to view:";
 	private static final String COMPARE_TITLE_FORMAT = "Compare(''{0}'' - ''{1}'')";
-	private static final String VERSION_NAME_FORMAT = "Version {1}.{2} {0}";
+	private static final String VERSION_NAME_FORMAT = "Version {1} {0}";
 
 	private Collection<IDocument> documents;
 	private IWorkbenchWindow window;
@@ -167,10 +166,7 @@ public class CompareDocumentsJob extends Job {
 	private String getDocumentLabel(IDocument document) {
 		
 		if ( showVersionLabels ) {
-			Object majorVersionNumber = document.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
-			Object minorVersionNumber = document.getValue( PropertyNames.MINOR_VERSION_NUMBER );
-			return MessageFormat.format(VERSION_NAME_FORMAT, document.getName(),
-					majorVersionNumber, minorVersionNumber);
+			return MessageFormat.format(VERSION_NAME_FORMAT, document.getName(), document.getVersionLabel() );
 		} else {
 			return document.getName();
 		}

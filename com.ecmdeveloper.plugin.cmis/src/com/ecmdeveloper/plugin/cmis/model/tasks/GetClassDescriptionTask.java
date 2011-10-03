@@ -25,9 +25,11 @@ import java.util.Collection;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 
+import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IClassDescriptionFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
@@ -45,7 +47,7 @@ public class GetClassDescriptionTask extends AbstractTask implements IGetClassDe
 	private String name;
 	private ObjectStore objectStore;
 	private Object parent;
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 	private Collection<Object> oldChildren;
 	private ArrayList<IClassDescription> children;
 
@@ -78,17 +80,29 @@ public class GetClassDescriptionTask extends AbstractTask implements IGetClassDe
 	@Override
 	public Object call() throws Exception {
 
-		Session session = objectStore.getSession();
-		ObjectType typeDefinition = session.getTypeDefinition(name);
+		try
+		{
+			Session session = objectStore.getSession();
+			ObjectType typeDefinition = session.getTypeDefinition(name);
+	
+			classDescription = new ClassDescription( typeDefinition, parent, objectStore );
+			
+		} catch ( Exception e ) {
+			
+			if ( !isAsynchronous() ) {
+				throw e;
+			}
+			ClassesPlaceholder classesPlaceholder = new ClassesPlaceholder(e);
+			classesPlaceholder.setParent(parent);
+			classDescription = classesPlaceholder;
+		}
 
-		classDescription = new ClassDescription( typeDefinition, parent, objectStore );
-		
 		addToParent(classDescription);
 		fireTaskCompleteEvent(TaskResult.COMPLETED);
 		return classDescription;
 	}
 
-	private void addToParent(ClassDescription classDescription) {
+	private void addToParent(IClassDescription classDescription) {
 
 		if ( parent == null ) {
 			return;

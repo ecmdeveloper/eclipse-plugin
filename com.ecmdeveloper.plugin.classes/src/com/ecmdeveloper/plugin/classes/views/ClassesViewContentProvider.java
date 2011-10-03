@@ -27,16 +27,16 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.ClassesManager;
-import com.ecmdeveloper.plugin.classes.model.ClassesManagerEvent;
-import com.ecmdeveloper.plugin.classes.model.ClassesManagerListener;
-import com.ecmdeveloper.plugin.classes.model.VirtualFolder;
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
-import com.ecmdeveloper.plugin.classes.model.constants.VirtualFolderType;
+import com.ecmdeveloper.plugin.core.model.ClassesManager;
+import com.ecmdeveloper.plugin.core.model.ClassesManagerEvent;
+import com.ecmdeveloper.plugin.core.model.ClassesManagerListener;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescriptionFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.constants.ClassDescriptionFolderType;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 
 /**
  * 
@@ -50,17 +50,17 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	private IObjectStores classesRoot;
 	private TreeViewer viewer;
 	private ClassType classesFilter;
-	private VirtualFolder rootVirtualFolder;
+	private IClassDescriptionFolder rootVirtualFolder;
 	public ClassesViewContentProvider(ClassType classesFilter) {
 		this.classesFilter = classesFilter;
 	}
 
-	public void setRootClassDescription(ClassDescription rootClassDescription ) {
+	public void setRootClassDescription(IClassDescription rootClassDescription ) {
 		Object[] virtualFolders = getVirtualFolders(rootClassDescription.getObjectStore() );
 		if ( virtualFolders.length == 1 ) {
 			ArrayList<Object> children = new ArrayList<Object>();
 			children.add( rootClassDescription );
-			rootVirtualFolder = (VirtualFolder)virtualFolders[0]; 
+			rootVirtualFolder = (IClassDescriptionFolder)virtualFolders[0]; 
 			rootVirtualFolder.setChildren(children);
 		}
 	}
@@ -114,16 +114,18 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	@Override
 	public Object[] getChildren(Object parent) {
 
-		if ( parent instanceof ObjectStore ) {
-			return getVirtualFolders(parent);
-		} else if ( parent instanceof VirtualFolder ) {
+		if ( parent instanceof IObjectStores ) {
+			return ((IObjectStores) parent).getChildren().toArray();
+		} else if ( parent instanceof IObjectStore ) {
+			return getVirtualFolders((IObjectStore) parent);
+		} else if ( parent instanceof IClassDescriptionFolder ) {
 			
-			VirtualFolder virtualFolder = (VirtualFolder) parent;
-			return virtualFolder.getChildren().toArray();
+			IClassDescriptionFolder classDescriptionFolder = (IClassDescriptionFolder) parent;
+			return classDescriptionFolder.getChildren().toArray();
 			
-		} else if (parent instanceof ClassDescription) {
+		} else if (parent instanceof IClassDescription) {
 			
-			ClassDescription classDescription = (ClassDescription) parent;
+			IClassDescription classDescription = (IClassDescription) parent;
 			return classDescription.getChildren().toArray();
 		} else if ( parent instanceof IObjectStoreItem ) {
 			Collection<IObjectStoreItem> children = ((IObjectStoreItem)parent).getChildren();
@@ -139,34 +141,33 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	}
 
 	private Object[] getAllVirtualFolders(Object parent) {
-		ArrayList<Object> virtualFolders = new ArrayList<Object>();
-		for (VirtualFolderType virtualFolderType : VirtualFolderType.values() ) {
-			virtualFolders.add( new VirtualFolder( virtualFolderType, (ObjectStore) parent )  );
+		if ( parent instanceof IObjectStore ) {
+			return ((IObjectStore) parent).getClassDescriptionFolders().toArray();
 		}
-		return virtualFolders.toArray();
+		return null;
 	}
 
-	private Object[] getVirtualFolders(Object parent) {
+	private Object[] getVirtualFolders(IObjectStore objectStore) {
 		
-		VirtualFolderType virtualFolderType = null;
+		ClassDescriptionFolderType classDescriptionFolderType = null;
 		
 		switch ( classesFilter ) {
 		case FOLDER_CLASSES:
-			virtualFolderType = VirtualFolderType.FOLDER_CLASSES;
+			classDescriptionFolderType = ClassDescriptionFolderType.FOLDER_CLASSES;
 			break;
 		case DOCUMENT_CLASSES:
-			virtualFolderType = VirtualFolderType.DOCUMENT_CLASSES;
+			classDescriptionFolderType = ClassDescriptionFolderType.DOCUMENT_CLASSES;
 			break;
 		case CUSTOM_OBJECT_CLASSES:
-			virtualFolderType = VirtualFolderType.CUSTOM_OBJECT_CLASSES;
+			classDescriptionFolderType = ClassDescriptionFolderType.CUSTOM_OBJECT_CLASSES;
 			break;
 		case ALL_CLASSES:
-			return getAllVirtualFolders(parent);
+			return getAllVirtualFolders(objectStore);
 		}
 		
-		if ( virtualFolderType != null ) {
-			VirtualFolder virtualFolder = new VirtualFolder( virtualFolderType, (ObjectStore) parent );
-			return new Object[] { virtualFolder };
+		if ( classDescriptionFolderType != null ) {
+			IClassDescriptionFolder classDescriptionFolder = objectStore.getClassDescriptionFolder( classDescriptionFolderType );
+			return new Object[] { classDescriptionFolder };
 		}
 
 		throw new UnsupportedOperationException( "Unsupported classes filter" );
@@ -176,14 +177,14 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	public Object getParent(Object child) {
 		if (child instanceof IObjectStoreItem ) {
 			return ((IObjectStoreItem)child).getParent();
-		} else if ( child instanceof VirtualFolder ) {
+		} else if ( child instanceof IClassDescriptionFolder ) {
 			
-			VirtualFolder virtualFolder = (VirtualFolder) child;
-			return virtualFolder.getParent();
+			IClassDescriptionFolder classDescriptionFolder = (IClassDescriptionFolder) child;
+			return classDescriptionFolder.getParent();
 			
-		} else if (child instanceof ClassDescription) {
+		} else if (child instanceof IClassDescription) {
 			
-			ClassDescription classDescription = (ClassDescription) child;
+			IClassDescription classDescription = (IClassDescription) child;
 			return classDescription.getParent();
 		}
 		return null;
@@ -193,10 +194,10 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 	public boolean hasChildren(Object element) {
 		if (element instanceof IObjectStoreItem) {
 			return ((IObjectStoreItem)element).hasChildren();
-		} if ( element instanceof VirtualFolder ) {
+		} if ( element instanceof IClassDescriptionFolder ) {
 			return true;
-		} if ( element instanceof ClassDescription ) {
-			return ((ClassDescription)element).hasChildren();
+		} if ( element instanceof IClassDescription ) {
+			return ((IClassDescription)element).hasChildren();
 		}
 		return true;
 	}
@@ -207,7 +208,7 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 		viewer.getTree().getDisplay().asyncExec( new Runnable() {
 			@Override
 			public void run() {
-				for ( ObjectStore objectStore: event.getObjectStores() ) {
+				for ( IObjectStore objectStore: event.getObjectStores() ) {
 						viewer.refresh(objectStore);
 				}
 			}
@@ -222,13 +223,13 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 			public void run() {
 	
 				if ( event.getItemsAdded() != null ) {
-					for ( ClassDescription classDescription : event.getItemsAdded() ) {
+					for ( IClassDescription classDescription : event.getItemsAdded() ) {
 						viewer.add( classDescription.getParent(), classDescription );
 					}
 				}
 				
 				if ( event.getItemsUpdated() != null ) {
-					for ( ClassDescription classDescription : event.getItemsUpdated() ) {
+					for ( IClassDescription classDescription : event.getItemsUpdated() ) {
 						viewer.refresh( classDescription );
 					}
 				}

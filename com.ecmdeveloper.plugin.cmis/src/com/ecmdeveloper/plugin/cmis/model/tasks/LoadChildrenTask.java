@@ -134,6 +134,7 @@ public class LoadChildrenTask extends AbstractTask implements ILoadChildrenTask 
 
 	private ObjectStore addChildren(org.apache.chemistry.opencmis.client.api.Folder folder, ObjectStore objectStore) {
 
+		folder.refresh();
 		ItemIterable<CmisObject> children = folder.getChildren();
 		
 		for (CmisObject cmisObject : children ) {

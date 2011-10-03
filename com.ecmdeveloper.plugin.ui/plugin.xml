@@ -76,6 +76,10 @@
             id="com.ecmdeveloper.plugin.objectStoresViewDoubleClick"
             name="DoubleClick">
       </command>
+      <command
+            id="com.ecmdeveloper.plugin.ui.importObjectStore"
+            name="Import Object Store">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -277,6 +281,10 @@
                </iterate>
             </with>
          </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.ui.handlers.ImportObjectStoreHandler"
+            commandId="com.ecmdeveloper.plugin.ui.importObjectStore">
       </handler>
    </extension>
    <extension
@@ -773,6 +781,15 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:com.ecmdeveloper.plugin.views.ObjectStoresView?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.ui.importObjectStore"
+               icon="icons/database_add.png"
+               style="pulldown"
+               tooltip="Add an Object Store to the view">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -781,6 +798,13 @@
             id="com.ecmdeveloper.plugin.propertyTester"
             namespace="com.ecmdeveloper.plugin"
             properties="isConnected,notConnected,canCheckout"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="com.ecmdeveloper.plugin.ui.tester.DocumentPropertyTester"
+            id="com.ecmdeveloper.plugin.documentPropertyTester"
+            namespace="com.ecmdeveloper.plugin"
+            properties="isCheckedOut"
             type="java.lang.Object">
       </propertyTester>
    </extension>

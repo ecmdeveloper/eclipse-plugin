@@ -24,10 +24,10 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import com.ecmdeveloper.plugin.classes.Activator;
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.Placeholder;
-import com.ecmdeveloper.plugin.classes.model.VirtualFolder;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescriptionFolder;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
 
 /**
  * 
@@ -38,12 +38,12 @@ public class ClassesViewLabelProvider extends ObjectStoreItemLabelProvider {
 
 	@Override
 	public Image getImage(Object object) {
-		if ( object instanceof VirtualFolder ) {
+		if ( object instanceof IClassDescriptionFolder ) {
 			String imageKey = ISharedImages.IMG_OBJ_FOLDER;
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
-		} else if ( object instanceof Placeholder ) {
-			return Activator.getImage("icons/hourglass.png" );
-		} else if ( object instanceof ClassDescription ) {
+		} else if ( object instanceof ClassesPlaceholder ) {
+			return ((ClassesPlaceholder) object).getImage();
+		} else if ( object instanceof IClassDescription ) {
 			return Activator.getImage("icons/table.png" );
 		}
 		return super.getImage(object);
@@ -51,11 +51,11 @@ public class ClassesViewLabelProvider extends ObjectStoreItemLabelProvider {
 
 	@Override
 	public String getText(Object object) {
-		if ( object instanceof VirtualFolder ) {
-			return ((VirtualFolder) object).getName();
-		} else if ( object instanceof Placeholder ) {
+		if ( object instanceof IClassDescriptionFolder ) {
+			return ((IClassDescriptionFolder) object).getName();
+		} else if ( object instanceof ClassesPlaceholder ) {
 			return object.toString();
-		} else if ( object instanceof ClassDescription ) {
+		} else if ( object instanceof IClassDescription ) {
 			return object.toString();
 		}
 		return super.getText(object);

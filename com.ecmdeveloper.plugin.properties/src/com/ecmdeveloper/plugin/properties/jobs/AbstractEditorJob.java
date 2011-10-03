@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
-import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -38,7 +38,7 @@ import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 public abstract class AbstractEditorJob extends Job {
 
 	protected ObjectStoreItemEditor editor;
-	protected ObjectStoreItem objectStoreItem;
+	protected IObjectStoreItem objectStoreItem;
 	protected IWorkbenchWindow window;
 
 	public AbstractEditorJob(ObjectStoreItemEditor editor,IWorkbenchWindow window, String name ) {
@@ -46,7 +46,7 @@ public abstract class AbstractEditorJob extends Job {
 		this.editor = editor;
 		this.window = window;
 		IEditorInput editorInput = getEditorInput();
-		objectStoreItem = (ObjectStoreItem) editorInput.getAdapter( ObjectStoreItem.class);
+		objectStoreItem = (IObjectStoreItem) editorInput.getAdapter( IObjectStoreItem.class);
 	}
 
 	protected IEditorInput getEditorInput() {

@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import com.ecmdeveloper.plugin.classes.model.Choice;
+import com.ecmdeveloper.plugin.core.model.IChoice;
 import com.ecmdeveloper.plugin.properties.choices.ChoicesContentProvider;
 import com.ecmdeveloper.plugin.properties.choices.ChoicesLabelProvider;
 import com.ecmdeveloper.plugin.properties.model.Property;
@@ -61,7 +61,7 @@ public class ChoiceFormInput {
 			}
 
 			private void makeSingleSelected(CheckStateChangedEvent event) {
-				Choice choice = (Choice) event.getElement();
+				IChoice choice = (IChoice) event.getElement();
 				if ( choice.isSelectable() ) {
 					treeViewer.setCheckedElements( new Object[] { choice } );
 				} else {
@@ -100,7 +100,7 @@ public class ChoiceFormInput {
 		treeViewer.setCheckedElements( new Object[0] );
 
 		if ( value != null ) {
-			for ( Choice choice : property.getChoices() ) {
+			for ( IChoice choice : property.getChoices() ) {
 				if ( value.equals( choice.getValue() ) ) {
 					treeViewer.setChecked( choice , true);
 					break;
@@ -115,7 +115,7 @@ public class ChoiceFormInput {
 			return null;
 		}
 		
-		Choice choice = (Choice) checkedElements[0];
+		IChoice choice = (IChoice) checkedElements[0];
 		return choice.getValue();
 	}
 
