@@ -23,8 +23,8 @@ package com.ecmdeveloper.plugin.properties.editors.input;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.model.SavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
@@ -34,14 +34,14 @@ import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
  */
 public class NewObjectStoreItemEditorInput extends ObjectStoreItemEditorInput {
 
-	private ObjectStoreItem parent;
+	private IObjectStoreItem parent;
 
-	public NewObjectStoreItemEditorInput(ClassDescription classDescription, ObjectStoreItem parent) {
+	public NewObjectStoreItemEditorInput(IClassDescription classDescription, IObjectStoreItem parent) {
 		super(null, classDescription);
 		this.parent = parent;
 	}
 
-	public ObjectStoreItem getParent() {
+	public IObjectStoreItem getParent() {
 		return parent;
 	}
 	
@@ -54,7 +54,7 @@ public class NewObjectStoreItemEditorInput extends ObjectStoreItemEditorInput {
 		return propertiesMap;
 	}
 	
-	public void setObjectStoreItem(ObjectStoreItem objectStoreItem ) {
+	public void setObjectStoreItem(IObjectStoreItem objectStoreItem ) {
 		this.objectStoreItem = objectStoreItem;
 		this.propertiesObject = new SavedPropertiesObject(objectStoreItem);
 	}

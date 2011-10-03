@@ -26,10 +26,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.ICustomObject;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
 import com.ecmdeveloper.plugin.properties.editors.DocumentEditor;
 import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
@@ -43,17 +43,17 @@ import com.ecmdeveloper.plugin.properties.util.PluginLog;
  */
 public abstract class AbstractEditHandler extends AbstractHandler {
 
-	protected void openObjectStoreItemEditor(ObjectStoreItem objectStoreItem, IWorkbenchWindow window) {
-		if (objectStoreItem instanceof Folder ) {
+	protected void openObjectStoreItemEditor(IObjectStoreItem objectStoreItem, IWorkbenchWindow window) {
+		if (objectStoreItem instanceof IFolder ) {
 			showEditor( objectStoreItem, window, FolderEditor.EDITOR_ID );
-		} else if (objectStoreItem instanceof Document ) {
+		} else if (objectStoreItem instanceof IDocument ) {
 			showEditor( objectStoreItem, window, DocumentEditor.EDITOR_ID );
-		} else if (objectStoreItem instanceof CustomObject ) {
+		} else if (objectStoreItem instanceof ICustomObject ) {
 			showEditor( objectStoreItem, window, CustomObjectEditor.EDITOR_ID );
 		}
 	}
 
-	protected void showEditor(ObjectStoreItem objectStoreItem, IWorkbenchWindow window, String editorId ) {
+	protected void showEditor(IObjectStoreItem objectStoreItem, IWorkbenchWindow window, String editorId ) {
 		
 		try {
 			IWorkbenchPage activePage = window.getActivePage();
@@ -68,13 +68,13 @@ public abstract class AbstractEditHandler extends AbstractHandler {
 		}
 	}
 
-	private void openEditor(ObjectStoreItem objectStoreItem, IWorkbenchWindow window, String editorId) {
+	private void openEditor(IObjectStoreItem objectStoreItem, IWorkbenchWindow window, String editorId) {
 		OpenObjectStoreItemEditorJob job = new OpenObjectStoreItemEditorJob(objectStoreItem, editorId, window);
 		job.setUser(true);
 		job.schedule();
 	}
 	
-	private IEditorReference getObjectStoreItemEditor(IWorkbenchPage activePage, ObjectStoreItem objectStoreItem) throws PartInitException {
+	private IEditorReference getObjectStoreItemEditor(IWorkbenchPage activePage, IObjectStoreItem objectStoreItem) throws PartInitException {
 		
 		IEditorReference[] editors = activePage.getEditorReferences();
 		
@@ -86,14 +86,14 @@ public abstract class AbstractEditHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private boolean isObjectStoreItemEditor(IEditorReference editor, ObjectStoreItem objectStoreItem) throws PartInitException {
+	private boolean isObjectStoreItemEditor(IEditorReference editor, IObjectStoreItem objectStoreItem) throws PartInitException {
 		
 		if ( ! ( editor.getEditorInput() instanceof ObjectStoreItemEditorInput ) ) {
 			return false;
 		}
 		
 		ObjectStoreItemEditorInput editorInput = (ObjectStoreItemEditorInput) editor.getEditorInput();
-		ObjectStoreItem editorItem = (ObjectStoreItem) editorInput.getAdapter( ObjectStoreItem.class);
+		IObjectStoreItem editorItem = (IObjectStoreItem) editorInput.getAdapter( IObjectStoreItem.class);
 		if ( editorItem == null ) {
 			return false;
 		}

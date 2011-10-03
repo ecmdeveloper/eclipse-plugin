@@ -35,6 +35,7 @@ import org.eclipse.ui.part.ShowInContext;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.Placeholder;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.ui.jobs.GetParentJob;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
@@ -59,7 +60,7 @@ public class ParentFolderView extends ObjectStoresView implements IShowInTarget 
 	}
 
 	private void displayLoadingMessage() {
-		Placeholder placeholder = new Placeholder(Placeholder.Type.LOADING);
+		Placeholder placeholder = new Placeholder(PlaceholderType.LOADING);
 		getContentProvider().setRootElements( new Object[] { placeholder } );
 		getViewer().refresh();
 	}
@@ -87,7 +88,7 @@ public class ParentFolderView extends ObjectStoresView implements IShowInTarget 
 			}
 
 			private void displayNoParentsMessage(final IObjectStoreItem objectStoreItem) {
-				Placeholder placeholder = new Placeholder(Placeholder.Type.MESSAGE);
+				Placeholder placeholder = new Placeholder(PlaceholderType.MESSAGE);
 				String message = MessageFormat.format(NO_PARENTS_MESSAGE, objectStoreItem.getDisplayName());
 				placeholder.setName(message );
 				getContentProvider().setRootElements( new Object[] { placeholder } );

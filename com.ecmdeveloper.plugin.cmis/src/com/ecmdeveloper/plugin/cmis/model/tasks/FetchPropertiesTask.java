@@ -19,9 +19,13 @@
  */
 package com.ecmdeveloper.plugin.cmis.model.tasks;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Property;
+
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
 
 /**
@@ -30,9 +34,7 @@ import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
  */
 public class FetchPropertiesTask extends AbstractTask implements IFetchPropertiesTask {
 
-	@SuppressWarnings("unused")
 	private ObjectStoreItem objectStoreItem; 
-	@SuppressWarnings("unused")
 	private String propertyNames[];
 	
 	public FetchPropertiesTask(IObjectStoreItem objectStoreItem, String[] propertyNames) {
@@ -43,7 +45,10 @@ public class FetchPropertiesTask extends AbstractTask implements IFetchPropertie
 	@Override
 	public Object call() throws Exception {
 
-		// TODO fetch specific properties
+		CmisObject cmisObject = objectStoreItem.getCmisObject();
+		cmisObject.refresh();
+		fireTaskCompleteEvent(TaskResult.COMPLETED );
+
 		return null;
 	}
 }

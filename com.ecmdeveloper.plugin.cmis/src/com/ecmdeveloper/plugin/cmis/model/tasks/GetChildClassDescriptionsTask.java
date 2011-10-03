@@ -72,13 +72,21 @@ public class GetChildClassDescriptionsTask extends AbstractTask implements IGetC
 		
 		ObjectType objectType = parent.getTypeDefinition();
 		ArrayList<IClassDescription> children = new ArrayList<IClassDescription>();
-
-		for (ObjectType childObjectType : objectType.getChildren() ) {
-			ClassDescription classDescription = new ClassDescription( childObjectType, parent, parent.getObjectStore());
-			children.add(classDescription);
-		}	
-
 		oldChildren = parent.getChildren();
+
+		try
+		{
+			for (ObjectType childObjectType : objectType.getChildren() ) {
+				ClassDescription classDescription = new ClassDescription( childObjectType, parent, parent.getObjectStore());
+				children.add(classDescription);
+			}	
+
+		} catch (Exception e) {
+			ClassesPlaceholder classesPlaceholder = new ClassesPlaceholder(e);
+			classesPlaceholder.setParent(parent);
+			children.add( classesPlaceholder );
+			e.printStackTrace();
+		}
 		parent.setChildren( children );
 	}
 }

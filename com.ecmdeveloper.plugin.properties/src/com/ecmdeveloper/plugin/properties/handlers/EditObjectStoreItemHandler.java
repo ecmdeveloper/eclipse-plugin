@@ -29,10 +29,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.ICustomObject;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
 import com.ecmdeveloper.plugin.properties.editors.DocumentEditor;
 import com.ecmdeveloper.plugin.properties.editors.FolderEditor;
@@ -65,12 +65,12 @@ public class EditObjectStoreItemHandler extends AbstractEditHandler {
 
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
-			ObjectStoreItem objectStoreItem = (ObjectStoreItem) iterator.next();
-			if (objectStoreItem instanceof Folder ) {
+			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
+			if (objectStoreItem instanceof IFolder ) {
 				showEditor( objectStoreItem, window, FolderEditor.EDITOR_ID );
-			} else if (objectStoreItem instanceof Document ) {
+			} else if (objectStoreItem instanceof IDocument ) {
 				showEditor( objectStoreItem, window, DocumentEditor.EDITOR_ID );
-			} else if (objectStoreItem instanceof CustomObject ) {
+			} else if (objectStoreItem instanceof ICustomObject ) {
 				showEditor( objectStoreItem, window, CustomObjectEditor.EDITOR_ID );
 			}
 		}

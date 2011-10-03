@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbench;
 
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 import com.ecmdeveloper.plugin.properties.editors.CustomObjectEditor;
 import com.ecmdeveloper.plugin.properties.editors.input.NewCustomObjectEditorInput;
 
@@ -34,7 +34,6 @@ import com.ecmdeveloper.plugin.properties.editors.input.NewCustomObjectEditorInp
  */
 public class NewCustomObjectWizard extends NewObjectStoreItemWizard {
 
-	private static final String DEFAULT_CLASS_NAME = "CustomObject";
 	private static final String WINDOW_TITLE = "New Custom Object";
 
 	@Override
@@ -59,6 +58,6 @@ public class NewCustomObjectWizard extends NewObjectStoreItemWizard {
 
 	@Override
 	protected String getDefaultClassName() {
-		return DEFAULT_CLASS_NAME;
+		return getParentObjectStore().getDefaultClassName(ClassType.CUSTOM_OBJECT_CLASSES);
 	}
 }

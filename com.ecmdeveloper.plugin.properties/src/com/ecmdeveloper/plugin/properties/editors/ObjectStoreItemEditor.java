@@ -35,17 +35,16 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.model.PropertiesObject;
 import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 import com.ecmdeveloper.plugin.properties.util.PluginLog;
-import com.ecmdeveloper.plugin.properties.util.PluginMessage;
 
 /**
  * @author Ricardo.Belfor
@@ -57,14 +56,14 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	private static final String SAVE_NEW_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveNewProperties";
 	
 	private PropertiesInputForm propertiesInputForm;
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 	private PropertiesObject propertiesObject;
 	private boolean isPageModified;
 	
 	@Override
 	protected void addPages() {
 		try {
-			classDescription = (ClassDescription) getEditorInput().getAdapter( ClassDescription.class);
+			classDescription = (IClassDescription) getEditorInput().getAdapter( IClassDescription.class);
 
 			addPropertiesInputForm();
 			
@@ -171,7 +170,7 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	private String getSaveCommandId() {
 		String commandId;
 		
-		Object object = getEditorInput().getAdapter( ObjectStoreItem.class);
+		Object object = getEditorInput().getAdapter( IObjectStoreItem.class);
 		if ( object == null ) {
 			commandId = SAVE_NEW_PROPERTIES_COMMAND_ID;
 		} else {
@@ -219,8 +218,8 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 	}
 
 	private void closeEditorOnDelete(ObjectStoresManagerEvent event) {
-		ObjectStoreItem objectStoreItem;
-		objectStoreItem = (ObjectStoreItem) getEditorInput().getAdapter(ObjectStoreItem.class);
+		IObjectStoreItem objectStoreItem;
+		objectStoreItem = (IObjectStoreItem) getEditorInput().getAdapter(IObjectStoreItem.class);
 		if (objectStoreItem != null) {
 			for (IObjectStoreItem itemRemoved : event.getItemsRemoved()) {
 				if (itemRemoved.equals(objectStoreItem)) {

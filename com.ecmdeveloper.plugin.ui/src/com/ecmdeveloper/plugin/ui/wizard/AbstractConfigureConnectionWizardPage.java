@@ -19,68 +19,74 @@
  */
 package com.ecmdeveloper.plugin.ui.wizard;
 
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 import com.ecmdeveloper.plugin.core.model.IConnection;
 
 public abstract class AbstractConfigureConnectionWizardPage extends WizardPage {
 
-	private Text urlField;
-	private Text usernameField;
-	private Text passwordField;
+	protected static final String USERNAME_FIELD = "USERNAME";
+	protected static final String URL_FIELD = "URL";
+
 	private Button connectButton;
 
+	protected StringFieldEditor usernameEditor;
+	protected StringFieldEditor passwordEditor;
+	protected StringFieldEditor urlEditor;
+	
+	protected String username;
+	protected String password;
+	protected String url;
+
+	protected Composite container;
+	
 	public AbstractConfigureConnectionWizardPage() {
 		super("configureConnection");
 		setTitle("Configure Connection");
-		setDescription("Configure the new connection to the Content Engine.");
+		setDescription("Configure the new connection to the server.");
 	}
 
 	@Override
 	public void createControl(Composite parent) {
 
+		container = createContainer(parent);
+
+		createUsernameEditor();
+		createPasswordEditor();
+		createUrlEditor();
+
+		createExtraControls(container);
+		
+		createConnectButton(container);
+	}
+
+	protected void createExtraControls(Composite container2) {
+		
+	}
+
+	private Composite createContainer(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		container.setLayout(gridLayout);
 		setControl(container);
-
-		addLabel(container, "URL:", true);
-		urlField = addTextField(container);
-
-		addLabel(container, "Name:", true);
-		usernameField = addTextField(container);
-
-		addLabel(container, "Password:", true);
-		passwordField = addTextField(container);
-		passwordField.setEchoChar('*');
-
-
-		createConnectButton(container);
+		return container;
 	}
 
+	protected abstract boolean isConnectionFieldsSet();
 
 	private void updateConnectButton() {
-		
-		boolean enabled = false;
-		
-		enabled = urlField.getText() != null
-				&& !urlField.getText().isEmpty()
-				&& usernameField.getText() != null
-				&& !usernameField.getText().isEmpty();
-
-		connectButton.setEnabled( enabled );
+		connectButton.setEnabled( isConnectionFieldsSet() );
 	}
 	
 	private void createConnectButton(Composite container) {
@@ -100,44 +106,22 @@ public abstract class AbstractConfigureConnectionWizardPage extends WizardPage {
 		setPageComplete( ((AbstractImportObjectStoreWizard) getWizard()).isConnected() );
 	}
 
-	private Text addTextField(Composite container) {
-		Text textField = new Text(container, SWT.BORDER);
-		textField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateConnectButton();				
-				updatePageComplete(e);
-			}
-		});
-		textField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		return textField;
-	}
-
-	private void addLabel(Composite container, String text, boolean enabled) {
-		final Label label_1 = new Label(container, SWT.NONE);
-		final GridData gridData_1 = new GridData(GridData.BEGINNING);
-		label_1.setLayoutData(gridData_1);
-		label_1.setText(text);
-		label_1.setEnabled(enabled);
-	}
-
-	protected void updatePageComplete(ModifyEvent event) {
-
-		setPageComplete(false);
-
-		if ( event.widget.equals( urlField ) && getURL() == null) {
-			setErrorMessage("The connection url cannot be empty");
-			return;
-		}
-
-		if ( event.widget.equals( usernameField ) && getUsername() == null) {
-			setErrorMessage("The user name cannot be empty" );
-			return;
-		}
-
-		setErrorMessage(null);
-	}
+//	protected void updatePageComplete(ModifyEvent event) {
+//
+//		setPageComplete(false);
+//		
+//		if ( event.widget.equals( urlField ) && getURL() == null) {
+//			setErrorMessage("The connection url cannot be empty");
+//			return;
+//		}
+//
+//		if ( event.widget.equals( usernameField ) && getUsername() == null) {
+//			setErrorMessage("The user name cannot be empty" );
+//			return;
+//		}
+//
+//		setErrorMessage(null);
+//	}
 
 	@Override
 	public boolean canFlipToNextPage() {
@@ -145,31 +129,96 @@ public abstract class AbstractConfigureConnectionWizardPage extends WizardPage {
 	}
 
 	public String getURL() {
-		String text = urlField.getText().trim();
-		if (text.length() == 0) {
-			return null;
-		}
-
-		return text;
+		return url;
 	}
 
 	public String getUsername() {
-		String text = usernameField.getText().trim();
-		if (text.length() == 0) {
-			return null;
-		}
-
-		return text;
+		return username;
 	}
 
 	public String getPassword() {
-		String text = passwordField.getText().trim();
-		if (text.length() == 0) {
-			return null;
-		}
-
-		return text;
+		return password;
 	}
 	
 	public abstract IConnection getConnection();
+
+	protected void createUsernameEditor() {
+		
+		usernameEditor = new StringFieldEditor("", "Username:",container ) {
+
+			@Override
+			public int getNumberOfControls() {
+				return 2; //ConfigureCredentialsWizardPage.this.getNumberOfControls();
+			}
+
+		};
+		usernameEditor.setEmptyStringAllowed(true);
+		usernameEditor.setPropertyChangeListener( new IPropertyChangeListener() {
+	
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if ( event.getProperty().equals( FieldEditor.VALUE ) ) {
+					username = (String) event.getNewValue();
+					updateControls(USERNAME_FIELD);
+				}
+			}
+		});
+
+	}
+	
+	protected void createPasswordEditor() {
+		passwordEditor = new StringFieldEditor("", "Password:",container ) {
+
+			@Override
+			public int getNumberOfControls() {
+				return 2; //ConfigureCredentialsWizardPage.this.getNumberOfControls();
+			}
+
+		};
+		passwordEditor.getTextControl(container).setEchoChar('*');
+		passwordEditor.setPropertyChangeListener( new IPropertyChangeListener() {
+	
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if ( event.getProperty().equals( FieldEditor.VALUE ) ) {
+					password = (String) event.getNewValue();
+				}
+			}
+		});
+
+	}
+
+	protected void createUrlEditor() {
+		urlEditor = new StringFieldEditor("", "URL:",container ) {
+
+			@Override
+			public int getNumberOfControls() {
+				return 2; //ConfigureCredentialsWizardPage.this.getNumberOfControls();
+			}
+
+		};
+		urlEditor.setEmptyStringAllowed(false);
+		urlEditor.setPropertyChangeListener( new IPropertyChangeListener() {
+	
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if ( event.getProperty().equals( FieldEditor.VALUE ) ) {
+					url = (String) event.getNewValue();
+					updateControls(URL_FIELD);
+				}
+			}
+		});
+	}
+
+	protected abstract boolean validateInput(String fieldname);
+	
+	public void updateControls(String fieldname) {
+
+		updateConnectButton();
+		boolean validInput = validateInput(fieldname);
+		setPageComplete( validInput );
+		if ( validInput ) {
+			setErrorMessage(null);
+		}
+	}
 }

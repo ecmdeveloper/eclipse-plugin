@@ -33,9 +33,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.jobs.GetDocumentVersionJob;
-import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.ui.jobs.GetDocumentVersionJob;
 
 /**
  * @author Ricardo.Belfor
@@ -60,8 +60,8 @@ public class EditDocumentVersionHandler extends AbstractEditHandler {
 		while ( iterator.hasNext() ) {
 			
 			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			if ( objectStoreItem instanceof Document ) {
-				Document document = (Document) objectStoreItem;
+			if ( objectStoreItem instanceof IDocument ) {
+				IDocument document = (IDocument) objectStoreItem;
 				IJobChangeListener jobChangeListener = new EditDocumentVersionJobChangeListener();
 				GetDocumentVersionJob job = new GetDocumentVersionJob(document, window.getShell() );
 				job.addJobChangeListener( jobChangeListener );
@@ -84,7 +84,7 @@ public class EditDocumentVersionHandler extends AbstractEditHandler {
 
 			GetDocumentVersionJob job = (GetDocumentVersionJob) event.getJob();
 			
-			for ( Document selectedVersion : job.getSelectedVersions() ) {
+			for ( IDocument selectedVersion : job.getSelectedVersions() ) {
 				openObjectStoreItemEditor(selectedVersion, window);
 			}
 		}

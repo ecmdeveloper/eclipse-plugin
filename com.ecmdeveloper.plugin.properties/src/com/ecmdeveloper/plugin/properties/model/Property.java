@@ -23,11 +23,9 @@ package com.ecmdeveloper.plugin.properties.model;
 import java.util.Collection;
 import java.util.List;
 
-import com.ecmdeveloper.plugin.classes.model.Choice;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.core.model.IChoice;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.properties.input.PropertyValueConversion;
-import com.filenet.api.core.Factory;
 
 /**
  * @author Ricardo.Belfor
@@ -36,14 +34,14 @@ import com.filenet.api.core.Factory;
 public class Property {
 
 	private PropertiesObject propertiesObject;
-	private PropertyDescription propertyDescription;
+	private IPropertyDescription propertyDescription;
 	
-	public Property(PropertiesObject objectStoreItem, PropertyDescription propertyDescription) {
+	public Property(PropertiesObject objectStoreItem, IPropertyDescription propertyDescription) {
 		this.propertiesObject = objectStoreItem;
 		this.propertyDescription = propertyDescription;
 	}
 
-	public PropertyDescription getPropertyDescription() {
+	public IPropertyDescription getPropertyDescription() {
 		return propertyDescription;
 	}
 	
@@ -83,34 +81,12 @@ public class Property {
 		return propertyDescription.isSettableOnEdit();
 	}
 	
-	public Collection<Choice> getChoices() {
+	public Collection<IChoice> getChoices() {
 		return propertyDescription.getChoices();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List getList() {
-
-		PropertyType propertyType = propertyDescription.getPropertyType();
-		
-		switch ( propertyType ) {
-		case BINARY:
-			return Factory.BinaryList.createList();
-		case BOOLEAN:
-			return Factory.BooleanList.createList();
-		case DATE:
-			return Factory.DateTimeList.createList();
-		case DOUBLE:
-			return Factory.Float64List.createList();
-		case GUID:
-			return Factory.IdList.createList();
-		case LONG:
-			return Factory.Integer32List.createList();
-		case OBJECT:
-			// TODO: fix this!!!
-			return null;
-		case STRING:
-			return Factory.StringList.createList();
-		}
-		return null;
+		return propertyDescription.getList();
 	}
 }

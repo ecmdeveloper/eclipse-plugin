@@ -26,16 +26,14 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.model.tasks.CheckinTask;
-import com.ecmdeveloper.plugin.model.tasks.CreateCustomObjectTask;
-import com.ecmdeveloper.plugin.model.tasks.CreateDocumentTask;
-import com.ecmdeveloper.plugin.model.tasks.CreateFolderTask;
-import com.ecmdeveloper.plugin.model.tasks.CreateTask;
-import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
-import com.ecmdeveloper.plugin.model.tasks.SaveTask;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IRefreshTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
 import com.ecmdeveloper.plugin.properties.editors.input.NewCustomObjectEditorInput;
@@ -80,61 +78,68 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 		
 		NewObjectStoreItemEditorInput editorInput = (NewObjectStoreItemEditorInput) getEditorInput();
 		
-		CreateTask task = createCreateTask(editorInput);
+		ICreateTask task = createCreateTask(editorInput);
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		editorInput.setObjectStoreItem( task.getNewObjectStoreItem() );
 		
+		ITaskFactory taskFactory;
 		if ( editorInput instanceof NewDocumentEditorInput ) {
-			Document document = storeDocumentContent(task.getNewObjectStoreItem(), editorInput);
+			IDocument document = storeDocumentContent(task.getNewObjectStoreItem(), editorInput);
+			taskFactory = document.getTaskFactory();
 			editorInput.setObjectStoreItem( document );
 		} else {
-			editorInput.setObjectStoreItem( task.getNewObjectStoreItem() );
+			IObjectStoreItem newObjectStoreItem = task.getNewObjectStoreItem();
+			taskFactory = newObjectStoreItem.getTaskFactory();
+			editorInput.setObjectStoreItem( newObjectStoreItem );
 		}
 		
-		RefreshTask refreshTask = new RefreshTask( task.getNewObjectStoreItem() );
+		IRefreshTask refreshTask = taskFactory.getRefreshTask( task.getNewObjectStoreItem() );
 		Activator.getDefault().getTaskManager().executeTaskSync(refreshTask);
 	}
 
-	private CreateTask createCreateTask(NewObjectStoreItemEditorInput editorInput) {
+	private ICreateTask createCreateTask(NewObjectStoreItemEditorInput editorInput) {
 	
-		ClassDescription classDescription = (ClassDescription) editorInput.getAdapter( ClassDescription.class);
+		IClassDescription classDescription = (IClassDescription) editorInput.getAdapter( IClassDescription.class);
 		String className = classDescription.getName();
 		
+		ITaskFactory taskFactory = editorInput.getParent().getTaskFactory();
 		if ( editorInput instanceof NewFolderEditorInput ) {
-			return new CreateFolderTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
+			return taskFactory.getCreateFolderTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
 		} else if ( editorInput instanceof NewDocumentEditorInput ) {
-			return new CreateDocumentTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
+			return taskFactory.getCreateDocumentTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
 		} else if ( editorInput instanceof NewCustomObjectEditorInput ) {
-			return new CreateCustomObjectTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
+			return taskFactory.getCreateCustomObjectTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
 		} else {
 			throw new UnsupportedOperationException( "Creation using the class " + editorInput.getName() + " not yet implemented" );
 		}
 	}
 
-	private Document storeDocumentContent(ObjectStoreItem objectStoreItem, NewObjectStoreItemEditorInput editorInput) throws ExecutionException {
+	private IDocument storeDocumentContent(IObjectStoreItem objectStoreItem, NewObjectStoreItemEditorInput editorInput) throws ExecutionException {
 		NewDocumentEditorInput newDocumentEditorInput = (NewDocumentEditorInput) editorInput;
 		
-		SaveTask saveTask = createSaveTask(objectStoreItem, newDocumentEditorInput);
+		ISaveTask saveTask = createSaveTask(objectStoreItem, newDocumentEditorInput);
 		Activator.getDefault().getTaskManager().executeTaskSync(saveTask);
 
-		CheckinTask checkinTask = createCheckinTask(saveTask.getReservationDocument(), newDocumentEditorInput);
+		ICheckinTask checkinTask = createCheckinTask(saveTask.getReservationDocument(), newDocumentEditorInput);
 		Activator.getDefault().getTaskManager().executeTaskSync(checkinTask);
 		
 		return checkinTask.getDocument();
 	}
 
-	private SaveTask createSaveTask(ObjectStoreItem objectStoreItem, NewDocumentEditorInput newDocumentEditorInput) {
-		Document document = (Document) objectStoreItem;
+	private ISaveTask createSaveTask(IObjectStoreItem objectStoreItem, NewDocumentEditorInput newDocumentEditorInput) {
+		IDocument document = (IDocument) objectStoreItem;
 		ArrayList<Object> content = newDocumentEditorInput.getContent();
 		String mimeType = newDocumentEditorInput.getMimeType();
-		SaveTask saveTask = new SaveTask( document, content, mimeType );
+		ITaskFactory taskFactory = document.getTaskFactory();
+		ISaveTask saveTask = taskFactory.getSaveTask( document, content, mimeType );
 		return saveTask;
 	}
 
-	private CheckinTask createCheckinTask(Document document, NewDocumentEditorInput newDocumentEditorInput) {
+	private ICheckinTask createCheckinTask(IDocument document, NewDocumentEditorInput newDocumentEditorInput) {
 		boolean autoClassify = newDocumentEditorInput.isAutoClassify();
 		boolean checkinMajor = newDocumentEditorInput.isCheckinMajor();
-		CheckinTask checkinTask = new CheckinTask(document, checkinMajor, autoClassify);
+		ITaskFactory taskFactory = document.getTaskFactory();
+		ICheckinTask checkinTask = taskFactory.getCheckinTask(document, checkinMajor, autoClassify);
 		return checkinTask;
 	}
 

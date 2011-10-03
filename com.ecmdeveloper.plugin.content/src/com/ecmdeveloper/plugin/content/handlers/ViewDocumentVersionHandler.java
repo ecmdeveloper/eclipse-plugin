@@ -20,19 +20,16 @@
 
 package com.ecmdeveloper.plugin.content.handlers;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import com.ecmdeveloper.plugin.content.Activator;
-import com.ecmdeveloper.plugin.content.constants.PropertyNames;
 import com.ecmdeveloper.plugin.content.jobs.ViewDocumentJob;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.ui.handlers.AbstractDocumentVersionHandler;
 import com.ecmdeveloper.plugin.ui.jobs.GetDocumentVersionJob;
-import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author Ricardo.Belfor
@@ -47,8 +44,6 @@ public class ViewDocumentVersionHandler extends AbstractDocumentVersionHandler {
 	
 	class GetDocumentVersionJobListener extends JobChangeAdapter {
 
-		private static final String VERSION_FORMAT = "Version {0}.{1} ";
-		
 		@Override
 		public void done(IJobChangeEvent event) {
 
@@ -66,10 +61,7 @@ public class ViewDocumentVersionHandler extends AbstractDocumentVersionHandler {
 
 		private void viewDocument(IDocument document) {
 			 				
-			Object majorVersionNumber = document.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
-			Object minorVersionNumber = document.getValue( PropertyNames.MINOR_VERSION_NUMBER );
-			String filePrefix = MessageFormat.format( VERSION_FORMAT, majorVersionNumber, minorVersionNumber );
-			ViewDocumentJob job = new ViewDocumentJob( document, filePrefix, window );
+			ViewDocumentJob job = new ViewDocumentJob( document, document.getVersionLabel(), window );
 			job.setUser(true);
 			job.schedule();
 		}

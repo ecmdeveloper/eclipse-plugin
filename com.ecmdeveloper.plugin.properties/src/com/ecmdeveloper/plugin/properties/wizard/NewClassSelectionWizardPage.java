@@ -20,9 +20,9 @@
 
 package com.ecmdeveloper.plugin.properties.wizard;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 
 /**
  * @author ricardo.belfor
@@ -37,7 +37,7 @@ public class NewClassSelectionWizardPage extends ClassSelectionWizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		if ( visible ) {
-			ClassDescription defaultClassDescription = ((NewObjectStoreItemWizard)getWizard()).getDefaultClassDescription();
+			IClassDescription defaultClassDescription = ((NewObjectStoreItemWizard)getWizard()).getDefaultClassDescription();
 			setDefaultClassDescription( defaultClassDescription );
 		}
 		super.setVisible(visible);

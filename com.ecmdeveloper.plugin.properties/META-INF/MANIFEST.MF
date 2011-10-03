@@ -7,13 +7,12 @@ Bundle-Activator: com.ecmdeveloper.plugin.properties.Activator
 Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.ecmdeveloper.plugin;bundle-version="1.0.0",
- com.ecmdeveloper.plugin.lib;bundle-version="1.0.0",
- com.ecmdeveloper.plugin.classes;bundle-version="1.0.0",
  org.eclipse.ui.forms,
  org.eclipse.ui.ide,
  org.eclipse.core.resources,
  com.ecmdeveloper.plugin.content;bundle-version="1.0.0",
- com.ecmdeveloper.plugin.core;bundle-version="1.0.0"
+ com.ecmdeveloper.plugin.core;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin.classes;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin.ui;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

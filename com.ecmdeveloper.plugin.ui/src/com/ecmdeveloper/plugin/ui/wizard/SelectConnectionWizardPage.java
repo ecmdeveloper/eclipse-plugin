@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -41,7 +42,7 @@ import org.eclipse.swt.widgets.Label;
 
 import com.ecmdeveloper.plugin.core.model.IConnection;
 
-public class SelectConnectionWizardPage extends WizardPage {
+public abstract class SelectConnectionWizardPage extends WizardPage {
 
 	private Collection<IConnection> connections;
 	private Button newConnectionButton;
@@ -53,7 +54,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 		super("selectConnection");
 		this.connections = connections;
 		setTitle("Select Connection");
-		setDescription("Select the connection to the Content Engine.");
+		setDescription("Select the connection to the server.");
 	}
 
 	@Override
@@ -70,6 +71,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 		addLabel(container, "Connection:", !connections.isEmpty());
 		createConnectionsCombo(container, connections);
 		createConnectButton( container );
+		updatePageComplete();
 	}
 
 	public boolean isNewConnection() {
@@ -146,7 +148,7 @@ public class SelectConnectionWizardPage extends WizardPage {
 		connectionsCombo.getCombo().setLayoutData(
 				new GridData(GridData.FILL_HORIZONTAL));
 		connectionsCombo.getCombo().setEnabled(!connections.isEmpty());
-		
+		connectionsCombo.setFilters( new ViewerFilter[] { getConnectionsFilter() } );
 		connectionsCombo
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					@Override
@@ -156,6 +158,8 @@ public class SelectConnectionWizardPage extends WizardPage {
 				});
 		
 	}
+
+	protected abstract ViewerFilter getConnectionsFilter();
 
 	private void updateConnectButton() {
 		

@@ -27,9 +27,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
@@ -63,9 +63,9 @@ public class QueryTable2 implements IQueryTable {
 		childQueryTables = new ArrayList<IQueryTable>();
 	}
 
-	public QueryTable2(ClassDescription classDescription) {
+	public QueryTable2(IClassDescription classDescription) {
 		
-		ObjectStore objectStore = classDescription.getObjectStore();
+		ObjectStore objectStore = (ObjectStore) classDescription.getObjectStore();
 		objectStoreName = objectStore.getName();
 		objectStoreDisplayName = objectStore.getDisplayName();
 		connectionName = objectStore.getConnection().getName();
@@ -75,7 +75,7 @@ public class QueryTable2 implements IQueryTable {
 		childQueryTables = new ArrayList<IQueryTable>();
 		cbrEnabled = Boolean.TRUE.equals( classDescription.getCBREnabled() );
 		
-		for ( PropertyDescription propertyDescription : classDescription.getAllPropertyDescriptions() ) {
+		for ( IPropertyDescription propertyDescription : classDescription.getAllPropertyDescriptions() ) {
 			if ( isQueryTableProperty(propertyDescription) ) {
 				IQueryField queryField = new QueryField2(propertyDescription, this );
 				fields.add(queryField);
@@ -93,7 +93,7 @@ public class QueryTable2 implements IQueryTable {
 		fields.add(0, new ThisQueryField(this) );
 	}
 
-	private boolean isQueryTableProperty(PropertyDescription propertyDescription) {
+	private boolean isQueryTableProperty(IPropertyDescription propertyDescription) {
 		if ( propertyDescription.getName().equals("This") ) {
 			return false;
 		} else if (propertyDescription.isSearchable()) {

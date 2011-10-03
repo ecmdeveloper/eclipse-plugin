@@ -33,7 +33,7 @@
                         ifEmpty="false"
                         operator="or">
                      <instanceof
-                           value="com.ecmdeveloper.plugin.model.ObjectStore">
+                           value="com.ecmdeveloper.plugin.core.model.IObjectStore">
                      </instanceof>
                   </iterate>
                </with>
@@ -51,7 +51,7 @@
                         ifEmpty="false"
                         operator="or">
                      <instanceof
-                           value="com.ecmdeveloper.plugin.classes.model.ClassDescription">
+                           value="com.ecmdeveloper.plugin.core.model.IClassDescription">
                      </instanceof>
                   </iterate>
                </with>

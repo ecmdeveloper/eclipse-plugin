@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 
 /**
  * @author Ricardo.Belfor
@@ -56,7 +56,7 @@ public class ClassesViewDragSource extends DragSourceAdapter {
 
 	private boolean isClassDescriptionSelected() {
 		return ((StructuredSelection) viewer
-				.getSelection()).getFirstElement() instanceof ClassDescription;
+				.getSelection()).getFirstElement() instanceof IClassDescription;
 	}
 
 	private boolean isSingleSelection() {

@@ -22,8 +22,8 @@ package com.ecmdeveloper.plugin.properties.input;
 
 import org.eclipse.swt.widgets.Composite;
 
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.properties.renderer.BooleanInputRenderer;
-import com.filenet.api.meta.PropertyDescriptionBoolean;
 
 /**
  * @author Ricardo.Belfor
@@ -33,11 +33,11 @@ public class BooleanPropertyInput extends PropertyInputBase {
 
 	private BooleanInputRenderer inputRenderer;
 	
-	public BooleanPropertyInput(PropertyDescriptionBoolean propertyDescription) {
+	public BooleanPropertyInput(IPropertyDescription propertyDescription) {
 		super(propertyDescription);
 
-		String displayName = propertyDescription.get_DisplayName();
-		String descriptiveText = propertyDescription.get_DescriptiveText();
+		String displayName = propertyDescription.getDisplayName();
+		String descriptiveText = propertyDescription.getDescriptiveText();
 //		propertyDescription.
 		inputRenderer = new BooleanInputRenderer(displayName, descriptiveText );
 	}

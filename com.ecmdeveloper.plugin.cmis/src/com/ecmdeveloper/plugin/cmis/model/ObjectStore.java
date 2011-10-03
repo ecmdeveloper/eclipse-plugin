@@ -39,6 +39,7 @@ import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
 import com.ecmdeveloper.plugin.core.model.Placeholder;
 import com.ecmdeveloper.plugin.core.model.constants.ClassDescriptionFolderType;
 import com.ecmdeveloper.plugin.core.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 
 /**
  * @author ricardo.belfor
@@ -129,7 +130,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 		if ( children == null )
 		{
 			children = new ArrayList<IObjectStoreItem>();
-			children.add( new Placeholder( Placeholder.Type.LOADING ) );
+			children.add( new Placeholder( PlaceholderType.LOADING ) );
 			
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
 			Activator.getDefault().getTaskManager().executeTaskASync(loadChildrenTask);

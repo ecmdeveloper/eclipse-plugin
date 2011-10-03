@@ -22,8 +22,8 @@ package com.ecmdeveloper.plugin.properties.input;
 
 import org.eclipse.swt.widgets.Composite;
 
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.properties.renderer.StringInputRenderer;
-import com.filenet.api.meta.PropertyDescriptionString;
 
 /**
  * @author Ricardo.Belfor
@@ -33,16 +33,16 @@ public class StringPropertyInput extends PropertyInputBase {
 
 	private StringInputRenderer inputRenderer;
 	
-	public StringPropertyInput(PropertyDescriptionString propertyDescription) {
+	public StringPropertyInput(IPropertyDescription propertyDescription) {
 		super(propertyDescription);
 	
-		String displayName = propertyDescription.get_DisplayName();
-		String descriptiveText = propertyDescription.get_DescriptiveText();
-		if ( propertyDescription.get_ChoiceList() != null ) {
-			descriptiveText += " (selectable)";
-		}
-		Integer maximumLengthString = propertyDescription.get_MaximumLengthString();
-		inputRenderer = new StringInputRenderer(displayName, descriptiveText, maximumLengthString );
+		String displayName = propertyDescription.getDisplayName();
+		String descriptiveText = propertyDescription.getDescriptiveText();
+//		if ( propertyDescription.getChoiceList() != null ) {
+//			descriptiveText += " (selectable)";
+//		}
+//		Integer maximumLengthString = propertyDescription.get_MaximumLengthString();
+//		inputRenderer = new StringInputRenderer(displayName, descriptiveText, maximumLengthString );
 		
 	}
 

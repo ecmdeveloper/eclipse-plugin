@@ -1,5 +1,6 @@
 package com.ecmdeveloper.plugin.ui;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -23,6 +24,8 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		Platform.getPlugin("com.ecmdeveloper.plugin.cmis");
+		Platform.getPlugin("com.ecmdeveloper.plugin");
 	}
 
 	public void stop(BundleContext context) throws Exception {

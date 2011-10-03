@@ -21,11 +21,16 @@
 package com.ecmdeveloper.plugin.core.model.tasks;
 
 import java.util.Collection;
+import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
 
 /**
  * @author ricardo.belfor
@@ -43,6 +48,8 @@ public interface ITaskFactory {
 	
 	IRefreshTask getRefreshTask( IObjectStoreItem[] objectStoreItems, boolean notifyListeners);
 	
+	IRefreshTask getRefreshTask(IObjectStoreItem objectStoreItem);
+
 	IUpdateTask getUpdateTask( IObjectStoreItem objectStoreItem );
 
 	IUpdateTask getUpdateTask( IObjectStoreItem[] objectStoreItems );
@@ -68,4 +75,19 @@ public interface ITaskFactory {
 	ICheckoutTask getCheckoutTask(IDocument document);
 
 	ICheckinTask getCheckinTask(IDocument document, boolean majorVersion, boolean autoClassify);
+	
+	// FIXME placeholder?
+	IGetChildClassDescriptionsTask getGetChildClassDescriptionsTask(IClassDescription parent, Object placeholder);
+
+	IGetClassDescriptionTask getGetClassDescriptionTask(String className, IObjectStore objectStore);
+
+	IRefreshClassDescriptionTask getRefreshClassDescriptionTask(IClassDescription[] classDescriptions);
+
+	IGetClassDescriptionTask getGetClassDescriptionTask(String className, IObjectStore objectStore, Object parent);
+
+	ICreateFolderTask getCreateFolderTask(IObjectStoreItem parent, String className, Map<String,Object> propertiesMap);
+	
+	ICreateDocumentTask getCreateDocumentTask(IObjectStoreItem parent, String className, Map<String,Object> propertiesMap);
+
+	ICreateCustomObjectTask getCreateCustomObjectTask(IObjectStoreItem parent, String className,	Map<String, Object> propertiesMap);	
 }

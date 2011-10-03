@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.properties.model;
 
 import java.beans.PropertyChangeListener;
 
-import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 
 /**
  * @author Ricardo.Belfor
@@ -30,14 +30,14 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItem;
  */
 public class SavedPropertiesObject implements PropertiesObject {
 
-	private ObjectStoreItem objectStoreItem;
+	private IObjectStoreItem objectStoreItem;
 
 	@Override
 	public String getName() {
 		return objectStoreItem.getDisplayName();
 	}
 
-	public SavedPropertiesObject(ObjectStoreItem objectStoreItem) {
+	public SavedPropertiesObject(IObjectStoreItem objectStoreItem) {
 		this.objectStoreItem = objectStoreItem;
 	}
 	

@@ -5,14 +5,14 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 
 public class PropertiesInputForm extends FormPage {
 
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 	private PropertiesInputBlock propertiesInputBlock;
 
-	public PropertiesInputForm(FormEditor editor, ClassDescription classDescription) {
+	public PropertiesInputForm(FormEditor editor, IClassDescription classDescription) {
 		super(editor, "propertiesInputPage", "Properties");
 		this.classDescription = classDescription;
 	}

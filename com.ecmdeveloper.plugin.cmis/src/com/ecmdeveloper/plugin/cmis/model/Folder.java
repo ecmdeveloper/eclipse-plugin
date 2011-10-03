@@ -34,6 +34,7 @@ import com.ecmdeveloper.plugin.cmis.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.Placeholder;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 
 /**
  * @author ricardo.belfor
@@ -42,10 +43,11 @@ import com.ecmdeveloper.plugin.core.model.Placeholder;
 public class Folder extends ObjectStoreItem implements IFolder {
 
 	private Collection<IObjectStoreItem> children;
-	protected org.apache.chemistry.opencmis.client.api.Folder folder;
-	protected Boolean hasChildren;
-	protected boolean contained;
-	protected String pathName;
+	private org.apache.chemistry.opencmis.client.api.Folder folder;
+	private Boolean hasChildren;
+	private boolean contained;
+	private String pathName;
+	private String className;
 
 	private Map<String,Object> properties;
 	
@@ -82,6 +84,7 @@ public class Folder extends ObjectStoreItem implements IFolder {
 		id = folder.getId();
 		children = null;
 		hasChildren = folder.getChildren().iterator().hasNext();
+		className = folder.getType().getId();
 	}
 
 	/**
@@ -97,7 +100,7 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	public Collection<IObjectStoreItem> getChildren() {
 		if ( children == null )	{
 			children = new ArrayList<IObjectStoreItem>();
-			children.add( new Placeholder(Placeholder.Type.LOADING) );
+			children.add( new Placeholder(PlaceholderType.LOADING) );
 
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
 			Activator.getDefault().getTaskManager().executeTaskASync(loadChildrenTask);
@@ -226,10 +229,7 @@ public class Folder extends ObjectStoreItem implements IFolder {
 
 	@Override
 	public String getClassName() {
-		if ( folder != null ) {
-//			return folder.getClassName();
-		}
-		return null;
+		return className;
 	}
 
 	@Override
@@ -250,6 +250,7 @@ public class Folder extends ObjectStoreItem implements IFolder {
 			folder.updateProperties(properties);
 		}
 		properties.clear();
+		saved = true;
 	}
 
 	@Override

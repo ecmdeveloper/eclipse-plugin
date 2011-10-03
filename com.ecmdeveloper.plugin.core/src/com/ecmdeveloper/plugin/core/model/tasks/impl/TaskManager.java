@@ -61,7 +61,9 @@ public class TaskManager implements ITaskManager {
 	{
 		try {
 			if ( task instanceof IBaseTask ) {
-				((IBaseTask)task).addTaskListener(modelController);
+				IBaseTask baseTask = (IBaseTask)task;
+				baseTask.addTaskListener(modelController);
+				baseTask.setAsynchronous(false);
 			}
 			return executorService.submit(task).get();
 		} catch (InterruptedException e) {
@@ -73,7 +75,9 @@ public class TaskManager implements ITaskManager {
 	public void executeTaskASync( Callable<?> task )
 	{
 		if ( task instanceof IBaseTask ) {
-			((IBaseTask)task).addTaskListener(modelController);
+			IBaseTask baseTask = (IBaseTask)task;
+			baseTask.addTaskListener(modelController);
+			baseTask.setAsynchronous(true);
 		}
 		executorService.submit(task);
 	}

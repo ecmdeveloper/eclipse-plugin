@@ -90,13 +90,13 @@
                         ifEmpty="false">
                      <or>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Folder">
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
+                              value="com.ecmdeveloper.plugin.core.model.IDocument">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
                         </instanceof>
                      </or>
                   </iterate>
@@ -120,7 +120,7 @@
                            ifEmpty="false">
                         <or>
                            <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Document">
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
                         </or>
                      </iterate></and>
@@ -166,13 +166,13 @@
                         ifEmpty="false">
                      <or>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Folder">
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
+                              value="com.ecmdeveloper.plugin.core.model.IDocument">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
                         </instanceof>
                      </or>
                   </iterate>
@@ -196,7 +196,7 @@
                            ifEmpty="false">
                         <or>
                            <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Document">
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
                         </or>
                      </iterate>
@@ -217,7 +217,7 @@
                      <iterate
                            ifEmpty="false">
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Folder">
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
                         </instanceof>
                      </iterate>
                   </with>
@@ -234,7 +234,7 @@
                      <iterate
                            ifEmpty="false">
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Folder">
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
                         </instanceof>
                      </iterate>
                   </with>
@@ -251,7 +251,7 @@
                      <iterate
                            ifEmpty="false">
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Folder">
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
                         </instanceof>
                      </iterate>
                   </with>
@@ -275,11 +275,11 @@
                            ifEmpty="false">
                         <or>
                            <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Folder">
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
                            </instanceof>
                            <and>
                               <instanceof
-                                    value="com.ecmdeveloper.plugin.model.ObjectStore">
+                                    value="com.ecmdeveloper.plugin.core.model.IObjectStore">
                               </instanceof>
                               <test
                                     property="com.ecmdeveloper.plugin.isConnected">
@@ -302,11 +302,11 @@
                            ifEmpty="false">
                         <or>
                            <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Folder">
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
                            </instanceof>
                            <and>
                               <instanceof
-                                    value="com.ecmdeveloper.plugin.model.ObjectStore">
+                                    value="com.ecmdeveloper.plugin.core.model.IObjectStore">
                               </instanceof>
                               <test
                                     property="com.ecmdeveloper.plugin.isConnected">
@@ -329,11 +329,11 @@
                            ifEmpty="false">
                         <or>
                            <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Folder">
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
                            </instanceof>
                            <and>
                               <instanceof
-                                    value="com.ecmdeveloper.plugin.model.ObjectStore">
+                                    value="com.ecmdeveloper.plugin.core.model.IObjectStore">
                               </instanceof>
                               <test
                                     property="com.ecmdeveloper.plugin.isConnected">
@@ -361,13 +361,13 @@
                         ifEmpty="false">
                      <or>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Folder">
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
+                              value="com.ecmdeveloper.plugin.core.model.IDocument">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
                         </instanceof>
                      </or>
                   </iterate>
@@ -391,7 +391,7 @@
                            ifEmpty="false">
                         <or>
                            <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Document">
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
                         </or>
                      </iterate>
@@ -415,13 +415,13 @@
                         ifEmpty="false">
                      <or>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Folder">
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.Document">
+                              value="com.ecmdeveloper.plugin.core.model.IDocument">
                         </instanceof>
                         <instanceof
-                              value="com.ecmdeveloper.plugin.model.CustomObject">
+                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
                         </instanceof>
                      </or>
                   </iterate>
@@ -445,7 +445,7 @@
                            ifEmpty="false">
                         <or>
                            <instanceof
-                                 value="com.ecmdeveloper.plugin.model.Document">
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
                         </or>
                      </iterate>
@@ -467,13 +467,13 @@
                      ifEmpty="false">
                   <or>
                      <instanceof
-                           value="com.ecmdeveloper.plugin.model.CustomObject">
+                           value="com.ecmdeveloper.plugin.core.model.ICustomObject">
                      </instanceof>
                      <instanceof
-                           value="com.ecmdeveloper.plugin.model.Document">
+                           value="com.ecmdeveloper.plugin.core.model.IDocument">
                      </instanceof>
                      <instanceof
-                           value="com.ecmdeveloper.plugin.model.Folder">
+                           value="com.ecmdeveloper.plugin.core.model.IFolder">
                      </instanceof></or>
                </iterate>
             </with>
@@ -517,7 +517,7 @@
                      ifEmpty="false">
                   <or>
                      <instanceof
-                           value="com.ecmdeveloper.plugin.model.Document">
+                           value="com.ecmdeveloper.plugin.core.model.IDocument">
                      </instanceof>
                   </or>
                </iterate>

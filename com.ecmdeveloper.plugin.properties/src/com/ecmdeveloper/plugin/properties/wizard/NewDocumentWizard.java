@@ -26,8 +26,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbench;
 
-import com.ecmdeveloper.plugin.classes.model.constants.ClassType;
 import com.ecmdeveloper.plugin.content.wizard.ContentSelectionWizardPage;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 import com.ecmdeveloper.plugin.properties.editors.DocumentEditor;
 import com.ecmdeveloper.plugin.properties.editors.input.NewDocumentEditorInput;
 
@@ -38,7 +38,6 @@ import com.ecmdeveloper.plugin.properties.editors.input.NewDocumentEditorInput;
 public class NewDocumentWizard extends NewObjectStoreItemWizard {
 
 	private static final String WINDOW_TITLE = "New Document";
-	private static final String DEFAULT_CLASS_NAME = "Document";
 	private ContentSelectionWizardPage contentSelectionWizardPage;
 	private ConfigureCreateDocumentWizardPage configureCreateDocumentWizardPage;
 	private ArrayList<Object> files;
@@ -99,7 +98,7 @@ public class NewDocumentWizard extends NewObjectStoreItemWizard {
 
 	@Override
 	protected String getDefaultClassName() {
-		return DEFAULT_CLASS_NAME;
+		return getParentObjectStore().getDefaultClassName(ClassType.DOCUMENT_CLASSES);
 	}
 
 	public void setFiles(ArrayList<Object> files) {

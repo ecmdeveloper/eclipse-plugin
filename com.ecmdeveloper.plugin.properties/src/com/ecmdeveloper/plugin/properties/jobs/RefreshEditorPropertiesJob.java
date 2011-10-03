@@ -26,9 +26,10 @@ import java.util.Set;
 
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.model.tasks.FetchPropertiesTask;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.properties.Activator;
 import com.ecmdeveloper.plugin.properties.editors.ObjectStoreItemEditor;
 
@@ -42,11 +43,11 @@ public class RefreshEditorPropertiesJob extends AbstractEditorJob {
 	private static final String MONITOR_MESSAGE = "Refreshing Editor Properties";
 	private static final String FAILED_MESSAGE = "Refreshing Editor Properties for \"{0}\" failed";
 	
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 	
 	public RefreshEditorPropertiesJob(ObjectStoreItemEditor editor,IWorkbenchWindow window) {
 		super( editor, window, JOB_NAME );
-		classDescription = (ClassDescription) getEditorInput().getAdapter( ClassDescription.class );
+		classDescription = (IClassDescription) getEditorInput().getAdapter( IClassDescription.class );
 	}
 
 	protected void runEditorJob() throws Exception {
@@ -58,7 +59,8 @@ public class RefreshEditorPropertiesJob extends AbstractEditorJob {
 		String[] propertyNames = getPropertyNames();
 		
 		if ( propertyNames.length != 0 ) {
-			FetchPropertiesTask task = new FetchPropertiesTask(objectStoreItem, propertyNames);
+			ITaskFactory taskFactory = objectStoreItem.getTaskFactory();
+			IFetchPropertiesTask task = taskFactory.getFetchPropertiesTask(objectStoreItem, propertyNames);
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 		}
 	}
@@ -66,7 +68,7 @@ public class RefreshEditorPropertiesJob extends AbstractEditorJob {
 	private String[] getPropertyNames() {
 
 		Set<String> propertyNames = new HashSet<String>();
-		for (PropertyDescription propertyDescription : classDescription.getPropertyDescriptions()) {
+		for (IPropertyDescription propertyDescription : classDescription.getPropertyDescriptions()) {
 			propertyNames.add(propertyDescription.getName());
 		}
 

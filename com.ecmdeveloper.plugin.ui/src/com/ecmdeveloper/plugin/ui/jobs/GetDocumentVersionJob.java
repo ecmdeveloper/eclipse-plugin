@@ -50,9 +50,6 @@ import com.ecmdeveloper.plugin.ui.Activator;
  *
  */
 public class GetDocumentVersionJob extends Job {
-
-	private static final String MAJOR_VERSION_NUMBER = "MajorVersionNumber";
-	private static final String MINOR_VERSION_NUMBER = "MinorVersionNumber";
 	
 	private static final String SELECTION_MESSAGE = "Select the document versions";
 	private static final String SELECTION_TITLE = "Document Versions Selection";
@@ -82,10 +79,6 @@ public class GetDocumentVersionJob extends Job {
 			monitor.beginTask( MONITOR_MESSAGE, IProgressMonitor.UNKNOWN );
 			final List<IDocument> versions = getDocumentVersions();
 			monitor.done();
-
-			monitor.beginTask("Getting version properties", versions.size() );
-			getDocumentVersionsProperties(versions,monitor);
-			monitor.done();
 			
 			shell.getDisplay().syncExec(new Runnable() {
 				@Override
@@ -101,18 +94,6 @@ public class GetDocumentVersionJob extends Job {
 			PluginMessage.openErrorFromThread(shell, JOB_NAME, message, e);
 		}
 		return Status.OK_STATUS;
-	}
-
-	private void getDocumentVersionsProperties(final List<IDocument> versions, IProgressMonitor monitor)
-			throws ExecutionException {
-
-		String[] propertyNames = { MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER };
-
-		for ( IDocument documentVersion : versions) {
-			IFetchPropertiesTask task = documentVersion.getTaskFactory().getFetchPropertiesTask(documentVersion, propertyNames);
-			Activator.getDefault().getTaskManager().executeTaskSync(task);
-			monitor.worked(1);
-		}
 	}
 
 	private List<IDocument> getDocumentVersions() throws ExecutionException {
@@ -150,7 +131,7 @@ public class GetDocumentVersionJob extends Job {
 	
 	class DocumentVersionLabelProvider extends LabelProvider {
 
-		private static final String VERSION_LABEL_FORMAT = "Version {1}.{2} ({0})";
+		private static final String VERSION_LABEL_FORMAT = "Version {1} ({0})";
 
 		@Override
 		public Image getImage(Object element) {
@@ -163,9 +144,7 @@ public class GetDocumentVersionJob extends Job {
 			if ( element instanceof IDocument) {
 				IDocument version = (IDocument) element;
 				String name = version.getName();
-				Object majorVersionNumber = version.getValue( MAJOR_VERSION_NUMBER );
-				Object minorVersionNumber = version.getValue( MINOR_VERSION_NUMBER );
-				return MessageFormat.format( VERSION_LABEL_FORMAT, name, majorVersionNumber, minorVersionNumber );
+				return MessageFormat.format( VERSION_LABEL_FORMAT, name, version.getVersionLabel() );
 			}
 
 			return super.getText(element);

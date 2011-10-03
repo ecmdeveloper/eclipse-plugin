@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.core.model;
 
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -70,4 +71,8 @@ public interface IObjectStoreItem extends IAdaptable {
 	public boolean isSimilarObject(IObjectStoreItem otherItem);
 	
 	public ITaskFactory getTaskFactory();
+
+	public void addPropertyChangeListener(PropertyChangeListener listener);
+
+	public void removePropertyChangeListener(PropertyChangeListener listener);
 }

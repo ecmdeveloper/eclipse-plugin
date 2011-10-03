@@ -146,8 +146,6 @@ public class ConfigureCredentialsWizardPage extends AbstractFieldEditorWizardPag
 				}
 			}
 		});
-
-		addFieldEditor(passwordEditor);
 	}
 
 	private void updateControls() {

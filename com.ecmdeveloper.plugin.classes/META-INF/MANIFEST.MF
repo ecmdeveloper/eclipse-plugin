@@ -8,24 +8,11 @@ Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.gef,
- com.ecmdeveloper.plugin;bundle-version="1.0.0",
- com.ecmdeveloper.plugin.lib;bundle-version="1.0.0",
- com.ecmdeveloper.plugin.core;bundle-version="1.0.0"
+ com.ecmdeveloper.plugin.core;bundle-version="1.0.0",
+ com.ecmdeveloper.plugin.ui;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: com.ecmdeveloper.plugin.classes.model;
-  uses:="com.ecmdeveloper.plugin.model.tasks,
-   org.eclipse.core.runtime,
-   com.ecmdeveloper.plugin.classes.model.constants,
-   com.ecmdeveloper.plugin.model",
- com.ecmdeveloper.plugin.classes.model.constants;uses:="com.filenet.api.constants",
- com.ecmdeveloper.plugin.classes.model.task;
-  uses:="com.ecmdeveloper.plugin.model.tasks,
-   com.filenet.api.meta,
-   com.filenet.api.admin,
-   com.ecmdeveloper.plugin.classes.model,
-   com.ecmdeveloper.plugin.model",
- com.ecmdeveloper.plugin.classes.views,
+Export-Package: com.ecmdeveloper.plugin.classes.views,
  com.ecmdeveloper.plugin.classes.wizard;
   uses:="org.eclipse.jface.wizard,
    com.ecmdeveloper.plugin.classes.model.constants,

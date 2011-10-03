@@ -57,7 +57,7 @@ public abstract class AbstractImportObjectStoreWizard extends Wizard implements 
 		Collection<IConnection> connections = Activator.getDefault().getObjectStoresManager().getConnections();
 
 		if ( ! connections.isEmpty() ) {
-			selectConnectionWizardPage = new SelectConnectionWizardPage( connections );
+			selectConnectionWizardPage = createSelectConnectionWizardPage(connections);
 			addPage( selectConnectionWizardPage );
 		}
 
@@ -67,9 +67,10 @@ public abstract class AbstractImportObjectStoreWizard extends Wizard implements 
 		selectObjectStoreWizardPage = new SelectObjectStoreWizardPage();
 		addPage(selectObjectStoreWizardPage);
 
-		setWindowTitle( "Import Object Store" );
 		setNeedsProgressMonitor(true);
 	}
+
+	protected abstract SelectConnectionWizardPage createSelectConnectionWizardPage(Collection<IConnection> connections);
 
 	protected abstract AbstractConfigureConnectionWizardPage createConfigureConnectionWizardPage();
 

@@ -29,7 +29,7 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
-import com.ecmdeveloper.plugin.core.model.tasks.CreateTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDeleteTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDocumentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IAddObjectStoreTask;
@@ -75,7 +75,7 @@ public class ObjectStoreItemsModelController implements TaskListener {
 			handleMoveTaskCompleted( taskCompleteEvent );
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IUpdateTask.class) ) {
 			handleUpdateTaskCompleted(taskCompleteEvent);
-		} if ( isTaskSourceInstanceOf(taskCompleteEvent, CreateTask.class) ) {
+		} if ( isTaskSourceInstanceOf(taskCompleteEvent, ICreateTask.class) ) {
 			handleCreateTaskCompleted(taskCompleteEvent);
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IDocumentTask.class) ) {
 			handleDocumentTaskCompleted(taskCompleteEvent);
@@ -192,7 +192,7 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	}
 
 	private void handleCreateTaskCompleted(TaskCompleteEvent taskCompleteEvent) {
-		CreateTask createTask = (CreateTask) taskCompleteEvent.getSource();
+		ICreateTask createTask = (ICreateTask) taskCompleteEvent.getSource();
 		if ( createTask.isAddedToParent() ) {
 			objectStoreItemsModel.add( createTask.getNewObjectStoreItem() );
 			Collection<IObjectStoreItem> parents = objectStoreItemsModel.addChild(

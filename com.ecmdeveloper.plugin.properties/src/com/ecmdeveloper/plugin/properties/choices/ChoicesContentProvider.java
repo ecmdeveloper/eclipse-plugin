@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.ecmdeveloper.plugin.classes.model.Choice;
+import com.ecmdeveloper.plugin.core.model.IChoice;
 import com.ecmdeveloper.plugin.properties.model.Property;
 
 public class ChoicesContentProvider implements IStructuredContentProvider, ITreeContentProvider, PropertyChangeListener {
@@ -34,8 +34,8 @@ public class ChoicesContentProvider implements IStructuredContentProvider, ITree
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if ( inputElement instanceof Choice ) {
-			return ((Choice)inputElement).getChildren().toArray();
+		if ( inputElement instanceof IChoice ) {
+			return ((IChoice)inputElement).getChildren().toArray();
 		} else {
 			return property.getChoices().toArray();
 		}
@@ -43,8 +43,8 @@ public class ChoicesContentProvider implements IStructuredContentProvider, ITree
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if ( element instanceof Choice ) {
-			return ! ((Choice)element).isSelectable();
+		if ( element instanceof IChoice ) {
+			return ! ((IChoice)element).isSelectable();
 		}
 		return false;
 	}
@@ -56,8 +56,8 @@ public class ChoicesContentProvider implements IStructuredContentProvider, ITree
 
 	@Override
 	public Object getParent(Object element) {
-		if ( element instanceof Choice ) {
-			return ((Choice)element).getParent();
+		if ( element instanceof IChoice ) {
+			return ((IChoice)element).getParent();
 		}
 		return null;
 	}

@@ -22,7 +22,6 @@ package com.ecmdeveloper.plugin.content.compare;
 
 import java.text.MessageFormat;
 
-import com.ecmdeveloper.plugin.content.constants.PropertyNames;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
@@ -31,7 +30,7 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
  */
 public class DocumentVersionCompareItem extends DocumentCompareItem {
 
-	private static final String VERSION_NAME_FORMAT = "Version {1}.{2} ({0})";
+	private static final String VERSION_NAME_FORMAT = "Version {1} ({0})";
 
 	public DocumentVersionCompareItem(IDocument document, int contentIndex ) {
 		super(document, contentIndex);
@@ -40,15 +39,20 @@ public class DocumentVersionCompareItem extends DocumentCompareItem {
 	@Override
 	public String getName() {
 		String name = document.getName();
-		Object majorVersionNumber = document.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
-		Object minorVersionNumber = document.getValue( PropertyNames.MINOR_VERSION_NUMBER );
-		return MessageFormat.format( VERSION_NAME_FORMAT, name, majorVersionNumber, minorVersionNumber );
+		String versionLabel = document.getVersionLabel();
+		return MessageFormat.format( VERSION_NAME_FORMAT, name, versionLabel );
 	}
 
 	@Override
 	public long getModificationDate() {
-		Integer majorVersionNumber = (Integer) document.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
-		Integer minorVersionNumber = (Integer) document.getValue( PropertyNames.MINOR_VERSION_NUMBER);
-		return majorVersionNumber.longValue() * 10 + minorVersionNumber.longValue();
+		String versionLabel = document.getVersionLabel();
+		if ( versionLabel != null ) {
+			versionLabel = versionLabel.replaceAll(".", "");
+			try {
+				Integer modificationDate = Integer.parseInt(versionLabel);
+				return modificationDate.longValue();
+			} catch (NumberFormatException e) {}
+		}
+		return 1L;
 	}
 }
