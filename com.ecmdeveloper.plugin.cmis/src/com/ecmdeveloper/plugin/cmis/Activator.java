@@ -5,9 +5,7 @@ import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.ecmdeveloper.plugin.cmis.model.ObjectStoresStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
-import com.ecmdeveloper.plugin.core.model.IObjectStoresStore;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 
 public class Activator extends AbstractUIPlugin {
@@ -23,10 +21,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-
 		sessionFactory = SessionFactoryImpl.newInstance();
-		IObjectStoresStore objectStoresStore = new ObjectStoresStore();
-		getObjectStoresManager().registerObjectStoresStore(objectStoresStore);
 	}
 
 	public void stop(BundleContext context) throws Exception {

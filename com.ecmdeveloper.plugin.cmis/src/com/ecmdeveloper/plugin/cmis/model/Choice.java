@@ -77,7 +77,10 @@ public class Choice implements IChoice {
 	
 	@Override
 	public Object getValue() {
-		return internalChoice.getValue();
+		if ( internalChoice.getValue() != null ) {
+			return internalChoice.getValue().toArray()[0];
+		}
+		return null;
 	}
 
 

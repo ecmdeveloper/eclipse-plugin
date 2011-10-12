@@ -43,11 +43,15 @@ public class CheckinTask extends DocumentTask implements ICheckinTask {
 
 	public Object call() throws Exception {
 
-		org.apache.chemistry.opencmis.client.api.Document internalDocument = getInternalDocument();
-		ObjectId objectId = internalDocument.checkIn(majorVersion, null, null, null);
-		Session session = getDocument().getObjectStore().getSession();
-		CmisObject newDocument = session.getObject(objectId);
-		getDocument().refresh((org.apache.chemistry.opencmis.client.api.Document) newDocument);
+		if ( getDocument().isSaved() ) {
+			org.apache.chemistry.opencmis.client.api.Document internalDocument = getInternalDocument();
+			ObjectId objectId = internalDocument.checkIn(majorVersion, null, null, null);
+			Session session = getDocument().getObjectStore().getSession();
+			CmisObject newDocument = session.getObject(objectId);
+			getDocument().refresh((org.apache.chemistry.opencmis.client.api.Document) newDocument);
+		} else {
+			getDocument().saveNew();
+		}
 		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 

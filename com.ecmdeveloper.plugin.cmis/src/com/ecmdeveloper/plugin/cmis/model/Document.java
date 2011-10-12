@@ -20,15 +20,12 @@
 
 package com.ecmdeveloper.plugin.cmis.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
@@ -47,22 +44,18 @@ public class Document extends ObjectStoreItem implements IDocument {
 	private String mimeType;
 	private boolean reserved;
 	private String versionLabel;
-
-	private Map<String,Object> properties;
-
-	private Map<String,Property<?>> documentProperties;
-
 	private String className;
+
+	private ContentStream contentStream;
 	
 	protected Document(Object document, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
-		super(parent, objectStore);
+		super(parent, objectStore, saved);
+		this.document = (org.apache.chemistry.opencmis.client.api.Document) document;
+		refresh();
 	}
 
 	protected Document(Object document, IObjectStoreItem parent, ObjectStore objectStore ) {
 		this(document, parent, objectStore, true);
-		this.document = (org.apache.chemistry.opencmis.client.api.Document) document;
-		refresh();
-		properties = new HashMap<String, Object>();
 	}
 	
 	@Override
@@ -118,28 +111,6 @@ public class Document extends ObjectStoreItem implements IDocument {
 	}
 
 	@Override
-	public Object getValue(String propertyName) {
-		
-		if ( !saved ) {
-			return null;
-		}
-
-		Property<?> property = documentProperties.get(propertyName);
-		Object objectValue = null;
-		if ( property != null ) {
-			objectValue = property.getValue();
-		}
-//		if ( objectValue instanceof Collection ) {
-//			ArrayList<?> values = new ArrayList( (Collection) objectValue );
-//			return values.toArray();
-//		} else if ( objectValue instanceof IndependentlyPersistableObject ) {
-//			return "TODO";
-//		}
-		return objectValue;
-		
-	}
-
-	@Override
 	public boolean isSimilarObject(IObjectStoreItem otherItem) {
 		if ( super.isSimilarObject(otherItem) ) {
 			return true;
@@ -178,31 +149,26 @@ public class Document extends ObjectStoreItem implements IDocument {
 			reserved = document.isVersionSeriesCheckedOut();
 		}
 		
-		versionLabel = document.getPropertyValue("cmis:versionLabel");
-		documentProperties = new HashMap<String, Property<?>>();
+		initalizeProperties();
 		
-		for ( Property<?> propery : document.getProperties() ) {
-			documentProperties.put(propery.getId(), propery );
-		}
+		versionLabel = document.getPropertyValue("cmis:versionLabel");
+		
+	}
+	
+	@Override
+	public void save() {
+		super.save();
+		this.name = document.getName();
+	}
+
+	public boolean isSaved() {
+		return saved;
 	}
 	
 	@Override
 	public void setName(String name) {
 		this.name = name;
-		properties.put(PropertyIds.NAME, name );
-	}
-
-	@Override
-	public void setValue(String propertyName, Object value) throws Exception {
-		properties.put(PropertyIds.NAME, name );
-	}
-
-	@Override
-	public void save() {
-		if ( !properties.isEmpty() ) {
-			document.updateProperties(properties);
-		}
-		properties.clear();
+		setValue(PropertyIds.NAME, name );
 	}
 
 	@Override
@@ -221,6 +187,26 @@ public class Document extends ObjectStoreItem implements IDocument {
 
 	public void refresh(org.apache.chemistry.opencmis.client.api.Document newDocument) {
 		document = newDocument;
+		refresh();
+	}
+
+	public void setContentStream(ContentStream contentStream) {
+		this.contentStream = contentStream;
+		if ( contentStream != null ) {
+			setValue(PropertyIds.CONTENT_STREAM_FILE_NAME, contentStream.getFileName() );
+		}
+	}
+	
+	public void saveNew() {
+
+		if ( saved ) {
+			throw new UnsupportedOperationException("Document is already saved" );
+		}
+		
+		org.apache.chemistry.opencmis.client.api.Folder internalFolder = ((Folder)parent).getInternalFolder();
+		document = internalFolder.createDocument(changedProperties, contentStream, VersioningState.NONE );
+		saved = true;
+		changedProperties.clear();
 		refresh();
 	}
 }

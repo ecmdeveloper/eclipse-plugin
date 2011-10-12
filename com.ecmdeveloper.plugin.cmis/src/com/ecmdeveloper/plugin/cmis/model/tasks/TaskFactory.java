@@ -179,8 +179,7 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public ICreateDocumentTask getCreateDocumentTask(IObjectStoreItem parent, String className,
 			Map<String, Object> propertiesMap) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CreateDocumentTask((ObjectStoreItem) parent, className, propertiesMap);
 	}
 
 	@Override

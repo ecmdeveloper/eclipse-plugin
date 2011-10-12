@@ -152,8 +152,8 @@ public class ParentSelectionWizardPage extends WizardPage {
 		ITreeContentProvider contentProvider = new ObjectStoresViewContentProvider();
 		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, contentProvider );
-		dialog.setInput( Activator.getDefault().getObjectStoresManager() );
-		contentProvider.inputChanged( null, null, Activator.getDefault().getObjectStoresManager() );
+		dialog.setInput( Activator.getDefault().getTaskManager() );
+		//contentProvider.inputChanged( null, null, Activator.getDefault().getTaskManager() );
 		dialog.setTitle( getTitle() );
 		dialog.setMessage( getDescription() );
 		dialog.addFilter( new ParentTargetFilter() );

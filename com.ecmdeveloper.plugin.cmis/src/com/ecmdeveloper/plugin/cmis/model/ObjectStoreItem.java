@@ -22,10 +22,22 @@ package com.ecmdeveloper.plugin.cmis.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Property;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ecmdeveloper.plugin.cmis.model.tasks.TaskFactory;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
@@ -44,12 +56,16 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	protected ObjectStore objectStore;
 	protected boolean saved;
 
+	protected Map<String,Object> changedProperties;
+	private Map<String,Property<?>> properties;
+
 	private transient PropertyChangeSupport pcsDelegate = new PropertyChangeSupport(this);
 
 	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
 		this.parent = parent;
 		this.objectStore = objectStore;
 		this.saved = saved;
+		changedProperties = new HashMap<String, Object>();
 	}
 	
 	public ObjectStoreItem(IObjectStoreItem parent, ObjectStore objectStore) {
@@ -150,8 +166,6 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return TaskFactory.getInstance();
 	}
 
-	public abstract void save();
-	
 	@Override
 	public boolean isSimilarObject(IObjectStoreItem otherItem) {
 
@@ -165,5 +179,97 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public Object getValue(String propertyName) {
+		
+		if ( !saved ) {
+			return null;
+		}
+
+		Object objectValue = getObjectValue(propertyName);
+		return convertFromInternalValue(objectValue);
+	}
+
+	private Object getObjectValue(String propertyName) {
+		Object objectValue = null;
+
+		if ( changedProperties.containsKey(propertyName) ) {
+			objectValue = changedProperties.get(propertyName);
+		} else {
+			Property<?> property = properties.get(propertyName);
+			if ( property != null ) {
+				objectValue = property.getValue();
+			}
+		}
+		return objectValue;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object convertFromInternalValue(Object objectValue) {
+		
+		if ( objectValue instanceof Calendar) {
+			return ((Calendar) objectValue).getTime();
+		} else if ( objectValue instanceof BigInteger ) {
+			return new Integer( ((BigInteger) objectValue).intValue() );
+		} else if ( objectValue instanceof BigDecimal ) {
+			return new Double( ((BigDecimal) objectValue).doubleValue() );
+		} else if ( objectValue instanceof ArrayList ) {
+			ArrayList<? super Object> valueList = (ArrayList<? super Object>) objectValue;
+			ArrayList<? super Object> newValueList = new ArrayList<Object>(valueList.size());
+			for (int i = 0; i < valueList.size(); ++i) {
+				newValueList.add(convertFromInternalValue( valueList.get(i) ) );
+			}
+			return newValueList.toArray();
+		}
+
+		return objectValue;
+	}
+	
+	protected void initalizeProperties() {
+		properties = new HashMap<String, Property<?>>();
+		
+		for ( Property<?> propery : getCmisObject().getProperties() ) {
+			properties.put(propery.getId(), propery );
+		}
+	}
+
+	@Override
+	public void setValue(String propertyName, Object value) {
+		Object oldValue = getValue(propertyName);
+		changedProperties.put(propertyName, convertToInternalValue(value) );
+		if ( propertyName.equals( PropertyIds.NAME ) ) {
+			name = (String) value;
+		}
+		firePropertyChange(propertyName, oldValue, value );
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object convertToInternalValue(Object value) {
+		if ( value instanceof Date ) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime((Date) value);
+			return calendar;
+		} else if ( value instanceof Double ) {
+			BigDecimal bigDecimalValue = new BigDecimal( ((Double)value).toString() );
+			return bigDecimalValue;
+		} else if ( value instanceof List<?> ) {
+			List<? super Object> valueList = (List<? super Object>) value;
+			ArrayList<? super Object> newValueList = new ArrayList<Object>(valueList.size());
+			for (int i = 0; i < valueList.size(); ++i) {
+				newValueList.add(convertToInternalValue( valueList.get(i) ) );
+			}
+			return newValueList;
+		}
+		return value;
+	}
+
+	public void save() {
+		if ( !changedProperties.isEmpty() ) {
+			getCmisObject().updateProperties(changedProperties);
+		}
+		changedProperties.clear();
+		initalizeProperties();
 	}
 }

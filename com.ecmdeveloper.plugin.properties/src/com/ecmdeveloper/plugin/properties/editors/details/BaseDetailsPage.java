@@ -53,6 +53,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	private Section section;
 	protected Button emptyValueButton;
 	private boolean isDirty;
+	private boolean commitChanges;
 	protected Property property;
 	
 	@Override
@@ -82,24 +83,30 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 
 	protected void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
+		if (property != null ) {
+			commitPropertyValue();
+		}
+		//commit(false);
 	}
 
 	@Override
 	public void commit(boolean onSave) {
-		if (property != null ) {
-			commitPropertyValue();
-		}
+//		if (property != null ) {
+//			commitPropertyValue();
+//		}
 	}
 
 	private void commitPropertyValue() {
-		try {
-			if ( emptyValueButton != null && emptyValueButton.getSelection() ) {
-				property.setValue( null );
-			} else {
-				commitNotNullPropertyValue();
+		if ( commitChanges ) {
+			try {
+				if ( emptyValueButton != null && emptyValueButton.getSelection() ) {
+					property.setValue( null );
+				} else {
+					commitNotNullPropertyValue();
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
 		}
 	}
 
@@ -107,11 +114,15 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	private void commitNotNullPropertyValue() throws Exception {
 		Object value = getValue();
 		if ( value instanceof Object[] ) {
-			List valuesList = property.getList();
-			for ( Object valueElement : (Object[]) value ) {
-				valuesList.add( valueElement );
+			if ( property.isMultivalue() ) {
+				List valuesList = property.getList();
+				for ( Object valueElement : (Object[]) value ) {
+					valuesList.add( valueElement );
+				}
+				property.setValue( valuesList );
+			} else { 
+				property.setValue( ((Object[])value)[0] );
 			}
-			property.setValue( valuesList );
 		} else {
 			property.setValue( getValue() );
 		}
@@ -167,9 +178,11 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	    if ( property != null ) {
 	    	setTitle( property.getDisplayName() );
 	    	setDescription( property.getDescriptiveText() );
+	    	commitChanges = false;
 	    	propertyChanged( property );
 			setEmptyValueButtonState(property);
-			setDirty(false);
+			this.isDirty = false;
+			commitChanges = true;
 			form.getMessageManager().removeAllMessages();
 	    }
 	}

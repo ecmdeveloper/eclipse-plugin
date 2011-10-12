@@ -65,10 +65,28 @@ public class ChoicesLabelProvider extends LabelProvider {
 
 	private StringBuffer getDisplayNameAndValue(IChoice choice) {
 		StringBuffer text = new StringBuffer();
-		text.append( choice.getDisplayName() );
-		text.append( CHOICE_VALUE_PREFIX );
-		text.append( choice.getValue().toString() );
-		text.append( CHOICE_VALUE_POSTFIX );
+		String displayName = choice.getDisplayName();
+		if ( displayName != null && !displayName.isEmpty() ) {
+			text.append( displayName );
+			text.append( CHOICE_VALUE_PREFIX );
+			text.append( choice.getValue().toString() );
+			text.append( CHOICE_VALUE_POSTFIX );
+		} else {
+			if (choice.getValue() instanceof Object[] ) {
+				getArrayValue(text, choice);
+			} else {
+				text.append( choice.getValue().toString() );
+			}
+		}
 		return text;
+	}
+
+	private void getArrayValue(StringBuffer text, IChoice choice) {
+		String concat = "";
+		for ( Object v : (Object[]) choice.getValue() ) {
+			text.append( concat );
+			text.append(v.toString());
+			concat = ", ";
+		}
 	}
 }

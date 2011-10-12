@@ -24,7 +24,6 @@ import java.text.MessageFormat;
 
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
 /**
  * @author ricardo.belfor
@@ -33,18 +32,13 @@ import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 public class NewFolderEditorInput extends NewObjectStoreItemEditorInput {
 
 	private static final String DEFAULT_FOLDER_NAME = "Folder {0}";
-	private static final String FOLDER_TITLE_PROPERTY_NAME = "FolderName";
 
 	private static int newFolderIndex = 0;
 	
 	public NewFolderEditorInput(IClassDescription classDescription, IObjectStoreItem parent) {
 		super(classDescription, parent);
 		
-		try {
-			String unsavedTitle = MessageFormat.format(DEFAULT_FOLDER_NAME, ++newFolderIndex);
-			propertiesObject.setValue(FOLDER_TITLE_PROPERTY_NAME, unsavedTitle);
-			((UnsavedPropertiesObject) propertiesObject).setName(unsavedTitle);
-		} catch (Exception e) {
-		}
+		String unsavedTitle = MessageFormat.format(DEFAULT_FOLDER_NAME, ++newFolderIndex);
+		setUnsavedName(unsavedTitle);
 	}
 }
