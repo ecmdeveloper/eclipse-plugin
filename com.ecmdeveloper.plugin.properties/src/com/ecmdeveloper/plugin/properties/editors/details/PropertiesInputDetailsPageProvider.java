@@ -40,6 +40,7 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 	
 	static
 	{
+		// Flags: selectable, multivalue, readOnly 
 		keyToClassMap.put( getPageKey(PropertyType.STRING, false, false, false ), StringDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.STRING, true, false, false ), SingleChoiceDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.STRING, false, true, false ), MultiValueStringDetailsPage.class );
@@ -80,6 +81,8 @@ public class PropertiesInputDetailsPageProvider implements IDetailsPageProvider 
 
 		keyToClassMap.put( getPageKey(PropertyType.GUID, false, false, true ), SingleValueReadOnlyDetailsPage.class );
 		keyToClassMap.put( getPageKey(PropertyType.GUID, false, true, true ), MultiValueReadOnlyDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.GUID, false, false, false ), StringDetailsPage.class );
+		keyToClassMap.put( getPageKey(PropertyType.GUID, false, true, false ), MultiValueStringDetailsPage.class );
 	}
 	
 	private IDetailsPage unknownDetailsPage;

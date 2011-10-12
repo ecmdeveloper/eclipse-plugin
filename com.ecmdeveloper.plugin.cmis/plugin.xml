@@ -53,5 +53,11 @@
             commandId="com.ecmdeveloper.plugin.cmis.importRepository">
       </handler>
    </extension>
+   <extension
+         point="com.ecmdeveloper.plugin.objectstorestores">
+      <client
+            class="com.ecmdeveloper.plugin.cmis.model.ObjectStoresStore">
+      </client>
+   </extension>
 
 </plugin>

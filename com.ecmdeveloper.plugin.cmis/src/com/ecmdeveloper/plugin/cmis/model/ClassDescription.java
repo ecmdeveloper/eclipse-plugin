@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 import com.ecmdeveloper.plugin.cmis.model.tasks.GetChildClassDescriptionsTask;
@@ -195,4 +196,8 @@ public class ClassDescription implements IClassDescription {
 
 	}
 
+	@Override
+	public String getNamePropertyName() {
+		return PropertyIds.NAME;
+	}
 }

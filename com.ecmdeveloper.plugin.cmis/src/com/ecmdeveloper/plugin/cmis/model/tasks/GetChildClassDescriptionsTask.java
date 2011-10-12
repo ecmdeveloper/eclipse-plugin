@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.client.api.Session;
 
 import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
@@ -31,6 +32,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.cmis.model.ClassDescription;
+import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
 
 /**
  * @author Ricardo.Belfor
@@ -77,7 +79,13 @@ public class GetChildClassDescriptionsTask extends AbstractTask implements IGetC
 		try
 		{
 			for (ObjectType childObjectType : objectType.getChildren() ) {
-				ClassDescription classDescription = new ClassDescription( childObjectType, parent, parent.getObjectStore());
+				System.out.println( childObjectType.getPropertyDefinitions() );
+				
+				Session session = ((ObjectStore)parent.getObjectStore()).getSession();
+				session.removeObjectFromCache(childObjectType.getId());
+				ObjectType typeDefinition = session.getTypeDefinition( childObjectType.getId() );
+				System.out.println( typeDefinition.getPropertyDefinitions() );
+				ClassDescription classDescription = new ClassDescription( typeDefinition, parent, parent.getObjectStore());
 				children.add(classDescription);
 			}	
 

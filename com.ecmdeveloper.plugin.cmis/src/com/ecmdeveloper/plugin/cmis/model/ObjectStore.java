@@ -203,12 +203,6 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	}
 
 	@Override
-	public void setValue(String propertyName, Object value) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Object getAdapter(Class adapter) {
 		// TODO Auto-generated method stub
 		return null;
@@ -216,8 +210,6 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

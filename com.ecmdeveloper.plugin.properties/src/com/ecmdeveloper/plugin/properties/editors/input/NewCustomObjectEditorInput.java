@@ -39,10 +39,7 @@ public class NewCustomObjectEditorInput extends NewObjectStoreItemEditorInput {
 	public NewCustomObjectEditorInput(IClassDescription classDescription, IObjectStoreItem parent) {
 		super(classDescription, parent);
 
-		try {
-			String unsavedTitle = MessageFormat.format(DEFAULT_CUSTOM_OBJECT_NAME, ++newCustomObjectIndex);
-			((UnsavedPropertiesObject) propertiesObject).setName(unsavedTitle);
-		} catch (Exception e) {
-		}
+		String unsavedTitle = MessageFormat.format(DEFAULT_CUSTOM_OBJECT_NAME, ++newCustomObjectIndex);
+		setUnsavedName(unsavedTitle);
 	}
 }

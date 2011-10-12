@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
@@ -103,9 +104,6 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 				.getDisplayName() : name;
 		propertyType = fromTypeID(propertyDescription.getPropertyType() );
 		choiceList = propertyDescription.getChoices();
-		if ( choiceList != null && !choiceList.isEmpty() ) {
-			System.out.println( choiceList );
-		}
 		required = propertyDescription.isRequired();
 		multivalue = !propertyDescription.getCardinality().equals( org.apache.chemistry.opencmis.commons.enums.Cardinality.SINGLE );
 		systemOwned = false; // TODO: propertyDescription.getUpdatability().get_IsSystemOwned();
@@ -490,25 +488,25 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 	@Override
 	public List getList() {
 		
-//		switch ( propertyType ) {
-//		case BINARY:
-//			return Factory.BinaryList.createList();
-//		case BOOLEAN:
-//			return Factory.BooleanList.createList();
-//		case DATE:
-//			return Factory.DateTimeList.createList();
-//		case DOUBLE:
-//			return Factory.Float64List.createList();
-//		case GUID:
-//			return Factory.IdList.createList();
-//		case LONG:
-//			return Factory.Integer32List.createList();
+		switch ( propertyType ) {
+		case BOOLEAN:
+			return new ArrayList<Boolean>();
+		case DATE:
+			return new ArrayList<Date>();
+		case DOUBLE:
+			return new ArrayList<Double>();
+		case LONG:
+			return new ArrayList<Integer>();
+		case STRING:
+			return new ArrayList<String>();
+		case GUID:
+			return new ArrayList<String>();
 //		case OBJECT:
 //			// TODO: fix this!!!
 //			return null;
-//		case STRING:
-//			return Factory.StringList.createList();
-//		}
+//		case BINARY:
+//			return Factory.BinaryList.createList();
+		}
 		return null;
 	}
 }

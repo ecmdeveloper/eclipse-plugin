@@ -130,4 +130,9 @@ public class ClassesPlaceholder extends AbstractPlaceholder implements IClassDes
 	public void setParent(Object parent) {
 		this.parent = parent;
 	}
+
+	@Override
+	public String getNamePropertyName() {
+		return null;
+	}
 }

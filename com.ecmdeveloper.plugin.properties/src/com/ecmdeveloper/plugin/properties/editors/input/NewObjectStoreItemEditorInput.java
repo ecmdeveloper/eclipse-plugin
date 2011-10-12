@@ -58,4 +58,16 @@ public class NewObjectStoreItemEditorInput extends ObjectStoreItemEditorInput {
 		this.objectStoreItem = objectStoreItem;
 		this.propertiesObject = new SavedPropertiesObject(objectStoreItem);
 	}
+	
+	protected void setUnsavedName(String name ) {
+		try {
+			String namePropertyName = getClassDescription().getNamePropertyName();
+			if ( namePropertyName != null ) {
+				propertiesObject.setValue(namePropertyName, name );
+			}
+			((UnsavedPropertiesObject) propertiesObject).setName(name);
+		} catch (Exception e) {
+			// The user can fix this
+		}
+	}
 }

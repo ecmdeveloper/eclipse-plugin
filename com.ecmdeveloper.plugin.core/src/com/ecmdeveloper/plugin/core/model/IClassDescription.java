@@ -56,4 +56,5 @@ public interface IClassDescription {
 
 	Object getParent();
 
+	String getNamePropertyName();
 }

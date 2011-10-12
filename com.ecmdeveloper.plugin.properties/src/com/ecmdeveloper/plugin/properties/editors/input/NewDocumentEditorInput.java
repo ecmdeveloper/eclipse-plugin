@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IFile;
 
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
 /**
  * @author ricardo.belfor
@@ -37,7 +36,6 @@ import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 public class NewDocumentEditorInput extends NewObjectStoreItemEditorInput {
 
 	private static final String DEFAULT_DOCUMENT_NAME = "Document {0}";
-	private static final String DOCUMENT_TITLE_PROPERTY_NAME = "DocumentTitle";
 
 	private static int newDocumentIndex = 0;
 	
@@ -49,15 +47,7 @@ public class NewDocumentEditorInput extends NewObjectStoreItemEditorInput {
 	public NewDocumentEditorInput(IClassDescription classDescription, IObjectStoreItem parent) {
 		super(classDescription, parent);
 		String unsavedTitle = MessageFormat.format(DEFAULT_DOCUMENT_NAME, ++newDocumentIndex);
-		setName(unsavedTitle);
-	}
-
-	private void setName(String unsavedTitle) {	
-		try {
-			propertiesObject.setValue(DOCUMENT_TITLE_PROPERTY_NAME, unsavedTitle);
-			((UnsavedPropertiesObject) propertiesObject).setName(unsavedTitle);
-		} catch (Exception e) {
-		}
+		setUnsavedName(unsavedTitle);
 	}
 
 	public ArrayList<Object> getContent() {
@@ -68,7 +58,7 @@ public class NewDocumentEditorInput extends NewObjectStoreItemEditorInput {
 		this.content = content;
 		String contentName = getContentName();
 		if (contentName != null) {
-			setName(contentName);
+			setUnsavedName(contentName);
 		}
 	}
 

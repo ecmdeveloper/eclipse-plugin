@@ -22,8 +22,6 @@ package com.ecmdeveloper.plugin.cmis.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -48,8 +46,6 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	private boolean contained;
 	private String pathName;
 	private String className;
-
-	private Map<String,Object> properties;
 	
 	protected Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore, boolean saved) {
 		super(parent, objectStore, saved);
@@ -57,7 +53,6 @@ public class Folder extends ObjectStoreItem implements IFolder {
 		this.folder = (org.apache.chemistry.opencmis.client.api.Folder) folder;
 		contained = false;
 		refresh();
-		properties = new HashMap<String, Object>();
 	}
 
 	protected Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore) {
@@ -85,6 +80,8 @@ public class Folder extends ObjectStoreItem implements IFolder {
 		children = null;
 		hasChildren = folder.getChildren().iterator().hasNext();
 		className = folder.getType().getId();
+		
+		initalizeProperties();
 	}
 
 	/**
@@ -200,9 +197,15 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	@Override
 	public void setName(String name) {
 		this.name = name;
-		properties.put(PropertyIds.NAME, name );
+		setValue(PropertyIds.NAME, name );
 	}
 
+	@Override
+	public void save() {
+		super.save();
+		this.name = folder.getName();
+	}
+	
 	/**
 	 * Sets if this folder is contained rather then a child object.
 	 * 
@@ -230,27 +233,6 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	@Override
 	public String getClassName() {
 		return className;
-	}
-
-	@Override
-	public Object getValue(String propertyName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(String propertyName, Object value) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void save() {
-		if ( !properties.isEmpty() ) {
-			folder.updateProperties(properties);
-		}
-		properties.clear();
-		saved = true;
 	}
 
 	@Override

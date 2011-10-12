@@ -23,8 +23,6 @@ package com.ecmdeveloper.plugin.cmis.model.tasks;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.FileNameMap;
-import java.net.URLConnection;
 import java.util.Collection;
 
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -32,9 +30,9 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
-import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
 import com.ecmdeveloper.plugin.cmis.model.Document;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItemFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
 
 /**
  * @author Ricardo.Belfor
@@ -56,16 +54,32 @@ public class SaveTask extends DocumentTask implements ISaveTask {
 	@Override
 	public Object call() throws Exception {
 
+		if ( getDocument().isSaved() ) {
+			setSavedContent();
+		} else {
+			setUnsavedContent();
+		}
+
+		return null;
+	}
+
+	private void setSavedContent() throws Exception {
 		org.apache.chemistry.opencmis.client.api.Document reservation = getReservation();
 		ContentStream content = createContent();
 		if ( content != null ) {
 			reservation.setContentStream( content, true );
 		}
 		reservationDocument = ObjectStoreItemFactory.createDocument( reservation, getDocument().getParent(), getDocument().getObjectStore() );
-
-		return null;
 	}
 
+	private void setUnsavedContent() throws Exception {
+		ContentStream content = createContent();
+		if ( content != null ) {
+			getDocument().setContentStream( content );
+		}
+		reservationDocument = getDocument();
+	}
+	
 	public Document getReservationDocument() {
 		return reservationDocument;
 	}
@@ -103,10 +117,4 @@ public class SaveTask extends DocumentTask implements ISaveTask {
 
 		return contentStream;
 	}
-	
-	private String getContentType(String filename) {
-		FileNameMap fileNameMap = URLConnection.getFileNameMap();
-		return fileNameMap.getContentTypeFor( filename );
-	}
-
 }
