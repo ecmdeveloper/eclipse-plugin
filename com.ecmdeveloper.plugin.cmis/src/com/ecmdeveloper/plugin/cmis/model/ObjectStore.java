@@ -50,7 +50,6 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	private Session session;
 	private final Connection connection;
 	private final String id;
-	private String name;
 	private String displayName;
 	private Collection<IObjectStoreItem> children;
 
@@ -70,7 +69,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 			parameters.put(SessionParameter.REPOSITORY_ID, id );
 			SessionFactory sessionFactory = Activator.getDefault().getSessionFactory();
 			session = sessionFactory.createSession(parameters);
-			name = session.getRepositoryInfo().getName();
+			displayName = session.getRepositoryInfo().getName();
 
 			ObjectStoreItemsModel.getInstance().add(this);			
 		}
@@ -111,7 +110,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 
 	@Override
 	public String getName() {
-		return name;
+		return id;
 	}
 
 	@Override

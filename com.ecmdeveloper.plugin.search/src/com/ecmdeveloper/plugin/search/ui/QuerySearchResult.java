@@ -31,7 +31,7 @@ import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.Query;
 
@@ -45,7 +45,7 @@ public class QuerySearchResult implements ISearchResult {
 	private Collection<String> columnNames;
 	private HashSet<ISearchResultListener> searchListeners = new HashSet<ISearchResultListener>();
 	private final Query query;
-	private ArrayList<SearchResultRow> searchResult;
+	private ArrayList<ISearchResultRow> searchResult;
 	
 	public QuerySearchResult(Query query, SearchQuery searchQuery) {
 		this.query = query;
@@ -91,18 +91,18 @@ public class QuerySearchResult implements ISearchResult {
 		searchListeners.remove(listeners);
 	}
 	
-	public Collection<SearchResultRow> getResult() {
+	public Collection<ISearchResultRow> getResult() {
 		if ( searchResult != null ) {
 			return searchResult;
 		}
-		return new ArrayList<SearchResultRow>();
+		return new ArrayList<ISearchResultRow>();
 	}
 	
 	public Collection<String> getColumnNames() {
 		return columnNames;
 	}
 
-	public void setSearchResult(ArrayList<SearchResultRow> searchResult) {
+	public void setSearchResult(ArrayList<ISearchResultRow> searchResult) {
 		this.searchResult = searchResult;
 		fireSearchResultChanged();
 	}
@@ -114,15 +114,15 @@ public class QuerySearchResult implements ISearchResult {
 		}
 	}
 
-	private void fireSearchResultAdded(SearchResultRow searchResultRow) {
+	private void fireSearchResultAdded(ISearchResultRow searchResultRow) {
 		for (ISearchResultListener listener: searchListeners) {
             listener.searchResultChanged(new SearchResultAddEvent(this, searchResultRow) );
 		}
 	}
 
-	public void addRow(SearchResultRow searchResultRow) {
+	public void addRow(ISearchResultRow searchResultRow) {
 		if (searchResult == null ) {
-			searchResult = new ArrayList<SearchResultRow>();
+			searchResult = new ArrayList<ISearchResultRow>();
 		}
 		searchResult.add(searchResultRow);
 		fireSearchResultAdded(searchResultRow);
@@ -142,17 +142,17 @@ public class QuerySearchResult implements ISearchResult {
 		return 0;
 	}
 	
-	public SearchResultRow[] getSearchResultRows(IObjectStoreItem[] objectStoreItems ) {
+	public ISearchResultRow[] getSearchResultRows(IObjectStoreItem[] objectStoreItems ) {
 		
-		ArrayList<SearchResultRow> searchResultRows = new ArrayList<SearchResultRow>();
+		ArrayList<ISearchResultRow> searchResultRows = new ArrayList<ISearchResultRow>();
 		for ( IObjectStoreItem objectStoreItem : objectStoreItems ) {
-			for ( SearchResultRow searchResultRow : searchResult ) {
+			for ( ISearchResultRow searchResultRow : searchResult ) {
 				if ( objectStoreItem.equals( searchResultRow.getObjectValue() ) ) {
 					searchResultRows.add(searchResultRow);
 				}
 			}
 		}
 		
-		return searchResultRows.toArray( new SearchResultRow[ searchResultRows.size() ] );
+		return searchResultRows.toArray( new ISearchResultRow[ searchResultRows.size() ] );
 	}
 }

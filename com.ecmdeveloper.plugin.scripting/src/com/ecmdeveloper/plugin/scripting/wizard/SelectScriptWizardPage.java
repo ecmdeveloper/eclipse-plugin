@@ -25,6 +25,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -46,7 +47,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import com.ecmdeveloper.plugin.scripting.ScriptingProjectNature;
+import com.ecmdeveloper.plugin.scripting.util.PluginLog;
 
 /**
  * @author ricardo.belfor
@@ -58,9 +59,11 @@ public class SelectScriptWizardPage extends WizardPage {
 
 	private TreeViewer javaElementsTree;
 	private IMethod method;
-
-	protected SelectScriptWizardPage() {
+	private final String projectNatureId;
+	
+	protected SelectScriptWizardPage(String projectNatureId) {
 		super(TITLE);
+		this.projectNatureId = projectNatureId;
 		setTitle(TITLE);
 		setDescription("Select the method to launch. Only Content Engine Scripting Projects\r\ncan be used.");
 	}
@@ -118,15 +121,22 @@ public class SelectScriptWizardPage extends WizardPage {
 		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for ( IProject project : root.getProjects() ) {
-			if ( project.isOpen() ) {
-				if ( ScriptingProjectNature.hasNature(project) ) {
-					return true;
-				}
+			if ( hasNature(project) ) {
+				return true;
 			}
 		}
 		return false;
 	}
 
+	public boolean hasNature(IProject project) {
+		try {
+			return project.isOpen() && project.hasNature( projectNatureId );
+		} catch (CoreException e) {
+			PluginLog.error(e);
+			return false;
+		}
+	}
+	
 	private ViewerFilter getJavaElementFilter() {
 		return new ViewerFilter() {
 
@@ -145,7 +155,7 @@ public class SelectScriptWizardPage extends WizardPage {
 					}
 					if ( type == IJavaElement.JAVA_PROJECT ) {
 						IJavaProject javaProject = ((IJavaProject)element);
-						return ScriptingProjectNature.hasNature(javaProject.getProject());
+						return hasNature(javaProject.getProject());
 					} else if ( type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.COMPILATION_UNIT ||
 						type == IJavaElement.TYPE || type == IJavaElement.METHOD) {
 						return true;

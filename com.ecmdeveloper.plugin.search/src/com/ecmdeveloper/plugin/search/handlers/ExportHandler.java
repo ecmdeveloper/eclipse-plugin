@@ -34,7 +34,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 import com.ecmdeveloper.plugin.search.ui.QuerySearchResult;
 import com.ecmdeveloper.plugin.search.ui.SearchResultPage;
 import com.ecmdeveloper.plugin.search.ui.wizard.ExportSearchResultWizard;
@@ -55,7 +55,7 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 		if (window == null)	return null;
 
 		SearchResultPage searchResultPage = getSearchResultPage();
-		Collection<SearchResultRow> result = getSearchResult(searchResultPage);
+		Collection<ISearchResultRow> result = getSearchResult(searchResultPage);
 		if ( result == null || result.isEmpty() ) {
 			MessageDialog.openError(window.getShell(), HANDLER_NAME, EMPTY_SEARCH_RESULT_MESSAGE );
 		}
@@ -69,9 +69,9 @@ public class ExportHandler extends AbstractHandler implements IHandler {
 		return null;
 	}
 
-	private Collection<SearchResultRow> getSearchResult(SearchResultPage searchResultPage) {
+	private Collection<ISearchResultRow> getSearchResult(SearchResultPage searchResultPage) {
 		
-		Collection<SearchResultRow> result = null;
+		Collection<ISearchResultRow> result = null;
 		if ( searchResultPage != null ) {
 			QuerySearchResult searchResult = (QuerySearchResult) searchResultPage.getSearchResult();
 			result = searchResult.getResult();

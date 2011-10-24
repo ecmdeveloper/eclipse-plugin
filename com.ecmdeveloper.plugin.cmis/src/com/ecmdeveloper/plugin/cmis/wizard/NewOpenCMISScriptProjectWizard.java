@@ -18,28 +18,33 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.ui;
+package com.ecmdeveloper.plugin.cmis.wizard;
 
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.SearchResultEvent;
+import java.io.IOException;
 
-import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
+import com.ecmdeveloper.plugin.cmis.Activator;
+import com.ecmdeveloper.plugin.cmis.scripting.ScriptingProjectNature;
+import com.ecmdeveloper.plugin.scripting.wizard.NewScriptingProjectWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SearchResultAddEvent extends SearchResultEvent {
+public class NewOpenCMISScriptProjectWizard extends NewScriptingProjectWizard {
 
-	private static final long serialVersionUID = 7348268456390688457L;
-	private final ISearchResultRow searchResultRow;
-	
-	protected SearchResultAddEvent(ISearchResult searchResult, ISearchResultRow searchResultRow ) {
-		super(searchResult);
-		this.searchResultRow = searchResultRow;
+	@Override
+	protected String[] getLibraries() throws IOException {
+		String[] libraries = Activator.getDefault().getLibraries();
+		return libraries;
 	}
 
-	public ISearchResultRow getSearchResultRow() {
-		return searchResultRow;
+	@Override
+	protected String getNatureId() {
+		return ScriptingProjectNature.NATURE_ID;
+	}
+
+	@Override
+	protected String getMethodRunnerLocation() throws Exception {
+		return Activator.getDefault().getMethodRunnerLocation();
 	}
 }

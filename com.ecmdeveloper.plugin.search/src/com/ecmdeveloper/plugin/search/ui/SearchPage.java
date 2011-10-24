@@ -51,13 +51,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
 import com.ecmdeveloper.plugin.search.editor.QueryEditorInput;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.store.QueryFileInfo;
 import com.ecmdeveloper.plugin.search.store.QueryFileStore;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -69,7 +69,6 @@ public class SearchPage extends DialogPage implements ISearchPage {
 	
 	private static final String PAGE_NAME = "Content Engine Search";
 	private static final String DATE_MODIFIED_FMT = "Date Modified: {0}";
-	private static final String SQL_FMT = "SQL: {0}";
 	private QueryFileStore queryFileStore = new QueryFileStore();
 	private Button newQueryButton;
 	private Button executeQueryButton;
@@ -206,7 +205,6 @@ public class SearchPage extends DialogPage implements ISearchPage {
 		createDeleteButton(buttonRow);
 		createShowSQLButton(buttonRow);
 		dateModifiedLabel = addLabel(group, MessageFormat.format( DATE_MODIFIED_FMT, "-" ) );
-//		sqlLabel = addLabel(group, MessageFormat.format( SQL_FMT, "-" ) );
 	}
 
 	private Label addLabel(Composite container, String text) {
@@ -278,11 +276,8 @@ public class SearchPage extends DialogPage implements ISearchPage {
 			dateModifiedLabel.setText(MessageFormat.format(DATE_MODIFIED_FMT, queryInfo
 					.getLastModified().toString()));
 			dateModifiedLabel.pack();
-//			sqlLabel.setText( MessageFormat.format( SQL_FMT, queryInfo.getSql() ) );
-//			sqlLabel.pack(true);
 		} else {
 			dateModifiedLabel.setText( MessageFormat.format( DATE_MODIFIED_FMT, "-" ) );
-//			sqlLabel.setText( MessageFormat.format( SQL_FMT, "-" ) );
 		}
 		
 		modifyQueryButton.setSelection( queryInfo != null && ! executeQueryButton.getSelection() );

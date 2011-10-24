@@ -43,22 +43,23 @@ import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 public class CloneCommand extends Command
 {
 
-	private List parts, newTopLevelParts, newConnections;
+	private List<QuerySubpart> parts;
+	private List<QuerySubpart> newTopLevelParts;
+	private List newConnections;
 	private QueryDiagram parent;
-	private Map bounds, indices, connectionPartMap;
-//	private ChangeGuideCommand vGuideCommand, hGuideCommand;
-//	private LogicGuide hGuide, vGuide;
-	private int hAlignment, vAlignment;
+	private Map<QuerySubpart,Rectangle> bounds;
+	private Map<QuerySubpart,Integer> indices;
+	private Map connectionPartMap;
 
 	public CloneCommand() {
 		super("Clone");
-		parts = new LinkedList();
+		parts = new LinkedList<QuerySubpart>();
 	}
 
 	public void addPart(QuerySubpart part, Rectangle newBounds) {
 		parts.add(part);
 		if (bounds == null) {
-			bounds = new HashMap();
+			bounds = new HashMap<QuerySubpart, Rectangle>();
 		}
 		bounds.put(part, newBounds);
 	}
@@ -66,7 +67,7 @@ public class CloneCommand extends Command
 	public void addPart(QuerySubpart part, int index) {
 		parts.add(part);
 		if (indices == null) {
-			indices = new HashMap();
+			indices = new HashMap<QuerySubpart, Integer>();
 		}
 		indices.put(part, new Integer(index));
 	}
@@ -75,23 +76,8 @@ public class CloneCommand extends Command
 			List newConnections, Map connectionPartMap, int index) {
 		QuerySubpart newPart = null;
 
-//		if (oldPart instanceof AndGate) {
-//			newPart = new AndGate();
-//		} else if (oldPart instanceof Circuit) {
-//			newPart = new Circuit();
-//		} else if (oldPart instanceof GroundOutput) {
-//			newPart = new GroundOutput();
-//		} else if (oldPart instanceof LED) {
-//			newPart = new LED();
-//			newPart.setPropertyValue(LED.P_VALUE, oldPart.getPropertyValue(LED.P_VALUE));
-//		} else if (oldPart instanceof LiveOutput) {
-//			newPart = new LiveOutput();
-//		} else 
 		if (oldPart instanceof Comparison) {
 			newPart = new Comparison( oldPart.getQuery() );
-			//((QueryCondition)newPart).setLabelContents(((QueryCondition)oldPart).getLabelContents());
-//		} else if (oldPart instanceof OrGate) {
-//			newPart = new OrGate();
 		} else 
 		if (oldPart instanceof OrContainer) {
 			newPart = new OrContainer( oldPart.getQuery() );
@@ -99,9 +85,6 @@ public class CloneCommand extends Command
 		if (oldPart instanceof AndContainer) {
 			newPart = new AndContainer( oldPart.getQuery() );
 		} 
-//		else if (oldPart instanceof XORGate) {
-//			newPart = new XORGate();
-//		}
 
 		if (oldPart instanceof QueryDiagram) {
 			Iterator i = ((QueryDiagram)oldPart).getChildren().iterator();
@@ -111,32 +94,6 @@ public class CloneCommand extends Command
 						newConnections, connectionPartMap, -1);
 			}
 		}
-
-//		Iterator i = oldPart.getTargetConnections().iterator();
-//		while (i.hasNext()) {
-//			Wire connection = (Wire)i.next();
-//			Wire newConnection = new Wire();
-//			newConnection.setValue(connection.getValue());
-//			newConnection.setTarget(newPart);
-//			newConnection.setTargetTerminal(connection.getTargetTerminal());
-//			newConnection.setSourceTerminal(connection.getSourceTerminal());
-//			newConnection.setSource(connection.getSource());
-//
-//			Iterator b = connection.getBendpoints().iterator();
-//			Vector newBendPoints = new Vector();
-//
-//			while (b.hasNext()) {
-//				WireBendpoint bendPoint = (WireBendpoint)b.next();
-//				WireBendpoint newBendPoint = new WireBendpoint();
-//				newBendPoint.setRelativeDimensions(bendPoint.getFirstRelativeDimension(), 
-//						bendPoint.getSecondRelativeDimension());
-//				newBendPoint.setWeight(bendPoint.getWeight());
-//				newBendPoints.add(newBendPoint);
-//			}
-//
-//			newConnection.setBendpoints(newBendPoints);
-//			newConnections.add(newConnection);
-//		}
 
 
 		if (index < 0) {
@@ -183,32 +140,6 @@ public class CloneCommand extends Command
 			}
 		}
 
-//		// go through and set the source of each connection to the proper source.
-//		Iterator c = newConnections.iterator();
-//
-//		while (c.hasNext()) {
-//			Wire conn = (Wire)c.next();
-//			LogicSubpart source = conn.getSource();
-//			if (connectionPartMap.containsKey(source)) {
-//				conn.setSource((LogicSubpart)connectionPartMap.get(source));
-//				conn.attachSource();
-//				conn.attachTarget();
-//			}
-//		}
-//
-//		if (hGuide != null) {
-//			hGuideCommand = new ChangeGuideCommand(
-//					(LogicSubpart)connectionPartMap.get(parts.get(0)), true);
-//			hGuideCommand.setNewGuide(hGuide, hAlignment);
-//			hGuideCommand.execute();
-//		}
-//
-//		if (vGuide != null) {
-//			vGuideCommand = new ChangeGuideCommand(
-//					(LogicSubpart)connectionPartMap.get(parts.get(0)), false);
-//			vGuideCommand.setNewGuide(vGuide, vAlignment);
-//			vGuideCommand.execute();
-//		}
 	}
 
 	public void setParent(QueryDiagram parent) {
@@ -218,36 +149,9 @@ public class CloneCommand extends Command
 	public void redo() {
 		for (Iterator iter = newTopLevelParts.iterator(); iter.hasNext();)
 			parent.addChild((QuerySubpart)iter.next());
-//		for (Iterator iter = newConnections.iterator(); iter.hasNext();) {
-//			Wire conn = (Wire) iter.next();
-//			LogicSubpart source = conn.getSource();
-//			if (connectionPartMap.containsKey(source)) {
-//				conn.setSource((LogicSubpart)connectionPartMap.get(source));
-//				conn.attachSource();
-//				conn.attachTarget();
-//			}
-//		}
-//		if (hGuideCommand != null)
-//			hGuideCommand.redo();
-//		if (vGuideCommand != null)
-//			vGuideCommand.redo();
 	}
 
-//	public void setGuide(LogicGuide guide, int alignment, boolean isHorizontal) {
-//		if (isHorizontal) {
-//			hGuide = guide;
-//			hAlignment = alignment;
-//		} else {
-//			vGuide = guide;
-//			vAlignment = alignment;
-//		}
-//	}
-
 	public void undo() {
-//		if (hGuideCommand != null)
-//			hGuideCommand.undo();
-//		if (vGuideCommand != null)
-//			vGuideCommand.undo();
 		for (Iterator iter = newTopLevelParts.iterator(); iter.hasNext();)
 			parent.removeChild((QuerySubpart)iter.next());
 	}

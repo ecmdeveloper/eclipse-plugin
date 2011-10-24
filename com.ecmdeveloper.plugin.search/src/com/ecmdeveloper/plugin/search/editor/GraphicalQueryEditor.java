@@ -64,6 +64,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.actions.AddTableAction;
 import com.ecmdeveloper.plugin.search.actions.ConvertToTextAction;
@@ -84,7 +85,6 @@ import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.parts.GraphicalPartFactory;
 import com.ecmdeveloper.plugin.search.store.QueryFileStore;
 import com.ecmdeveloper.plugin.search.util.IconFiles;
-import com.ecmdeveloper.plugin.search.util.PluginMessage;
 
 /**
  * @author ricardo.belfor

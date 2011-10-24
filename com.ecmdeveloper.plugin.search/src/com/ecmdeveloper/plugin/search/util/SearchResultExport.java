@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 
 /**
  * @author ricardo.belfor
@@ -36,10 +36,10 @@ import com.ecmdeveloper.plugin.model.SearchResultRow;
  */
 public abstract class SearchResultExport {
 
-	private final Collection<SearchResultRow> searchResult;
+	private final Collection<ISearchResultRow> searchResult;
 	private final String filename;
 	
-	public SearchResultExport(Collection<SearchResultRow> searchResult, String filename ) {
+	public SearchResultExport(Collection<ISearchResultRow> searchResult, String filename ) {
 		this.searchResult = searchResult;
 		this.filename = filename;
 	}
@@ -56,13 +56,13 @@ public abstract class SearchResultExport {
 		
 		FileWriter writer = new FileWriter( new File(filename) );
 		startExport(writer);
-		SearchResultRow firstRow = searchResult.iterator().next();
+		ISearchResultRow firstRow = searchResult.iterator().next();
 		ArrayList<String> valueNames = firstRow.getValueNames();
 		writeHeaderRow( writer, valueNames );
 		
-		Iterator<SearchResultRow> iterator = searchResult.iterator();
+		Iterator<ISearchResultRow> iterator = searchResult.iterator();
 		while (iterator.hasNext() ) {
-			SearchResultRow searchResultRow = iterator.next();
+			ISearchResultRow searchResultRow = iterator.next();
 			ArrayList<String> values = getValues(searchResultRow, valueNames);
 			writeValuesRow( writer, values, valueNames );
 		}
@@ -80,7 +80,7 @@ public abstract class SearchResultExport {
 
 	protected abstract void finishExport(FileWriter writer) throws IOException;
 
-	private ArrayList<String> getValues(SearchResultRow searchResultRow,
+	private ArrayList<String> getValues(ISearchResultRow searchResultRow,
 			Collection<String> valueNames) {
 		ArrayList<String> values = new ArrayList<String>();
 		for ( String valueName : valueNames ) {

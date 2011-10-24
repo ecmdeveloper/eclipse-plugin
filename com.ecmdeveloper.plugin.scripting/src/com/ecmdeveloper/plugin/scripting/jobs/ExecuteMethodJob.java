@@ -20,10 +20,10 @@
 
 package com.ecmdeveloper.plugin.scripting.jobs;
 
-import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME;
 import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS;
 import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME;
 import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME;
 
 import java.util.Collection;
 
@@ -45,7 +45,6 @@ import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.scripting.Activator;
-import com.ecmdeveloper.plugin.scripting.engine.MethodRunner;
 import com.ecmdeveloper.plugin.scripting.engine.ScriptingContext;
 import com.ecmdeveloper.plugin.scripting.util.PluginMessage;
 
@@ -63,13 +62,15 @@ public class ExecuteMethodJob extends Job {
 
 	private final String username;
 	private final String password;
+	private final String runnerClassName;
 
-	public ExecuteMethodJob(IMethod method, Collection<IObjectStoreItem> objectStoreItems, String username, String password, boolean debug) {
+	public ExecuteMethodJob(IMethod method, Collection<IObjectStoreItem> objectStoreItems, String username, String password, String runnerClassName, boolean debug) {
 		super(JOB_NAME);
 		this.method = method;
 		this.objectStoreItems = objectStoreItems;
 		this.username = username;
 		this.password = password;
+		this.runnerClassName = runnerClassName;
 		this.debug = debug;
 	}
 
@@ -112,7 +113,7 @@ public class ExecuteMethodJob extends Job {
 		ILaunchConfigurationType launchConfigurationType = launchManager.getLaunchConfigurationType(ID_JAVA_APPLICATION);
 		
 		ILaunchConfigurationWorkingCopy workingCopy = launchConfigurationType.newInstance(null, getLaunchName() );
-		workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, MethodRunner.class.getName() );
+		workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, runnerClassName );
 		workingCopy.setAttribute(ATTR_PROJECT_NAME, method.getJavaProject().getElementName() );
 		workingCopy.setAttribute(ATTR_PROGRAM_ARGUMENTS, "\"" + filename + "\"" );
 		ILaunchConfiguration launchConfiguration = workingCopy.doSave();

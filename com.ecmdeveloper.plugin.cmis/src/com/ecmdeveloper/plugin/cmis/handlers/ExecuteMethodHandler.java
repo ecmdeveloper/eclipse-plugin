@@ -18,28 +18,33 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.ui;
+package com.ecmdeveloper.plugin.cmis.handlers;
 
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.jface.preference.IPreferenceStore;
 
-import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
+import com.ecmdeveloper.plugin.cmis.Activator;
+import com.ecmdeveloper.plugin.cmis.scripting.MethodRunner;
+import com.ecmdeveloper.plugin.cmis.scripting.ScriptingProjectNature;
+import com.ecmdeveloper.plugin.scripting.handlers.AbstractExecuteMethodHandler;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SearchResultAddEvent extends SearchResultEvent {
+public class ExecuteMethodHandler extends AbstractExecuteMethodHandler {
 
-	private static final long serialVersionUID = 7348268456390688457L;
-	private final ISearchResultRow searchResultRow;
-	
-	protected SearchResultAddEvent(ISearchResult searchResult, ISearchResultRow searchResultRow ) {
-		super(searchResult);
-		this.searchResultRow = searchResultRow;
+	@Override
+	protected IPreferenceStore getPreferenceStore() {
+		return Activator.getDefault().getPreferenceStore();
 	}
 
-	public ISearchResultRow getSearchResultRow() {
-		return searchResultRow;
+	@Override
+	protected String getProjectNatureId() {
+		return ScriptingProjectNature.NATURE_ID;
+	}
+
+	@Override
+	protected String getRunnerClassName() {
+		return MethodRunner.class.getName();
 	}
 }

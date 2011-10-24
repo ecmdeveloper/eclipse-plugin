@@ -23,8 +23,10 @@ package com.ecmdeveloper.plugin.scripting.dialogs;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -32,7 +34,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import com.ecmdeveloper.plugin.scripting.ScriptingProjectNature;
+import com.ecmdeveloper.plugin.scripting.util.PluginLog;
 
 /**
  * @author ricardo.belfor
@@ -41,7 +43,12 @@ import com.ecmdeveloper.plugin.scripting.ScriptingProjectNature;
 public class ClassesContentProvider {
 
 	private ArrayList<ICompilationUnit> classes;
+	private final String projectNatureId;
 	
+	public ClassesContentProvider(String projectNatureId) {
+		this.projectNatureId = projectNatureId;
+	}
+
 	public Collection<ICompilationUnit> getElements() throws JavaModelException {
 		
 		if ( classes == null ) {
@@ -56,7 +63,7 @@ public class ClassesContentProvider {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IJavaProject[] projects = JavaCore.create(root).getJavaProjects();
 		for (IJavaProject javaProject : projects) {
-			if (ScriptingProjectNature.hasNature(javaProject.getProject()) ) {
+			if (hasNature(javaProject.getProject()) ) {
 				getProjectClasses(javaProject);
 			}
 		}
@@ -74,6 +81,15 @@ public class ClassesContentProvider {
 			for ( ICompilationUnit compilationUnit : packageFragment.getCompilationUnits() ) {
 				classes.add(compilationUnit);
 			}
+		}
+	}
+
+	public boolean hasNature(IProject project) {
+		try {
+			return project.isOpen() && project.hasNature( projectNatureId );
+		} catch (CoreException e) {
+			PluginLog.error(e);
+			return false;
 		}
 	}
 }

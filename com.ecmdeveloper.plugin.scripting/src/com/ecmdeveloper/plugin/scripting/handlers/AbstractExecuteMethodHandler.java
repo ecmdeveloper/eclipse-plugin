@@ -28,6 +28,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -44,7 +45,7 @@ import com.ecmdeveloper.plugin.scripting.wizard.LaunchScriptWizard;
  * @author ricardo.belfor
  *
  */
-public class ExecuteMethodHandler  extends AbstractHandler implements IHandler {
+public abstract class AbstractExecuteMethodHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -60,7 +61,7 @@ public class ExecuteMethodHandler  extends AbstractHandler implements IHandler {
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		ArrayList<IObjectStoreItem> objectStoreItems = new ArrayList<IObjectStoreItem>();
 
-		LaunchScriptWizard wizard = new LaunchScriptWizard();
+		LaunchScriptWizard wizard = new LaunchScriptWizard(getPreferenceStore(), getProjectNatureId() );
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();
 		if ( dialog.open() != Dialog.OK ) {
@@ -85,10 +86,16 @@ public class ExecuteMethodHandler  extends AbstractHandler implements IHandler {
 			password = wizard.getPassword();
 		}
 		 
-		ExecuteMethodJob job = new ExecuteMethodJob(wizard.getMethod(), objectStoreItems, username, password, wizard.isDebug() );
+		ExecuteMethodJob job = new ExecuteMethodJob(wizard.getMethod(), objectStoreItems, username, password, getRunnerClassName(), wizard.isDebug() );
 		job.setUser(true);
 		job.schedule();
 
 		return null;
 	}
+
+	protected abstract String getRunnerClassName();
+
+	protected abstract String getProjectNatureId();
+
+	protected abstract IPreferenceStore getPreferenceStore();
 }

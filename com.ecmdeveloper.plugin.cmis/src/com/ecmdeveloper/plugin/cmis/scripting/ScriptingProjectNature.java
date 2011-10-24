@@ -18,7 +18,7 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.scripting;
+package com.ecmdeveloper.plugin.cmis.scripting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +29,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
-import com.ecmdeveloper.plugin.scripting.util.PluginLog;
+import com.ecmdeveloper.plugin.cmis.Activator;
+import com.ecmdeveloper.plugin.cmis.util.PluginLog;
 
 /**
  * @author ricardo.belfor
@@ -37,7 +38,7 @@ import com.ecmdeveloper.plugin.scripting.util.PluginLog;
  */
 public class ScriptingProjectNature implements IProjectNature {
 
-	private static final String NATURE_ID = Activator.PLUGIN_ID + ".contentEngineScript";
+	public static final String NATURE_ID = Activator.PLUGIN_ID + ".openCMISScript";
 	
 	private IProject project;
 
@@ -59,44 +60,5 @@ public class ScriptingProjectNature implements IProjectNature {
 	@Override
 	public void setProject(IProject project) {
 		this.project = project;
-	}
-
-	public static void addNature(IProject project) {
-		
-		if (!project.isOpen()) {
-			return;
-		}
-
-		IProjectDescription description;
-		try {
-			description = project.getDescription();
-		} catch (CoreException e) {
-			PluginLog.error(e);
-			return;
-		}
-		
-		List<String> newIds = new ArrayList<String>();
-		newIds.addAll(Arrays.asList(description.getNatureIds()));
-		int index = newIds.indexOf(NATURE_ID);
-
-		if (index == -1) {
-			newIds.add(NATURE_ID);
-			description.setNatureIds(newIds.toArray(new String[newIds.size()]));
-	
-			try {
-				project.setDescription(description, null);
-			} catch (CoreException e) {
-				PluginLog.error(e);
-			}
-		}
-	}
-
-	public static boolean hasNature(IProject project) {
-		try {
-			return project.isOpen() && project.hasNature(NATURE_ID);
-		} catch (CoreException e) {
-			PluginLog.error(e);
-			return false;
-		}
 	}
 }

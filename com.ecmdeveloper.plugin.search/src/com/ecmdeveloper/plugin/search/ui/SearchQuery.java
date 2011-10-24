@@ -36,13 +36,13 @@ import org.eclipse.search.ui.ISearchResult;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.SearchResultRow;
-import com.ecmdeveloper.plugin.model.tasks.ExecuteSearchTask;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
+import com.ecmdeveloper.plugin.core.model.tasks.IExecuteSearchTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.search.Activator;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.Query;
-import com.ecmdeveloper.plugin.search.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -96,7 +96,7 @@ public class SearchQuery implements ISearchQuery {
 			
 			monitor.beginTask(TASK_NAME, IProgressMonitor.UNKNOWN );
 			monitor.subTask( getLabel() );
-			ArrayList<SearchResultRow> searchResultRows = executeSearch();
+			ArrayList<ISearchResultRow> searchResultRows = executeSearch();
 			if ( monitor.isCanceled() ) {
 				return Status.CANCEL_STATUS;
 			}
@@ -112,12 +112,12 @@ public class SearchQuery implements ISearchQuery {
 		}
 	}
 
-	private IStatus addRowsToResult(ArrayList<SearchResultRow> searchResultRows,
+	private IStatus addRowsToResult(ArrayList<ISearchResultRow> searchResultRows,
 			IProgressMonitor monitor) {
 
 		monitor.beginTask("Fetching Result", searchResultRows.size() );
 
-		for (SearchResultRow searchResultRow : searchResultRows ) {
+		for (ISearchResultRow searchResultRow : searchResultRows ) {
 			try {
 				addRowToResult(searchResultRow, monitor);
 				monitor.worked(1);
@@ -133,7 +133,7 @@ public class SearchQuery implements ISearchQuery {
 		return Status.OK_STATUS;
 	}
 
-	private void addRowToResult(SearchResultRow searchResultRow, IProgressMonitor monitor) throws ExecutionException {
+	private void addRowToResult(ISearchResultRow searchResultRow, IProgressMonitor monitor) throws ExecutionException {
 		if ( searchResultRow.isHasObjectValue() ) {
 			IObjectStoreItem objectStoreItem = searchResultRow.loadObjectValue();
 			monitor.subTask( objectStoreItem.getDisplayName() );
@@ -141,14 +141,17 @@ public class SearchQuery implements ISearchQuery {
 		searchResult.addRow(searchResultRow);
 	}
 
-	private ArrayList<SearchResultRow> executeSearch() throws Exception {
+	private ArrayList<ISearchResultRow> executeSearch() throws Exception {
 		IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager();
 		IObjectStore objectStore = getObjectStore(objectStoresManager);
-		ObjectStore.assertConnected(objectStore);
-		ExecuteSearchTask task = new ExecuteSearchTask(query.toSQL(), objectStore);
+		
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+// FIXME query		
+//		ObjectStore.assertConnected(objectStore);
+		IExecuteSearchTask task = taskFactory.getExecuteSearchTask(query.toSQL(), objectStore);
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		
-		ArrayList<SearchResultRow> searchResultRows = task.getSearchResult();
+		ArrayList<ISearchResultRow> searchResultRows = task.getSearchResult();
 		return searchResultRows;
 	}
 

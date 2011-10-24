@@ -44,7 +44,6 @@ public class Document extends ObjectStoreItem implements IDocument {
 	private String mimeType;
 	private boolean reserved;
 	private String versionLabel;
-	private String className;
 
 	private ContentStream contentStream;
 	
@@ -103,11 +102,6 @@ public class Document extends ObjectStoreItem implements IDocument {
 	@Override
 	public Collection<IObjectStoreItem> getChildren() {
 		return null;
-	}
-
-	@Override
-	public String getClassName() {
-		return className;
 	}
 
 	@Override
@@ -197,14 +191,14 @@ public class Document extends ObjectStoreItem implements IDocument {
 		}
 	}
 	
-	public void saveNew() {
+	public void saveNew(VersioningState versioningState) {
 
 		if ( saved ) {
-			throw new UnsupportedOperationException("Document is already saved" );
+			throw new IllegalStateException("Document is already saved" );
 		}
 		
 		org.apache.chemistry.opencmis.client.api.Folder internalFolder = ((Folder)parent).getInternalFolder();
-		document = internalFolder.createDocument(changedProperties, contentStream, VersioningState.NONE );
+		document = internalFolder.createDocument(changedProperties, contentStream, versioningState );
 		saved = true;
 		changedProperties.clear();
 		refresh();

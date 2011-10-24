@@ -45,7 +45,6 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	private Boolean hasChildren;
 	private boolean contained;
 	private String pathName;
-	private String className;
 	
 	protected Folder(Object folder, IObjectStoreItem parent, ObjectStore objectStore, boolean saved) {
 		super(parent, objectStore, saved);
@@ -228,11 +227,6 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	@Override
 	public String getPathName() {
 		return pathName;
-	}
-
-	@Override
-	public String getClassName() {
-		return className;
 	}
 
 	@Override

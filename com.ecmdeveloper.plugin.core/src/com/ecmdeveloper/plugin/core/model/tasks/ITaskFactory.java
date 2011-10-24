@@ -89,5 +89,7 @@ public interface ITaskFactory {
 	
 	ICreateDocumentTask getCreateDocumentTask(IObjectStoreItem parent, String className, Map<String,Object> propertiesMap);
 
-	ICreateCustomObjectTask getCreateCustomObjectTask(IObjectStoreItem parent, String className,	Map<String, Object> propertiesMap);	
+	ICreateCustomObjectTask getCreateCustomObjectTask(IObjectStoreItem parent, String className,	Map<String, Object> propertiesMap);
+	
+	IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore);
 }

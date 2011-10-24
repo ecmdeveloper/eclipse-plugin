@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ecmdeveloper.plugin.cmis.model.tasks.TaskFactory;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
@@ -55,6 +53,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	protected String id;
 	protected ObjectStore objectStore;
 	protected boolean saved;
+	protected String className;
 
 	protected Map<String,Object> changedProperties;
 	private Map<String,Property<?>> properties;
@@ -93,6 +92,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	@Override
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public String getClassName() {
+		return className;
 	}
 
 	@Override
@@ -241,6 +245,10 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		changedProperties.put(propertyName, convertToInternalValue(value) );
 		if ( propertyName.equals( PropertyIds.NAME ) ) {
 			name = (String) value;
+		}
+
+		if ( PropertyIds.OBJECT_TYPE_ID.equals( propertyName) ) {
+			className = (String) value;
 		}
 		firePropertyChange(propertyName, oldValue, value );
 	}

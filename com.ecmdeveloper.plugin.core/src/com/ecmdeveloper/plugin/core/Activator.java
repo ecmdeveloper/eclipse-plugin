@@ -51,7 +51,6 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		ObjectStoresManager.getManager().saveObjectStores();
 		plugin = null;
 		imageCache.dispose();
 		super.stop(context);

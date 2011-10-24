@@ -21,8 +21,10 @@
 package com.ecmdeveloper.plugin.cmis.model.tasks;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 import com.ecmdeveloper.plugin.cmis.model.Document;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
@@ -50,11 +52,25 @@ public class CheckinTask extends DocumentTask implements ICheckinTask {
 			CmisObject newDocument = session.getObject(objectId);
 			getDocument().refresh((org.apache.chemistry.opencmis.client.api.Document) newDocument);
 		} else {
-			getDocument().saveNew();
+			Session session = getDocument().getObjectStore().getSession();
+			DocumentType typeDefinition = (DocumentType) session.getTypeDefinition( getDocument().getClassName() );
+			getDocument().saveNew( getVersioningState(typeDefinition) );
 		}
 		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );
 
 		return null;
 	}
+
+	private VersioningState getVersioningState(DocumentType typeDefinition) {
+		VersioningState versioningState;
+		if ( typeDefinition.isVersionable() == null || !typeDefinition.isVersionable() ) {
+			versioningState = VersioningState.NONE;
+		} else {
+			versioningState = majorVersion ? VersioningState.MAJOR : VersioningState.MINOR;
+		}
+		return versioningState;
+	}
 }
+
+

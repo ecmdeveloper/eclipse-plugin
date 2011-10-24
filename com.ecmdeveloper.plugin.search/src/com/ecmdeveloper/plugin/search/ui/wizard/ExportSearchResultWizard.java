@@ -34,13 +34,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.search.ui.wizard.ExportFileWizardPage.Format;
 import com.ecmdeveloper.plugin.search.util.CSVSearchResultExport;
 import com.ecmdeveloper.plugin.search.util.HTMLSearchResultExport;
 import com.ecmdeveloper.plugin.search.util.SearchResultExport;
 import com.ecmdeveloper.plugin.search.util.XMLSearchResultExport;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
@@ -49,7 +49,7 @@ import com.ecmdeveloper.plugin.util.PluginMessage;
 public class ExportSearchResultWizard extends Wizard {
 
 	private static final String TITLE = "Export Search Result";
-	private final Collection<SearchResultRow> searchResult;
+	private final Collection<ISearchResultRow> searchResult;
 	private final String label;
 	private final IWorkbench workbench;
 
@@ -58,7 +58,7 @@ public class ExportSearchResultWizard extends Wizard {
 	private HTMLExportWizardPage htmlExportWizardPage;
 	private XMLExportWizardPage xmlExportWizardPage;
 
-	public ExportSearchResultWizard(Collection<SearchResultRow> searchResult, String label, IWorkbench workbench) {
+	public ExportSearchResultWizard(Collection<ISearchResultRow> searchResult, String label, IWorkbench workbench) {
 		this.searchResult = searchResult;
 		this.label = label;
 		this.workbench = workbench;

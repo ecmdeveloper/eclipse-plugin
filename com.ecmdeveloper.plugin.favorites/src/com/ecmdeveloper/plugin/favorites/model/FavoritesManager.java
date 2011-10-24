@@ -36,6 +36,7 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
@@ -68,9 +69,18 @@ public class FavoritesManager implements ITaskManagerListener {
 
 	public FavoritesManager() {
 		taskManager = Activator.getDefault().getTaskManager();
-		taskManager.addTaskManagerListener(this);
 		// TODO find a place to remove this object as listener
+		taskManager.addTaskManagerListener(this);
+		initializeFavoriteObjectStores();
+	}
+
+	private void initializeFavoriteObjectStores() {
 		favoriteObjectStores = new ArrayList<FavoriteObjectStore>();
+		IObjectStores objectStores = Activator.getDefault().getObjectStoresManager().getObjectStores();
+		for ( IObjectStore objectStore : objectStores.getChildren() ) {
+			FavoriteObjectStore favoriteObjectStore = new FavoriteObjectStore(objectStore);
+			favoriteObjectStores.add( favoriteObjectStore );
+		}
 	}
 
 	private void initializeFavorites() {

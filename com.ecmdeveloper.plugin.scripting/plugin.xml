@@ -4,7 +4,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="com.ecmdeveloper.plugin.scripting.handlers.ExecuteMethodHandler"
             id="com.ecmdeveloper.plugin.scripting.executeClass"
             name="Execute Script">
       </command>
@@ -18,34 +17,6 @@
                style="push">
          </command>
       </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            id="com.ecmdeveloper.plugin.category.contentEngine"
-            name="Content Engine">
-      </category>
-      <wizard
-            category="com.ecmdeveloper.plugin.category.contentEngine"
-            class="com.ecmdeveloper.plugin.scripting.wizard.NewScriptingProjectWizard"
-            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
-            id="com.ecmdeveloper.plugin.scripting.newScriptingProjectWizard"
-            name="Content Engine Script Project"
-            project="true">
-      </wizard>
-   </extension>
-   <extension
-         id="contentEngineScript"
-         name="Content Engine Script"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="com.ecmdeveloper.plugin.scripting.ScriptingProjectNature">
-         </run>
-      </runtime>
-      <requires-nature
-            id="org.eclipse.jdt.core.javanature">
-      </requires-nature>
    </extension>
 
 </plugin>
