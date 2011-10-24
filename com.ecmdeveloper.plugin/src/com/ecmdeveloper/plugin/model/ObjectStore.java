@@ -24,10 +24,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.Activator;
+import com.ecmdeveloper.plugin.core.model.IClassDescriptionFolder;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
+import com.ecmdeveloper.plugin.core.model.Placeholder;
+import com.ecmdeveloper.plugin.core.model.constants.ClassDescriptionFolderType;
+import com.ecmdeveloper.plugin.core.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.ecmdeveloper.plugin.util.Messages;
 import com.filenet.api.constants.PropertyNames;
@@ -39,6 +44,10 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  *
  */
 public class ObjectStore extends ObjectStoreItem implements IObjectStore {
+	
+	private static final String DEFAULT_FOLDER_CLASS_NAME = "Folder";
+	private static final String DEFAULT_DOCUMENT_CLASS_NAME = "Document";
+	private static final String DEFAULT_CUSTOM_OBJECT_CLASS_NAME = "CustomObject";
 	
 	private static final String NOT_CONNECTED_MESSAGE = Messages.ObjectStore_NotConnectedMessage;
 	protected ContentEngineConnection connection;
@@ -87,7 +96,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 		if ( children == null )
 		{
 			children = new ArrayList<IObjectStoreItem>();
-			children.add( new Placeholder( Placeholder.Type.LOADING ) );
+			children.add( new Placeholder( PlaceholderType.LOADING ) );
 			
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
 			Activator.getDefault().getTaskManager().executeTaskASync(loadChildrenTask);
@@ -175,6 +184,34 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	public String getClassName() {
 		if ( objectStore != null ) {
 			return objectStore.getClassName();
+		}
+		return null;
+	}
+
+	@Override
+	public Collection<IClassDescriptionFolder> getClassDescriptionFolders() {
+		
+		ArrayList<IClassDescriptionFolder> virtualFolders = new ArrayList<IClassDescriptionFolder>();
+		for (ClassDescriptionFolderType classDescriptionFolderType : ClassDescriptionFolderType.values() ) {
+			virtualFolders.add( new ClassDescriptionFolder( classDescriptionFolderType, this )  );
+		}
+		
+		return virtualFolders;
+	}
+
+	@Override
+	public IClassDescriptionFolder getClassDescriptionFolder( ClassDescriptionFolderType classDescriptionFolderType) {
+		return new ClassDescriptionFolder( classDescriptionFolderType, this );
+	}
+
+	@Override
+	public String getDefaultClassName(ClassType classType) {
+		if ( classType.equals( ClassType.DOCUMENT_CLASSES ) ) {
+			return DEFAULT_DOCUMENT_CLASS_NAME;
+		} else if ( classType.equals( ClassType.FOLDER_CLASSES ) ) {
+			return DEFAULT_FOLDER_CLASS_NAME;
+		} else if ( classType.equals( ClassType.CUSTOM_OBJECT_CLASSES ) ) {
+			return DEFAULT_CUSTOM_OBJECT_CLASS_NAME;
 		}
 		return null;
 	}

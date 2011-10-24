@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
+import com.ecmdeveloper.plugin.core.model.tasks.IExecuteSearchTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.SearchResultRow;
@@ -38,19 +40,20 @@ import com.filenet.api.query.SearchScope;
  * @author ricardo.belfor
  *
  */
-public class ExecuteSearchTask extends BaseTask {
+public class ExecuteSearchTask extends BaseTask implements IExecuteSearchTask {
 
 	private ObjectStore objectStore;
 	private String query;
-	private ArrayList<SearchResultRow> searchResultList;
+	private ArrayList<ISearchResultRow> searchResultList;
 	
 	public ExecuteSearchTask(String query, IObjectStore objectStore2) {
 		this.query = query;
 		this.objectStore = (ObjectStore) objectStore2;
-		searchResultList = new ArrayList<SearchResultRow>(); 
+		searchResultList = new ArrayList<ISearchResultRow>(); 
 	}
 	
-	public ArrayList<SearchResultRow> getSearchResult() {
+	@Override
+	public ArrayList<ISearchResultRow> getSearchResult() {
 		return searchResultList;
 	}
 

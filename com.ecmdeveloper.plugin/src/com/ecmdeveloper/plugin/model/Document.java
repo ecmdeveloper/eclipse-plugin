@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.model;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.core.model.IDocument;
@@ -39,6 +40,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 	protected String containmentName;
 	private String mimeType;
 	private boolean reserved;
+	private String versionLabel;
 
 	protected Document(Object document, IObjectStoreItem parent, ObjectStore objectStore) {
 		this(document, parent,objectStore, true );
@@ -64,13 +66,14 @@ public class Document extends ObjectStoreItem implements IDocument {
 		}
 		
 		document.refresh(new String[] { PropertyNames.NAME, PropertyNames.ID,
-				PropertyNames.VERSION_SERIES, PropertyNames.IS_RESERVED, PropertyNames.MIME_TYPE });
+				PropertyNames.VERSION_SERIES, PropertyNames.IS_RESERVED, PropertyNames.MIME_TYPE, PropertyNames.MAJOR_VERSION_NUMBER, PropertyNames.MINOR_VERSION_NUMBER });
 		name = document.get_Name();
 		id = document.get_Id().toString();
 		mimeType = document.get_MimeType();
 		VersionSeries versionSeries = document.get_VersionSeries();
 		versionSeriesId = versionSeries.get_Id().toString();
 		reserved = versionSeries.get_IsReserved();
+		versionLabel = MessageFormat.format( "{0}.{1}", document.get_MajorVersionNumber(), document.get_MinorVersionNumber() ); 
 	}
 
 	public void refresh( com.filenet.api.core.Document newDocument ) {
@@ -109,6 +112,11 @@ public class Document extends ObjectStoreItem implements IDocument {
 
 	public void setVersionSeriesId(String versionSeriesId) {
 		this.versionSeriesId = versionSeriesId;
+	}
+
+	@Override
+	public String getVersionLabel() {
+		return versionLabel;
 	}
 
 	@Override

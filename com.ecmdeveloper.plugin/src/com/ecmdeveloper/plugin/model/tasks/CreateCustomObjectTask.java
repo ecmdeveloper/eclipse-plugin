@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateCustomObjectTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.CustomObject;
 import com.ecmdeveloper.plugin.model.Folder;
@@ -33,7 +34,7 @@ import com.filenet.api.core.Factory;
  * @author ricardo.belfor
  *
  */
-public class CreateCustomObjectTask extends CreateTask {
+public class CreateCustomObjectTask extends CreateTask implements ICreateCustomObjectTask {
 
 	private CustomObject newCustomObject;
 

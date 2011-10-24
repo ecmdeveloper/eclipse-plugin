@@ -22,6 +22,9 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateFolderTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -34,7 +37,7 @@ import com.filenet.api.core.Factory;
  * @author ricardo.belfor
  *
  */
-public class CreateFolderTask extends CreateTask {
+public class CreateFolderTask extends CreateTask implements ICreateFolderTask {
 
 	private Folder newFolder;
 
@@ -42,12 +45,13 @@ public class CreateFolderTask extends CreateTask {
 		super( parent, className, propertiesMap );
 	}
 
-	public Folder getNewFolder() {
+	@Override
+	public IFolder getNewFolder() {
 		return newFolder;
 	}
 
 	@Override
-	public ObjectStoreItem getNewObjectStoreItem() {
+	public IObjectStoreItem getNewObjectStoreItem() {
 		return getNewFolder();
 	}
 
