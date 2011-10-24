@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.scripting.util;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.dialogs.ExceptionDetailsDialog;
+import com.ecmdeveloper.plugin.core.dialogs.ExceptionDetailsDialog;
 import com.ecmdeveloper.plugin.scripting.Activator;
 
 /**

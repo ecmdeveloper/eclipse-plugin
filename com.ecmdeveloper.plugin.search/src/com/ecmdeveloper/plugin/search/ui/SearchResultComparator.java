@@ -23,7 +23,7 @@ package com.ecmdeveloper.plugin.search.ui;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 
 /**
  * @author ricardo.belfor
@@ -50,8 +50,8 @@ public class SearchResultComparator extends ViewerComparator {
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		
-		SearchResultRow row1 = (SearchResultRow) e1;
-		SearchResultRow row2 = (SearchResultRow) e2;
+		ISearchResultRow row1 = (ISearchResultRow) e1;
+		ISearchResultRow row2 = (ISearchResultRow) e2;
 		int returnCode = row1.compareTo(row2, sortValue );
 		if ( descending ) {
 			returnCode = -returnCode;

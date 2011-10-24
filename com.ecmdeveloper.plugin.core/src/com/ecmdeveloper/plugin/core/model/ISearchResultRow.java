@@ -39,4 +39,6 @@ public interface ISearchResultRow {
 
 	IObjectStoreItem getObjectValue();
 
+	int compareTo(ISearchResultRow searchResultRow, String valueName);
+
 }

@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 
 /**
  * @author ricardo.belfor
@@ -35,7 +35,7 @@ public class HTMLSearchResultExport extends SearchResultExport {
 
 	private boolean writeHeader;
 	
-	public HTMLSearchResultExport(Collection<SearchResultRow> searchResult, String filename,
+	public HTMLSearchResultExport(Collection<ISearchResultRow> searchResult, String filename,
 			boolean writeHeader) {
 		super(searchResult, filename);
 		this.writeHeader = writeHeader;

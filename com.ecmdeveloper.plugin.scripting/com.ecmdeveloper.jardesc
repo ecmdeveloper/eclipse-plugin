@@ -12,7 +12,7 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=com.ecmdeveloper.plugin.scripting/src&lt;com.ecmdeveloper.plugin.scripting.engine{ScriptingContext.java"/>
-        <javaElement handleIdentifier="=com.ecmdeveloper.plugin.scripting/src&lt;com.ecmdeveloper.plugin.scripting.engine{MethodRunner.java"/>
+        <javaElement handleIdentifier="=com.ecmdeveloper.plugin.scripting/src&lt;com.ecmdeveloper.plugin.scripting.engine{AbstractMethodRunner.java"/>
     </selectedElements>
     <fatjar builder="org.eclipse.jdt.ui.plain_jar_builder" launchConfig=""/>
 </jardesc>

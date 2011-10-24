@@ -35,12 +35,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
+import com.ecmdeveloper.plugin.core.model.IFolder;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.search.Activator;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
-import com.ecmdeveloper.plugin.views.ObjectStoresViewContentProvider;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
 
 
 /**
@@ -118,8 +118,8 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 	}
 
 	private void setSelectedValues(IObjectStoreItem destination) {
-		if ( destination instanceof Folder ) {
-			selectedPath = ((Folder)destination).getPathName();
+		if ( destination instanceof IFolder ) {
+			selectedPath = ((IFolder)destination).getPathName();
 		} else {
 			selectedPath = null;
 			useIdButton.setSelection(true);
@@ -151,7 +151,7 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
 			@Override
 			public IStatus validate(Object[] selection) {
-				if ( selection != null && selection.length == 1 && !(selection[0] instanceof ObjectStore ) ) {
+				if ( selection != null && selection.length == 1 && !(selection[0] instanceof IObjectStore ) ) {
 					return Status.OK_STATUS;
 				}
 				return errorStatus;
@@ -172,7 +172,7 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
-					if ( element instanceof ObjectStore || element instanceof Folder ) {
+					if ( element instanceof IObjectStore || element instanceof IFolder ) {
 						return true;
 					}
 					return false;

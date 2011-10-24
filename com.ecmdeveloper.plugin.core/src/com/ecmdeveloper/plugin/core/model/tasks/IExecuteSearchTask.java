@@ -18,10 +18,9 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.ui;
+package com.ecmdeveloper.plugin.core.model.tasks;
 
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.SearchResultEvent;
+import java.util.ArrayList;
 
 import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 
@@ -29,17 +28,8 @@ import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
  * @author ricardo.belfor
  *
  */
-public class SearchResultAddEvent extends SearchResultEvent {
+public interface IExecuteSearchTask extends IBaseTask {
 
-	private static final long serialVersionUID = 7348268456390688457L;
-	private final ISearchResultRow searchResultRow;
-	
-	protected SearchResultAddEvent(ISearchResult searchResult, ISearchResultRow searchResultRow ) {
-		super(searchResult);
-		this.searchResultRow = searchResultRow;
-	}
+	ArrayList<ISearchResultRow> getSearchResult();
 
-	public ISearchResultRow getSearchResultRow() {
-		return searchResultRow;
-	}
 }

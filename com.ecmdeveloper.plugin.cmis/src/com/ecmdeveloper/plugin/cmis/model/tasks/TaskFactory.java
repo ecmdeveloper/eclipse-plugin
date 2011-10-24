@@ -37,6 +37,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.ICreateCustomObjectTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICreateDocumentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICreateFolderTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDeleteTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IExecuteSearchTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchObjectTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IGetContentAsFileTask;
@@ -217,5 +218,11 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public IRefreshTask getRefreshTask(IObjectStoreItem objectStoreItem) {
 		return new RefreshTask(objectStoreItem);
+	}
+
+	@Override
+	public IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

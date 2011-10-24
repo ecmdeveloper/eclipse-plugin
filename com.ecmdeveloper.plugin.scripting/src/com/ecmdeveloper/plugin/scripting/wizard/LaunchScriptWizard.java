@@ -34,13 +34,20 @@ public class LaunchScriptWizard extends Wizard {
 
 	private ConfigureScriptWizardPage configureScriptWizardPage;
 	private ConfigureCredentialsWizardPage configureCredentialsWizardPage;
+	private final IPreferenceStore preferenceStore;
+	private final String projectNatureId;
 
+	public LaunchScriptWizard(IPreferenceStore preferenceStore, String projectNatureId) {
+		super();
+		this.preferenceStore = preferenceStore;
+		this.projectNatureId = projectNatureId;
+		setWindowTitle("Run Console Project");
+	}
+	
 	@Override
 	public void addPages() {
 		
-		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-
-		configureScriptWizardPage = new ConfigureScriptWizardPage(preferenceStore);
+		configureScriptWizardPage = new ConfigureScriptWizardPage(preferenceStore, projectNatureId);
 		addPage(configureScriptWizardPage);
 		
 		configureCredentialsWizardPage = new ConfigureCredentialsWizardPage(preferenceStore );

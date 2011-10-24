@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 
 /**
  * @author ricardo.belfor
@@ -36,7 +36,7 @@ public class XMLSearchResultExport extends SearchResultExport {
 	private final String rowsTag;
 	private final String rowTag;
 
-	public XMLSearchResultExport(Collection<SearchResultRow> searchResult, String filename, String rowsTag, String rowTag) {
+	public XMLSearchResultExport(Collection<ISearchResultRow> searchResult, String filename, String rowsTag, String rowTag) {
 		super(searchResult, filename);
 		this.rowsTag = rowsTag;
 		this.rowTag = rowTag;

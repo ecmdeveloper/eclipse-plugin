@@ -37,6 +37,54 @@
                tooltip="Imports an Repository">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.cmis.scripting.executeClass"
+               icon="icons/application_go.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.cmis.model.Document">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.cmis.model.Folder">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoreFavorites?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.cmis.scripting.executeClass"
+               icon="icons/application_go.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.cmis.model.Document">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.cmis.model.Folder">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -45,6 +93,10 @@
             id="com.ecmdeveloper.plugin.cmis.importRepository"
             name="Import CMIS Repository">
       </command>
+      <command
+            id="com.ecmdeveloper.plugin.cmis.scripting.executeClass"
+            name="Run Console Project">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -52,12 +104,65 @@
             class="com.ecmdeveloper.plugin.cmis.handlers.ImportRepositoryHandler"
             commandId="com.ecmdeveloper.plugin.cmis.importRepository">
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.cmis.handlers.ExecuteMethodHandler"
+            commandId="com.ecmdeveloper.plugin.cmis.scripting.executeClass">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <or>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.cmis.model.Document">
+                     </instanceof>
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.cmis.model.Folder">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="com.ecmdeveloper.plugin.objectstorestores">
       <client
             class="com.ecmdeveloper.plugin.cmis.model.ObjectStoresStore">
       </client>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="com.ecmdeveloper.plugin.cmis.category"
+            name="CMIS">
+      </category>
+      <wizard
+            category="com.ecmdeveloper.plugin.cmis.category"
+            class="com.ecmdeveloper.plugin.cmis.wizard.NewOpenCMISScriptProjectWizard"
+            descriptionImage="icons/application.png"
+            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            icon="icons/application.png"
+            id="com.ecmdeveloper.plugin.cmis.scripting.newScriptingProjectWizard"
+            name="Open CMIS Console Project"
+            project="true">
+         <description>
+            Creates a new Open CMIS Console Project. This type of project contains classes that accept documents or folders as input.
+         </description>
+      </wizard>
+   </extension>
+
+   <extension
+         id="openCMISScript"
+         name="Open CMIS Script"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="com.ecmdeveloper.plugin.cmis.scripting.ScriptingProjectNature">
+         </run>
+      </runtime>
+      <requires-nature
+            id="org.eclipse.jdt.core.javanature">
+      </requires-nature>
    </extension>
 
 </plugin>

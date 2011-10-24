@@ -67,14 +67,14 @@ public class MethodSelectionDialog extends FilteredItemsSelectionDialog {
 	private IMethod selectedMethod;
 	private Set<String> signatures;
 	
-	public MethodSelectionDialog(Shell shell) {
+	public MethodSelectionDialog(Shell shell, String projectNatureId ) {
 		super(shell);
 		setTitle("Script Selection");
 		setListLabelProvider(new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT | 
 				JavaElementLabelProvider.SHOW_ROOT) );
 
 		setDetailsLabelProvider( createDetailsLabelProvider());
-		classesContentProvider = new ClassesContentProvider();
+		classesContentProvider = new ClassesContentProvider(projectNatureId);
 
 		signatures = new HashSet<String>();
 		signatures.add( "(QObject;)V" );

@@ -55,7 +55,7 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public String getMethodRunnerLocation() throws Exception {
+	public String getBaseMethodRunnerLocation() throws Exception {
 		Bundle bundle = getBundle();
 		URL locationUrl = FileLocator.find(bundle, new Path("/dist/com.ecmdeveloper.scripting_1.0.0.jar"), null);
 		URL fileUrl = FileLocator.toFileURL(locationUrl);

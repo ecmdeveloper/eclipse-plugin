@@ -26,7 +26,7 @@ import java.util.Collection;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.ecmdeveloper.plugin.model.SearchResultRow;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 
 /**
  * @author ricardo.belfor
@@ -38,7 +38,7 @@ public class CSVSearchResultExport extends SearchResultExport {
 	private final char separator;
 	private boolean writeHeader;
 	
-	public CSVSearchResultExport(Collection<SearchResultRow> searchResult, String filename,
+	public CSVSearchResultExport(Collection<ISearchResultRow> searchResult, String filename,
 			boolean writeHeader, char separator ) {
 		super(searchResult, filename );
 		this.separator = separator;

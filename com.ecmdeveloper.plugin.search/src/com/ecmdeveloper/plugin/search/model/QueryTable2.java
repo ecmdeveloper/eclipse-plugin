@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.constants.PropertyType;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
  * @author ricardo.belfor
@@ -65,7 +65,7 @@ public class QueryTable2 implements IQueryTable {
 
 	public QueryTable2(IClassDescription classDescription) {
 		
-		ObjectStore objectStore = (ObjectStore) classDescription.getObjectStore();
+		IObjectStore objectStore = (IObjectStore) classDescription.getObjectStore();
 		objectStoreName = objectStore.getName();
 		objectStoreDisplayName = objectStore.getDisplayName();
 		connectionName = objectStore.getConnection().getName();

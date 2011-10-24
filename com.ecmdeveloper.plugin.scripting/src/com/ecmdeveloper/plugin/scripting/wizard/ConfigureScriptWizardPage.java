@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.scripting.wizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -35,8 +36,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
-import com.ecmdeveloper.plugin.scripting.ScriptingProjectNature;
 import com.ecmdeveloper.plugin.scripting.dialogs.MethodSelectionDialog;
+import com.ecmdeveloper.plugin.scripting.util.PluginLog;
 
 /**
  * @author ricardo.belfor
@@ -55,12 +56,14 @@ public class ConfigureScriptWizardPage extends AbstractFieldEditorWizardPage {
 
 	private IMethod method;
 	private boolean debug = false;
+	private final String projectNatureId;
 	
-	protected ConfigureScriptWizardPage(IPreferenceStore preferenceStore) {
+	protected ConfigureScriptWizardPage(IPreferenceStore preferenceStore, String projectNatureId) {
 		super(TITLE, preferenceStore);
 		setTitle(TITLE);
 		setDescription("Select the launch method and configure the launching options");
 		javaElementLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT);
+		this.projectNatureId = projectNatureId;
 	}
 
 	@Override
@@ -144,7 +147,7 @@ public class ConfigureScriptWizardPage extends AbstractFieldEditorWizardPage {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for ( IProject project : root.getProjects() ) {
 			if ( project.isOpen() ) {
-				if ( ScriptingProjectNature.hasNature(project) ) {
+				if ( hasNature(project) ) {
 					return true;
 				}
 			}
@@ -153,7 +156,7 @@ public class ConfigureScriptWizardPage extends AbstractFieldEditorWizardPage {
 	}
 	
 	private MethodSelectionDialog createMethodSelectionDialog() {
-		MethodSelectionDialog methodSelectionDialog = new MethodSelectionDialog(getShell());
+		MethodSelectionDialog methodSelectionDialog = new MethodSelectionDialog(getShell(), projectNatureId);
 		methodSelectionDialog.setInitialPattern("**");
 		return methodSelectionDialog;
 	}
@@ -174,5 +177,14 @@ public class ConfigureScriptWizardPage extends AbstractFieldEditorWizardPage {
 	@Override
 	public int getNumberOfControls() {
 		return 3;
+	}
+
+	public boolean hasNature(IProject project) {
+		try {
+			return project.isOpen() && project.hasNature( projectNatureId );
+		} catch (CoreException e) {
+			PluginLog.error(e);
+			return false;
+		}
 	}
 }

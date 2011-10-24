@@ -96,7 +96,7 @@ public class ConfigureCredentialsWizardPage extends AbstractFieldEditorWizardPag
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		String value = preferenceStore.getString( USE_EXISTING_CREDENTIALS_PREF_KEY );
 		if ( value != null ) {
-			useExistingCredentials = Boolean.valueOf( value );
+			useExistingCredentials = Boolean.valueOf( value ) || value.isEmpty();
 		}
 		
 		username = preferenceStore.getString( LAUNCH_USERNAME_KEY );

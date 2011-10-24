@@ -29,12 +29,12 @@ import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import com.ecmdeveloper.plugin.core.model.ICustomObject;
+import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.CustomObject;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.Folder;
-import com.ecmdeveloper.plugin.model.SearchResultRow;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
 
 /**
  * @author ricardo.belfor
@@ -53,8 +53,8 @@ public class SearchResultLabelProvider extends ObjectStoreItemLabelProvider impl
 	
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-		if (element instanceof SearchResultRow) {
-			SearchResultRow searchResultRow = (SearchResultRow)element;
+		if (element instanceof ISearchResultRow) {
+			ISearchResultRow searchResultRow = (ISearchResultRow)element;
 			String name = indexToNameMap.get(Integer.valueOf(columnIndex) );
 			if ( name != null ) {
 				if ( name.equals("This") & searchResultRow.isHasObjectValue() ) {
@@ -66,12 +66,12 @@ public class SearchResultLabelProvider extends ObjectStoreItemLabelProvider impl
 		return null;
 	}
 
-	private Image getObjectStoreItemImage(IObjectStoreItem obj, SearchResultRow searchResultRow) {
-		if (obj instanceof Folder) {
+	private Image getObjectStoreItemImage(IObjectStoreItem obj, ISearchResultRow searchResultRow) {
+		if (obj instanceof IFolder) {
 			return getDecoratedImage( searchResultRow, getStandardImage(ISharedImages.IMG_OBJ_FOLDER ) );
-		} else if (obj instanceof Document) {
+		} else if (obj instanceof IDocument) {
 			return getDecoratedImage(searchResultRow, getStandardImage(ISharedImages.IMG_OBJ_FILE ) );
-		} else if (obj instanceof CustomObject) {
+		} else if (obj instanceof ICustomObject) {
 			return getDecoratedImage(searchResultRow, getStandardImage( ISharedImages.IMG_OBJ_ELEMENT ) );
 		}
 		return null;
@@ -98,8 +98,8 @@ public class SearchResultLabelProvider extends ObjectStoreItemLabelProvider impl
 	
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		if (element instanceof SearchResultRow) {
-			SearchResultRow searchResultRow = (SearchResultRow)element;
+		if (element instanceof ISearchResultRow) {
+			ISearchResultRow searchResultRow = (ISearchResultRow)element;
 			String name = indexToNameMap.get(Integer.valueOf(columnIndex) );
 			if ( name != null ) {
 				if ( name.equals("This") && searchResultRow.isHasObjectValue() ) {

@@ -60,8 +60,8 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.ShowInContext;
 
-import com.ecmdeveloper.plugin.model.SearchResultRow;
-import com.ecmdeveloper.plugin.util.PluginLog;
+import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
+import com.ecmdeveloper.plugin.search.util.PluginLog;
 
 /**
  * @author ricardo.belfor
@@ -180,8 +180,8 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
 				IStructuredSelection selection = (IStructuredSelection) super.getSelection();
 				ArrayList<Object> newSelection = new ArrayList<Object>(); 
 				for ( Object object : selection.toList() ) {
-					if ( object instanceof SearchResultRow ) {
-						SearchResultRow searchResultRow = (SearchResultRow) object;
+					if ( object instanceof ISearchResultRow ) {
+						ISearchResultRow searchResultRow = (ISearchResultRow) object;
 						if ( searchResultRow.isHasObjectValue() ) {
 							newSelection.add( searchResultRow.getObjectValue() );
 						} else {

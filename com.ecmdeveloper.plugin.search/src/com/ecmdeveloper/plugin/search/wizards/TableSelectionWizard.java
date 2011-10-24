@@ -30,9 +30,9 @@ import org.eclipse.jface.wizard.Wizard;
 import com.ecmdeveloper.plugin.classes.wizard.ClassSelectionWizardPage;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.QueryTable2;
-import com.ecmdeveloper.plugin.util.PluginMessage;
 
 /**
  * @author ricardo.belfor
