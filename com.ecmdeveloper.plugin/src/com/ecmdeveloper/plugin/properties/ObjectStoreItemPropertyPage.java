@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 
@@ -55,6 +56,13 @@ public class ObjectStoreItemPropertyPage extends PropertyPage {
 		}
 		createPageRow(panel, "Type:", getElement().getClass().getSimpleName() );		
 
+		if ( objectStoreItem instanceof IDocument ) {
+			IDocument document = (IDocument) objectStoreItem;
+			
+			createPageRow(panel, "Version Label:", document.getVersionLabel() );		
+			createPageRow(panel, "Version Series Id:", document.getVersionSeriesId() );		
+		}
+		
 		return panel;
 	}
 
