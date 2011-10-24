@@ -19,19 +19,49 @@
  */
 package com.ecmdeveloper.plugin.wizard;
 
+import java.util.Collection;
+
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.ui.wizard.AbstractConfigureConnectionWizardPage;
 import com.ecmdeveloper.plugin.ui.wizard.AbstractImportObjectStoreWizard;
+import com.ecmdeveloper.plugin.ui.wizard.SelectConnectionWizardPage;
 
 public class ImportObjectStoreWizard extends AbstractImportObjectStoreWizard 
 {
+
+	public ImportObjectStoreWizard() {
+		super();
+		setWindowTitle( "Import Object Store" );
+	}
+
+	@Override
+	protected SelectConnectionWizardPage createSelectConnectionWizardPage(Collection<IConnection> connections) {
+		return new SelectConnectionWizardPage(connections) {
+	
+			@Override
+			protected ViewerFilter getConnectionsFilter() {
+				return new ViewerFilter() {
+	
+					@Override
+					public boolean select(Viewer viewer, Object parentElement, Object element) {
+						return  element instanceof ContentEngineConnection; 
+					}
+				};
+			}
+			
+		};
+	}
 
 	@Override
 	protected AbstractConfigureConnectionWizardPage createConfigureConnectionWizardPage() {
 		
 		return new AbstractConfigureConnectionWizardPage() {
 
+			
 			@Override
 			public IConnection getConnection() {
 				
@@ -50,14 +80,32 @@ public class ImportObjectStoreWizard extends AbstractImportObjectStoreWizard
 
 			@Override
 			protected boolean isConnectionFieldsSet() {
-				// TODO Auto-generated method stub
-				return false;
+				return isFieldSet(getURL() ) && isFieldSet(getUsername() );
+			}
+
+			private boolean isFieldSet(String value) {
+				return value != null && !value.isEmpty();
 			}
 
 			@Override
-			protected boolean validateInput() {
-				// TODO Auto-generated method stub
-				return false;
+			protected boolean validateInput(String fieldname) {
+				setErrorMessage(null);
+				
+				if ( !isFieldSet(getURL() ) ) {
+					if ( URL_FIELD.equals(fieldname) ) { 
+						setErrorMessage("The connection url cannot be empty");
+					}
+					return false;
+				}
+
+				if ( !isFieldSet( getUsername() ) ) {
+					if ( USERNAME_FIELD.equals(fieldname) ) {
+						setErrorMessage("The user name cannot be empty");
+					}
+					return false;
+				}
+				
+				return true;
 			}
 			
 		};
