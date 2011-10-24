@@ -19,16 +19,18 @@
  */
 package com.ecmdeveloper.plugin;
 
-import org.eclipse.core.runtime.Platform;
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
-import com.ecmdeveloper.plugin.core.model.IObjectStoresStore;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
-import com.ecmdeveloper.plugin.model.ObjectStoresStore;
 import com.ecmdeveloper.plugin.util.ImageCache;
 
 public class Activator extends AbstractUIPlugin {
@@ -43,10 +45,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		IObjectStoresStore objectStoresStore = new ObjectStoresStore();
-		getObjectStoresManager().registerObjectStoresStore(objectStoresStore);
-		
-		Platform.getPlugin("com.ecmdeveloper.plugin.cmis");
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -56,22 +54,10 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
 
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
@@ -86,5 +72,12 @@ public class Activator extends AbstractUIPlugin {
 
 	public ITaskManager getTaskManager() {
 		return (ITaskManager) getWorkbench().getService(ITaskManager.class);		
+	}
+
+	public String getMethodRunnerLocation() throws Exception {
+		Bundle bundle = getBundle();
+		URL locationUrl = FileLocator.find(bundle, new Path("/dist/methodrunner.jar"), null);
+		URL fileUrl = FileLocator.toFileURL(locationUrl);
+		return fileUrl.getFile();
 	}
 }
