@@ -149,7 +149,7 @@ public class GetDocumentVersionJob extends Job {
 	
 	class DocumentVersionLabelProvider extends LabelProvider {
 
-		private static final String VERSION_LABEL_FORMAT = "Version {1}.{2} ({0})";
+		private static final String VERSION_LABEL_FORMAT = "Version {1} ({0})";
 
 		@Override
 		public Image getImage(Object element) {
@@ -162,9 +162,7 @@ public class GetDocumentVersionJob extends Job {
 			if ( element instanceof Document) {
 				Document version = (Document) element;
 				String name = version.getName();
-				Object majorVersionNumber = version.getValue( PropertyNames.MAJOR_VERSION_NUMBER );
-				Object minorVersionNumber = version.getValue( PropertyNames.MINOR_VERSION_NUMBER );
-				return MessageFormat.format( VERSION_LABEL_FORMAT, name, majorVersionNumber, minorVersionNumber );
+				return MessageFormat.format( VERSION_LABEL_FORMAT, name, document.getVersionLabel() );
 			}
 
 			return super.getText(element);
