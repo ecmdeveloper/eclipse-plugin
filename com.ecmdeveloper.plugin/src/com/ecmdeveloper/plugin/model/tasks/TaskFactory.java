@@ -21,7 +21,10 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Collection;
+import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
@@ -29,7 +32,11 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckoutTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateCustomObjectTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateDocumentTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateFolderTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDeleteTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IExecuteSearchTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchObjectTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IGetContentAsFileTask;
@@ -43,7 +50,12 @@ import com.ecmdeveloper.plugin.core.model.tasks.IRefreshTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
+import com.ecmdeveloper.plugin.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 /**
  * @author ricardo.belfor
@@ -153,5 +165,57 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public ISaveTask getSaveTask(IDocument document, Collection<Object> content, String mimeType) {
 		return new SaveTask((Document) document, content, mimeType);
+	}
+
+	@Override
+	public ICreateCustomObjectTask getCreateCustomObjectTask(IObjectStoreItem parent,
+			String className, Map<String, Object> propertiesMap) {
+		return new CreateCustomObjectTask((ObjectStoreItem) parent, className, propertiesMap);
+	}
+
+	@Override
+	public ICreateDocumentTask getCreateDocumentTask(IObjectStoreItem parent, String className,
+			Map<String, Object> propertiesMap) {
+		return new CreateDocumentTask((ObjectStoreItem) parent, className, propertiesMap);
+	}
+
+	@Override
+	public ICreateFolderTask getCreateFolderTask(IObjectStoreItem parent, String className,
+			Map<String, Object> propertiesMap) {
+		return new CreateFolderTask((ObjectStoreItem) parent, className, propertiesMap);
+	}
+
+	@Override
+	public IGetChildClassDescriptionsTask getGetChildClassDescriptionsTask(
+			IClassDescription parent, Object placeholder) {
+		return new GetChildClassDescriptionsTask((ClassDescription)parent, (ClassesPlaceholder) placeholder);
+	}
+
+	@Override
+	public IGetClassDescriptionTask getGetClassDescriptionTask(String className,
+			IObjectStore objectStore) {
+		return new GetClassDescriptionTask(className, objectStore);
+	}
+
+	@Override
+	public IGetClassDescriptionTask getGetClassDescriptionTask(String className,
+			IObjectStore objectStore, Object parent) {
+		return new GetClassDescriptionTask(className, parent, objectStore);
+	}
+
+	@Override
+	public IRefreshClassDescriptionTask getRefreshClassDescriptionTask(
+			IClassDescription[] classDescriptions) {
+		return new RefreshClassDescriptionTask((ClassDescription[]) classDescriptions);
+	}
+
+	@Override
+	public IRefreshTask getRefreshTask(IObjectStoreItem objectStoreItem) {
+		return new RefreshTask( objectStoreItem );
+	}
+
+	@Override
+	public IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore) {
+		return new ExecuteSearchTask(query, objectStore);
 	}
 }

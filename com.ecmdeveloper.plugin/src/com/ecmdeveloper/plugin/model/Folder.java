@@ -26,6 +26,8 @@ import java.util.concurrent.ExecutionException;
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.Placeholder;
+import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
@@ -119,7 +121,7 @@ public class Folder extends ObjectStoreItem implements IFolder {
 	public Collection<IObjectStoreItem> getChildren() {
 		if ( children == null )	{
 			children = new ArrayList<IObjectStoreItem>();
-			children.add( new Placeholder(Placeholder.Type.LOADING) );
+			children.add( new Placeholder(PlaceholderType.LOADING) );
 
 			LoadChildrenTask loadChildrenTask = new LoadChildrenTask( this );
 			Activator.getDefault().getTaskManager().executeTaskASync(loadChildrenTask);

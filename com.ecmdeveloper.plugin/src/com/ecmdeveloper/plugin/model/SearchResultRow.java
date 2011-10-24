@@ -149,8 +149,9 @@ public class SearchResultRow implements ISearchResultRow {
 		}
 		return objectType;
 	}
-	
-	public int compareTo(SearchResultRow searchResultRow, String valueName ) {
+
+	@Override
+	public int compareTo(ISearchResultRow searchResultRow, String valueName ) {
 		
 		Object value1 = getValue(valueName);
 		Object value2 = searchResultRow.getValue(valueName);

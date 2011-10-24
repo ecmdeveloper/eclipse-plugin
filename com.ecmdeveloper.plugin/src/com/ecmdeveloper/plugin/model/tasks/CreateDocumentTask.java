@@ -2,6 +2,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.tasks.ICreateDocumentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
@@ -9,7 +10,7 @@ import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.filenet.api.core.Factory;
 
-public class CreateDocumentTask extends CreateTask {
+public class CreateDocumentTask extends CreateTask implements ICreateDocumentTask {
 
 	private Document newDocument;
 

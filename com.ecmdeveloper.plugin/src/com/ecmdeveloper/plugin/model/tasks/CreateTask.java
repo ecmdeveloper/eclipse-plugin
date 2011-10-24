@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
@@ -56,7 +57,7 @@ public abstract class CreateTask extends BaseTask {
 		return className;
 	}
 
-	public abstract ObjectStoreItem getNewObjectStoreItem();
+	public abstract IObjectStoreItem getNewObjectStoreItem();
 	
 	protected void setProperties(ObjectStoreItem objectStoreItem) throws Exception {
 		for ( String propertyName : propertiesMap.keySet() ) {
@@ -76,7 +77,7 @@ public abstract class CreateTask extends BaseTask {
 		com.filenet.api.core.Folder internalParent = (com.filenet.api.core.Folder) getParent()
 				.getObjectStoreObject();
 		
-		ObjectStoreItem newDocument = getNewObjectStoreItem();
+		ObjectStoreItem newDocument = (ObjectStoreItem) getNewObjectStoreItem();
 		
 		ReferentialContainmentRelationship relationship = internalParent.file(newDocument
 				.getObjectStoreObject(), AutoUniqueName.AUTO_UNIQUE, newDocument.getName(),
