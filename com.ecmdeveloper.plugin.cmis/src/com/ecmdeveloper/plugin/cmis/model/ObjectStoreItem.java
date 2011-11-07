@@ -101,6 +101,9 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 
 	@Override
 	public boolean isSupportedFeature(Feature feature) {
+		if ( feature.equals(Feature.CLASS_FILTER ) ) {
+			return false;
+		}
 		return true;
 	}
 	

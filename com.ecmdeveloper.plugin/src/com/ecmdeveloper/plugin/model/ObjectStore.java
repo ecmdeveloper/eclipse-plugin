@@ -171,12 +171,11 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 		}
 	}
 
-	public static void assertConnected(IObjectStore objectStore2) {
-
-		if ( ! objectStore2.isConnected() ) {
-			throw new RuntimeException(MessageFormat.format(
-					NOT_CONNECTED_MESSAGE, objectStore2.getConnection()
-							.toString(), objectStore2.getName()));
+	@Override
+	public void assertConnected() {
+		if (!isConnected()) {
+			throw new RuntimeException(MessageFormat.format(NOT_CONNECTED_MESSAGE, getConnection()
+					.toString(), getName()));
 		}
 	}
 

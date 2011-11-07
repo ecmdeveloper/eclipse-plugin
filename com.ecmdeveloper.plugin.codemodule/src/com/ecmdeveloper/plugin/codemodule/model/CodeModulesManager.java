@@ -182,7 +182,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 	public void saveNewCodeModuleFile(CodeModuleFile codeModuleFile) throws Exception {
 
 		IObjectStore objectStore = getObjectStore(codeModuleFile);
-		ObjectStore.assertConnected(objectStore);
+		objectStore.assertConnected();
 		
 		CreateCodeModuleTask task = new CreateCodeModuleTask(codeModuleFile
 				.getName(), codeModuleFile.getContentElementFiles(), objectStore );
@@ -214,7 +214,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 	public Collection<Action> getCodeModuleActions( CodeModuleFile codeModuleFile ) throws ExecutionException {
 		
 		IObjectStore objectStore = getObjectStore(codeModuleFile);
-		ObjectStore.assertConnected(objectStore);
+		objectStore.assertConnected();
 		GetCodeModuleActionsTask task = new GetCodeModuleActionsTask(codeModuleFile.getId(), objectStore );
 		return (Collection<Action>) getTaskManager().executeTaskSync(task);
 	}
@@ -222,7 +222,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws Exception {
 		
 		IObjectStore objectStore = getObjectStore(codeModuleFile);
-		ObjectStore.assertConnected(objectStore);
+		objectStore.assertConnected();
 		UpdateCodeModuleTask task = new UpdateCodeModuleTask(codeModuleFile
 				.getId(), codeModuleFile.getName(), codeModuleFile.getContentElementFiles(),
 				objectStore);

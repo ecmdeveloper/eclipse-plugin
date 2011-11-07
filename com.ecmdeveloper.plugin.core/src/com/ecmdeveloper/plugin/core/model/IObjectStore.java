@@ -42,4 +42,6 @@ public interface IObjectStore extends IObjectStoreItem {
 	IClassDescriptionFolder getClassDescriptionFolder( ClassDescriptionFolderType classDescriptionFolderType);
 
 	String getDefaultClassName(ClassType classType);
+
+	void assertConnected();
 }
