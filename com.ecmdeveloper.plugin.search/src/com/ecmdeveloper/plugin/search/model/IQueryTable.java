@@ -39,6 +39,7 @@ public interface IQueryTable {
 	public boolean isCBREnabled();
 	public void setAlias(String alias);
 	public String getAlias();
+	public boolean isContentEngineTable();
 	
 	// TODO: add these to a different interface?
 	public void addChildQueryTable(IQueryTable childTable);

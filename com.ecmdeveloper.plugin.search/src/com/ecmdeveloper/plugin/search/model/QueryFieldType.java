@@ -32,16 +32,22 @@ public enum QueryFieldType {
 			return BINARY_NAME;
 		}
 	},
-	BOOLEAN{ 		
+	BOOLEAN { 		
 		@Override
 		public String toString() {
 			return BOOLEAN_NAME;
 		}
 	},
-	DATE{ 		
+	DATE { 		
 		@Override
 		public String toString() {
 			return DATE_NAME;
+		}
+	},
+	DATE_MV { 		
+		@Override
+		public String toString() {
+			return DATE_MV_NAME;
 		}
 	},
 	DOUBLE{ 		
@@ -74,6 +80,13 @@ public enum QueryFieldType {
 			return STRING_NAME;
 		}
 	},
+
+	STRING_MV { 		
+		@Override
+		public String toString() {
+			return STRING_MV_NAME;
+		}
+	},
 	NONE { 		
 		@Override
 		public String toString() {
@@ -82,27 +95,17 @@ public enum QueryFieldType {
 	};
 	
 	private static final String STRING_NAME = "String";
+	private static final String STRING_MV_NAME = "String[]";
 	private static final String OBJECT_NAME = "Object";
 	private static final String LONG_NAME = "Long";
 	private static final String GUID_NAME = "Id";
 	private static final String DOUBLE_NAME = "Double";
 	private static final String DATE_NAME = "Date";
+	private static final String DATE_MV_NAME = "Date[]";
 	private static final String BOOLEAN_NAME = "Boolean";
 	private static final String BINARY_NAME = "Binary";
 
-//	public static PropertyType fromTypeID(TypeID typeId )
-//	{
-//		switch ( typeId.getValue() ) {
-//			case TypeID.BINARY_AS_INT: return BINARY;
-//			case TypeID.BOOLEAN_AS_INT: return BOOLEAN;
-//			case TypeID.DATE_AS_INT: return DATE;
-//			case TypeID.DOUBLE_AS_INT: return DOUBLE;
-//			case TypeID.GUID_AS_INT: return GUID;
-//			case TypeID.LONG_AS_INT: return LONG;
-//			case TypeID.OBJECT_AS_INT: return OBJECT;
-//			case TypeID.STRING_AS_INT: return STRING;
-//			default: return UNKNOWN;
-//		}
-//	}
-
+	public static boolean isMultiValued( QueryFieldType queryFieldType ) {
+		return queryFieldType.name().endsWith("_MV");
+	}
 }

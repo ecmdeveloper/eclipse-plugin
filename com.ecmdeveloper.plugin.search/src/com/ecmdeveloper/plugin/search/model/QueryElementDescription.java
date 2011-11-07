@@ -34,8 +34,7 @@ public abstract class QueryElementDescription {
 	private final String description;
 	private final ImageDescriptor icon;
 	private final ImageDescriptor largeIcon;
-	@SuppressWarnings("unchecked")
-	private final Class objectType;
+	private final Class<? extends QueryElement> objectType;
 
 	@SuppressWarnings("unchecked")
 	public QueryElementDescription(Class objectType, String label, String description, String iconPath, String largeIconPath ) {
@@ -50,8 +49,7 @@ public abstract class QueryElementDescription {
 		return label;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Class getObjectType() {
+	public Class<? extends QueryElement> getObjectType() {
 		return objectType;
 	}
 

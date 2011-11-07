@@ -123,6 +123,7 @@ public class ComparisonWizard extends QueryComponentWizard {
 		
 		switch (field.getType() ) {
 		case STRING:
+		case STRING_MV:
 			page = new StringValueWizardPage();
 			break;
 		case LONG:
@@ -138,6 +139,7 @@ public class ComparisonWizard extends QueryComponentWizard {
 			page = new BooleanValueWizardPage();
 			break;
 		case DATE:
+		case DATE_MV:
 			page = new DateValueWizardPage();
 			break;
 		case OBJECT:

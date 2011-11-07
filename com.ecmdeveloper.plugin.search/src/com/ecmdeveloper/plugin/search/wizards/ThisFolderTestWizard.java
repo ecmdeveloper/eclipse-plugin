@@ -20,39 +20,52 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import org.eclipse.jface.wizard.Wizard;
+
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class IdValueWizardPage extends SimpleValueWizardPage {
+public class ThisFolderTestWizard extends Wizard {
 
-	private static final String INVALID_ID_VALUE = "Invalid Id value";
-	private static final String TITLE = "Id value";
-	private static final String DESCRIPTION = "Enter an Id value.";
+	private String folder;
+	private ObjectValueWizardPage objectValueWizardPage;
+	private final Query query;
+	
+	public ThisFolderTestWizard(Query query) {
+		this.query = query;
+	}
 
-	protected IdValueWizardPage() {
-		super(TITLE);
-		setTitle(TITLE);
-		setDescription(DESCRIPTION);
+	public void addPages() {
+
+		objectValueWizardPage = new ObjectValueWizardPage();
+		objectValueWizardPage.setShowOnlyFolders(true);
+		objectValueWizardPage.setAllowPaths(false);
+		objectValueWizardPage.setValue(folder);
+		
+		addPage(objectValueWizardPage);
 	}
 
 	@Override
-	protected void textModified(String textValue) {
-		try {
-			setValue( parseInput(textValue) );
-			setErrorMessage(null);
-			setDirty();
-		} catch (IllegalArgumentException exception) {
-			setErrorMessage(INVALID_ID_VALUE);
-		}
+	public boolean canFinish() {
+		return getFolder() != null;
 	}
-	
-	private String parseInput( String textValue ) {
-		if ( textValue.length() != 0 ) {
-			return textValue;
-		} else {
+
+	@Override
+	public boolean performFinish() {
+		return true;
+	}
+
+	public void setFolder(String folder) {
+		this.folder = folder;
+	}
+
+	public String getFolder() {
+		if ( objectValueWizardPage == null ) {
 			return null;
 		}
+		return (String) objectValueWizardPage.getValue();
 	}
 }

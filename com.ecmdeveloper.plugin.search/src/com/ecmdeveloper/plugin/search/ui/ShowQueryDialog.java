@@ -42,7 +42,7 @@ public class ShowQueryDialog extends Dialog {
 			"INNER", "LEFT", "OUTER", "RIGHT", "FULL", "JOIN", "ON", "WITH", "INCLUDESUBCLASSES",
 			"EXCLUDESUBCLASSES", "AND", "OR", "NOT", "LIKE", "IS", "NOT", "NULL", "IN", "EXISTS", "ASC", "DESC" };
 	private static final String[] FUNCTIONS = { "INFOLDER", "INSUBFOLDER", "ISCLASS", "CONTAINS",
-			"FREETEXT", "UPPER", "LOWER", "ABS" };
+			"FREETEXT", "UPPER", "LOWER", "ABS", "IN_FOLDER", "IN_TREE" };
 
 	private final String sql;
 

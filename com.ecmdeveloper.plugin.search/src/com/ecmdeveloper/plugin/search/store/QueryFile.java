@@ -60,6 +60,8 @@ import com.ecmdeveloper.plugin.search.model.QueryFieldType;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
 import com.ecmdeveloper.plugin.search.model.QueryTable2;
 import com.ecmdeveloper.plugin.search.model.SortType;
+import com.ecmdeveloper.plugin.search.model.ThisInFolderTest;
+import com.ecmdeveloper.plugin.search.model.ThisInTreeTest;
 import com.ecmdeveloper.plugin.search.model.ThisQueryField;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 import com.ecmdeveloper.plugin.search.model.constants.FullTextQueryType;
@@ -183,7 +185,17 @@ public class QueryFile {
 			InSubFolderTest inSubFolderTest = (InSubFolderTest) queryComponent;
 			queryComponentChild.putString(PluginTagNames.FOLDER,  inSubFolderTest.getFolder() );
 			break;
-		
+			
+		case THIS_IN_FOLDER_TEST:
+			ThisInFolderTest thisInFolderTest = (ThisInFolderTest) queryComponent;
+			queryComponentChild.putString(PluginTagNames.FOLDER,  thisInFolderTest.getFolder() );
+			break;
+			
+		case THIS_IN_TREE_TEST:
+			ThisInTreeTest thisInTreeTest = (ThisInTreeTest) queryComponent;
+			queryComponentChild.putString(PluginTagNames.FOLDER,  thisInTreeTest.getFolder() );
+			break;
+			
 		case NULL_TEST:
 			NullTest nullTest = (NullTest) queryComponent;
 			queryComponentChild.putBoolean(PluginTagNames.NEGATED, nullTest.isNegated() );
@@ -369,6 +381,18 @@ public class QueryFile {
 			queryComponent = inSubFolderTest;
 			break;
 
+		case THIS_IN_FOLDER_TEST:
+			ThisInFolderTest thisInFolderTest = new ThisInFolderTest(query);
+			thisInFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+			queryComponent = thisInFolderTest;
+			break;
+			
+		case THIS_IN_TREE_TEST:
+			ThisInTreeTest thisInTreeTest = new ThisInTreeTest(query);
+			thisInTreeTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+			queryComponent = thisInTreeTest;
+			break;
+
 		case CLASS_TEST:
 			ClassTest classTest = new ClassTest(query);
 			classTest.setClassName( m.getString(PluginTagNames.CLASS_NAME) );
@@ -512,7 +536,9 @@ public class QueryFile {
 		String objectStoreDisplayName = queryTableChild.getString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME );
 		boolean cbrEnabled = queryTableChild.getBoolean(PluginTagNames.CBR_ENABLED );
 
-		IQueryTable queryTable = new QueryTable2(name, displayName, objectStoreName, objectStoreDisplayName, connectionName, connectionDisplayName, cbrEnabled );
+		// FIXME search
+		boolean classFilterSupported = false;
+		IQueryTable queryTable = new QueryTable2(name, displayName, objectStoreName, objectStoreDisplayName, connectionName, connectionDisplayName, cbrEnabled, classFilterSupported );
 
 		queryTable.setAlias(queryTableChild.getString( PluginTagNames.ALIAS) );
 		

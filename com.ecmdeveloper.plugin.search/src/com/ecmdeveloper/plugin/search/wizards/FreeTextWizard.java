@@ -33,6 +33,10 @@ public class FreeTextWizard extends Wizard {
 
 	@Override
 	public void addPages() {
+		
+		MultiValueWizardPage p = new IntegerMultiValueWizardPage();
+		addPage(p);
+		
 		stringValueWizardPage = new StringValueWizardPage();
 		if ( text != null ) {
 			stringValueWizardPage.setValue(text);
