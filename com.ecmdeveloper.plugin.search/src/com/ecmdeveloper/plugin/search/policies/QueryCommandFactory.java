@@ -39,6 +39,8 @@ import com.ecmdeveloper.plugin.search.commands.CreateFullTextQueryCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateThisInFolderTestCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateThisInTreeTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.editor.QueryCreationFactory;
 import com.ecmdeveloper.plugin.search.model.ClassTest;
@@ -52,6 +54,8 @@ import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
+import com.ecmdeveloper.plugin.search.model.ThisInFolderTest;
+import com.ecmdeveloper.plugin.search.model.ThisInTreeTest;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
@@ -76,6 +80,10 @@ public class QueryCommandFactory {
 			command = new CreateWildcardTestCommand();
 		} else if ( objectType == InFolderTest.class ) {
 			command = new CreateInFolderTestCommand();
+		} else if ( objectType == ThisInFolderTest.class ) {
+			command = new CreateThisInFolderTestCommand();
+		} else if ( objectType == ThisInTreeTest.class ) {
+			command = new CreateThisInTreeTestCommand();
 		} else if ( objectType == InSubFolderTest.class ) {
 			command = new CreateInSubFolderTestCommand();
 		} else if ( objectType == FreeText.class ) {
@@ -91,7 +99,6 @@ public class QueryCommandFactory {
 		return command;
 	}
 
-	@SuppressWarnings("unchecked")
 	public CreateCommand getCreateCommand(IQueryField queryField, Query query) {
 		
 		CreateCommand createCommand;

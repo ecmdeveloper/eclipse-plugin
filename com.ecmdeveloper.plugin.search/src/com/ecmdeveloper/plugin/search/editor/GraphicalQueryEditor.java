@@ -31,6 +31,8 @@ import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
+import org.eclipse.gef.palette.PaletteDrawer;
+import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.CopyTemplateAction;
@@ -146,6 +148,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		String propertyName = propertyChangeEvent.getPropertyName();
 		if ( propertyName.equals( Query.TABLE_ADDED ) ||
 				propertyName.equals( Query.TABLE_REMOVED ) ) {
+			
+			setQueryComponentsVisibility();
 			removeTableItem.setEnabled( !query.getQueryTables().isEmpty() );
 		}
 
@@ -154,6 +158,37 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		if (!wasDirty) {
 			firePropertyChange(IEditorPart.PROP_DIRTY);
 		}
+	}
+
+	private void setQueryComponentsVisibility() {
+		PaletteDrawer paletteDrawer = getQueryComponentsDrawer();
+		PaletteEntry paletteEntry = getPaletteEntry(paletteDrawer, QueryPaletteFactory.CLASS_TEST_ENTRY );
+		paletteEntry.setVisible( query.isContentEngineQuery() != null && query.isContentEngineQuery() );
+	}
+
+	private PaletteEntry getPaletteEntry(PaletteDrawer paletteDrawer, String entryId) {
+		for ( Object object : paletteDrawer.getChildren() ) {
+			if ( object instanceof PaletteEntry ) {
+				PaletteEntry paletteEntry = (PaletteEntry) object;
+				if (entryId.equals(paletteEntry.getId())) {
+					return paletteEntry;
+				}
+			}
+		}
+
+		throw new IllegalArgumentException("No palette entry found for " + entryId );
+	}
+
+	private PaletteDrawer getQueryComponentsDrawer() {
+		for ( Object object : root.getChildren() ) {
+			if ( object instanceof PaletteDrawer ) {
+				PaletteDrawer paletteDrawer = (PaletteDrawer) object;
+				if ( paletteDrawer.getId().equals(QueryPaletteFactory.QUERY_COMPONENTS_DRAWER ) ) {
+					return paletteDrawer;
+				}
+			}
+		}
+		throw new IllegalStateException();
 	}
 
 	@Override

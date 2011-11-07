@@ -49,6 +49,7 @@ public class Query implements PropertyChangeListener {
 	private Integer maxCount;
 	private Integer timeLimit;
 	private String name;
+	private Boolean contentEngineQuery;
 	
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
@@ -72,12 +73,14 @@ public class Query implements PropertyChangeListener {
 	public void add(IQueryTable queryTable) {
 		queryTable.addPropertyChangeListener(this);
 		queryTables.add(queryTable);
+		contentEngineQuery = queryTable.isContentEngineTable();
 		listeners.firePropertyChange(TABLE_ADDED, queryTable, null);
 	}
 	
 	public void remove(IQueryTable queryTable) {
 		queryTable.removePropertyChangeListener(this);
 		queryTables.remove(queryTable);
+		contentEngineQuery = null;
 		listeners.firePropertyChange(TABLE_REMOVED, queryTable, null);
 	}
 	
@@ -369,5 +372,9 @@ public class Query implements PropertyChangeListener {
 
 	private static boolean isAlphaNumeric(char c) {
 		return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	}
+
+	public Boolean isContentEngineQuery() {
+		return contentEngineQuery;
 	}
 }

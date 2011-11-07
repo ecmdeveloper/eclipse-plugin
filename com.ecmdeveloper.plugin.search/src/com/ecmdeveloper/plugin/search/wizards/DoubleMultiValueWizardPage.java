@@ -18,22 +18,32 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model.constants;
+package com.ecmdeveloper.plugin.search.wizards;
 
 /**
  * @author ricardo.belfor
  *
  */
-public enum QueryComponentType {
+public class DoubleMultiValueWizardPage extends SimpleMultiValueWizardPage {
+	
+	private static final String INVALID_DOUBLE_VALUE = "Invalid double value";
+	
+	public DoubleMultiValueWizardPage() {
+		super();
+		setDescription("Enter Double Values" );
+		setMultiLine(false);
+	}
 
-	COMPARISON,
-	FREE_TEXT,
-	IN_FOLDER_TEST,
-	IN_SUBFOLDER_TEST,
-	THIS_IN_FOLDER_TEST,
-	THIS_IN_TREE_TEST,
-	NULL_TEST,
-	WILDCARD_TEST,
-	CLASS_TEST,
-	FULL_TEXT
+	@Override
+	protected Object getEditorValue() {
+		String textValue = getText();
+		if ( !textValue.isEmpty() ) {
+			try {
+				return Double.parseDouble( textValue );
+			} catch (NumberFormatException e) {
+				setErrorMessage(INVALID_DOUBLE_VALUE);
+			}
+		}
+		return null;
+	}
 }

@@ -18,22 +18,25 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model.constants;
+package com.ecmdeveloper.plugin.search.wizards;
 
 /**
  * @author ricardo.belfor
  *
  */
-public enum QueryComponentType {
+public class StringMultiValueWizardPage extends SimpleMultiValueWizardPage {
 
-	COMPARISON,
-	FREE_TEXT,
-	IN_FOLDER_TEST,
-	IN_SUBFOLDER_TEST,
-	THIS_IN_FOLDER_TEST,
-	THIS_IN_TREE_TEST,
-	NULL_TEST,
-	WILDCARD_TEST,
-	CLASS_TEST,
-	FULL_TEXT
+	public StringMultiValueWizardPage() {
+		super();
+		setDescription("Enter String Values" );
+	}
+
+	@Override
+	protected Object getEditorValue() {
+		String textValue = getText();
+		if ( !textValue.isEmpty() ) {
+			return textValue;
+		}
+		return null;
+	}
 }

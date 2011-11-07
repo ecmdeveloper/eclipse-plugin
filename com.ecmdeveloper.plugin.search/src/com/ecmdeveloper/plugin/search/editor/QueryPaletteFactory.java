@@ -41,6 +41,8 @@ import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
+import com.ecmdeveloper.plugin.search.model.ThisInFolderTest;
+import com.ecmdeveloper.plugin.search.model.ThisInTreeTest;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
@@ -50,6 +52,13 @@ import com.ecmdeveloper.plugin.search.model.WildcardTest;
  */
 public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin {
 
+	public static final String CLASS_TEST_ENTRY = "CLASS_TEST_ENTRY";
+	public static final String IN_FOLDER_TEST_ENTRY = "IN_FOLDER_TEST_ENTRY";
+	public static final String IN_SUBFOLDER_TEST_ENTRY = "IN_SHBFOLDER_TEST_ENTRY";
+	public static final String THIS_IN_FOLDER_TEST_ENTRY = "THIS_IN_FOLDER_TEST_ENTRY";
+	public static final String THIS_IN_TREE_TEST_ENTRY = "THIS_IN_TREE_TEST_ENTRY";
+
+	public static final String QUERY_COMPONENTS_DRAWER = "QUERY_COMPONENTS_DRAWER";
 	private static QueryPaletteFactory singleton;
 
 	@SuppressWarnings("unchecked")
@@ -93,35 +102,45 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		
 		PaletteDrawer drawer = new PaletteDrawer(
 				"Query Components", Activator.getImageDescriptor( QueryIcons.QUERY_COMPONENT_ICON) ); //$NON-NLS-1$
+		drawer.setId( QUERY_COMPONENTS_DRAWER );
+		List<CombinedTemplateCreationEntry> entries = new ArrayList();
 
-		List<Object> entries = new ArrayList();
-
-		CombinedTemplateCreationEntry combined;
+		CombinedTemplateCreationEntry entry;
 		
-		combined = createEntry(Comparison.DESCRIPTION, queryProxy);
-		entries.add(combined);
+		entry = createEntry(Comparison.DESCRIPTION, queryProxy);
+		entries.add(entry);
 
-		combined = createEntry(NullTest.DESCRIPTION, queryProxy);
-		entries.add(combined);
+		entry = createEntry(NullTest.DESCRIPTION, queryProxy);
+		entries.add(entry);
 
-		combined = createEntry(WildcardTest.DESCRIPTION, queryProxy);
-		entries.add(combined);
+		entry = createEntry(WildcardTest.DESCRIPTION, queryProxy);
+		entries.add(entry);
 
-		combined = createEntry( InFolderTest.DESCRIPTION, queryProxy);
-		entries.add(combined);
+		entry = createEntry( InFolderTest.DESCRIPTION, queryProxy);
+		entries.add(entry);
 
-		combined = createEntry(InSubFolderTest.DESCRIPTION, queryProxy);
-		entries.add(combined);
+		entry = createEntry( ThisInFolderTest.DESCRIPTION, queryProxy);
+		entries.add(entry);
+
+		entry = createEntry( ThisInTreeTest.DESCRIPTION, queryProxy);
+		entries.add(entry);
 		
-		combined = createEntry(ClassTest.DESCRIPTION, queryProxy);
-		entries.add(combined);
+		entry = createEntry(InSubFolderTest.DESCRIPTION, queryProxy);
+		entry.setId(CLASS_TEST_ENTRY);
+		entries.add(entry);
+		
+		entry = createEntry(ClassTest.DESCRIPTION, queryProxy);
+		entry.setId(CLASS_TEST_ENTRY);
+		entry.setVisible(false);
+		
+		entries.add(entry);
 
-		combined = createEntry(FreeText.DESCRIPTION, queryProxy);
-		entries.add(combined);
+		entry = createEntry(FreeText.DESCRIPTION, queryProxy);
+		entries.add(entry);
 
-		combined = createEntry(FullTextQuery.DESCRIPTION, queryProxy);
-		entries.add(combined);
-
+		entry = createEntry(FullTextQuery.DESCRIPTION, queryProxy);
+		entries.add(entry);
+		
 		drawer.addAll(entries);
 		return drawer;
 	}
@@ -160,4 +179,6 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 			singleton = this;
 		}
 	}
+
+
 }

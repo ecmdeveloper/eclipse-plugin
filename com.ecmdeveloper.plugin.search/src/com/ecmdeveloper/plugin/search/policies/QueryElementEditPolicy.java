@@ -38,6 +38,8 @@ import com.ecmdeveloper.plugin.search.commands.EditFullTextQueryCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditNullTestCommand;
+import com.ecmdeveloper.plugin.search.commands.EditThisInFolderTestCommand;
+import com.ecmdeveloper.plugin.search.commands.EditThisInTreeTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditWildcardTestCommand;
 import com.ecmdeveloper.plugin.search.commands.SetMainQueryCommand;
 import com.ecmdeveloper.plugin.search.model.ClassTest;
@@ -52,6 +54,8 @@ import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryDiagram;
 import com.ecmdeveloper.plugin.search.model.QueryElement;
 import com.ecmdeveloper.plugin.search.model.QuerySubpart;
+import com.ecmdeveloper.plugin.search.model.ThisInFolderTest;
+import com.ecmdeveloper.plugin.search.model.ThisInTreeTest;
 import com.ecmdeveloper.plugin.search.model.WildcardTest;
 
 /**
@@ -101,6 +105,10 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 			return new EditWildcardTestCommand(queryComponent);
 		} else if ( queryComponent instanceof InFolderTest ) {
 			return new EditInFolderTestCommand(queryComponent);
+		} else if ( queryComponent instanceof ThisInFolderTest ) {
+			return new EditThisInFolderTestCommand(queryComponent);
+		} else if ( queryComponent instanceof ThisInTreeTest ) {
+			return new EditThisInTreeTestCommand(queryComponent);
 		} else if ( queryComponent instanceof InSubFolderTest ) {
 			return new EditInSubFolderTestCommand(queryComponent);
 		} else if ( queryComponent instanceof ClassTest ) {

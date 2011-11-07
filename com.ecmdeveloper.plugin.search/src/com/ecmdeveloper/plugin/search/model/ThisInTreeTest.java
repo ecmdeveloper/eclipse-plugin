@@ -27,40 +27,41 @@ import com.ecmdeveloper.plugin.search.model.constants.QueryComponentType;
  * @author ricardo.belfor
  *
  */
-public class ClassTest extends QueryComponent  {
+public class ThisInTreeTest extends QueryComponent {
 
 	private static final long serialVersionUID = 1L;
-	private String className;
-	
+
+	private String folder;
+
 	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
-			ClassTest.class, "Is Class Test", "Query Field Is Class Test",
-			QueryIcons.CLASS_TEST_ICON, QueryIcons.CLASS_TEST_ICON_LARGE){
+			ThisInTreeTest.class, "In Tree Test", "Query Field In Tree Test",
+			QueryIcons.INSUBFOLDER_TEST_ICON, QueryIcons.INSUBFOLDER_TEST_ICON_LARGE){
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					return queryField.getQueryTable().isContentEngineTable()
-					&& queryField instanceof ThisQueryField;
+					// FIXME check on This?
+					return false;
 				}};	
-	
-	public ClassTest(Query query) {
+
+	public ThisInTreeTest(Query query) {
 		super(query);
 	}
 
 	@Override
 	public QueryComponentType getType() {
-		return QueryComponentType.CLASS_TEST;
+		return QueryComponentType.THIS_IN_TREE_TEST;
 	}
 
-	public String getClassName() {
-		return className;
+	public String getFolder() {
+		return folder;
 	}
 
-	public void setClassName(String className) {
-		String oldValue = this.className;
-		this.className = className;
-		firePropertyChange(FIELD_CHANGED, oldValue, className );
+	public void setFolder(String folder) {
+		String oldValue = this.folder;
+		this.folder = folder;
+		firePropertyChange(FIELD_CHANGED, oldValue, folder);
 	}
-
+	
 	@Override
 	public String toString() {
 		return toString(false);
@@ -70,30 +71,16 @@ public class ClassTest extends QueryComponent  {
 	public String toSQL() {
 		return toString(true);
 	}
-	
+
 	private String toString(boolean strict) {
-		if ( getField() != null && className != null ) {
-			
+		if ( folder != null ) { 
 			StringBuffer result = new StringBuffer();
-			result.append( " ISCLASS(");
-
-			if ( strict ) result.append('[');
-			if ( getField() instanceof ThisQueryField ) {
-				result.append( getField().getQueryTable().getName() );
-			} else {
-				result.append( getField().getName() );
-			}
-			if ( strict ) result.append(']');
-
-			result.append(',');
-			if ( strict ) result.append('[');
-			result.append(className);
-			if ( strict ) result.append(']');
-			result.append( ")");
+			result.append( " IN_TREE('");
+			result.append(folder);
+			result.append( "')");
 			return result.toString();
 		} else {
 			return "";
 		}
 	}
-
 }

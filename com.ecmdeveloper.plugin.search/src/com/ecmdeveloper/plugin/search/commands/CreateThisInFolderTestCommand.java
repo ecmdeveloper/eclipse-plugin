@@ -18,22 +18,33 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.search.model.constants;
+package com.ecmdeveloper.plugin.search.commands;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import com.ecmdeveloper.plugin.search.model.ThisInFolderTest;
+import com.ecmdeveloper.plugin.search.wizards.ThisFolderTestWizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public enum QueryComponentType {
+public class CreateThisInFolderTestCommand extends CreateCommand {
 
-	COMPARISON,
-	FREE_TEXT,
-	IN_FOLDER_TEST,
-	IN_SUBFOLDER_TEST,
-	THIS_IN_FOLDER_TEST,
-	THIS_IN_TREE_TEST,
-	NULL_TEST,
-	WILDCARD_TEST,
-	CLASS_TEST,
-	FULL_TEXT
+	@Override
+	public void execute() {
+
+		Shell shell = Display.getCurrent().getActiveShell();
+		
+		ThisFolderTestWizard wizard = new ThisFolderTestWizard( child.getQuery() );
+		WizardDialog dialog = new WizardDialog(shell, wizard);
+		dialog.create();
+		if ( dialog.open() == Dialog.OK ) {
+			((ThisInFolderTest)child).setFolder( wizard.getFolder() );
+			super.execute();
+		}
+	}	
 }

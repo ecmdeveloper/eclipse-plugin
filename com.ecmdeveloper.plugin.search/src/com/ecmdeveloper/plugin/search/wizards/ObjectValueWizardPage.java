@@ -57,6 +57,7 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 	private String selectedPath;
 	private String selectedId;
 	private boolean showOnlyFolders = false;
+	private boolean allowPaths = true;
 	
 	protected ObjectValueWizardPage() {
 		super(TITLE);
@@ -71,6 +72,14 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
 	public void setShowOnlyFolders(boolean showOnlyFolders) {
 		this.showOnlyFolders = showOnlyFolders;
+	}
+
+	public void setAllowPaths(boolean allowPaths) {
+		this.allowPaths = allowPaths;
+	}
+
+	public boolean isAllowPaths() {
+		return allowPaths;
 	}
 
 	@Override
@@ -92,9 +101,11 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 			}} 
 		);
 
-		useIdButton = createButton(container, "Use Id value", true);
-		usePathButton = createButton(container, "Use Path value", false);
-		updateButtonState();
+		if ( allowPaths ) {
+			useIdButton = createButton(container, "Use Id value", true);
+			usePathButton = createButton(container, "Use Path value", false);
+			updateButtonState();
+		}
 	}
 	
 	private void selectValue() {
@@ -118,18 +129,20 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 	}
 
 	private void setSelectedValues(IObjectStoreItem destination) {
-		if ( destination instanceof IFolder ) {
-			selectedPath = ((IFolder)destination).getPathName();
-		} else {
-			selectedPath = null;
-			useIdButton.setSelection(true);
-			usePathButton.setSelection(false);
+		if ( allowPaths ) {
+			if ( destination instanceof IFolder ) {
+				selectedPath = ((IFolder)destination).getPathName();
+			} else {
+				selectedPath = null;
+				useIdButton.setSelection(true);
+				usePathButton.setSelection(false);
+			}
 		}
 		selectedId = destination.getId();
 	}
 
 	private void updateValue() {
-		if (useIdButton.getSelection() ) {
+		if ( isUseId() ) {
 			setText( selectedId );
 			setValue( selectedId );
 		} else {
@@ -137,6 +150,10 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 			setValue( selectedPath );
 		}
 		setDirty();
+	}
+
+	private boolean isUseId() {
+		return !allowPaths || useIdButton.getSelection();
 	}
 
 	private ElementTreeSelectionDialog createSelectionDialog() {
@@ -157,9 +174,8 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 				return errorStatus;
 			}
 		});
-		dialog.setInput( Activator.getDefault().getObjectStoresManager() );
+		dialog.setInput( Activator.getDefault().getTaskManager() );
 		
-		contentProvider.inputChanged( null, null, Activator.getDefault().getObjectStoresManager() );
 		dialog.setTitle(TITLE);
 		dialog.setMessage( "Select an object" );
 		addFolderFilter(dialog);
@@ -196,8 +212,9 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 	}
 	
 	private void updateButtonState() {
-		useIdButton.setEnabled( selectedId != null );
-		usePathButton.setEnabled( selectedPath != null );
-	
+		if ( allowPaths ) {
+			useIdButton.setEnabled( selectedId != null );
+			usePathButton.setEnabled( selectedPath != null );
+		}
 	}
 }

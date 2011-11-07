@@ -30,6 +30,7 @@ import java.util.Comparator;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.Feature;
 import com.ecmdeveloper.plugin.core.model.constants.PropertyType;
 
 /**
@@ -47,12 +48,14 @@ public class QueryTable2 implements IQueryTable {
 	private final String name;
 	private final String displayName;
 	private final boolean cbrEnabled;
+	private final boolean isContentEngineTable;
+	
 	private String alias;
 	
 	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
 	public QueryTable2(String name, String displayName, String objectStoreName, String objectStoreDisplayName,
-			String connectionName, String connectionDisplayName, boolean cbrEnabled ) {
+			String connectionName, String connectionDisplayName, boolean cbrEnabled, boolean contentEngineTable ) {
 		this.name = name;
 		this.displayName = displayName;
 		this.objectStoreName = objectStoreName;
@@ -60,6 +63,7 @@ public class QueryTable2 implements IQueryTable {
 		this.connectionName = connectionName;
 		this.connectionDisplayName = connectionDisplayName;
 		this.cbrEnabled = cbrEnabled;
+		this.isContentEngineTable = contentEngineTable;
 		childQueryTables = new ArrayList<IQueryTable>();
 	}
 
@@ -74,6 +78,7 @@ public class QueryTable2 implements IQueryTable {
 		displayName = classDescription.getDisplayName();
 		childQueryTables = new ArrayList<IQueryTable>();
 		cbrEnabled = Boolean.TRUE.equals( classDescription.getCBREnabled() );
+		isContentEngineTable = objectStore.isSupportedFeature(Feature.CLASS_FILTER);
 		
 		for ( IPropertyDescription propertyDescription : classDescription.getAllPropertyDescriptions() ) {
 			if ( isQueryTableProperty(propertyDescription) ) {
@@ -239,5 +244,10 @@ public class QueryTable2 implements IQueryTable {
 	@Override
 	public void notifyQueryFieldChanged(String propertyName, Object oldValue, Object newValue) {
 		listeners.firePropertyChange(propertyName, oldValue,  newValue);
+	}
+
+	@Override
+	public boolean isContentEngineTable() {
+		return isContentEngineTable;
 	}
 }
