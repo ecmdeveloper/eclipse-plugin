@@ -26,5 +26,6 @@ package com.ecmdeveloper.plugin.core.model.constants;
  */
 public enum Feature {
 
-	VERSIONING
+	VERSIONING,
+	CLASS_FILTER
 }

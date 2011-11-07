@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.cmis.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -46,6 +47,8 @@ import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
  *
  */
 public class ObjectStore extends ObjectStoreItem implements IObjectStore {
+
+	private static final String NOT_CONNECTED_MESSAGE = "Object Store \"{0}:{1}\" is not connected.\nConnect to the Object Store before trying this action";
 
 	private Session session;
 	private final Connection connection;
@@ -242,5 +245,13 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 			return "cmis:folder";
 		}
 		return null;
+	}
+
+	@Override
+	public void assertConnected() {
+		if (!isConnected()) {
+			throw new RuntimeException(MessageFormat.format(NOT_CONNECTED_MESSAGE, getConnection()
+					.toString(), getName()));
+		}
 	}
 }
