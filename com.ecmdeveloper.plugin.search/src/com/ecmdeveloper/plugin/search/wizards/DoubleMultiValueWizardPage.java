@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+
 /**
  * @author ricardo.belfor
  *
@@ -28,8 +30,8 @@ public class DoubleMultiValueWizardPage extends SimpleMultiValueWizardPage {
 	
 	private static final String INVALID_DOUBLE_VALUE = "Invalid double value";
 	
-	public DoubleMultiValueWizardPage() {
-		super();
+	public DoubleMultiValueWizardPage(IQueryField queryField) {
+		super(queryField);
 		setDescription("Enter Double Values" );
 		setMultiLine(false);
 	}

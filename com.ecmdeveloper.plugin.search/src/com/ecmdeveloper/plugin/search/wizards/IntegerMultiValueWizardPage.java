@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+
 /**
  * @author ricardo.belfor
  *
@@ -28,8 +30,8 @@ public class IntegerMultiValueWizardPage extends SimpleMultiValueWizardPage {
 
 	private static final String INVALID_INTEGER_VALUE = "Invalid integer value";
 	
-	public IntegerMultiValueWizardPage() {
-		super();
+	public IntegerMultiValueWizardPage(IQueryField queryField) {
+		super(queryField);
 		setDescription("Enter Integer Values" );
 		setMultiLine(false);
 	}

@@ -27,6 +27,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+
 /**
  * @author ricardo.belfor
  *
@@ -35,6 +37,10 @@ public abstract class SimpleMultiValueWizardPage extends MultiValueWizardPage {
 
 	private Text text;
 	private boolean multiLine;
+	
+	protected SimpleMultiValueWizardPage(IQueryField queryField) {
+		super(queryField);
+	}
 	
 	protected void createValuesControls(Composite parent) {
 		text = new Text(parent, getTextStyle() );

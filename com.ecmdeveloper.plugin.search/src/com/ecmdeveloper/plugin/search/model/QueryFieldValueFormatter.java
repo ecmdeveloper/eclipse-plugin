@@ -21,7 +21,7 @@
 package com.ecmdeveloper.plugin.search.model;
 
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * @author ricardo.belfor
@@ -41,7 +41,7 @@ public class QueryFieldValueFormatter {
 		case LONG:
 			return value.toString(); 
 		case DATE:
-			return formatDate(value);
+			return formatDate(value, queryField );
 		case DOUBLE:
 			return formatDouble(value);
 		case OBJECT:
@@ -52,28 +52,59 @@ public class QueryFieldValueFormatter {
 		return null;
 	}
 
-	private static String formatDate(Object value) {
-		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		String dateValue = dateFormatter.format(value);
-		if ( dateValue.endsWith("T00:00:00") ) {
-			dateValue = dateValue.replaceAll("T00:00:00", "");
+	private static String formatDate(Object value, IQueryField queryField) {
+		
+		if ( queryField.getQueryTable().isContentEngineTable() ) { 
+			return formatContentEngineDate(value);
 		} else {
-			dateValue += getISOTimeZone(value);
+			return formatCmisDate(value);
 		}
-		return dateValue;
 	}
 
-	private static String getISOTimeZone(Object value) {
-		SimpleDateFormat timeZoneFormatter = new SimpleDateFormat("Z");
-		String timeZone = timeZoneFormatter.format(value);
-		if ( timeZone.equals("Z") ) {
-			timeZone = "+00:00";
-		} else if ( timeZone.length() == 5) {
-			timeZone = timeZone.substring(0,3) + ":" + timeZone.substring(3);
-		} else if ( timeZone.length() == 3 ) {
-			timeZone = timeZone + ":00";
+	private static String formatCmisDate(Object value) {
+
+		StringBuffer output = new StringBuffer();
+		Calendar calendar = (Calendar)value;
+		output.append( getDateTimeInTimeZone(calendar) );
+		output.append(".000");
+		output.append( getTimeZoneOffset(calendar) );
+		return output.toString();
+	}
+
+	private static String getTimeZoneOffset(Calendar calendar) {
+		int rawOffset = calendar.getTimeZone().getRawOffset();
+		int hour = rawOffset / (60*60*1000);
+		String timeZoneOffset;
+		int minute = Math.abs(rawOffset/(60*1000)) % 60;
+		if ( hour == 0 && minute == 0 ) {
+			timeZoneOffset = "Z";
+		} else if ( hour < 0 ) {
+			timeZoneOffset = String.format("-%02d:%02d", -hour, minute);
+		} else {
+			timeZoneOffset = String.format("+%02d:%02d", hour, minute);
 		}
-		return timeZone;
+		return timeZoneOffset;
+	}
+
+	private static String getDateTimeInTimeZone(Calendar calendar) {
+		String dateTimeInTimeZone = String.format("%04d-%02d-%02dT%02d:%02d:%02d", calendar
+				.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar
+				.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar
+				.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
+		return dateTimeInTimeZone;
+	}
+	
+	private static String formatContentEngineDate(Object value) {
+
+		StringBuffer output = new StringBuffer();
+		Calendar calendar = (Calendar)value;
+		String dateValue = getDateTimeInTimeZone(calendar);
+		if ( dateValue.endsWith("T00:00:00") ) {
+			dateValue = dateValue.replaceAll("T00:00:00", "");
+		}
+		output.append( dateValue );
+		output.append( getTimeZoneOffset(calendar) );
+		return output.toString();
 	}
 
 	private static String formatString(Object value) {
