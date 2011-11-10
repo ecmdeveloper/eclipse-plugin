@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.search.wizards;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -37,6 +38,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.QueryFieldValueFormatter;
+
 /**
  * @author ricardo.belfor
  *
@@ -45,9 +49,11 @@ public abstract class MultiValueWizardPage extends WizardPage {
 
 	private TableViewer valuesTable;
 	private ArrayList<Object> values;
+	private final IQueryField queryField;
 	
-	protected MultiValueWizardPage() {
+	protected MultiValueWizardPage(IQueryField queryField) {
 		super("Multi Value Wizard Page");
+		this.queryField = queryField;
 		setTitle( "Multiple Values" );
 		values = new ArrayList<Object>();
 	}
@@ -88,7 +94,17 @@ public abstract class MultiValueWizardPage extends WizardPage {
 		valuesTable = new TableViewer(container, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION ); 
 		valuesTable.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		valuesTable.setContentProvider( new ArrayContentProvider() );
-		valuesTable.setLabelProvider( new LabelProvider() );
+		valuesTable.setLabelProvider( new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				if ( element instanceof Calendar) {
+					return QueryFieldValueFormatter.format(queryField, element);
+//					return ((Calendar) element).getTime().toString();
+				}
+				return super.getText(element);
+			}} );
+		
 		valuesTable.setInput( values );
 		valuesTable.addSelectionChangedListener(new ISelectionChangedListener() {
 

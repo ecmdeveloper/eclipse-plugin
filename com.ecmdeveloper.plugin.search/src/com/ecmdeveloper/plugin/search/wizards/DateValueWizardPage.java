@@ -20,9 +20,18 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.TimeZone;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,6 +52,7 @@ public class DateValueWizardPage extends ValueWizardPage {
 	private DateTime calendar;
 	private DateTime time;
 	private Button omitTimeButton;
+	private ComboViewer timeZonesCombo;
 
 	protected DateValueWizardPage() {
 		super(TITLE);
@@ -57,10 +67,12 @@ public class DateValueWizardPage extends ValueWizardPage {
 		createCalendar(container);
 		createLabel(container, "Time:" );
 		createTime(container);
+		createLabel(container, "Time Zone:" );
+		createTimeZones(container);
 		createOmitTimeButton(container);
 		
-		if ( getValue() instanceof Date ) {
-			setCalendarValue((Date) getValue());
+		if ( getValue() instanceof Calendar ) {
+			setCalendarValue((Calendar) getValue());
 		} else {
 			setValue(getCalendarValue());
 			setDirty();
@@ -113,10 +125,8 @@ public class DateValueWizardPage extends ValueWizardPage {
 		});
 	}
 
-	private void setCalendarValue(Date value) {
-		if ( value != null ) {
-			Calendar calendarValue = Calendar.getInstance();
-			calendarValue.setTime(value);
+	private void setCalendarValue(Calendar calendarValue) {
+		if ( calendarValue != null ) {
 			calendar.setDate(calendarValue.get(Calendar.YEAR), calendarValue.get(Calendar.MONTH),
 					calendarValue.get(Calendar.DAY_OF_MONTH));
 			int hourOfDay = calendarValue.get(Calendar.HOUR_OF_DAY);
@@ -124,15 +134,15 @@ public class DateValueWizardPage extends ValueWizardPage {
 			int seconds = calendarValue.get(Calendar.SECOND);
 			omitTimeButton.setSelection( hourOfDay == 0 && minutes == 0 && seconds == 0 );
 			time.setTime(hourOfDay, minutes,seconds );
+			setTimeZone( calendarValue.getTimeZone() );
 		}
 	}
 
 	private boolean isOmitTime() {
 		
 		Object value = getValue();
-		if ( value != null && value instanceof Date) {
-			Calendar calendarValue = Calendar.getInstance();
-			calendarValue.setTime((Date) value);
+		if ( value != null && value instanceof Calendar) {
+			Calendar calendarValue = (Calendar) value;
 			int hourOfDay = calendarValue.get(Calendar.HOUR_OF_DAY);
 			int minutes = calendarValue.get(Calendar.MINUTE);
 			int seconds = calendarValue.get(Calendar.SECOND);
@@ -141,7 +151,8 @@ public class DateValueWizardPage extends ValueWizardPage {
 		}
 		return false;
 	}
-	private Date getCalendarValue() {
+	
+	private Calendar getCalendarValue() {
 	
 		Calendar calendarValue = Calendar.getInstance();
 	
@@ -151,7 +162,51 @@ public class DateValueWizardPage extends ValueWizardPage {
 		calendarValue.set(Calendar.HOUR_OF_DAY, time.getHours() );
 		calendarValue.set(Calendar.MINUTE, time.getMinutes() );
 		calendarValue.set(Calendar.SECOND, time.getSeconds() );
+		calendarValue.setTimeZone( getTimeZone() );
+		return calendarValue;
+	}
+
+	private void createTimeZones(Composite parent) {
 		
-		return calendarValue.getTime();
+		timeZonesCombo = new ComboViewer(parent, SWT.VERTICAL
+				| SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		timeZonesCombo.setContentProvider(new ArrayContentProvider());
+		timeZonesCombo.setLabelProvider(new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				TimeZone timeZone = (TimeZone) element;
+				return timeZone.getID();
+			}} );
+
+		timeZonesCombo.setInput( getTimeZones() );
+		timeZonesCombo.addSelectionChangedListener( new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				setValue( getCalendarValue() );
+				setDirty();				
+			}} );
+		setTimeZone( TimeZone.getDefault() );
+	}
+
+	private void setTimeZone(TimeZone timeZone) {
+		ISelection selection = new StructuredSelection( timeZone );
+		timeZonesCombo.setSelection(selection );
+	}
+
+	private ArrayList<TimeZone> getTimeZones() {
+		
+		ArrayList<TimeZone> timeZoneList = new ArrayList<TimeZone>();
+		for ( String id :  TimeZone.getAvailableIDs() ) {
+			timeZoneList.add( TimeZone.getTimeZone(id) );
+		}
+		return timeZoneList;
+	}
+
+	private TimeZone getTimeZone() {
+		IStructuredSelection selection = (IStructuredSelection) timeZonesCombo.getSelection();
+		TimeZone timeZone = (TimeZone) selection.iterator().next();
+		return timeZone;
 	}
 }

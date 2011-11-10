@@ -20,14 +20,16 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
+import com.ecmdeveloper.plugin.search.model.IQueryField;
+
 /**
  * @author ricardo.belfor
  *
  */
 public class StringMultiValueWizardPage extends SimpleMultiValueWizardPage {
 
-	public StringMultiValueWizardPage() {
-		super();
+	public StringMultiValueWizardPage(IQueryField queryField) {
+		super(queryField);
 		setDescription("Enter String Values" );
 	}
 

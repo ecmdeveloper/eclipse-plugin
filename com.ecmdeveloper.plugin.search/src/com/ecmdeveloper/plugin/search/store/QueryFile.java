@@ -27,9 +27,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -231,10 +233,12 @@ public class QueryFile {
 				queryComponentChild.putBoolean( PluginTagNames.BOOLEAN_VALUE, (Boolean) value );
 			} else if ( value instanceof String ) {
 				queryComponentChild.putString(PluginTagNames.STRING_VALUE,  value.toString() );
-			} else if ( value instanceof Date ) {
+			} else if ( value instanceof Calendar ) {
 				SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-				String dateString = dateFormatter.format(value);
+				Calendar calendar = (Calendar) value;
+				String dateString = dateFormatter.format(calendar.getTime());
 				queryComponentChild.putString(PluginTagNames.DATE_VALUE, dateString );
+				queryComponentChild.putString(PluginTagNames.TIME_ZONE_ID, calendar.getTimeZone().getID() );
 			} else if ( value instanceof Integer ) {
 				queryComponentChild.putString(PluginTagNames.INTEGER_VALUE,  value.toString() );
 			} else if ( value instanceof Double ) {
@@ -458,7 +462,18 @@ public class QueryFile {
 		if ( dateStringValue != null ) {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
 			try {
-				return dateFormatter.parse(dateStringValue);
+				Date date = dateFormatter.parse(dateStringValue);
+				String timeZoneId = m.getString(PluginTagNames.TIME_ZONE_ID);
+				TimeZone timeZone;
+				if ( timeZoneId != null ) {
+					timeZone = TimeZone.getTimeZone(timeZoneId);
+				} else {
+					timeZone = TimeZone.getDefault();
+				}
+					
+				Calendar calendar = Calendar.getInstance(timeZone);
+				calendar.setTime(date);
+				return calendar;
 			} catch (ParseException e) {
 				throw new RuntimeException(e);
 			}

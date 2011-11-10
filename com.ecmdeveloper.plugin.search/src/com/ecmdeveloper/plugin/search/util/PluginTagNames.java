@@ -73,4 +73,5 @@ public class PluginTagNames {
 	public static final String ALIAS = "alias";
 	public static final String SELECTABLE = "selectable";
 	public static final String SEARCHABLE = "searchable";
+	public static final String TIME_ZONE_ID = "timeZoneId";
 }
