@@ -96,6 +96,7 @@ public class Activator extends Plugin {
 		return pathPartsList.toArray( new String[0] );
 	}
 
+	@SuppressWarnings("unchecked")
 	private String[] getPathParts() {
 		Dictionary headers = getBundle().getHeaders();
 		String bundleClassPath = (String) headers.get("Bundle-ClassPath");
