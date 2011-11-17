@@ -35,5 +35,7 @@ public enum QueryComponentType {
 	NULL_TEST,
 	WILDCARD_TEST,
 	CLASS_TEST,
-	FULL_TEXT
+	FULL_TEXT,
+	IN_TEST,
+	MULTI_VALUE_IN_TEST,
 }

@@ -65,9 +65,11 @@ public class QueryFieldValueFormatter {
 
 		StringBuffer output = new StringBuffer();
 		Calendar calendar = (Calendar)value;
+		output.append( "TIMESTAMP '");
 		output.append( getDateTimeInTimeZone(calendar) );
 		output.append(".000");
 		output.append( getTimeZoneOffset(calendar) );
+		output.append( "'");
 		return output.toString();
 	}
 

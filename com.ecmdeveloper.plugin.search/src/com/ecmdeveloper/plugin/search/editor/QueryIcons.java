@@ -50,4 +50,8 @@ public interface QueryIcons {
 	public static final String CLASS_TEST_ICON_LARGE = "icons/class24.png";
 	public static final String FULL_TEXT_ICON = "icons/fulltext16.png";
 	public static final String FULL_TEXT_ICON_LARGE = "icons/fulltext24.png";
+	public static final String IN_TEST_ICON = "icons/in16.png";
+	public static final String IN_TEST_ICON_LARGE = "icons/in24.png";
+	public static final String MULTI_VALUE_IN_TEST_ICON = "icons/multi_in16.png";
+	public static final String MULTI_VALUE_IN_TEST_ICON_LARGE = "icons/multi_in24.png";
 }

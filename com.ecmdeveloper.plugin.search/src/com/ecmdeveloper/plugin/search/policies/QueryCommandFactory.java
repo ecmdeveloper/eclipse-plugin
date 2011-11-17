@@ -38,6 +38,7 @@ import com.ecmdeveloper.plugin.search.commands.CreateFreeTextCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateFullTextQueryCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateInTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateThisInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateThisInTreeTestCommand;
@@ -50,6 +51,7 @@ import com.ecmdeveloper.plugin.search.model.FullTextQuery;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.InTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
@@ -76,6 +78,8 @@ public class QueryCommandFactory {
 			command = new CreateComparisonCommand();
 		} else if ( objectType == NullTest.class ) {
 			command = new CreateNullTestCommand();
+		} else if ( objectType == InTest.class ) {
+			command = new CreateInTestCommand();
 		} else if ( objectType == WildcardTest.class ) {
 			command = new CreateWildcardTestCommand();
 		} else if ( objectType == InFolderTest.class ) {
@@ -140,12 +144,24 @@ public class QueryCommandFactory {
 			operations.add(NullTest.DESCRIPTION);
 		}
 
+		if ( InTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(InTest.DESCRIPTION);
+		}
+
 		if ( WildcardTest.DESCRIPTION.isValidFor(queryField)) {
 			operations.add(WildcardTest.DESCRIPTION);
 		}
 
 		if ( InFolderTest.DESCRIPTION.isValidFor(queryField)) {
 			operations.add(InFolderTest.DESCRIPTION);
+		}
+
+		if ( ThisInFolderTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(ThisInFolderTest.DESCRIPTION);
+		}
+
+		if ( ThisInTreeTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(ThisInTreeTest.DESCRIPTION);
 		}
 
 		if ( InSubFolderTest.DESCRIPTION.isValidFor(queryField)) {
