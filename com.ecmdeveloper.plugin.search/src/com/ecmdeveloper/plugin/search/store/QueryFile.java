@@ -27,6 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -49,6 +50,7 @@ import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.InTest;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
@@ -201,6 +203,15 @@ public class QueryFile {
 		case NULL_TEST:
 			NullTest nullTest = (NullTest) queryComponent;
 			queryComponentChild.putBoolean(PluginTagNames.NEGATED, nullTest.isNegated() );
+			break;
+
+		case IN_TEST:
+			InTest inTest = (InTest) queryComponent;
+			IMemento valuesChild = queryComponentChild.createChild(PluginTagNames.VALUES);
+			for ( Object value : (List<?>) inTest.getValue() ) {
+				IMemento valueChild = valuesChild.createChild( PluginTagNames.VALUE); 
+				addValue(valueChild, value);
+			}
 			break;
 			
 		case WILDCARD_TEST:
@@ -409,6 +420,20 @@ public class QueryFile {
 			queryComponent = nullTest;
 			break;
 			
+		case IN_TEST:
+			{
+				InTest inTest = new InTest(query);
+				IMemento valuesChild = m.getChild(PluginTagNames.VALUES);
+				ArrayList<Object> values = new ArrayList<Object>();
+				for ( IMemento valueChild : valuesChild.getChildren(PluginTagNames.VALUE) ) {
+					values.add( getValue(valueChild) );
+				}
+				
+				inTest.setValue( values );
+				queryComponent = inTest;
+			}
+			break;
+
 		case WILDCARD_TEST:
 			WildcardTest wildcardTest = new WildcardTest(query);
 			WildcardType wildcardType = WildcardType.valueOf( m.getString(PluginTagNames.WILDCARD_TYPE) );

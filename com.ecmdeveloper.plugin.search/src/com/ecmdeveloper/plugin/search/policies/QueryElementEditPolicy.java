@@ -37,6 +37,7 @@ import com.ecmdeveloper.plugin.search.commands.EditFreeTextCommand;
 import com.ecmdeveloper.plugin.search.commands.EditFullTextQueryCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditInSubFolderTestCommand;
+import com.ecmdeveloper.plugin.search.commands.EditInTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditThisInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.EditThisInTreeTestCommand;
@@ -48,6 +49,7 @@ import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.FullTextQuery;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.InTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
@@ -101,6 +103,8 @@ public class QueryElementEditPolicy extends ComponentEditPolicy {
 			return new EditComparisonCommand(queryComponent);
 		} else if ( queryComponent instanceof NullTest ) {
 			return new EditNullTestCommand(queryComponent);
+		} else if ( queryComponent instanceof InTest ) {
+			return new EditInTestCommand(queryComponent);
 		} else if ( queryComponent instanceof WildcardTest ) {
 			return new EditWildcardTestCommand(queryComponent);
 		} else if ( queryComponent instanceof InFolderTest ) {

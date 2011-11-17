@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.search.wizards;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -58,8 +59,9 @@ public abstract class MultiValueWizardPage extends WizardPage {
 		values = new ArrayList<Object>();
 	}
 
-	public void setValue(ArrayList<Object> values) {
+	public void setValue(List<?> values) {
 		if ( values != null) {
+			this.values.clear();
 			this.values.addAll(values);
 		}
 	}

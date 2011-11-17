@@ -36,6 +36,7 @@ import com.ecmdeveloper.plugin.search.model.FreeText;
 import com.ecmdeveloper.plugin.search.model.FullTextQuery;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
+import com.ecmdeveloper.plugin.search.model.InTest;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
@@ -139,6 +140,9 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		entries.add(entry);
 
 		entry = createEntry(FullTextQuery.DESCRIPTION, queryProxy);
+		entries.add(entry);
+
+		entry = createEntry(InTest.DESCRIPTION, queryProxy);
 		entries.add(entry);
 		
 		drawer.addAll(entries);
