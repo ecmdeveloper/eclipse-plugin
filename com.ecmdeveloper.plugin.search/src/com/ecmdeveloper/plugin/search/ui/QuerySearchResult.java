@@ -114,6 +114,12 @@ public class QuerySearchResult implements ISearchResult {
 		}
 	}
 
+	private void fireSearchResultRemoved() {
+		for (ISearchResultListener listener: searchListeners) {
+            listener.searchResultChanged(new SearchResultRemovedEvent(this, searchResult) );
+		}
+	}
+	
 	private void fireSearchResultAdded(ISearchResultRow searchResultRow) {
 		for (ISearchResultListener listener: searchListeners) {
             listener.searchResultChanged(new SearchResultAddEvent(this, searchResultRow) );
@@ -130,8 +136,8 @@ public class QuerySearchResult implements ISearchResult {
 
 	public void clear() {
 		if ( searchResult != null ) {
+			fireSearchResultRemoved();
 			searchResult.clear();
-			fireSearchResultChanged();
 		}
 	}
 

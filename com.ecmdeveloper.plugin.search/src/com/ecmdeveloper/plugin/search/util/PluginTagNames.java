@@ -76,4 +76,5 @@ public class PluginTagNames {
 	public static final String TIME_ZONE_ID = "timeZoneId";
 	public static final String VALUES = "values";
 	public static final String VALUE = "value";
+	public static final String CONTENT_ENGINE_TABLE = "contentEngineTable";
 }

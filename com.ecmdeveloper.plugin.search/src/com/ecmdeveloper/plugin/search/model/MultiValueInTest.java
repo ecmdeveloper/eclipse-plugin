@@ -38,7 +38,11 @@ public class MultiValueInTest extends QueryComponent {
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					return queryField.isSearchable();
+					if ( !queryField.isSearchable() ) {
+						return false;
+					}
+					
+					return QueryFieldType.isMultiValued( queryField.getType() );
 				}};	
 	
 	private Object value;
@@ -60,7 +64,7 @@ public class MultiValueInTest extends QueryComponent {
 		if (getField() != null ) {
 			StringBuffer result = new StringBuffer();
 			result.append( QueryFieldValueFormatter.format(getField(), value) );
-			result.append( " IN ");
+			result.append( getQuery().isContentEngineQuery() ? " IN " : " = ANY ");
 			appendField(result, strict);
 			result.append( " " );
 			return result.toString();

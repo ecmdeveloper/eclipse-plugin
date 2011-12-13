@@ -39,7 +39,7 @@ public class InSubFolderTest extends QueryComponent {
 
 		@Override
 		public boolean isValidFor(IQueryField queryField) {
-			return queryField.isContainable();
+			return queryField.getQueryTable().isContentEngineTable() && queryField.isContainable();
 		}};	
 
 	private String folder;

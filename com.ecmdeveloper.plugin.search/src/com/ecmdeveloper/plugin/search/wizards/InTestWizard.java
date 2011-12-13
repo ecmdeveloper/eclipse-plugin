@@ -29,7 +29,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
+import com.ecmdeveloper.plugin.search.model.InTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryFieldType;
 
@@ -51,6 +53,16 @@ public class InTestWizard extends QueryComponentWizard {
 		typePages = new HashMap<QueryFieldType, MultiValueWizardPage>();
 	}
 
+	@Override
+	protected QueryFieldFilter getQueryFieldFilter() {
+		return new QueryFieldFilter() {
+
+			@Override
+			protected boolean select(IQueryField queryField) {
+				return InTest.DESCRIPTION.isValidFor(queryField);
+			}
+		};
+	}
 	
 	@Override
 	public void addPages() {

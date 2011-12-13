@@ -39,6 +39,7 @@ import com.ecmdeveloper.plugin.search.commands.CreateFullTextQueryCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInSubFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateInTestCommand;
+import com.ecmdeveloper.plugin.search.commands.CreateMultiValueInTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateNullTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateThisInFolderTestCommand;
 import com.ecmdeveloper.plugin.search.commands.CreateThisInTreeTestCommand;
@@ -52,6 +53,7 @@ import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.InTest;
+import com.ecmdeveloper.plugin.search.model.MultiValueInTest;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.Query;
 import com.ecmdeveloper.plugin.search.model.QueryElementDescription;
@@ -80,6 +82,8 @@ public class QueryCommandFactory {
 			command = new CreateNullTestCommand();
 		} else if ( objectType == InTest.class ) {
 			command = new CreateInTestCommand();
+		} else if ( objectType == MultiValueInTest.class ) {
+			command = new CreateMultiValueInTestCommand();
 		} else if ( objectType == WildcardTest.class ) {
 			command = new CreateWildcardTestCommand();
 		} else if ( objectType == InFolderTest.class ) {
@@ -146,6 +150,10 @@ public class QueryCommandFactory {
 
 		if ( InTest.DESCRIPTION.isValidFor(queryField)) {
 			operations.add(InTest.DESCRIPTION);
+		}
+
+		if ( MultiValueInTest.DESCRIPTION.isValidFor(queryField)) {
+			operations.add(MultiValueInTest.DESCRIPTION);
 		}
 
 		if ( WildcardTest.DESCRIPTION.isValidFor(queryField)) {

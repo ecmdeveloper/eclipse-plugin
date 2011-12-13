@@ -39,8 +39,7 @@ public class ThisInTreeTest extends QueryComponent {
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					// FIXME check on This?
-					return false;
+					return !queryField.getQueryTable().isContentEngineTable() && queryField instanceof ThisQueryField;
 				}};	
 
 	public ThisInTreeTest(Query query) {

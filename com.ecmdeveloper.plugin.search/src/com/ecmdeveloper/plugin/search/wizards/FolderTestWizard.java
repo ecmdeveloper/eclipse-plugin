@@ -44,6 +44,7 @@ public class FolderTestWizard extends QueryComponentWizard {
 		super.addPages();
 		objectValueWizardPage = new ObjectValueWizardPage();
 		objectValueWizardPage.setShowOnlyFolders(true);
+		objectValueWizardPage.setAllowPaths(true);
 		objectValueWizardPage.setValue(folder);
 		
 		addPage(objectValueWizardPage);

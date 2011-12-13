@@ -34,13 +34,12 @@ public class ThisInFolderTest extends QueryComponent {
 	private String folder;
 
 	public static final QueryElementDescription DESCRIPTION = new QueryElementDescription(
-			ThisInFolderTest.class, "In Folder Test 2", "Query Field In Folder Test",
+			ThisInFolderTest.class, "In Folder Test", "Query Field In Folder Test",
 			QueryIcons.INFOLDER_TEST_ICON, QueryIcons.INFOLDER_TEST_ICON_LARGE){
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					// FIXME check on This?
-					return false;
+					return !queryField.getQueryTable().isContentEngineTable() && queryField instanceof ThisQueryField;
 				}};	
 
 	public ThisInFolderTest(Query query) {

@@ -106,7 +106,7 @@ public class ThisQueryField implements IQueryField {
 
 	@Override
 	public boolean isSearchable() {
-		return true;
+		return queryTable.isContentEngineTable();
 	}
 
 	@Override

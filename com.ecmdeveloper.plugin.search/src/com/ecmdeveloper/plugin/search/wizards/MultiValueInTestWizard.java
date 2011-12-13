@@ -28,7 +28,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.IQueryField;
 import com.ecmdeveloper.plugin.search.model.MultiValueInTest;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -130,28 +129,23 @@ public class MultiValueInTestWizard extends QueryComponentWizard {
 		ValueWizardPage page;
 		
 		switch (field.getType() ) {
-		case STRING:
 		case STRING_MV:
 			page = new StringValueWizardPage();
 			break;
-		case LONG:
+		case LONG_MV:
 			page = new IntegerValueWizardPage();
 			break;
-		case DOUBLE:
+		case DOUBLE_MV:
 			page = new DoubleValueWizardPage();
 			break;
-		case GUID:
+		case GUID_MV:
 			page = new IdValueWizardPage();
 			break;
-		case BOOLEAN:
+		case BOOLEAN_MV:
 			page = new BooleanValueWizardPage();
 			break;
-		case DATE:
 		case DATE_MV:
 			page = new DateValueWizardPage();
-			break;
-		case OBJECT:
-			page = new ObjectValueWizardPage();
 			break;
 		default:
 			throw new IllegalArgumentException();

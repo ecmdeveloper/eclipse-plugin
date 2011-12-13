@@ -73,11 +73,11 @@ public class QueryField2 implements IQueryField {
 	private QueryFieldType getQueryFieldType(IPropertyDescription propertyDescription) {
 		switch ( propertyDescription.getPropertyType() ) {
 		case BINARY: return QueryFieldType.BINARY;
-		case BOOLEAN: return QueryFieldType.BOOLEAN;
+		case BOOLEAN: return propertyDescription.isMultivalue() ? QueryFieldType.BOOLEAN_MV : QueryFieldType.BOOLEAN;
 		case DATE: return propertyDescription.isMultivalue() ? QueryFieldType.DATE_MV : QueryFieldType.DATE;
-		case DOUBLE: return QueryFieldType.DOUBLE;
-		case GUID: return QueryFieldType.GUID;
-		case LONG: return QueryFieldType.LONG;
+		case DOUBLE: return propertyDescription.isMultivalue() ? QueryFieldType.DOUBLE_MV : QueryFieldType.DOUBLE;
+		case GUID: return propertyDescription.isMultivalue() ? QueryFieldType.GUID_MV : QueryFieldType.GUID;
+		case LONG: return propertyDescription.isMultivalue() ? QueryFieldType.LONG_MV : QueryFieldType.LONG ;
 		case OBJECT: return QueryFieldType.OBJECT;
 		case STRING: return propertyDescription.isMultivalue() ? QueryFieldType.STRING_MV : QueryFieldType.STRING;
 		case UNKNOWN: return QueryFieldType.NONE;

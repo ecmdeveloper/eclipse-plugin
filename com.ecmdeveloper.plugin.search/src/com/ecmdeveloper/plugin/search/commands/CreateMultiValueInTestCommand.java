@@ -25,29 +25,29 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.search.model.InTest;
-import com.ecmdeveloper.plugin.search.wizards.InTestWizard;
+import com.ecmdeveloper.plugin.search.model.MultiValueInTest;
+import com.ecmdeveloper.plugin.search.wizards.MultiValueInTestWizard;
 
 /**
  * @author ricardo.belfor
  * 
  */
-public class CreateInTestCommand extends CreateCommand {
+public class CreateMultiValueInTestCommand extends CreateCommand {
 
 	@Override
 	public void execute() {
 
 		Shell shell = Display.getCurrent().getActiveShell();
 
-		InTestWizard wizard = new InTestWizard( child.getQuery() );
+		MultiValueInTestWizard wizard = new MultiValueInTestWizard( child.getQuery() );
 		wizard.setSelection( getQueryField() );
 		wizard.setSkipFieldSelection( getQueryField() != null );
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if ( dialog.open() == Dialog.OK ) {
-			InTest inTest = (InTest)child;
-			inTest.setField( wizard.getField() );
-			inTest.setValue( wizard.getValue() );
+			MultiValueInTest comparison = (MultiValueInTest)child;
+			comparison.setField( wizard.getField() );
+			comparison.setValue( wizard.getValue() );
 			super.execute();
 		}
 	}

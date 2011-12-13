@@ -50,7 +50,8 @@ import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
 public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
 	private static final String TITLE = "Object value";
-	private static final String DESCRIPTION = "Enter an id or path or select an object.";
+	private static final String DESCRIPTION = "Enter an id or select an object.";
+	private static final String DESCRIPTION_WITH_PATHS = "Enter an id or path or select an object.";
 	
 	private Button useIdButton;
 	private Button usePathButton;
@@ -62,7 +63,7 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 	protected ObjectValueWizardPage() {
 		super(TITLE);
 		setTitle(TITLE);
-		setDescription(DESCRIPTION);
+		setDescription();
 		setMultiLine(true);
 	}
 
@@ -76,6 +77,11 @@ public class ObjectValueWizardPage extends SimpleValueWizardPage {
 
 	public void setAllowPaths(boolean allowPaths) {
 		this.allowPaths = allowPaths;
+		setDescription();
+	}
+
+	private void setDescription() {
+		setDescription( this.allowPaths ? DESCRIPTION_WITH_PATHS : DESCRIPTION );
 	}
 
 	public boolean isAllowPaths() {
