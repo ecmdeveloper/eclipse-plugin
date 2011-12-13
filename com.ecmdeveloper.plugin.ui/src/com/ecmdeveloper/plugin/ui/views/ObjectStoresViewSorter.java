@@ -32,8 +32,8 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
  */
 public class ObjectStoresViewSorter extends ViewerSorter {
 
-	private static int CONTAINERS_CATEGORY = 0;
-	private static int CONTAINEES_CATEGORY = 1;
+	protected static int CONTAINERS_CATEGORY = 0;
+	protected static int CONTAINEES_CATEGORY = 1;
 	
 	@Override
 	public int category(Object objectStoreItem) {

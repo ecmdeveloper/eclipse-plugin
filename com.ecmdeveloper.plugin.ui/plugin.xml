@@ -849,5 +849,18 @@
          </enablement>
       </decorator>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="com.ecmdeveloper.plugin.ui.properties.ObjectStoreItemPropertyPage"
+            id="com.ecmdeveloper.plugin.objectStoreItemPropertyPage"
+            name="General">
+         <enabledWhen>
+            <instanceof
+                  value="com.ecmdeveloper.plugin.core.model.IObjectStoreItem">
+            </instanceof>
+         </enabledWhen>
+      </page>
+   </extension>
 
 </plugin>
