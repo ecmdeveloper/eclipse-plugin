@@ -85,6 +85,30 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.search.ui.views.SearchView?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.cmis.scripting.executeClass"
+               icon="icons/application_go.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.cmis.model.Document">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.cmis.model.Folder">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -163,6 +187,19 @@
       <requires-nature
             id="org.eclipse.jdt.core.javanature">
       </requires-nature>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="com.ecmdeveloper.plugin.cmis.properties.ConnectionPropertyPage"
+            id="com.ecmdeveloper.plugin.CmisConnectionPropertyPage"
+            name="Connection">
+         <enabledWhen>
+            <instanceof
+                  value="com.ecmdeveloper.plugin.cmis.model.ObjectStore">
+            </instanceof>
+         </enabledWhen>
+      </page>
    </extension>
 
 </plugin>
