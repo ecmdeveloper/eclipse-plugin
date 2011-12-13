@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -59,6 +60,7 @@ public class ClassesView extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider( new ClassesViewContentProvider( ClassType.ALL_CLASSES ) );
 		viewer.setLabelProvider(new ClassesViewLabelProvider() );
+		viewer.setSorter( new ViewerSorter() {} );
 		viewer.setInput( ClassesManager.getManager() );
 		
 		hookContextMenu();

@@ -43,7 +43,7 @@ public class MultiValueStringDetailsPage extends BaseMultiValueDetailsPage {
 
 	private void createText(Composite client, FormToolkit toolkit) {
 		text = toolkit.createText(client, "", SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.WRAP ); 
-		text.setLayoutData( new GridData(GridData.FILL_HORIZONTAL ) );
+		text.setLayoutData( new GridData(GridData.FILL_BOTH ) );
 		text.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
