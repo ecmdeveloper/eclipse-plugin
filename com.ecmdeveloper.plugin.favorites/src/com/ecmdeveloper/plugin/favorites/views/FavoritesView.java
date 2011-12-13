@@ -26,6 +26,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -36,6 +37,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 import com.ecmdeveloper.plugin.favorites.Activator;
+import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.favorites.util.PluginLog;
 import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewSorter;
 
@@ -56,11 +58,25 @@ public class FavoritesView extends ViewPart {
 		viewer.setContentProvider(new FavoritesContentProvider());
 		viewer.setLabelProvider(new FavoritesLabelProvider());
 		viewer.setInput( Activator.getDefault().getTaskManager() );
-		viewer.setSorter( new ObjectStoresViewSorter() );
+		viewer.setSorter( getSorter() );
+
 		hookContextMenu();
 		hookMouse();
 		
 		getSite().setSelectionProvider(viewer);
+	}
+
+	private ObjectStoresViewSorter getSorter() {
+		return new ObjectStoresViewSorter() {
+
+			@Override
+			public int category(Object objectStoreItem) {
+				if ( objectStoreItem instanceof FavoriteObjectStore ) {
+					return CONTAINERS_CATEGORY;
+				}
+				return super.category(objectStoreItem);
+			}
+		};
 	}
 
 	private void hookContextMenu() {

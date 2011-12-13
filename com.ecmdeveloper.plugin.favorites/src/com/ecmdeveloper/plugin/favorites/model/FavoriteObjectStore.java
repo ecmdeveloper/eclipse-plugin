@@ -93,6 +93,11 @@ public class FavoriteObjectStore {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return getObjectStore().getDisplayName();
+	}
+
 	public boolean isObjectStoreOf(IObjectStore objectStore) {
 		IConnection connection = objectStore.getConnection();
 		String objectStoreName = this.objectStore.getName();
