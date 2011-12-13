@@ -37,16 +37,22 @@ public class QueryFieldValueFormatter {
 		
 		switch (queryField.getType()) {
 		case BOOLEAN:
+		case BOOLEAN_MV:
 		case GUID:
+		case GUID_MV:
 		case LONG:
+		case LONG_MV:
 			return value.toString(); 
 		case DATE:
+		case DATE_MV:
 			return formatDate(value, queryField );
 		case DOUBLE:
+		case DOUBLE_MV:
 			return formatDouble(value);
 		case OBJECT:
 			return MessageFormat.format("OBJECT(''{0}'')", value.toString());
 		case STRING:
+		case STRING_MV:
 			return formatString(value);
 		}
 		return null;

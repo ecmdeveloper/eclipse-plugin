@@ -136,6 +136,7 @@ public class ComparisonWizard extends QueryComponentWizard {
 			page = new IdValueWizardPage();
 			break;
 		case BOOLEAN:
+		case BOOLEAN_MV:
 			page = new BooleanValueWizardPage();
 			break;
 		case DATE:

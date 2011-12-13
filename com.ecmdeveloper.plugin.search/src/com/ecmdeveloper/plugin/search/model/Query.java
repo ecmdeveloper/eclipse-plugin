@@ -216,11 +216,16 @@ public class Query implements PropertyChangeListener {
 	}
 
 	private void appendFieldPart(StringBuffer sql, IQueryField queryField) {
-		sql.append( queryField.getName() );
-		if ( queryField.getAlias() != null ) {
-			sql.append(' ');
-			sql.append("AS ");
-			sql.append( getSafeAlias( queryField.getAlias() ) );
+		if (queryField instanceof ThisQueryField
+				&& !queryField.getQueryTable().isContentEngineTable()) {
+			sql.append( "[cmis:objectId] AS This");
+		} else {
+			sql.append( queryField.getName() );
+			if ( queryField.getAlias() != null ) {
+				sql.append(' ');
+				sql.append("AS ");
+				sql.append( getSafeAlias( queryField.getAlias() ) );
+			}
 		}
 	}
 

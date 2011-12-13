@@ -136,13 +136,9 @@ public class TaskFactory implements ITaskFactory {
 		return new CheckinTask((Document) document, majorVersion, autoClassify);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory#getGetParentTask(com.ecmdeveloper.plugin.core.model.IObjectStoreItem)
-	 */
 	@Override
 	public IGetParentTask getGetParentTask(IObjectStoreItem objectStoreItem) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetParentTask(objectStoreItem);
 	}
 
 	@Override

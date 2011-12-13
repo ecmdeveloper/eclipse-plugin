@@ -35,7 +35,7 @@ public abstract class QueryComponentWizard extends Wizard {
 	protected SelectFieldWizardPage selectFieldWizardPage;
 	protected IQueryField selection;
 	private boolean skipFieldSelection = false;
-	private final Query query;
+	protected final Query query;
 	
 	public QueryComponentWizard(Query query) {
 		this.query = query;

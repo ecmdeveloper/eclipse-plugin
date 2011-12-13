@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.search.ui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -311,6 +312,10 @@ public class SearchResultPage extends Page implements ISearchResultPage, IShowIn
 								SearchResultAddEvent addEvent = (SearchResultAddEvent) e;
 								viewer.add( addEvent.getSearchResultRow() );
 								viewPart.updateLabel();
+							} else if ( e instanceof SearchResultRemovedEvent ) {
+								SearchResultRemovedEvent removedEvent = (SearchResultRemovedEvent) e;
+								List<ISearchResultRow> searchResultRows = removedEvent.getSearchResultRows();
+								viewer.remove( searchResultRows.toArray() );
 							} else {
 								viewer.refresh();
 								viewPart.updateLabel();

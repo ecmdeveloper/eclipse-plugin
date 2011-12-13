@@ -26,11 +26,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 
+import com.ecmdeveloper.plugin.cmis.model.tasks.FetchObjectTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.ISearchResultRow;
 
@@ -52,11 +56,7 @@ public class SearchResultRow implements ISearchResultRow {
 		
 		for ( PropertyData<?> property : row.getProperties() ) {
 			String propertyName = property.getQueryName();
-			Object value = property.getFirstValue();
-// FIXME search			
-//			if ( !THIS_PROPERTY_NAME.equals(propertyName) && value instanceof EngineObject ) {
-//				value = getEngineObjectValue(value);
-//			}
+			Object value = getPropertyValue(property);
 			values.put(propertyName, value );
 			if (propertyName.equals(THIS_PROPERTY_NAME) ) {
 				hasObjectValue = true;
@@ -64,20 +64,15 @@ public class SearchResultRow implements ISearchResultRow {
 		}
 	}
 
-	private String getEngineObjectValue(Object value) {
-
-// FIXME search		
-//		EngineObject repositoryObject = (EngineObject) value;
-//		StringBuffer engineObjectValue = new StringBuffer('[');
-//		engineObjectValue.append( repositoryObject.getClassName() );
-//		Properties properties2 = repositoryObject.getProperties();
-//		if ( properties2.isPropertyPresent( PropertyNames.ID ) ) {
-//			engineObjectValue.append( ',');
-//			engineObjectValue.append( properties2.getIdValue( PropertyNames.ID ).toString() );
-//		}
-//		engineObjectValue.append(']');
-//		return engineObjectValue.toString();
-		return null;
+	private Object getPropertyValue(PropertyData<?> property) {
+		Object value;
+		List<?> propertyValues = property.getValues();
+		if ( propertyValues.size() == 1) {
+			value = property.getFirstValue();
+		} else {
+			value = propertyValues;
+		}
+		return value;
 	}
 	
 	@Override
@@ -97,15 +92,26 @@ public class SearchResultRow implements ISearchResultRow {
 	@Override
 	public IObjectStoreItem loadObjectValue() throws ExecutionException {
 		if ( hasObjectValue && objectStoreItem == null ) {
-//			IndependentlyPersistableObject objectStoreObject = (IndependentlyPersistableObject) values.get(THIS_PROPERTY_NAME);
-//			String objectType = getObjectType(objectStoreObject);
-//			if ( objectType != null ) {
-//				String id = objectStoreObject.getProperties().getIdValue(PropertyNames.ID ).toString();
-//				FetchObjectTask task = new FetchObjectTask(objectStore, id, objectStoreObject.getClassName(), objectType );
-//				objectStoreItem = (IObjectStoreItem) Activator.getDefault().getTaskManager().executeTaskSync(task);
-//			}
+			CmisObject cmisObject = getCmisObject();
+			String objectType = getObjectType(cmisObject);
+			if ( FetchObjectTask.FOLDER_OBJECT_TYPE.equals( objectType ) ) {
+				objectStoreItem = ObjectStoreItemFactory.createFolder(cmisObject, null, objectStore );
+			} else {
+				objectStoreItem = ObjectStoreItemFactory.createDocument(cmisObject, null, objectStore );
+			}
 		}
+
+//		String id = objectStoreObject.getProperties().getIdValue(PropertyNames.ID ).toString();
+//		FetchObjectTask task = new FetchObjectTask(objectStore, objectId, null, objectType );
+//		objectStoreItem = (IObjectStoreItem) Activator.getDefault().getTaskManager().executeTaskSync(task);
 		return objectStoreItem; 
+	}
+
+	private CmisObject getCmisObject() {
+		String objectId = (String) values.get(THIS_PROPERTY_NAME);
+		Session session = objectStore.getSession();
+		CmisObject cmisObject = session.getObject(objectId);
+		return cmisObject;
 	}
 
 	@Override
@@ -136,17 +142,15 @@ public class SearchResultRow implements ISearchResultRow {
 		return objectStoreItem;
 	}
 	
-//	private String getObjectType(IndependentObject objectStoreObject) {
-//		String objectType = null;
-//		if ( objectStoreObject instanceof com.filenet.api.core.Folder ) {
-//			objectType = FetchObjectTask.FOLDER_OBJECT_TYPE;
-//		} else if ( objectStoreObject instanceof com.filenet.api.core.Document ) {
-//			objectType = FetchObjectTask.DOCUMENT_OBJECT_TYPE;
-//		} else if ( objectStoreObject instanceof com.filenet.api.core.CustomObject ) {
-//			objectType = FetchObjectTask.CUSTOM_OBJECT_TYPE;
-//		}
-//		return objectType;
-//	}
+	private String getObjectType(CmisObject objectStoreObject) {
+		String objectType = null;
+		if ( objectStoreObject instanceof org.apache.chemistry.opencmis.client.api.Folder ) {
+			objectType = FetchObjectTask.FOLDER_OBJECT_TYPE;
+		} else if ( objectStoreObject instanceof org.apache.chemistry.opencmis.client.api.Document ) {
+			objectType = FetchObjectTask.DOCUMENT_OBJECT_TYPE;
+		}
+		return objectType;
+	}
 
 	@Override
 	public int compareTo(ISearchResultRow searchResultRow, String valueName ) {

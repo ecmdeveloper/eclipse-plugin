@@ -51,6 +51,7 @@ import com.ecmdeveloper.plugin.search.model.IQueryTable;
 import com.ecmdeveloper.plugin.search.model.InFolderTest;
 import com.ecmdeveloper.plugin.search.model.InSubFolderTest;
 import com.ecmdeveloper.plugin.search.model.InTest;
+import com.ecmdeveloper.plugin.search.model.MultiValueInTest;
 import com.ecmdeveloper.plugin.search.model.NotContainer;
 import com.ecmdeveloper.plugin.search.model.NullTest;
 import com.ecmdeveloper.plugin.search.model.OrContainer;
@@ -214,6 +215,11 @@ public class QueryFile {
 			}
 			break;
 			
+		case MULTI_VALUE_IN_TEST:
+			MultiValueInTest multiValueInTest = (MultiValueInTest) queryComponent;
+			addValue(queryComponentChild, multiValueInTest.getValue() );
+			break;
+
 		case WILDCARD_TEST:
 			WildcardTest wildcardTest = (WildcardTest) queryComponent;
 			queryComponentChild.putString(PluginTagNames.WILDCARD_TYPE,  wildcardTest.getWildcardType().name() );
@@ -289,6 +295,8 @@ public class QueryFile {
 		queryTableChild.putString( PluginTagNames.OBJECT_STORE_NAME, queryTable.getObjectStoreName() );
 		queryTableChild.putString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME, queryTable.getObjectStoreDisplayName() );
 		queryTableChild.putBoolean( PluginTagNames.CBR_ENABLED, queryTable.isCBREnabled() );
+		queryTableChild.putBoolean( PluginTagNames.CONTENT_ENGINE_TABLE, queryTable.isContentEngineTable() );
+		
 		queryTableChild.putString( PluginTagNames.ALIAS, queryTable.getAlias() );
 		
 		IMemento fieldsChild = queryTableChild.createChild(PluginTagNames.FIELDS);
@@ -371,85 +379,40 @@ public class QueryFile {
 		switch ( type ) {
 
 		case COMPARISON:
-			Comparison comparison = new Comparison(query);
-			ComparisonOperation comparisonOperation = ComparisonOperation.valueOf( m.getString(PluginTagNames.COMPARISON_OPERATION) );
-			comparison.setComparisonOperation(comparisonOperation);
-			comparison.setValue( getValue(m) );
-			queryComponent = comparison;
+			queryComponent = getComparison(m, query);
 			break;
-			
 		case FREE_TEXT:
-			FreeText freeText = new FreeText(query);
-			freeText.setText( m.getString(PluginTagNames.TEXT ) );
-			queryComponent = freeText;
+			queryComponent = getFreeText(m, query);
 			break;
-
 		case IN_FOLDER_TEST:
-			InFolderTest inFolderTest = new InFolderTest(query);
-			inFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
-			queryComponent = inFolderTest;
+			queryComponent = getInFolderTest(m, query);
 			break;
-		
 		case IN_SUBFOLDER_TEST:
-			InSubFolderTest inSubFolderTest = new InSubFolderTest(query);
-			inSubFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
-			queryComponent = inSubFolderTest;
+			queryComponent = getInSubFolderTest(m, query);
 			break;
-
 		case THIS_IN_FOLDER_TEST:
-			ThisInFolderTest thisInFolderTest = new ThisInFolderTest(query);
-			thisInFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
-			queryComponent = thisInFolderTest;
+			queryComponent = getThisInFolderTest(m, query);
 			break;
-			
 		case THIS_IN_TREE_TEST:
-			ThisInTreeTest thisInTreeTest = new ThisInTreeTest(query);
-			thisInTreeTest.setFolder( m.getString(PluginTagNames.FOLDER) );
-			queryComponent = thisInTreeTest;
+			queryComponent = getThisInTreeTest(m, query);
 			break;
-
 		case CLASS_TEST:
-			ClassTest classTest = new ClassTest(query);
-			classTest.setClassName( m.getString(PluginTagNames.CLASS_NAME) );
-			queryComponent = classTest;
+			queryComponent = getClassTest(m, query);
 			break;
-		
 		case NULL_TEST:
-			NullTest nullTest = new NullTest(query);
-			nullTest.setNegated( m.getBoolean(PluginTagNames.NEGATED) );
-			queryComponent = nullTest;
+			queryComponent = getNullTest(m, query);
 			break;
-			
 		case IN_TEST:
-			{
-				InTest inTest = new InTest(query);
-				IMemento valuesChild = m.getChild(PluginTagNames.VALUES);
-				ArrayList<Object> values = new ArrayList<Object>();
-				for ( IMemento valueChild : valuesChild.getChildren(PluginTagNames.VALUE) ) {
-					values.add( getValue(valueChild) );
-				}
-				
-				inTest.setValue( values );
-				queryComponent = inTest;
-			}
+			queryComponent = getInTest(m, query);
 			break;
-
+		case MULTI_VALUE_IN_TEST: 
+			queryComponent = getMultiValueInTest(m, query);
+			break;
 		case WILDCARD_TEST:
-			WildcardTest wildcardTest = new WildcardTest(query);
-			WildcardType wildcardType = WildcardType.valueOf( m.getString(PluginTagNames.WILDCARD_TYPE) );
-			wildcardTest.setWildcardType(wildcardType);
-			wildcardTest.setValue( m.getString(PluginTagNames.STRING_VALUE) );
-			queryComponent = wildcardTest;
+			queryComponent = getWildcardTest(m, query);
 			break;
-
 		case FULL_TEXT:
-			FullTextQuery fullTextQuery = new FullTextQuery(query);
-			fullTextQuery.setAllFields( m.getBoolean(PluginTagNames.ALL_FIELDS ) );
-			fullTextQuery.setText(m.getString(PluginTagNames.TEXT) );
-			FullTextQueryType fullTextQueryType = FullTextQueryType.valueOf(m
-					.getString(PluginTagNames.FULL_TEXT_QUERY_TYPE));
-			fullTextQuery.setFullTextQueryType(fullTextQueryType);
-			queryComponent = fullTextQuery;
+			queryComponent = getFullTextQuery(m, query);
 			break;
 		default:
 			throw new IllegalArgumentException();
@@ -469,6 +432,92 @@ public class QueryFile {
 		}
 		
 		return queryComponent;
+	}
+
+	private QueryComponent getComparison(IMemento m, Query query) {
+		Comparison comparison = new Comparison(query);
+		ComparisonOperation comparisonOperation = ComparisonOperation.valueOf( m.getString(PluginTagNames.COMPARISON_OPERATION) );
+		comparison.setComparisonOperation(comparisonOperation);
+		comparison.setValue( getValue(m) );
+		return comparison;
+	}
+
+	private QueryComponent getFreeText(IMemento m, Query query) {
+		FreeText freeText = new FreeText(query);
+		freeText.setText( m.getString(PluginTagNames.TEXT ) );
+		return freeText;
+	}
+
+	private QueryComponent getInFolderTest(IMemento m, Query query) {
+		InFolderTest inFolderTest = new InFolderTest(query);
+		inFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+		return inFolderTest;
+	}
+
+	private QueryComponent getInSubFolderTest(IMemento m, Query query) {
+		InSubFolderTest inSubFolderTest = new InSubFolderTest(query);
+		inSubFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+		return inSubFolderTest;
+	}
+
+	private QueryComponent getThisInFolderTest(IMemento m, Query query) {
+		ThisInFolderTest thisInFolderTest = new ThisInFolderTest(query);
+		thisInFolderTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+		return thisInFolderTest;
+	}
+
+	private QueryComponent getThisInTreeTest(IMemento m, Query query) {
+		ThisInTreeTest thisInTreeTest = new ThisInTreeTest(query);
+		thisInTreeTest.setFolder( m.getString(PluginTagNames.FOLDER) );
+		return thisInTreeTest;
+	}
+
+	private QueryComponent getClassTest(IMemento m, Query query) {
+		ClassTest classTest = new ClassTest(query);
+		classTest.setClassName( m.getString(PluginTagNames.CLASS_NAME) );
+		return classTest;
+	}
+
+	private QueryComponent getNullTest(IMemento m, Query query) {
+		NullTest nullTest = new NullTest(query);
+		nullTest.setNegated( m.getBoolean(PluginTagNames.NEGATED) );
+		return nullTest;
+	}
+
+	private QueryComponent getFullTextQuery(IMemento m, Query query) {
+		FullTextQuery fullTextQuery = new FullTextQuery(query);
+		fullTextQuery.setAllFields( m.getBoolean(PluginTagNames.ALL_FIELDS ) );
+		fullTextQuery.setText(m.getString(PluginTagNames.TEXT) );
+		FullTextQueryType fullTextQueryType = FullTextQueryType.valueOf(m
+				.getString(PluginTagNames.FULL_TEXT_QUERY_TYPE));
+		fullTextQuery.setFullTextQueryType(fullTextQueryType);
+		return fullTextQuery;
+	}
+
+	private QueryComponent getWildcardTest(IMemento m, Query query) {
+		WildcardTest wildcardTest = new WildcardTest(query);
+		WildcardType wildcardType = WildcardType.valueOf( m.getString(PluginTagNames.WILDCARD_TYPE) );
+		wildcardTest.setWildcardType(wildcardType);
+		wildcardTest.setValue( m.getString(PluginTagNames.STRING_VALUE) );
+		return wildcardTest;
+	}
+
+	private QueryComponent getMultiValueInTest(IMemento m, Query query) {
+		MultiValueInTest multiValueInTest = new MultiValueInTest(query);
+		multiValueInTest.setValue( getValue(m) );
+		return multiValueInTest;
+	}
+
+	private QueryComponent getInTest(IMemento m, Query query) {
+		InTest inTest = new InTest(query);
+		IMemento valuesChild = m.getChild(PluginTagNames.VALUES);
+		ArrayList<Object> values = new ArrayList<Object>();
+		for ( IMemento valueChild : valuesChild.getChildren(PluginTagNames.VALUE) ) {
+			values.add( getValue(valueChild) );
+		}
+		
+		inTest.setValue( values );
+		return inTest;
 	}
 
 	private Object getValue(IMemento m ) {
@@ -575,10 +624,9 @@ public class QueryFile {
 		String objectStoreName = queryTableChild.getString( PluginTagNames.OBJECT_STORE_NAME );
 		String objectStoreDisplayName = queryTableChild.getString( PluginTagNames.OBJECT_STORE_DISPLAY_NAME );
 		boolean cbrEnabled = queryTableChild.getBoolean(PluginTagNames.CBR_ENABLED );
+		boolean contentEngineTable = queryTableChild.getBoolean(PluginTagNames.CONTENT_ENGINE_TABLE) == null || queryTableChild.getBoolean(PluginTagNames.CONTENT_ENGINE_TABLE);
 
-		// FIXME search
-		boolean classFilterSupported = false;
-		IQueryTable queryTable = new QueryTable2(name, displayName, objectStoreName, objectStoreDisplayName, connectionName, connectionDisplayName, cbrEnabled, classFilterSupported );
+		IQueryTable queryTable = new QueryTable2(name, displayName, objectStoreName, objectStoreDisplayName, connectionName, connectionDisplayName, cbrEnabled, contentEngineTable );
 
 		queryTable.setAlias(queryTableChild.getString( PluginTagNames.ALIAS) );
 		

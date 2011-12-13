@@ -70,17 +70,20 @@ public class TableSelectionWizard extends Wizard {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								monitor.beginTask("Initializing table " + classDescription.getDisplayName(), IProgressMonitor.UNKNOWN );
 								queryTable = new QueryTable2( classDescription );
-								try {
-									Collection<Object> children = classDescription.getChildren(true);
-									for ( Object childClassDescription : children ) {
-										
-										IClassDescription childClassDescription2 = (IClassDescription) childClassDescription;
-										monitor.subTask( "Initializing table " + childClassDescription2.getDisplayName() );
-										IQueryTable childTable = new QueryTable2( childClassDescription2 );
-										queryTable.addChildQueryTable( childTable );
+								
+								if ( queryTable.isContentEngineTable() ) {
+									try {
+										Collection<Object> children = classDescription.getChildren(true);
+										for ( Object childClassDescription : children ) {
+											
+											IClassDescription childClassDescription2 = (IClassDescription) childClassDescription;
+											monitor.subTask( "Initializing table " + childClassDescription2.getDisplayName() );
+											IQueryTable childTable = new QueryTable2( childClassDescription2 );
+											queryTable.addChildQueryTable( childTable );
+										}
+									} catch (Exception e) {
+										PluginMessage.openErrorFromThread(getShell(), TITLE, e.getLocalizedMessage(), e);
 									}
-								} catch (Exception e) {
-									PluginMessage.openErrorFromThread(getShell(), TITLE, e.getLocalizedMessage(), e);
 								}
 								monitor.done();
 							}

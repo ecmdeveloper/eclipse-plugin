@@ -27,7 +27,7 @@
             class="com.ecmdeveloper.plugin.search.ui.SearchPage"
             icon="icons/find_edit.png"
             id="com.ecmdeveloper.plugin.search.searchPage"
-            label="Content Engine Search">
+            label="Object Store Search">
       </page>
    </extension>
    <extension

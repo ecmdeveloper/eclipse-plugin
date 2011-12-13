@@ -64,10 +64,12 @@ public class ExecuteSearchTask extends AbstractTask implements IExecuteSearchTas
 		
 		Session session = objectStore.getSession();
 		ItemIterable<QueryResult> queryResults = getQueryResult(session);
-
-		for ( QueryResult queryResult : queryResults ) {
-			SearchResultRow s = new SearchResultRow(queryResult, objectStore);
-			searchResultList.add(s);
+		
+		if ( queryResults != null ) {
+			for ( QueryResult queryResult : queryResults ) {
+				SearchResultRow s = new SearchResultRow(queryResult, objectStore);
+				searchResultList.add(s);
+			}
 		}
 		
 		return null;

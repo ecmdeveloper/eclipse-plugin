@@ -38,6 +38,12 @@ public enum QueryFieldType {
 			return BOOLEAN_NAME;
 		}
 	},
+	BOOLEAN_MV { 		
+		@Override
+		public String toString() {
+			return BOOLEAN_MV_NAME;
+		}
+	},
 	DATE { 		
 		@Override
 		public String toString() {
@@ -56,16 +62,34 @@ public enum QueryFieldType {
 			return DOUBLE_NAME;
 		}
 	},
+	DOUBLE_MV { 		
+		@Override
+		public String toString() {
+			return DOUBLE_MV_NAME;
+		}
+	},
 	GUID{ 		
 		@Override
 		public String toString() {
 			return GUID_NAME;
 		}
 	},
+	GUID_MV{ 		
+		@Override
+		public String toString() {
+			return GUID_MV_NAME;
+		}
+	},
 	LONG{ 		
 		@Override
 		public String toString() {
 			return LONG_NAME;
+		}
+	},
+	LONG_MV{ 		
+		@Override
+		public String toString() {
+			return LONG_MV_NAME;
 		}
 	},
 	OBJECT{ 		
@@ -98,11 +122,15 @@ public enum QueryFieldType {
 	private static final String STRING_MV_NAME = "String[]";
 	private static final String OBJECT_NAME = "Object";
 	private static final String LONG_NAME = "Long";
+	private static final String LONG_MV_NAME = "Long[]";
 	private static final String GUID_NAME = "Id";
+	private static final String GUID_MV_NAME = "Id[]";
 	private static final String DOUBLE_NAME = "Double";
+	private static final String DOUBLE_MV_NAME = "Double[]";
 	private static final String DATE_NAME = "Date";
 	private static final String DATE_MV_NAME = "Date[]";
 	private static final String BOOLEAN_NAME = "Boolean";
+	private static final String BOOLEAN_MV_NAME = "Boolean[]";
 	private static final String BINARY_NAME = "Binary";
 
 	public static boolean isMultiValued( QueryFieldType queryFieldType ) {

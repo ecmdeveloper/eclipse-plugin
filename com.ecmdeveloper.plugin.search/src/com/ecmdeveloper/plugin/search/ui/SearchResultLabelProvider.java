@@ -21,6 +21,7 @@
 package com.ecmdeveloper.plugin.search.ui;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -107,11 +108,28 @@ public class SearchResultLabelProvider extends ObjectStoreItemLabelProvider impl
 					return super.getText(objectStoreItem);
 				} else {
 					Object value = searchResultRow.getValue(name);
-					if ( value != null ) {
-						return value.toString();
-					}
+					return 	getValueString(value);
 				}
 			} 
+		}
+		return "";
+	}
+
+	private String getValueString(Object value) {
+		
+		if ( value != null ) {
+			if ( value instanceof List ) {
+				StringBuffer valueString = new StringBuffer();
+				String concat = "";
+				for ( Object listValue : (List<?>) value ) {
+					valueString.append(concat);
+					valueString.append( listValue.toString() );
+					concat = ",";
+				}
+				return valueString.toString();
+			} else {
+				return value.toString();
+			}
 		}
 		return "";
 	}

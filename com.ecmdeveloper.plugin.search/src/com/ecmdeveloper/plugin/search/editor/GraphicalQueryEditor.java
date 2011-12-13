@@ -115,6 +115,9 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	private Text maxCountText;
 
 	private Text timeLimitText;
+
+	private ToolItem distinctButton;
+	private ToolItem includeSubClassesButton;
 	
 	public GraphicalQueryEditor() {
 		setEditDomain(new DefaultEditDomain(this));
@@ -162,8 +165,36 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 
 	private void setQueryComponentsVisibility() {
 		PaletteDrawer paletteDrawer = getQueryComponentsDrawer();
-		PaletteEntry paletteEntry = getPaletteEntry(paletteDrawer, QueryPaletteFactory.CLASS_TEST_ENTRY );
-		paletteEntry.setVisible( query.isContentEngineQuery() != null && query.isContentEngineQuery() );
+
+		if ( query.isContentEngineQuery() == null ) {
+			setCeEntriesVisibility(paletteDrawer, false);
+			setCmisEntriesVisibility(paletteDrawer, false);
+		} else if ( query.isContentEngineQuery() ) {
+			setCeEntriesVisibility(paletteDrawer, true);
+			setCmisEntriesVisibility(paletteDrawer, false);
+		} else if ( !query.isContentEngineQuery() ) {
+			setCeEntriesVisibility(paletteDrawer, false);
+			setCmisEntriesVisibility(paletteDrawer, true);
+		}
+		
+		
+	}
+
+	private void setCmisEntriesVisibility(PaletteDrawer paletteDrawer, boolean visibility) {
+		for ( String entryId : QueryPaletteFactory.CMIS_ONLY_ENTRIES ) {
+			PaletteEntry paletteEntry = getPaletteEntry(paletteDrawer, entryId );
+			paletteEntry.setVisible( visibility );
+		}
+	}
+
+	private void setCeEntriesVisibility(PaletteDrawer paletteDrawer, boolean visibility) {
+		for ( String entryId : QueryPaletteFactory.CE_ONLY_ENTRIES ) {
+			PaletteEntry paletteEntry = getPaletteEntry(paletteDrawer, entryId );
+			paletteEntry.setVisible( visibility );
+		}
+		distinctButton.setEnabled( visibility );
+		includeSubClassesButton.setEnabled(visibility);
+		timeLimitText.setEnabled(visibility);
 	}
 
 	private PaletteEntry getPaletteEntry(PaletteDrawer paletteDrawer, String entryId) {
@@ -212,8 +243,12 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		SashForm sashForm = new SashForm(composite, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL ));
 
-		queryFieldsTable = new QueryFieldsTable(query, sashForm);	
+		queryFieldsTable = new QueryFieldsTable(query, sashForm);
+		
+		setQueryComponentsVisibility();
+		
 		super.createPartControl(sashForm);
+		
 	}
 
 	private Control createToolBar(Composite composite) {
@@ -278,16 +313,16 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		ti.setText("Time Limit:");	
 
 		ToolItem ti2 = new ToolItem(toolbar, SWT.SEPARATOR);
-		Text text = new Text(toolbar, SWT.BORDER );
-		text.setText("0000");
-		text.pack();
+		Text timeLimitText = new Text(toolbar, SWT.BORDER );
+		timeLimitText.setText("0000");
+		timeLimitText.pack();
 		if ( query.getTimeLimit() != null ) {
-			text.setText( query.getTimeLimit().toString() );
+			timeLimitText.setText( query.getTimeLimit().toString() );
 		} else {
-			text.setText("");			
+			timeLimitText.setText("");			
 		}
 
-		text.addModifyListener( new ModifyListener() {
+		timeLimitText.addModifyListener( new ModifyListener() {
 
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -295,10 +330,10 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 				action.run();
 			} } );
 		
-		ti2.setWidth(text.getBounds().width);
-		ti2.setControl(text);
+		ti2.setWidth(timeLimitText.getBounds().width);
+		ti2.setControl(timeLimitText);
 		
-		return text;
+		return timeLimitText;
 	}
 	
 	public Integer getTimeLimit() {
@@ -351,11 +386,11 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	}
 	
 	private void createIncludeSubClassesButton(ToolBar toolBar) {
-		ToolItem toolItem = new ToolItem(toolBar, SWT.CHECK);
-		toolItem.setImage( Activator.getImage(IconFiles.TABLE_SUBCLASSES) );
-		toolItem.setToolTipText("Include Subclasses");
-		toolItem.setSelection( query.isIncludeSubclasses() );
-		toolItem.addSelectionListener( new SelectionAdapter(){
+		includeSubClassesButton = new ToolItem(toolBar, SWT.CHECK);
+		includeSubClassesButton.setImage( Activator.getImage(IconFiles.TABLE_SUBCLASSES) );
+		includeSubClassesButton.setToolTipText("Include Subclasses");
+		includeSubClassesButton.setSelection( query.isIncludeSubclasses() );
+		includeSubClassesButton.addSelectionListener( new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IAction action = getActionRegistry().getAction( ToggleIncludeSubclassesAction.ID );
@@ -365,11 +400,11 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 	}
 
 	private void createDistinctButton(ToolBar toolBar) {
-		ToolItem toolItem = new ToolItem(toolBar, SWT.CHECK);
-		toolItem.setImage( Activator.getImage( IconFiles.DISTINCT ) );
-		toolItem.setToolTipText("Distinct");
-		toolItem.setSelection( query.isDistinct() );
-		toolItem.addSelectionListener( new SelectionAdapter(){
+		distinctButton = new ToolItem(toolBar, SWT.CHECK);
+		distinctButton.setImage( Activator.getImage( IconFiles.DISTINCT ) );
+		distinctButton.setToolTipText("Distinct");
+		distinctButton.setSelection( query.isDistinct() );
+		distinctButton.addSelectionListener( new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IAction action = getActionRegistry().getAction( ToggleDistinctAction.ID );

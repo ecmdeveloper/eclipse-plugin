@@ -29,6 +29,9 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 
 import com.ecmdeveloper.plugin.cmis.Activator;
 import com.ecmdeveloper.plugin.cmis.model.tasks.LoadChildrenTask;
@@ -74,7 +77,11 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 			session = sessionFactory.createSession(parameters);
 			displayName = session.getRepositoryInfo().getName();
 
-			ObjectStoreItemsModel.getInstance().add(this);			
+			RepositoryInfo repositoryInfo = session.getRepositoryInfo();
+			RepositoryCapabilities capabilities = repositoryInfo.getCapabilities();
+			CapabilityRenditions renditionsCapability = capabilities.getRenditionsCapability();
+			
+			ObjectStoreItemsModel.getInstance().add(this);	
 		}
 	}
 
