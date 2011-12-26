@@ -93,6 +93,10 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	@Override
 	public Collection<IObjectStoreItem> getChildren() {
 		
+		if ( !isConnected() ) {
+			return null;
+		}
+		
 		if ( children == null )
 		{
 			children = new ArrayList<IObjectStoreItem>();
@@ -148,6 +152,12 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 		ObjectStoreItemsModel.getInstance().add(this);
 	}
 	
+	@Override
+	public void disconnect() {
+		connection = null;
+		children = null;
+	}
+
 	public ContentEngineConnection getConnection() {
 		return connection;
 	}

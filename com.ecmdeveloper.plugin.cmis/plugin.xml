@@ -200,6 +200,16 @@
             </instanceof>
          </enabledWhen>
       </page>
+      <page
+            class="com.ecmdeveloper.plugin.cmis.properties.RepositoryInfoPropertyPage"
+            id="com.ecmdeveloper.plugin.cmis.repositoryInfoPage"
+            name="Repository Info">
+         <enabledWhen>
+            <instanceof
+                  value="com.ecmdeveloper.plugin.cmis.model.ObjectStore">
+            </instanceof>
+         </enabledWhen>
+      </page>
    </extension>
 
 </plugin>

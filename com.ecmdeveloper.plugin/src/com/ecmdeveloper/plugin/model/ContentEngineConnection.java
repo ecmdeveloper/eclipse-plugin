@@ -26,7 +26,6 @@ import javax.security.auth.Subject;
 
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.filenet.api.collection.ObjectStoreSet;
 import com.filenet.api.constants.PropertyNames;
@@ -64,6 +63,41 @@ public class ContentEngineConnection implements IConnection
 		connected = false;
 	}
 	
+	@Override
+	public void connect() {
+		
+		if ( ! connected ) {
+			connection = Factory.Connection.getConnection(url);
+	
+			subject = UserContext.createSubject(connection, username, password, null );
+			UserContext uc = UserContext.get();
+			uc.pushSubject(subject);
+			
+			EntireNetwork entireNetwork = Factory.EntireNetwork.fetchInstance(connection, null);
+			domain = entireNetwork.get_LocalDomain();
+			
+			name = domain.get_Name();
+			if ( displayName == null ) {
+				displayName = domain.get_Name();
+			}
+			
+			connected = true;
+		}
+	}
+
+	@Override
+	public void disconnect() {
+		connection = null;
+		subject = null;
+		domain = null;
+		connected = false;
+	}
+
+	@Override
+	public boolean isConnected() {
+		return connected;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -99,11 +133,6 @@ public class ContentEngineConnection implements IConnection
 		this.password = password;
 	}
 	
-	@Override
-	public boolean isConnected() {
-		return connected;
-	}
-
 	public Subject getSubject() {
 		return subject;
 	}
@@ -128,28 +157,6 @@ public class ContentEngineConnection implements IConnection
 		return objectStoreList.toArray( new IObjectStore[0] );
 	}
 	
-	@Override
-	public void connect() {
-		
-		if ( ! connected ) {
-			connection = Factory.Connection.getConnection(url);
-	
-			subject = UserContext.createSubject(connection, username, password, null );
-			UserContext uc = UserContext.get();
-			uc.pushSubject(subject);
-			
-			EntireNetwork entireNetwork = Factory.EntireNetwork.fetchInstance(connection, null);
-			domain = entireNetwork.get_LocalDomain();
-			
-			name = domain.get_Name();
-			if ( displayName == null ) {
-				displayName = domain.get_Name();
-			}
-			
-			connected = true;
-		}
-	}
-
 	public Object getObjectStoreObject(String objectStoreName ) 
 	{
 		if ( connected == false )

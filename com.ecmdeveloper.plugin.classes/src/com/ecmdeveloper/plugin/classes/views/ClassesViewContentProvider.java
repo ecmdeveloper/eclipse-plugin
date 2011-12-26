@@ -149,6 +149,10 @@ public class ClassesViewContentProvider implements IStructuredContentProvider,
 
 	private Object[] getVirtualFolders(IObjectStore objectStore) {
 		
+		if ( !objectStore.isConnected() ) {
+			return null;
+		}
+		
 		ClassDescriptionFolderType classDescriptionFolderType = null;
 		
 		switch ( classesFilter ) {

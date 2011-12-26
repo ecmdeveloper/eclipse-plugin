@@ -34,14 +34,17 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.impl.ObjectStoresManager;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
@@ -69,13 +72,21 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 	final protected Control createContents(Composite parent) {
 		
 		Composite container = createContainer(parent);
+		
 		IConnection connection = getConnection();
-		setTitle( connection.getDisplayName() );
 		userName = connection.getUsername();
 		password = connection.getPassword();
 		url = connection.getUrl();
 
 		createConnectionContents(container, connection);
+
+		if ( connection.isConnected() ) {
+			Label label = new Label(container, SWT.None);
+			label.setText("\n\n\nNOTE: Changes to the connection will take only effect after a reconnect.");
+			GridData gd = new GridData(GridData.BEGINNING);
+			gd.horizontalSpan = 2;
+			label.setLayoutData(gd);
+		}
 		
 		return container;
 	}
@@ -99,11 +110,16 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 			}
 		});
 		connectButton.setText("Test");
+		GridData gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = 2;
+		connectButton.setLayoutData(gd);
 	}
 
 	protected void performConnect() {
 
 		final IConnection connection = getTestConnection();
+		initializeConnection(connection);
+		
 		IRunnableContext context = new ProgressMonitorDialog( getShell() );
 		try {
 			context.run(true, false, new IRunnableWithProgress() {
@@ -123,7 +139,9 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		}		
 	}
 
-	public abstract IConnection getTestConnection();
+	protected abstract void initializeConnection(IConnection connection);
+
+	protected abstract IConnection getTestConnection();
 		
 	private Composite createContainer(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
@@ -198,7 +216,13 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		setValid(true);
 	}
 
-	
+	@Override
+	public boolean performOk() {
+		initializeConnection( getConnection() );
+		ObjectStoresManager.getManager().saveObjectStores();
+		return true;
+	}
+
 	@Override
 	protected void performDefaults() {
 
@@ -209,14 +233,6 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		urlEditor.setStringValue( connection.getUrl() );
 		
 		super.performDefaults();
-	}
-
-	@Override
-	public boolean performOk() {
-		System.out.println(userName);
-		
-		// TODO Auto-generated method stub
-		return super.performOk();
 	}
 
 	public void setUserName(String userName) {

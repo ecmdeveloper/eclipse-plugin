@@ -48,6 +48,10 @@ public class FavoriteObjectStore {
 
 	public Collection<IObjectStoreItem> getChildren() 
 	{
+		if ( !objectStore.isConnected() ) {
+			return null;
+		}
+		
 		if ( children == null )
 		{
 			children = new ArrayList<IObjectStoreItem>();

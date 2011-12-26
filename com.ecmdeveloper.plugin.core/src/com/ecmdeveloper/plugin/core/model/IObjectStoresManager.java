@@ -49,9 +49,10 @@ public interface IObjectStoresManager {
 	 */
 	void removeObjectStore(IObjectStore objectStore);
 
-	void connectObjectStore(IObjectStore objectStore, IProgressMonitor monitor)
-			throws ExecutionException;
+	void connectObjectStore(IObjectStore objectStore, IProgressMonitor monitor) throws ExecutionException;
 
+	void disconnectObjectStore(IObjectStore objectStore, IProgressMonitor monitor) throws ExecutionException;
+	
 	IObjectStores getObjectStores();
 
 	IObjectStore[] getNewObjectstores(String connectionName);
