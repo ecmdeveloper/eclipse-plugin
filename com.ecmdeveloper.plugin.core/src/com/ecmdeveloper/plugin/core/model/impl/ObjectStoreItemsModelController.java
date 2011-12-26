@@ -31,6 +31,7 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
 import com.ecmdeveloper.plugin.core.model.tasks.ICreateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDeleteTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IDisconnectConnectionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDocumentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IAddObjectStoreTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IConnectConnectionTask;
@@ -65,6 +66,8 @@ public class ObjectStoreItemsModelController implements TaskListener {
 	private void handleTaskCompleteEvent(TaskCompleteEvent taskCompleteEvent) {
 		if ( isTaskSourceInstanceOf(taskCompleteEvent, IConnectConnectionTask.class) ) {
 			handleConnectConnectionTask(taskCompleteEvent);
+		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IDisconnectConnectionTask.class) ) {
+			handleDisconnectConnectionTask( taskCompleteEvent );
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, IDeleteTask.class) ) {
 			handleDeleteTaskCompleted( taskCompleteEvent );
 		} else if ( isTaskSourceInstanceOf(taskCompleteEvent, ILoadChildrenTask.class) ) {
@@ -92,6 +95,12 @@ public class ObjectStoreItemsModelController implements TaskListener {
 
 	private void handleConnectConnectionTask(TaskCompleteEvent taskCompleteEvent) {
 		IConnectConnectionTask task = (IConnectConnectionTask) taskCompleteEvent.getSource();
+		Collection<IObjectStoreItem> connectionObjectStores = task.getConnectionObjectStores();
+		fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
+	}
+
+	private void handleDisconnectConnectionTask(TaskCompleteEvent taskCompleteEvent) {
+		IDisconnectConnectionTask task = (IDisconnectConnectionTask) taskCompleteEvent.getSource();
 		Collection<IObjectStoreItem> connectionObjectStores = task.getConnectionObjectStores();
 		fireObjectStoreItemsChanged(null, null, connectionObjectStores.toArray( new IObjectStoreItem[0] ) );
 	}

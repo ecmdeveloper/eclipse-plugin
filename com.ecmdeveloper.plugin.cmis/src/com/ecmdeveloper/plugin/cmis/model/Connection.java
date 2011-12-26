@@ -64,6 +64,12 @@ public class Connection implements IConnection {
 	}
 
 	@Override
+	public void disconnect() {
+		parameters = null;
+		repositories = null;
+	}
+
+	@Override
 	public boolean isConnected() {
 		return repositories != null;
 	}

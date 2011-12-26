@@ -32,18 +32,22 @@ import com.ecmdeveloper.plugin.model.ObjectStore;
 public class ConnectionPropertyPage extends AbstractConnectionPropertyPage {
 
 	public IConnection getTestConnection() {
-	
-		final ContentEngineConnection connection = new ContentEngineConnection();
-		
-		connection.setUrl(getUrl());
-		connection.setUsername(getUserName());
-		connection.setPassword(getPassword());
-		return connection;
+		return new ContentEngineConnection();
 	}
 	
 	public IConnection getConnection() {
 		ObjectStore objectStore = (ObjectStore) getElement();
 		IConnection connection = objectStore.getConnection();
 		return connection;
+	}
+
+	@Override
+	protected void initializeConnection(IConnection connection) {
+
+		final ContentEngineConnection connection2 = (ContentEngineConnection) connection;
+		
+		connection2.setUrl(getUrl());
+		connection2.setUsername(getUserName());
+		connection2.setPassword(getPassword());
 	}
 }

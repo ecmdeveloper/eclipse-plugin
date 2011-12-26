@@ -40,6 +40,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.impl.AddObjectStoreTask;
 import com.ecmdeveloper.plugin.core.model.tasks.impl.ConnectConnectionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.impl.ConnectNewConnectionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.impl.DisconnectConnectionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.impl.GetObjectStoresTask;
 
 /**
@@ -52,6 +53,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.impl.GetObjectStoresTask;
 public class ObjectStoresManager implements IObjectStoresManager
 {
 	private static final String CONNECT_MESSAGE = "Connecting to \"{0}\"";
+	private static final String DISCONNECT_MESSAGE = "Disconnecting from \"{0}\"";
 
 	private static ObjectStoresManager objectStoresManager;
 	
@@ -259,4 +261,42 @@ public class ObjectStoresManager implements IObjectStoresManager
 		IObjectStoreItem[] itemsAdded = loadedObjectStores.toArray( new IObjectStoreItem[0] );
 		taskManager.fireObjectStoreItemsChanged(itemsAdded , null, null);
 	}
+
+	@Override
+	public void disconnectObjectStore(IObjectStore objectStore, IProgressMonitor monitor)
+			throws ExecutionException {
+
+		if ( objectStore == null) {
+			return;
+		}
+		
+		if ( !objectStore.isConnected() ) {
+			return;
+		}
+		
+		disconnectConnection(objectStore.getConnection(), monitor );
+	}
+
+	public void disconnectConnection( IConnection connection,IProgressMonitor monitor ) throws ExecutionException {
+
+		try {
+			
+			String connectionName = connection.getName();
+			if ( monitor != null ) {
+				monitor.beginTask( MessageFormat.format( DISCONNECT_MESSAGE, connection.getDisplayName() ), IProgressMonitor.UNKNOWN);
+			}
+	
+			if ( connections.containsKey( connectionName ) ) {
+				DisconnectConnectionTask task = new DisconnectConnectionTask(connectionName, connections, objectStores );
+				taskManager.executeTaskSync(task);
+			} else {
+				throw new UnsupportedOperationException( "Invalid connection name '" + connectionName + "'" );
+			}
+		} finally {
+			if ( monitor != null ) {
+				monitor.done();
+			}
+		}
+	}
+
 }

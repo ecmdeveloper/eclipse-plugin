@@ -80,6 +80,12 @@
             id="com.ecmdeveloper.plugin.ui.importObjectStore"
             name="Import Object Store">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Disconnect from the Object Store"
+            id="com.ecmdeveloper.plugin.disconnectObjectStore"
+            name="Disconnect">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -286,6 +292,20 @@
             class="com.ecmdeveloper.plugin.ui.handlers.ImportObjectStoreHandler"
             commandId="com.ecmdeveloper.plugin.ui.importObjectStore">
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.ui.handlers.DisconnectObjectStoreHandler"
+            commandId="com.ecmdeveloper.plugin.disconnectObjectStore">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <test
+                        property="com.ecmdeveloper.plugin.isConnected">
+                  </test>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -355,6 +375,25 @@
                icon="icons/database_connect.png"
                style="push"
                tooltip="Connect to the Object Store">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.core.model.IObjectStore">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.disconnectObjectStore"
+               icon="icons/disconnect.png"
+               style="push"
+               tooltip="Disconnect from the Object Store">
             <visibleWhen
                   checkEnabled="false">
                <with

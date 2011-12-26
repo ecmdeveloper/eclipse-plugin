@@ -21,9 +21,12 @@
 package com.ecmdeveloper.plugin.cmis.model;
 
 import java.text.MessageFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -31,7 +34,6 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 
 import com.ecmdeveloper.plugin.cmis.Activator;
 import com.ecmdeveloper.plugin.cmis.model.tasks.LoadChildrenTask;
@@ -77,12 +79,14 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 			session = sessionFactory.createSession(parameters);
 			displayName = session.getRepositoryInfo().getName();
 
-			RepositoryInfo repositoryInfo = session.getRepositoryInfo();
-			RepositoryCapabilities capabilities = repositoryInfo.getCapabilities();
-			CapabilityRenditions renditionsCapability = capabilities.getRenditionsCapability();
-			
 			ObjectStoreItemsModel.getInstance().add(this);	
 		}
+	}
+
+	@Override
+	public void disconnect() {
+		session = null;
+		children = null;		
 	}
 
 	public Session getSession() {
@@ -135,6 +139,10 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 
 	@Override
 	public Collection<IObjectStoreItem> getChildren() {
+		
+		if ( !isConnected() ) {
+			return null;
+		}
 		
 		if ( children == null )
 		{
@@ -211,6 +219,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		// TODO Auto-generated method stub
@@ -260,5 +269,60 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 			throw new RuntimeException(MessageFormat.format(NOT_CONNECTED_MESSAGE, getConnection()
 					.toString(), getName()));
 		}
+	}
+	
+	public List<Entry<String, Object>> getRepositoryInfo() {
+
+		List<Entry<String,Object>> repositoryInfoMap = new ArrayList< Entry<String,Object> >();
+		
+		repositoryInfoMap.add( getEntry( "General", getGeneralInfo() ) );
+		repositoryInfoMap.add( getEntry( "Capabilities", getCapabilitiesInfo() ) );
+
+		return repositoryInfoMap;
+	}
+
+	private List<Entry<String,Object>> getGeneralInfo() {
+		
+		List< Entry<String,Object> > generalInfoMap = new ArrayList< Entry<String,Object> >();
+
+		RepositoryInfo repInfo = session.getRepositoryInfo();
+		
+		generalInfoMap.add( getEntry( "Name", repInfo.getName() ) );
+		generalInfoMap.add( getEntry( "Id", repInfo.getId() ) );
+		generalInfoMap.add( getEntry( "Description", repInfo.getDescription() ) );
+		generalInfoMap.add( getEntry( "Vendor", repInfo.getVendorName() ) );
+		generalInfoMap.add( getEntry( "Product", repInfo.getProductName() + " " + repInfo.getProductVersion() ) );
+		generalInfoMap.add( getEntry( "CMIS Version", repInfo.getCmisVersionSupported() ) );
+
+		return generalInfoMap;
+	}
+
+	private Entry<String, Object> getEntry(String key, Object value) {
+		Entry<String, Object> entry = new AbstractMap.SimpleEntry<String, Object>(key, value);
+		return entry;
+	}
+
+	private List<Entry<String,Object>> getCapabilitiesInfo() {
+
+		RepositoryCapabilities cap = session.getRepositoryInfo().getCapabilities();
+		List< Entry<String,Object> > capabilitiesMap = new ArrayList< Entry<String,Object> >();
+		
+		if ( cap != null ) {
+			capabilitiesMap.add( getEntry( "Get descendants supported", cap.isGetDescendantsSupported() ) );
+			capabilitiesMap.add( getEntry( "Get folder tree supported", cap.isGetFolderTreeSupported() ) );
+			capabilitiesMap.add( getEntry( "Unfiling supported", cap.isUnfilingSupported() ) );
+			capabilitiesMap.add( getEntry( "Multifiling supported", cap.isMultifilingSupported() ) );
+			capabilitiesMap.add( getEntry( "Version specific filing supported", cap.isVersionSpecificFilingSupported() ) );
+			capabilitiesMap.add( getEntry( "Query", cap.getQueryCapability() ) );
+			capabilitiesMap.add( getEntry( "Joins", cap.getJoinCapability() ) );
+			capabilitiesMap.add( getEntry( "All versions searchable", cap.isAllVersionsSearchableSupported() ) );
+			capabilitiesMap.add( getEntry( "PWC searchable", cap.isPwcSearchableSupported() ) );
+			capabilitiesMap.add( getEntry( "PWC updatable", cap.isPwcUpdatableSupported() ) );
+			capabilitiesMap.add( getEntry( "Content stream updates", cap.getContentStreamUpdatesCapability() ) );
+			capabilitiesMap.add( getEntry( "Renditions", cap.getRenditionsCapability() ) );
+			capabilitiesMap.add( getEntry( "Changes", cap.getChangesCapability() ) );
+			capabilitiesMap.add( getEntry( "ACLs", cap.getAclCapability() ) );
+		}
+		return capabilitiesMap;
 	}
 }

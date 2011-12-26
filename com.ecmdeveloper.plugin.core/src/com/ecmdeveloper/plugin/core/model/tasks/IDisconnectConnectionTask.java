@@ -18,23 +18,18 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model;
+package com.ecmdeveloper.plugin.core.model.tasks;
 
+import java.util.Collection;
+
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IConnection {
+public interface IDisconnectConnectionTask extends IBaseTask {
 
-	String getName();
-	String getUsername();
-	String getPassword();
-	String getUrl();
-	void connect();
-	IObjectStore[] getObjectStores(IObjectStores parent);
-	String getDisplayName();
-	boolean isConnected();
-	void disconnect();
+	Collection<IObjectStoreItem> getConnectionObjectStores();
 
 }

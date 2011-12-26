@@ -37,6 +37,8 @@ public interface IObjectStore extends IObjectStoreItem {
 
 	void connect();
 
+	void disconnect();
+
 	Collection<IClassDescriptionFolder> getClassDescriptionFolders();
 
 	IClassDescriptionFolder getClassDescriptionFolder( ClassDescriptionFolderType classDescriptionFolderType);

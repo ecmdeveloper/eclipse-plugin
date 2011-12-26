@@ -27,9 +27,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import com.ecmdeveloper.plugin.cmis.model.Connection;
+import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.properties.AbstractConnectionPropertyPage;
-import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
 
 /**
  * @author ricardo.belfor
@@ -94,18 +94,17 @@ public class ConnectionPropertyPage extends AbstractConnectionPropertyPage {
 
 	@Override
 	public IConnection getTestConnection() {
-		
-		String url = getUrl();
-		String username = getUserName();
-		String password = getPassword();
+		return new Connection();
+	}
 
-		final Connection connection = new Connection();
+	protected void initializeConnection(IConnection connection) {
 		
-		connection.setUrl(url);
-		connection.setUsername(username);
-		connection.setPassword(password);
-		connection.setName(url);
-		connection.setDisplayName(connectionName);
-		return connection;
+		Connection connection2 = (Connection) connection;
+
+		connection2.setDisplayName(connectionName);
+		connection2.setName( getUrl() );
+		connection2.setUrl( getUrl() );
+		connection2.setUsername( getUserName() );
+		connection2.setPassword( getPassword() );
 	}
 }
