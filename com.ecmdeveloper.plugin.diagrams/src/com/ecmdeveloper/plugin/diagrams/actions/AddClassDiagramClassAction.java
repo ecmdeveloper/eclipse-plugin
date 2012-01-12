@@ -30,7 +30,7 @@ import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramClassFactory;
 import com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditor;
 import com.ecmdeveloper.plugin.diagrams.parts.ClassDiagramEditPart;
@@ -46,7 +46,7 @@ public class AddClassDiagramClassAction extends SelectionAction {
 
 	private static final String ACTION_NAME = "Add Class";
 
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 
 	public AddClassDiagramClassAction(IWorkbenchPart part) {
 		super(part);
@@ -54,7 +54,7 @@ public class AddClassDiagramClassAction extends SelectionAction {
 		setText( ACTION_NAME );
 	}
 
-	public void setClassDescription(ClassDescription classDescription ) {
+	public void setClassDescription(IClassDescription classDescription ) {
 		this.classDescription = classDescription;
 	}
 	

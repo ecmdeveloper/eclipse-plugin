@@ -43,7 +43,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.diagrams.actions.AddClassDiagramClassAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramAction;
 import com.ecmdeveloper.plugin.diagrams.actions.ExportDiagramClassAction;
@@ -182,7 +182,7 @@ public class ClassDiagramEditor extends GraphicalEditorWithFlyoutPalette {
       getActionRegistry().getAction(DeleteAction.ID).run();
 	}
 	
-	public void addClassDiagramClass(ClassDescription classDescription) {
+	public void addClassDiagramClass(IClassDescription classDescription) {
 		AddClassDiagramClassAction action = (AddClassDiagramClassAction) getActionRegistry()
 				.getAction(AddClassDiagramClassAction.ID);
 

@@ -32,7 +32,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.diagrams.editors.ClassDiagramEditor;
 
 /**
@@ -59,7 +59,7 @@ public class AddClassToDiagramHandler extends AbstractHandler implements IHandle
 			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 
 			while ( iterator.hasNext() ) {
-				ClassDescription classDescription = (ClassDescription) iterator.next();
+				IClassDescription classDescription = (IClassDescription) iterator.next();
 				classDiagramEditor.addClassDiagramClass(classDescription);
 			}
 		}

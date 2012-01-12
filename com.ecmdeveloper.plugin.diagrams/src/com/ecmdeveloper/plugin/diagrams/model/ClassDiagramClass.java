@@ -27,14 +27,13 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.PropertyType;
 import com.ecmdeveloper.plugin.diagrams.properties.ClassDiagramClassProperties;
 import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
-import com.ecmdeveloper.plugin.model.ContentEngineConnection;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.filenet.api.meta.PropertyDescriptionObject;
 
 
 /**
@@ -79,68 +78,60 @@ public class ClassDiagramClass extends ClassDiagramElement implements IAdaptable
 		parentVisible = true;
 	}
 
-	public ClassDiagramClass(IAdaptable adaptableObject) {
+	public ClassDiagramClass(IClassDescription classDescription) {
 		
-		com.filenet.api.meta.ClassDescription internalClassDescription = (com.filenet.api.meta.ClassDescription) adaptableObject
-				.getAdapter(com.filenet.api.meta.ClassDescription.class);
-		
-		abstractClass = ! internalClassDescription.get_AllowsInstances();
-		id = internalClassDescription.get_Id().toString();
-		displayName = internalClassDescription.get_DisplayName();
-		name = internalClassDescription.get_SymbolicName();
-		ClassDescription classDescription = (ClassDescription) adaptableObject.getAdapter(ClassDescription.class);
+		abstractClass = classDescription.isAbstract();
+		id = classDescription.getId();
+		displayName = classDescription.getDisplayName();
+		name = classDescription.getName();
 		createClassDiagramAttributes(classDescription);
 		createClassDiagramAttributeRelations(classDescription);
 		
-		if ( classDescription.getParent() instanceof ClassDescription ) {
-			parentClassId = ((ClassDescription)classDescription.getParent()).getId();
+		if ( classDescription.getParent() instanceof IClassDescription ) {
+			parentClassId = ((IClassDescription)classDescription.getParent()).getId();
 		}
 		parentVisible = true;
 
 		initializeObjectStoreConfiguration(classDescription);
 	}
 
-	private void initializeObjectStoreConfiguration(ClassDescription classDescription) {
+	private void initializeObjectStoreConfiguration(IClassDescription classDescription) {
 		
-		ObjectStore objectStore = classDescription.getObjectStore();
+		IObjectStore objectStore = classDescription.getObjectStore();
 		objectStoreName = objectStore.getName();
 		objectStoreDisplayName = objectStore.getDisplayName();
 
-		ContentEngineConnection connection = objectStore.getConnection();
+		IConnection connection = objectStore.getConnection();
 		connectionName = connection.getName();
 		connectionDisplayName = connection.getDisplayName();
 	}
 
-	private void createClassDiagramAttributeRelations(ClassDescription classDescription) {
-		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
+	private void createClassDiagramAttributeRelations(IClassDescription classDescription) {
+		for ( IPropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
 			if ( isAllowedAttribute(propertyDescription) && !propertyDescription.isReadOnly()
 					&& propertyDescription.getPropertyType().equals(PropertyType.OBJECT) ) {
-				createClassDiagramAttributeRelation(propertyDescription);
+				createClassDiagramAttributeRelation(propertyDescription, classDescription.getObjectStore() );
 			}
 		}		
 	}
 
-	private void createClassDiagramAttributeRelation(PropertyDescription propertyDescription) {
-		com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) propertyDescription
-		.getAdapter(com.filenet.api.meta.PropertyDescription.class );
-		PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
+	private void createClassDiagramAttributeRelation(IPropertyDescription propertyDescription, IObjectStore objectStore ) {
 		try {
-			AttributeRelationship attributeRelationship = new AttributeRelationship(objectPropertyDescription,this, propertyDescription.getObjectStore() );
+			AttributeRelationship attributeRelationship = new AttributeRelationship(propertyDescription,this, objectStore );
 			sourceRelations.add(attributeRelationship);
 		} catch (Exception e) {
 			PluginLog.error(e);
 		}
 	}
 
-	private boolean isAllowedAttribute(PropertyDescription propertyDescription) {
-		System.out.println( propertyDescription.getName() );
+	private boolean isAllowedAttribute(IPropertyDescription propertyDescription) {
 		return !Boolean.TRUE.equals(propertyDescription.getSystemOwned()) || FOLDER_NAME_PROPERTY.equals(propertyDescription.getName() );
 	}
 
-	private void createClassDiagramAttributes(ClassDescription classDescription) {
-		for ( PropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
+	private void createClassDiagramAttributes(IClassDescription classDescription) {
+		for ( IPropertyDescription propertyDescription : classDescription.getPropertyDescriptions() ) {
 			if ( isAllowedAttribute(propertyDescription) ) {
-				ClassDiagramAttribute attribute = (ClassDiagramAttribute) propertyDescription.getAdapter(ClassDiagramAttribute.class);
+				ClassDiagramAttribute attribute = new ClassDiagramAttribute( propertyDescription, classDescription.getObjectStore() ); 
 				addAttribute(attribute);
 			}
 		 }

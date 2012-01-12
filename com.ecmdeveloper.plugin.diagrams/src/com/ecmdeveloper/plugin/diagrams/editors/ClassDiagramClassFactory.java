@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.diagrams.editors;
 
 import org.eclipse.gef.requests.CreationFactory;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
 
 /**
@@ -31,15 +31,15 @@ import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
  */
 public class ClassDiagramClassFactory implements CreationFactory {
 
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 
-	public ClassDiagramClassFactory( ClassDescription classDiagramClass ) {
+	public ClassDiagramClassFactory( IClassDescription classDiagramClass ) {
 		this.classDescription = classDiagramClass;
 	}
 
 	@Override
 	public Object getNewObject() {
-		return classDescription.getAdapter( ClassDiagramClass.class );
+		return new ClassDiagramClass(classDescription);
 	}
 
 	@Override

@@ -32,10 +32,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.task.GetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
 import com.ecmdeveloper.plugin.diagrams.Activator;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagram;
 import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClass;
@@ -96,7 +97,7 @@ public class ClassDiagramClassRefreshCommand extends Command {
 					
 						monitor.beginTask(getLabel(), IProgressMonitor.UNKNOWN);
 						try {
-							ClassDescription classDescription = getClassDescription(objectStore);
+							IClassDescription classDescription = getClassDescription(objectStore);
 							if ( ! monitor.isCanceled() ) { 
 								initializeRefreshedClassDiagramClass(classDescription);
 							}
@@ -107,16 +108,17 @@ public class ClassDiagramClassRefreshCommand extends Command {
 						monitor.done();
 				}
 
-				private void initializeRefreshedClassDiagramClass(ClassDescription classDescription) {
-					refreshedClassDiagramClass = (ClassDiagramClass) classDescription.getAdapter(ClassDiagramClass.class);
+				private void initializeRefreshedClassDiagramClass(IClassDescription classDescription) {
+					refreshedClassDiagramClass = new ClassDiagramClass( classDescription ); 
 					refreshedClassDiagramClass.setLocation( classDiagramClass.getLocation() );
 					refreshedClassDiagramClass.setParentClassId( classDiagramClass.getParentClassId() );
 				}
 
-				private ClassDescription getClassDescription(final IObjectStore objectStore ) throws Exception {
-					GetClassDescriptionTask task = new GetClassDescriptionTask( classDiagramClass.getName(), objectStore);
+				private IClassDescription getClassDescription(final IObjectStore objectStore ) throws Exception {
+					ITaskFactory taskFactory = objectStore.getTaskFactory();
+					IGetClassDescriptionTask task = taskFactory.getGetClassDescriptionTask( classDiagramClass.getName(), objectStore);
 					Activator.getDefault().getTaskManager().executeTaskSync(task);
-					ClassDescription classDescription = task.getClassDescription();
+					IClassDescription classDescription = task.getClassDescription();
 					return classDescription;
 				}
 				
