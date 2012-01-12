@@ -24,9 +24,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
-
 import com.ecmdeveloper.plugin.core.model.ClassesManager;
 import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
@@ -41,7 +38,7 @@ import com.filenet.api.collection.PropertyDescriptionList;
  * @author Ricardo Belfor
  * 
  */
-public class ClassDescription implements IAdaptable, IClassDescription {
+public class ClassDescription implements IClassDescription {
 
 	private com.filenet.api.meta.ClassDescription classDescription;
 	private IObjectStore objectStore;
@@ -54,7 +51,8 @@ public class ClassDescription implements IAdaptable, IClassDescription {
 	List<IPropertyDescription> propertyDescriptions;
 	private final Boolean cbrEnabled;
 	private String namePropertyName;
-
+	private boolean isAbstract;
+	
 	public ClassDescription(Object classDescription, Object parent, IObjectStore objectStore) {
 
 		if (classDescription != null) {
@@ -63,11 +61,12 @@ public class ClassDescription implements IAdaptable, IClassDescription {
 			this.parent = parent;
 			this.id = this.classDescription.get_Id().toString();
 			this.cbrEnabled = this.classDescription.get_IsCBREnabled();
+			this.isAbstract = !this.classDescription.get_AllowsInstances();
 			Integer namePropertyIndex = this.classDescription.get_NamePropertyIndex();
 			if (namePropertyIndex != null) {
-				PropertyDescription namePropertyDescription = (PropertyDescription) this.classDescription
+				com.filenet.api.meta.PropertyDescription namePropertyDescription = (com.filenet.api.meta.PropertyDescription) this.classDescription
 						.get_PropertyDescriptions().get(namePropertyIndex);
-				namePropertyName = namePropertyDescription.getName();
+				namePropertyName = namePropertyDescription.get_SymbolicName();
 
 			}
 			refreshInternal();
@@ -219,21 +218,15 @@ public class ClassDescription implements IAdaptable, IClassDescription {
 						(ObjectStore) objectStore));
 			}
 		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object getAdapter(Class adapter) {
-
-		if (adapter.isInstance(classDescription)) {
-			return classDescription;
-		}
-		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	@Override
 	public String getNamePropertyName() {
 		return namePropertyName;
+	}
+
+	@Override
+	public boolean isAbstract() {
+		return isAbstract;
 	}
 }

@@ -22,13 +22,8 @@ package com.ecmdeveloper.plugin.cmis.wizard;
 
 import java.util.Collection;
 
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.widgets.Composite;
 
 import com.ecmdeveloper.plugin.cmis.model.Connection;
 import com.ecmdeveloper.plugin.core.model.IConnection;
@@ -42,8 +37,6 @@ import com.ecmdeveloper.plugin.ui.wizard.SelectConnectionWizardPage;
  */
 public class ImportRepositoryWizard extends AbstractImportObjectStoreWizard {
 
-	private static final String CONNECTION_NAME_FIELD = "CONNECTION_NAME";
-
 	public ImportRepositoryWizard() {
 		super();
 		setWindowTitle( "Import Repository" );
@@ -51,88 +44,7 @@ public class ImportRepositoryWizard extends AbstractImportObjectStoreWizard {
 
 	@Override
 	protected AbstractConfigureConnectionWizardPage createConfigureConnectionWizardPage() {
-		return new AbstractConfigureConnectionWizardPage() {
-
-			private StringFieldEditor connectionNameEditor;
-			private String connectionName;
-			
-			@Override
-			protected void createExtraControls(Composite container2) {
-				createConnectionNameEditor();
-			}
-
-			protected void createConnectionNameEditor() {
-				
-				connectionNameEditor = new StringFieldEditor("", "Connection name:",container ) {
-
-					@Override
-					public int getNumberOfControls() {
-						return 2; //ConfigureCredentialsWizardPage.this.getNumberOfControls();
-					}
-
-				};
-
-				connectionNameEditor.setPropertyChangeListener( new IPropertyChangeListener() {
-			
-					@Override
-					public void propertyChange(PropertyChangeEvent event) {
-						if ( event.getProperty().equals( FieldEditor.VALUE ) ) {
-							connectionName = (String) event.getNewValue();
-							updateControls(CONNECTION_NAME_FIELD);
-						}
-					}
-				});
-
-			}
-			
-			@Override
-			public IConnection getConnection() {
-				
-				String url = getURL();
-				String username = getUsername();
-				String password = getPassword();
-
-				final Connection connection = new Connection();
-				
-				connection.setUrl(url);
-				connection.setUsername(username);
-				connection.setPassword(password);
-				connection.setName(url);
-				connection.setDisplayName(connectionName);
-				return connection;
-			}
-
-			@Override
-			protected boolean isConnectionFieldsSet() {
-				return isFieldSet(getURL() ) && isFieldSet(connectionName);
-			}
-
-			private boolean isFieldSet(String value) {
-				return value != null && !value.isEmpty();
-			}
-
-			@Override
-			protected boolean validateInput(String fieldname) {
-				
-				setErrorMessage(null);
-				
-				if ( !isFieldSet(getURL() ) ) {
-					if ( URL_FIELD.equals(fieldname) ) { 
-						setErrorMessage("The connection url cannot be empty");
-					}
-					return false;
-				}
-
-				if ( !isFieldSet( connectionName ) ) {
-					if ( CONNECTION_NAME_FIELD.equals(fieldname) ) {
-						setErrorMessage("The connection name cannot be empty");
-					}
-					return false;
-				}
-				
-				return true;
-			}
-		};
+		return new ConfigureConnectionWizardPage();
 	}
 
 	@Override

@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.tasks;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IClassDescriptionFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
@@ -42,7 +43,7 @@ public class GetClassDescriptionTask extends BaseTask implements IGetClassDescri
 	private String name;
 	private ObjectStore objectStore;
 	private Object parent;
-	private ClassDescription classDescription;
+	private IClassDescription classDescription;
 	private Collection<Object> oldChildren;
 	private ArrayList<IClassDescription> children;
 
@@ -75,20 +76,32 @@ public class GetClassDescriptionTask extends BaseTask implements IGetClassDescri
 	@Override
 	protected Object execute() throws Exception {
 
-		com.filenet.api.core.ObjectStore objectStoreObject = 
-			(com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
+		try
+		{
+			com.filenet.api.core.ObjectStore objectStoreObject = 
+				(com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
+	
+			com.filenet.api.meta.ClassDescription classDescriptionObject = 
+				(com.filenet.api.meta.ClassDescription) objectStoreObject.fetchObject("ClassDescription", name, null);
+	
+			classDescription = new ClassDescription(classDescriptionObject, parent, objectStore );
 
-		com.filenet.api.meta.ClassDescription classDescriptionObject = 
-			(com.filenet.api.meta.ClassDescription) objectStoreObject.fetchObject("ClassDescription", name, null);
-
-		classDescription = new ClassDescription(classDescriptionObject, parent, objectStore );
-		
+		} catch ( Exception e ) {
+			
+			if ( !isAsynchronous() ) {
+				throw e;
+			}
+			ClassesPlaceholder classesPlaceholder = new ClassesPlaceholder(e);
+			classesPlaceholder.setParent(parent);
+			classDescription = classesPlaceholder;
+		}
+			
 		addToParent(classDescription);
 		fireTaskCompleteEvent(TaskResult.COMPLETED);
 		return classDescription;
 	}
 
-	private void addToParent(ClassDescription classDescription) {
+	private void addToParent(IClassDescription classDescription) {
 
 		if ( parent == null ) {
 			return;

@@ -28,8 +28,10 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
 
 /**
@@ -92,4 +94,6 @@ public interface ITaskFactory {
 	ICreateCustomObjectTask getCreateCustomObjectTask(IObjectStoreItem parent, String className, Map<String, Object> propertiesMap);
 	
 	IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits );
+
+	IGetRequiredClassDescriptionTask getGetRequiredClassDescription(IPropertyDescription targetPropertyDescription, IObjectStore objectStore);
 }

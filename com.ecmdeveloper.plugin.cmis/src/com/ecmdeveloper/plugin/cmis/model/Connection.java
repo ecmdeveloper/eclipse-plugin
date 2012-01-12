@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 
@@ -48,6 +49,11 @@ public class Connection implements IConnection {
 	private Map<String, String> parameters;
 	private String name;
 	private String displayName	;
+	private Authentication authentication;
+	private BindingType bindingType;
+	private boolean useCompression;
+	private boolean useClientCompression;
+	private boolean useCookies;
 	
 	@Override
 	public void connect() {
@@ -57,10 +63,60 @@ public class Connection implements IConnection {
 		parameters = new HashMap<String, String>();
 		parameters.put(SessionParameter.USER, username );
 		parameters.put(SessionParameter.PASSWORD, password );
-		parameters.put(SessionParameter.ATOMPUB_URL, url );
 		parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-			
+		
+		setUrlParameters();
+        setAuthenticationParameters();
+		
+        if ( useCompression ) {
+            parameters.put(SessionParameter.COMPRESSION, "true");
+        }
+
+        if ( useClientCompression ) {
+            parameters.put(SessionParameter.CLIENT_COMPRESSION, "true");
+        }
+
+        if ( useCookies ) {
+            parameters.put(SessionParameter.COOKIES, "true");
+        }
+        
 		repositories = sessionFactory.getRepositories(parameters);
+	}
+
+	private void setAuthenticationParameters() {
+		switch (authentication) {
+        case STANDARD:
+            parameters.put(SessionParameter.USER, username);
+            parameters.put(SessionParameter.PASSWORD, password);
+        	break;
+        case NTLM:
+            parameters.put(SessionParameter.USER, username);
+            parameters.put(SessionParameter.PASSWORD, password);
+            parameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
+        	break;
+        }
+	}
+
+	private void setUrlParameters() {
+
+		switch (bindingType) {
+		case ATOMPUB:
+			parameters.put(SessionParameter.ATOMPUB_URL, url );
+			break;
+		case WEBSERVICES:
+            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url);
+			break;
+		default:
+			throw new IllegalArgumentException( "Invalid binding type " + bindingType );
+		}
 	}
 
 	@Override
@@ -138,5 +194,45 @@ public class Connection implements IConnection {
 	@Override
 	public String toString() {
 		return getDisplayName();
+	}
+
+	public void setAuthentication(Authentication authentication) {
+		this.authentication = authentication;
+	}
+
+	public Authentication getAuthentication() {
+		return authentication;
+	}
+
+	public BindingType getBindingType() {
+		return bindingType;
+	}
+
+	public void setBindingType(BindingType bindingType) {
+		this.bindingType = bindingType;
+	}
+
+	public boolean isUseCompression() {
+		return useCompression;
+	}
+
+	public void setUseCompression(boolean useCompression) {
+		this.useCompression = useCompression;
+	}
+
+	public boolean isUseClientCompression() {
+		return useClientCompression;
+	}
+
+	public void setUseClientCompression(boolean useClientCompression) {
+		this.useClientCompression = useClientCompression;
+	}
+
+	public boolean isUseCookies() {
+		return useCookies;
+	}
+
+	public void setUseCookies(boolean useCookies) {
+		this.useCookies = useCookies;
 	}
 }

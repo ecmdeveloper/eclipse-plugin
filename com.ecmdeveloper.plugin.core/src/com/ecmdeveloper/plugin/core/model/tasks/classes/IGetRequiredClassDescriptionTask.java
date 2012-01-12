@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.core.model.tasks.classes;
 
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
@@ -27,5 +29,6 @@ import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
  *
  */
 public interface IGetRequiredClassDescriptionTask extends IBaseTask {
-
+	IClassDescription getRequiredClass();
+	IPropertyDescription getReflectivePropertyDescription();
 }

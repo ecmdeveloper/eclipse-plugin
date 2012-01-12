@@ -1,5 +1,5 @@
 /**
- * Copyright 2011, Ricardo Belfor
+ * Copyright 2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,45 +18,30 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model;
-
-import java.util.Collection;
-
-import com.ecmdeveloper.plugin.core.model.IObjectStore;
+package com.ecmdeveloper.plugin.cmis.model;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IClassDescription {
-
-	void refresh();
-
-	IObjectStore getObjectStore();
-
-	Collection<Object> getChildren();
-
-	Collection<Object> getChildren(boolean synchronous) throws Exception;
-
-	String getDisplayName();
-
-	String getName();
-
-	String getId();
-
-	Boolean getCBREnabled();
-
-	boolean hasChildren();
-
-	void setChildren(Collection<IClassDescription> children);
-
-	Collection<IPropertyDescription> getAllPropertyDescriptions();
-
-	Collection<IPropertyDescription> getPropertyDescriptions();
-
-	Object getParent();
-
-	String getNamePropertyName();
-
-	boolean isAbstract();
+public enum Authentication {
+	
+	NONE { 		
+		@Override
+		public String toString() {
+			return "None";
+		}
+	}, 
+	STANDARD { 		
+		@Override
+		public String toString() {
+			return "Standard";
+		}
+	}, 
+	NTLM { 		
+		@Override
+		public String toString() {
+			return "NTLM";
+		}
+	}
 }

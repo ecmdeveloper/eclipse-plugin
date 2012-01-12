@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
@@ -198,9 +199,17 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		connectionChild.putString( PluginTagNames.DISPLAY_NAME_TAG, connection.getDisplayName() );
 		connectionChild.putString( PluginTagNames.URL_TAG, connection.getUrl() );
 		connectionChild.putString( PluginTagNames.USERNAME_TAG, connection.getUsername() );
+				
 		String password = connection.getPassword();
 		// TODO add some basic encryption
 		connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
+		
+//		BINDINGTYPE;
+//		AUTHENTICATION;
+//		USECOMPRESSION;
+//		USECLIENTCOMPRESSION;
+//		USECOOKIES;
+		
 	}
 
 	private void saveObjectStore(IMemento objectStoresChild, IObjectStoreItem objectStore) {

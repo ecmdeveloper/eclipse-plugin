@@ -135,4 +135,10 @@ public class ClassesPlaceholder extends AbstractPlaceholder implements IClassDes
 	public String getNamePropertyName() {
 		return null;
 	}
+
+	@Override
+	public boolean isAbstract() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

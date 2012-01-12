@@ -22,11 +22,14 @@ package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.model.PropertyDescription;
 import com.filenet.api.meta.ClassDescription;
-import com.filenet.api.meta.PropertyDescription;
 import com.filenet.api.meta.PropertyDescriptionObject;
 import com.filenet.api.util.Id;
 
@@ -41,9 +44,10 @@ public class GetRequiredClassDescription extends BaseTask implements IGetRequire
 	private ClassDescription requiredClass;
 	private final ObjectStore objectStore;
 
-	public GetRequiredClassDescription(PropertyDescriptionObject propertyDescription, ObjectStore objectStore) {
-		this.propertyDescription = propertyDescription;
-		this.objectStore = objectStore;
+	public GetRequiredClassDescription(IPropertyDescription propertyDescription, IObjectStore objectStore) {
+		PropertyDescription p = (PropertyDescription) propertyDescription;
+		this.propertyDescription = (PropertyDescriptionObject) p.getInternalPropertyDescription();
+		this.objectStore = (ObjectStore) objectStore;
 	}
 
 	@Override
@@ -55,7 +59,7 @@ public class GetRequiredClassDescription extends BaseTask implements IGetRequire
 		if ( reflectivePropertyId != null ) {
 			Iterator<?> iterator = requiredClass.get_PropertyDescriptions().iterator();
 			while (iterator.hasNext()) {
-				PropertyDescription propertyDescription = (PropertyDescription) iterator.next();
+				com.filenet.api.meta.PropertyDescription propertyDescription = (com.filenet.api.meta.PropertyDescription) iterator.next();
 				if ( propertyDescription.get_Id().equals( reflectivePropertyId ) ) {
 					reflectivePropertyDescription = (PropertyDescriptionObject) propertyDescription;
 					break;
@@ -66,12 +70,14 @@ public class GetRequiredClassDescription extends BaseTask implements IGetRequire
 		return null;
 	}
 
-	public PropertyDescriptionObject getReflectivePropertyDescription() {
-		return reflectivePropertyDescription;
+	@Override
+	public IPropertyDescription getReflectivePropertyDescription() {
+		return new com.ecmdeveloper.plugin.model.PropertyDescription(reflectivePropertyDescription, objectStore);
 	}
 
-	public ClassDescription getRequiredClass() {
-		return requiredClass;
+	@Override
+	public IClassDescription getRequiredClass() {
+		return new com.ecmdeveloper.plugin.model.ClassDescription(requiredClass, null, objectStore);
 	}
 
 	@Override

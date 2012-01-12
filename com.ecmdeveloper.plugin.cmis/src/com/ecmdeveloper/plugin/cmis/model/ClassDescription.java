@@ -52,6 +52,7 @@ public class ClassDescription implements IClassDescription {
 	private boolean hasChildren;
 	private ArrayList<Object> children;
 	List<IPropertyDescription> propertyDescriptions;
+	private boolean isAbstract;
 
 	public ClassDescription(ObjectType objectType, Object parent, IObjectStore objectStore ) {
 		this.objectType = objectType;
@@ -61,19 +62,11 @@ public class ClassDescription implements IClassDescription {
 		refreshInternal();
 	}
 
-//	@Override
-//	public void refresh() {
-////		if ( objectType. != null) {
-////			classDescription.refresh();
-////			propertyDescriptions = null;
-//			refreshInternal();
-////		}
-//	}
-
 	private void refreshInternal() {
 		name = objectType.getQueryName();
 		displayName = objectType.getDisplayName();
 		hasChildren = objectType.getChildren().iterator().hasNext();
+		isAbstract = !objectType.isCreatable();
 		children = null;
 		initializePropertyDescriptions();
 	}
@@ -187,17 +180,18 @@ public class ClassDescription implements IClassDescription {
 		return propertyDescriptions;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ecmdeveloper.plugin.core.model.IClassDescription#refresh()
-	 */
 	@Override
 	public void refresh() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public String getNamePropertyName() {
 		return PropertyIds.NAME;
+	}
+
+	@Override
+	public boolean isAbstract() {
+		return isAbstract;
 	}
 }

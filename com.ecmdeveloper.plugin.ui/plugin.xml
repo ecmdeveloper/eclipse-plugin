@@ -7,7 +7,7 @@
             class="com.ecmdeveloper.plugin.ui.perspectives.ContentEnginePerspectiveFactory"
             icon="icons/database_table.png"
             id="com.ecmdeveloper.plugin.ui.contentEnginePerspective"
-            name="Content Engine">
+            name="Object Store">
          <description>
             This perspective is designed to support working with Content Engines. It offers an Object Store explorer, a Favorities view, a Code Modules view and a Tracker view.
          </description>

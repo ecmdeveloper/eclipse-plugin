@@ -39,7 +39,7 @@ public class InTest extends QueryComponent {
 
 				@Override
 				public boolean isValidFor(IQueryField queryField) {
-					return queryField.isSearchable();
+					return queryField.isSearchable() &&  !QueryFieldType.isMultiValued( queryField.getType() );
 				}};	
 	
 	private List<?> values;
