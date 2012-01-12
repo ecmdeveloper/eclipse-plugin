@@ -19,15 +19,14 @@
  */
 package com.ecmdeveloper.plugin.diagrams.model;
 
-import org.eclipse.core.runtime.IAdaptable;
-
-import com.ecmdeveloper.plugin.classes.model.ClassesManager;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
-import com.ecmdeveloper.plugin.classes.model.constants.PropertyType;
-import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.PropertyType;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
+import com.ecmdeveloper.plugin.diagrams.Activator;
 import com.ecmdeveloper.plugin.diagrams.util.PluginLog;
-import com.filenet.api.constants.Cardinality;
-import com.filenet.api.meta.PropertyDescriptionObject;
 
 /**
  * 
@@ -58,29 +57,24 @@ public class ClassDiagramAttribute {
 		active = true;
 	}
 
-	public ClassDiagramAttribute(IAdaptable adaptableObject) {
+	public ClassDiagramAttribute(IPropertyDescription propertyDescription, IObjectStore objectStore) {
 
-		PropertyDescription propertyDescription = (PropertyDescription) adaptableObject
-				.getAdapter(PropertyDescription.class);
-		com.filenet.api.meta.PropertyDescription internalPropertyDescription = (com.filenet.api.meta.PropertyDescription) adaptableObject
-				.getAdapter(com.filenet.api.meta.PropertyDescription.class );
-		
-		this.multiplicity = MultiplicityFormatter.getMultiplicity( internalPropertyDescription );
-		this.modifiers = getModifiers( internalPropertyDescription );
-		this.name = internalPropertyDescription.get_SymbolicName();
-		this.displayName = internalPropertyDescription.get_DisplayName();
+		this.multiplicity = MultiplicityFormatter.getMultiplicity( propertyDescription );
+		this.modifiers = getModifiers( propertyDescription );
+		this.name = propertyDescription.getName();
+		this.displayName = propertyDescription.getDisplayName();
 		this.type = propertyDescription.getPropertyType().toString();
 		this.defaultValue = getDefaultValue();
 		
 		if ( propertyDescription.getPropertyType().equals( PropertyType.OBJECT ) ) {
-			PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
 			try {
 				// TODO: make this asynchronous?
-				GetRequiredClassDescription task = new GetRequiredClassDescription(
-						objectPropertyDescription, propertyDescription.getObjectStore());
-				ClassesManager.getManager().executeTaskSync( task );
-				com.filenet.api.meta.ClassDescription requiredClass = task.getRequiredClass();
-				this.type = requiredClass.get_SymbolicName();
+				ITaskFactory taskFactory = objectStore.getTaskFactory();
+				IGetRequiredClassDescriptionTask task = taskFactory.getGetRequiredClassDescription(
+						propertyDescription, objectStore );
+				Activator.getDefault().getTaskManager().executeTaskSync(task);
+				IClassDescription requiredClass = task.getRequiredClass();
+				this.type = requiredClass.getName();
 			} catch (Exception e) {
 				PluginLog.error(e);
 			}
@@ -138,24 +132,24 @@ public class ClassDiagramAttribute {
 		return getUMLString(false, true, true, true, true );
 	}
 
-	private String getModifiers(com.filenet.api.meta.PropertyDescription internalPropertyDescription) {
+	private String getModifiers(IPropertyDescription propertyDescription) {
 	
 		StringBuffer modifiersText = new StringBuffer();
 		String separator = "";
 
-		if ( internalPropertyDescription.get_IsReadOnly() ) {
+		if ( propertyDescription.isReadOnly() ) {
 			modifiersText.append( separator );
 			modifiersText.append( "readOnly" );
 			separator = ",";
 		}
 		
-		if ( Cardinality.LIST.equals( internalPropertyDescription.get_Cardinality() ) ) {
+		if ( propertyDescription.isList() ) {
 			modifiersText.append( separator );
 			modifiersText.append( "ordered" );
 			separator = ",";
 		}
 		
-		if ( Cardinality.ENUM.equals( internalPropertyDescription.get_Cardinality() ) ) {
+		if ( propertyDescription.isEnum() ) {
 			modifiersText.append( separator );
 			modifiersText.append( "unique" );
 			separator = ",";

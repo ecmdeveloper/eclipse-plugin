@@ -20,7 +20,7 @@
 
 package com.ecmdeveloper.plugin.diagrams.model;
 
-import com.filenet.api.constants.Cardinality;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 
 /**
  * 
@@ -35,17 +35,17 @@ public class MultiplicityFormatter {
 	private static final String MULTIPLICITY_SINGLE_REQUIRED = "";
 	private static final String MULTIPLICITY_SINGLE_NOT_REQUIRED = "0" + MULTIPLICITY_SEPARATOR + "1";
 
-	public static String getMultiplicity( com.filenet.api.meta.PropertyDescription internalPropertyDescription ) {
+	public static String getMultiplicity( IPropertyDescription propertyDescription ) {
 		
-		if ( Cardinality.SINGLE.equals( internalPropertyDescription.get_Cardinality() ) ) {
+		if ( !propertyDescription.isMultivalue() ) {
 			
-			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
+			if ( ! propertyDescription.isRequired() ) {
 				return MULTIPLICITY_SINGLE_NOT_REQUIRED;
 			} else {
 				return MULTIPLICITY_SINGLE_REQUIRED;
 			}
 		} else {
-			if ( ! internalPropertyDescription.get_IsValueRequired() ) {
+			if ( ! propertyDescription.isRequired() ) {
 				return MULTIPLICITY_MULTI_NOT_REQUIRED;
 			} else {
 				return MULTIPLICITY_MULTI_REQUIRED;

@@ -21,8 +21,8 @@ package com.ecmdeveloper.plugin.diagrams.util;
 
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.core.dialogs.ExceptionDetailsDialog;
 import com.ecmdeveloper.plugin.diagrams.Activator;
-import com.ecmdeveloper.plugin.dialogs.ExceptionDetailsDialog;
 
 /**
  * Facade class for the error message dialog.

@@ -19,20 +19,13 @@
  */
 package com.ecmdeveloper.plugin.diagrams;
 
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.ecmdeveloper.plugin.classes.model.ClassDescription;
-import com.ecmdeveloper.plugin.classes.model.PropertyDescription;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramAttributeAdapterFactory;
-import com.ecmdeveloper.plugin.diagrams.model.ClassDiagramClassAdapterFactory;
 import com.ecmdeveloper.plugin.diagrams.util.ImageCache;
 
 /**
@@ -45,34 +38,15 @@ public class Activator extends AbstractUIPlugin {
 	private static final ImageCache imageCache = new ImageCache();
 	private static Activator plugin;
 
-	private IAdapterFactory classDiagramClassAdapterFactory;
-	private IAdapterFactory classDiagramAttributeAdapterFactory;
-	
 	public Activator() {}
 
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		
-		classDiagramClassAdapterFactory = new ClassDiagramClassAdapterFactory();
-		IAdapterManager adapterManager = Platform.getAdapterManager();
-		adapterManager.registerAdapters( classDiagramClassAdapterFactory, ClassDescription.class );
-		
-		classDiagramAttributeAdapterFactory = new ClassDiagramAttributeAdapterFactory();
-		adapterManager.registerAdapters( classDiagramAttributeAdapterFactory, PropertyDescription.class);		
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		
-		IAdapterManager adapterManager = Platform.getAdapterManager();
-		
-		adapterManager.unregisterAdapters(classDiagramClassAdapterFactory);
-		classDiagramClassAdapterFactory = null;
-		
-		adapterManager.unregisterAdapters(classDiagramAttributeAdapterFactory);
-		classDiagramAttributeAdapterFactory = null;
-		
 		super.stop(context);
 	}
 

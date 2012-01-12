@@ -123,7 +123,7 @@
             class="com.ecmdeveloper.plugin.diagrams.perspectives.ClassDiagramPerspectiveFactory"
             icon="icons/table_multiple.png"
             id="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
-            name="Content Engine Class Diagram">
+            name="Object Store Class Diagram">
          <description>
             Edit Content Engine Class Diagrams.
          </description>

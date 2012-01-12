@@ -1,5 +1,5 @@
 /**
- * Copyright 2010, Ricardo Belfor
+ * Copyright 2010,2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -20,12 +20,12 @@
 
 package com.ecmdeveloper.plugin.diagrams.model;
 
-import com.ecmdeveloper.plugin.classes.model.ClassesManager;
-import com.ecmdeveloper.plugin.classes.model.task.GetRequiredClassDescription;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.filenet.api.constants.DeletionAction;
-import com.filenet.api.meta.ClassDescription;
-import com.filenet.api.meta.PropertyDescriptionObject;
+import com.ecmdeveloper.plugin.core.model.IClassDescription;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
+import com.ecmdeveloper.plugin.diagrams.Activator;
 
 /**
  * @author Ricardo.Belfor
@@ -42,13 +42,14 @@ public class AttributeRelationship extends ClassDiagramBase {
 	private ClassConnector targetConnector;
 	private boolean active;
 	
-	public AttributeRelationship(PropertyDescriptionObject targetPropertyDescription, ClassDiagramClass parent, ObjectStore objectStore ) throws Exception {
+	public AttributeRelationship(IPropertyDescription targetPropertyDescription, ClassDiagramClass parent, IObjectStore objectStore ) throws Exception {
 
-		GetRequiredClassDescription task = new GetRequiredClassDescription( targetPropertyDescription, objectStore );
-		ClassesManager.getManager().executeTaskSync( task );
-		ClassDescription requiredClass = task.getRequiredClass(); 
-		PropertyDescriptionObject sourcePropertyDescription = task.getReflectivePropertyDescription();
-		name = targetPropertyDescription.get_DisplayName();
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IGetRequiredClassDescriptionTask task = taskFactory.getGetRequiredClassDescription( targetPropertyDescription, objectStore );
+		Activator.getDefault().getTaskManager().executeTaskSync( task );
+		IClassDescription requiredClass = task.getRequiredClass(); 
+		IPropertyDescription sourcePropertyDescription = task.getReflectivePropertyDescription();
+		name = targetPropertyDescription.getDisplayName();
 		initializeTargetConnector(targetPropertyDescription, sourcePropertyDescription, requiredClass);
 		initalizeSourceConnector(targetPropertyDescription, sourcePropertyDescription, parent);
 		visible = true;
@@ -62,18 +63,18 @@ public class AttributeRelationship extends ClassDiagramBase {
 		active = true;
 	}
 
-	private void initializeTargetConnector(PropertyDescriptionObject targetPropertyDescription,
-			PropertyDescriptionObject sourcePropertyDescription,
-			ClassDescription requiredClass) {
+	private void initializeTargetConnector(IPropertyDescription targetPropertyDescription,
+			IPropertyDescription sourcePropertyDescription,
+			IClassDescription requiredClass) {
 		
 		targetConnector = new ClassConnector();
-		targetConnector.setClassId( requiredClass.get_Id().toString() );
-		targetConnector.setClassName( requiredClass.get_SymbolicName() );
+		targetConnector.setClassId( requiredClass.getId() );
+		targetConnector.setClassName( requiredClass.getName() );
 		targetConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( targetPropertyDescription ) );
 
 		if ( sourcePropertyDescription != null ) {
-			targetConnector.setPropertyId( sourcePropertyDescription.get_Id().toString() );
-			targetConnector.setPropertyName( sourcePropertyDescription.get_SymbolicName() );
+			targetConnector.setPropertyId( sourcePropertyDescription.getId() );
+			targetConnector.setPropertyName( sourcePropertyDescription.getName() );
 		}
 	}
 
@@ -85,21 +86,21 @@ public class AttributeRelationship extends ClassDiagramBase {
 		return targetConnector;
 	}
 
-	private void initalizeSourceConnector(PropertyDescriptionObject targetPropertyDescription,
-			PropertyDescriptionObject sourcePropertyDescription,
+	private void initalizeSourceConnector(IPropertyDescription targetPropertyDescription,
+			IPropertyDescription sourcePropertyDescription,
 			ClassDiagramClass parent) {
 
 		sourceConnector = new ClassConnector();
 		sourceConnector.setClassId( parent.getId() );
 		sourceConnector.setClassName( parent.getName() );
-		sourceConnector.setPropertyId( targetPropertyDescription.get_Id().toString() );
-		sourceConnector.setPropertyName( targetPropertyDescription.get_SymbolicName() );
+		sourceConnector.setPropertyId( targetPropertyDescription.getId() );
+		sourceConnector.setPropertyName( targetPropertyDescription.getName() );
 		if ( sourcePropertyDescription != null ) {
 			sourceConnector.setMultiplicity( MultiplicityFormatter.getMultiplicity( sourcePropertyDescription ) );
 		}
 
-		DeletionAction deletionAction = targetPropertyDescription.get_DeletionAction();
-		sourceConnector.setAggregate( DeletionAction.CASCADE.equals( deletionAction ) );
+		boolean cascadeDelete = targetPropertyDescription.isCascadeDelete();
+		sourceConnector.setAggregate( cascadeDelete );
 	}
 
 	public String getName() {
@@ -144,6 +145,4 @@ public class AttributeRelationship extends ClassDiagramBase {
 	public String toString() {
 		return getSourceConnector().toString() + " --> " + getTargetConnector().toString();
 	}
-	
-	
 }
