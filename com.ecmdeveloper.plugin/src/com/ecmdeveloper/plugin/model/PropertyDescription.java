@@ -28,9 +28,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
-
 import com.ecmdeveloper.plugin.core.model.ChoicePlaceholder;
 import com.ecmdeveloper.plugin.core.model.ClassesManager;
 import com.ecmdeveloper.plugin.core.model.IChoice;
@@ -43,6 +40,7 @@ import com.ecmdeveloper.plugin.model.tasks.GetChoiceValuesTask;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.filenet.api.admin.ChoiceList;
 import com.filenet.api.constants.Cardinality;
+import com.filenet.api.constants.DeletionAction;
 import com.filenet.api.constants.PropertySettability;
 import com.filenet.api.constants.TypeID;
 import com.filenet.api.core.Factory;
@@ -58,7 +56,7 @@ import com.filenet.api.meta.PropertyDescriptionString;
  * @author Ricardo.Belfor
  *
  */
-public class PropertyDescription implements IAdaptable, TaskListener, IPropertyDescription {
+public class PropertyDescription implements TaskListener, IPropertyDescription {
 	
 	private static final String READ_ONLY_TEXT = " The value is read only.";
 	private static final String SETTABLE_ON_CHECKIN_TEXT = " The value is only settable on checkin.";
@@ -96,12 +94,17 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 	private final boolean hidden;
 	private final boolean searchable;
 	private final boolean selectable;
+	private final String id;
+	private final boolean isenum;
+	private final boolean list;
+	private final boolean cascadeDelete;
 	
 	public PropertyDescription(Object internalPropertyDescription, ObjectStore objectStore ) {
 		this.objectStore = objectStore;
 		this.propertyDescription = (com.filenet.api.meta.PropertyDescription) internalPropertyDescription;
 		name = propertyDescription.get_SymbolicName();
 		displayName = propertyDescription.get_DisplayName();
+		id = propertyDescription.get_Id().toString();
 		propertyType = fromTypeID(propertyDescription.get_DataType() );
 		choiceList = propertyDescription.get_ChoiceList();
 		required = propertyDescription.get_IsValueRequired();
@@ -115,6 +118,17 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 		
 		containable = null;
 			
+		Cardinality cardinality = propertyDescription.get_Cardinality();
+		isenum = Cardinality.ENUM.equals(cardinality);
+		list = Cardinality.LIST.equals(cardinality);
+		
+		if ( propertyDescription instanceof PropertyDescriptionObject ) {
+			DeletionAction deletionAction = ((PropertyDescriptionObject) propertyDescription).get_DeletionAction();
+			cascadeDelete = DeletionAction.CASCADE.equals(deletionAction);
+		} else {
+			cascadeDelete = false;
+		}
+		
 		initializeOrderable();
 		initializeSettability();
 		initializeDescriptiveText();
@@ -265,7 +279,6 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 	private boolean initializeContainable() {
 		if ( propertyType.equals(PropertyType.OBJECT) ) {
 			try {
-				// TODO: make this asynchronous?
 				PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) propertyDescription;
 				CheckContainableClass task = new CheckContainableClass(objectPropertyDescription,
 						objectStore);
@@ -278,13 +291,6 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 		}
 		return false;
 	}
-
-	private com.filenet.api.meta.ClassDescription getRequiredClassDescription(
-		Object internalPropertyDescription, ObjectStore objectStore) {
-	com.filenet.api.meta.ClassDescription requiredClass = null;
-	PropertyDescriptionObject objectPropertyDescription = (PropertyDescriptionObject) internalPropertyDescription;
-	return requiredClass;
-}
 
 	@Override
 	public boolean hasChoices() {
@@ -315,16 +321,6 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 			choices = task.getChoices();
 			firePropertyChange("Choices", null, null);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object getAdapter(Class adapter) {
-
-		if ( adapter.isInstance(propertyDescription) ) {
-			return propertyDescription;
-		}
-		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	private void initializeDescriptiveText() {
@@ -523,5 +519,29 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 			return Factory.StringList.createList();
 		}
 		return null;
+	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public boolean isCascadeDelete() {
+		return cascadeDelete;
+	}
+
+	@Override
+	public boolean isEnum() {
+		return isenum;
+	}
+
+	@Override
+	public boolean isList() {
+		return list;
+	}
+
+	public com.filenet.api.meta.PropertyDescription getInternalPropertyDescription() {
+		return propertyDescription;
 	}
 }

@@ -29,6 +29,7 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckoutTask;
@@ -52,6 +53,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
 import com.ecmdeveloper.plugin.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.Document;
@@ -217,5 +219,11 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits) {
 		return new ExecuteSearchTask(query, objectStore);
+	}
+
+	@Override
+	public IGetRequiredClassDescriptionTask getGetRequiredClassDescription(
+			IPropertyDescription targetPropertyDescription, IObjectStore objectStore) {
+		return new GetRequiredClassDescription(targetPropertyDescription, objectStore);
 	}
 }

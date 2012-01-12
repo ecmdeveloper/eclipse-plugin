@@ -132,7 +132,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <menu
                id="contentEngine"
-               label="Content Engine">
+               label="Object Store">
             <command
                   commandId="com.ecmdeveloper.plugin.newDocumentFromResource"
                   style="push">

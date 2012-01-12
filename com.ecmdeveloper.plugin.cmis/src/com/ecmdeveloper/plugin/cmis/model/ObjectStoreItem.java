@@ -71,6 +71,11 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		this(parent, objectStore, true );
 	}
 
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter) {
+		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -115,11 +120,6 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 	@Override
 	public void setParent(IObjectStoreItem parent) {
 		this.parent = parent;
-	}
-
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter) {
-		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	@Override

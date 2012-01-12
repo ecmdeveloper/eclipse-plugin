@@ -1,5 +1,5 @@
 /**
- * Copyright 2011, Ricardo Belfor
+ * Copyright 2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,45 +18,23 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model;
+package com.ecmdeveloper.plugin.ui.model;
 
-import java.util.Collection;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
-import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IClassDescription {
+public class ObjectStoreItemWorkbenchAdapter extends WorkbenchAdapter {
 
-	void refresh();
-
-	IObjectStore getObjectStore();
-
-	Collection<Object> getChildren();
-
-	Collection<Object> getChildren(boolean synchronous) throws Exception;
-
-	String getDisplayName();
-
-	String getName();
-
-	String getId();
-
-	Boolean getCBREnabled();
-
-	boolean hasChildren();
-
-	void setChildren(Collection<IClassDescription> children);
-
-	Collection<IPropertyDescription> getAllPropertyDescriptions();
-
-	Collection<IPropertyDescription> getPropertyDescriptions();
-
-	Object getParent();
-
-	String getNamePropertyName();
-
-	boolean isAbstract();
+	@Override
+	public String getLabel(Object object) {
+		if ( object instanceof IObjectStoreItem ) {
+			return ((IObjectStoreItem) object).getDisplayName();
+		}
+		return null;
+	}
 }

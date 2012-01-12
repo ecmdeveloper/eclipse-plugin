@@ -77,4 +77,12 @@ public interface IPropertyDescription {
 	void removePropertyChangeListener(PropertyChangeListener listener);
 	
 	List getList();
+
+	String getId();
+
+	boolean isCascadeDelete();
+
+	boolean isList();
+
+	boolean isEnum();
 }

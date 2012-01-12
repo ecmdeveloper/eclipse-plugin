@@ -106,7 +106,7 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 		choiceList = propertyDescription.getChoices();
 		required = propertyDescription.isRequired();
 		multivalue = !propertyDescription.getCardinality().equals( org.apache.chemistry.opencmis.commons.enums.Cardinality.SINGLE );
-		systemOwned = false; // TODO: propertyDescription.getUpdatability().get_IsSystemOwned();
+		systemOwned = Updatability.READONLY.equals( propertyDescription.getUpdatability() );
 		orderable = propertyDescription.isOrderable();
 		cbrEnabled = initializeCBREnabled();
 		hidden = false;
@@ -508,5 +508,29 @@ public class PropertyDescription implements IAdaptable, TaskListener, IPropertyD
 //			return Factory.BinaryList.createList();
 		}
 		return null;
+	}
+
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isCascadeDelete() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isEnum() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isList() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

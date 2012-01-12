@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 
@@ -51,16 +52,24 @@ public class ObjectStoreItemPropertyPage extends PropertyPage {
 		
 		createPageRow(panel, "Display Name:", objectStoreItem.getDisplayName() );		
 		createPageRow(panel, "Name:", objectStoreItem.getName() );
-		if ( !(objectStoreItem instanceof IObjectStore) ) {
-			createPageRow(panel, "Id:", objectStoreItem.getId() );		
-		}
 		createPageRow(panel, "Type:", getElement().getClass().getSimpleName() );		
+
+		if ( !(objectStoreItem instanceof IObjectStore) ) {
+			createPageRow(panel, "Id:", objectStoreItem.getId() );
+			createPageRow(panel, "Class:", objectStoreItem.getClassName() );
+		}
 
 		if ( objectStoreItem instanceof IDocument ) {
 			IDocument document = (IDocument) objectStoreItem;
 			
 			createPageRow(panel, "Version Label:", document.getVersionLabel() );		
 			createPageRow(panel, "Version Series Id:", document.getVersionSeriesId() );		
+		} 
+		
+		if ( objectStoreItem instanceof IFolder) {
+			IFolder folder = (IFolder) objectStoreItem;
+			
+			createPageRow(panel, "Path:", folder.getPathName() );		
 		}
 		
 		return panel;
@@ -75,6 +84,6 @@ public class ObjectStoreItemPropertyPage extends PropertyPage {
 		Text nameLabelValue = new Text(panel, SWT.WRAP
 				| SWT.READ_ONLY);
 		nameLabelValue.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-		nameLabelValue.setText( value );
+		nameLabelValue.setText( value != null ? value : "" );
 	}
 }
