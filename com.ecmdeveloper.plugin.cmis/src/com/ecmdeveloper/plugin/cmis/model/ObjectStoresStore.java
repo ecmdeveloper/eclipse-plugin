@@ -131,6 +131,19 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		connection.setUrl( connectionChild.getString( PluginTagNames.URL_TAG ) );
 		connection.setUsername( connectionChild.getString( PluginTagNames.USERNAME_TAG ) );
 		connection.setPassword( connectionChild.getString( PluginTagNames.PASSWORD_TAG ) );
+		String bindingTypeValue = connectionChild.getString( PluginTagNames.BINDING_TYPE_TAG  );
+		connection.setBindingType( BindingType.valueOf( bindingTypeValue ) );
+		String authenticationValue = connectionChild.getString( PluginTagNames.AUTHENTICATION_TAG );
+		connection.setAuthentication( Authentication.valueOf( authenticationValue ) );
+		connection.setUseCompression( connectionChild.getBoolean( PluginTagNames.USE_COMPRESSION_TAG ) );
+		connection.setUseClientCompression( connectionChild.getBoolean( PluginTagNames.USE_CLIENT_COMPRESSION_TAG ) );
+		connection.setUseCookies( connectionChild.getBoolean( PluginTagNames.USE_COOKIES_TAG ) );
+
+//		connection.setBindingType( BindingType.ATOMPUB );
+//		connection.setAuthentication( Authentication.STANDARD );
+//		connection.setUseCompression( true );
+//		connection.setUseClientCompression( false );
+//		connection.setUseCookies( false );
 		
 		return connection;
 	}
@@ -203,13 +216,11 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		String password = connection.getPassword();
 		// TODO add some basic encryption
 		connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
-		
-//		BINDINGTYPE;
-//		AUTHENTICATION;
-//		USECOMPRESSION;
-//		USECLIENTCOMPRESSION;
-//		USECOOKIES;
-		
+		connectionChild.putString( PluginTagNames.BINDING_TYPE_TAG, connection.getBindingType().name() );
+		connectionChild.putString( PluginTagNames.AUTHENTICATION_TAG, connection.getAuthentication().name() );
+		connectionChild.putBoolean( PluginTagNames.USE_COMPRESSION_TAG, connection.isUseCompression() );
+		connectionChild.putBoolean( PluginTagNames.USE_CLIENT_COMPRESSION_TAG, connection.isUseClientCompression() );
+		connectionChild.putBoolean( PluginTagNames.USE_COOKIES_TAG, connection.isUseCookies() );
 	}
 
 	private void saveObjectStore(IMemento objectStoresChild, IObjectStoreItem objectStore) {

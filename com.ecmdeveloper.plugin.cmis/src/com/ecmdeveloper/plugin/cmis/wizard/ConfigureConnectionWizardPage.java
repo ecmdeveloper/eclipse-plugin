@@ -23,16 +23,17 @@ package com.ecmdeveloper.plugin.cmis.wizard;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import com.ecmdeveloper.plugin.cmis.model.Authentication;
 import com.ecmdeveloper.plugin.cmis.model.Connection;
+import com.ecmdeveloper.plugin.cmis.ui.AuthenticationEditor;
+import com.ecmdeveloper.plugin.cmis.ui.BindingEditor;
+import com.ecmdeveloper.plugin.cmis.ui.ConnectionNameEditor;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.ui.wizard.AbstractConfigureConnectionWizardPage;
 
@@ -43,17 +44,14 @@ import com.ecmdeveloper.plugin.ui.wizard.AbstractConfigureConnectionWizardPage;
 public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWizardPage {
 
 	private static final String CONNECTION_NAME_FIELD = "CONNECTION_NAME";
-	private static final String BINDING_NAME_FIELD = "BINDING";
-	private static final String AUTHENTICATION_NAME_FIELD = "AUTHENTICATION";
 	
-	private StringFieldEditor connectionNameEditor;
-	private String connectionName;
-	private BindingType bindingType = BindingType.ATOMPUB;
-	private Authentication authentication = Authentication.STANDARD;
+	private ConnectionNameEditor connectionNameEditor;
 	private boolean useCompression = true;
 	private boolean useClientCompression = false;
 	private boolean useCookies = false;
 	private PreferenceStore preferenceStore = new PreferenceStore();
+	private AuthenticationEditor authenticationEditor;
+	private BindingEditor bindingEditor;
 	
 	@Override
 	protected void createExtraControls(Composite container2) {
@@ -66,94 +64,24 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 	}
 
 	protected void createConnectionNameEditor() {
-		
-		connectionNameEditor = new StringFieldEditor("", "Connection name:",container ) {
+
+		connectionNameEditor = new ConnectionNameEditor(container) {
 
 			@Override
-			public int getNumberOfControls() {
-				return 2; //ConfigureCredentialsWizardPage.this.getNumberOfControls();
+			protected void updateControls() {
+				ConfigureConnectionWizardPage.this.updateControls(CONNECTION_NAME_FIELD);
 			}
-
 		};
-
-		connectionNameEditor.setPropertyChangeListener( new IPropertyChangeListener() {
-	
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if ( event.getProperty().equals( FieldEditor.VALUE ) ) {
-					connectionName = (String) event.getNewValue();
-					updateControls(CONNECTION_NAME_FIELD);
-				}
-			}
-		});
-
 	}
 
 	private void createAuthenticationEditor(Composite container) {
-		
-		final String preferenceName = "Authentication";
-		
-		RadioGroupFieldEditor authenticationEditor = new RadioGroupFieldEditor(preferenceName, "&Authentication:", 3,
-				getAuthenticationLabelsAndValues(), container, false) {
-			@Override
-			public int getNumberOfControls() {
-				return 1;
-			}
-		};
-
-		setFieldEditorValue(preferenceName, authentication.name(), authenticationEditor);
-		
-		authenticationEditor.setPropertyChangeListener( new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				authentication = Authentication.valueOf((String) event.getNewValue());
-				updateControls(AUTHENTICATION_NAME_FIELD);
-			}
-		});
+		authenticationEditor = new AuthenticationEditor(container);
+		authenticationEditor.setValue(Authentication.STANDARD);
 	}
 
-	private void setFieldEditorValue(final String preferenceName, String value, FieldEditor editor) {
-		preferenceStore.setValue(preferenceName, value );
-		editor.setPreferenceStore( preferenceStore );
-		editor.load();
-	}
-
-	private String[][] getAuthenticationLabelsAndValues() {
-		String labelsAndValues[][] = new String[Authentication.values().length][2];
-		
-		int i = 0;
-		for (Authentication format : Authentication.values()) {
-			labelsAndValues[i++] = new String[] { format.toString(), format.name() };
-		}
-		return labelsAndValues;
-	}
-	
 	private void createBindingEditor(Composite container) {
-		
-		final String preferenceName = "Binding";
-
-		String[][] labelsAndValues = { { "AtomPub", BindingType.ATOMPUB.name() },
-									   { "Web Services", BindingType.WEBSERVICES.name() } };
-	
-		RadioGroupFieldEditor bindingEditor = new RadioGroupFieldEditor("", "B&inding:", 3,
-				labelsAndValues, container, false) {
-			@Override
-			public int getNumberOfControls() {
-				return 1;
-			}
-		};
-
-		setFieldEditorValue(preferenceName, bindingType.name(), bindingEditor);
-		
-		bindingEditor.setPropertyChangeListener( new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				bindingType = BindingType.valueOf((String) event.getNewValue());
-				updateControls(BINDING_NAME_FIELD);
-			}
-		});
+		bindingEditor = new BindingEditor(container);
+		bindingEditor.setValue(BindingType.ATOMPUB);
 	}
 	
 	private void createCompressEditor(Composite container) {
@@ -229,9 +157,9 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 		connection.setUsername(username);
 		connection.setPassword(password);
 		connection.setName(url);
-		connection.setDisplayName(connectionName);
-		connection.setAuthentication(authentication);
-		connection.setBindingType(bindingType);
+		connection.setDisplayName( connectionNameEditor.getValue() );
+		connection.setAuthentication( authenticationEditor.getValue() );
+		connection.setBindingType( bindingEditor.getValue() );
 		connection.setUseCompression(useCompression);
 		connection.setUseClientCompression(useClientCompression);
 		connection.setUseCookies(useCookies);
@@ -241,7 +169,7 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 
 	@Override
 	protected boolean isConnectionFieldsSet() {
-		return isFieldSet(getURL() ) && isFieldSet(connectionName);
+		return isFieldSet(getURL() ) && isFieldSet( connectionNameEditor.getValue() );
 	}
 
 	private boolean isFieldSet(String value) {
@@ -260,7 +188,7 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 			return false;
 		}
 
-		if ( !isFieldSet( connectionName ) ) {
+		if ( !isFieldSet( connectionNameEditor.getValue() ) ) {
 			if ( CONNECTION_NAME_FIELD.equals(fieldname) ) {
 				setErrorMessage("The connection name cannot be empty");
 			}
