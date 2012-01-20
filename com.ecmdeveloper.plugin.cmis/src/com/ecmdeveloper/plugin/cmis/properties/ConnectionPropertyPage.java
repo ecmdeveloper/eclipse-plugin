@@ -20,14 +20,14 @@
 
 package com.ecmdeveloper.plugin.cmis.properties;
 
-import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import com.ecmdeveloper.plugin.cmis.model.Connection;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
+import com.ecmdeveloper.plugin.cmis.ui.AuthenticationEditor;
+import com.ecmdeveloper.plugin.cmis.ui.BindingEditor;
+import com.ecmdeveloper.plugin.cmis.ui.ConnectionNameEditor;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.properties.AbstractConnectionPropertyPage;
 
@@ -38,43 +38,54 @@ import com.ecmdeveloper.plugin.core.properties.AbstractConnectionPropertyPage;
 public class ConnectionPropertyPage extends AbstractConnectionPropertyPage {
 
 	private StringFieldEditor connectionNameEditor;
-	private String connectionName;
+	private AuthenticationEditor authenticationEditor;
+	private BindingEditor bindingEditor;
 
 	@Override
 	protected void performDefaults() {
-		IConnection connection = getConnection();
+		Connection connection = (Connection) getConnection();
 		connectionNameEditor.setStringValue( connection.getDisplayName() );
+		bindingEditor.setValue( connection.getBindingType() );
+		authenticationEditor.setValue( connection.getAuthentication() );
+		
 		super.performDefaults();
 	}
 
 	@Override
 	protected void createConnectionContents(Composite container, IConnection connection) {
-		connectionName = connection.getDisplayName();
-		createConnectionNameEditor(container);		
+		createConnectionNameEditor(container, connection );		
 		super.createConnectionContents(container, connection);
+		createBindingEditor(container, connection);
+		createAuthenticationEditor(container, connection );
 	}
 
-	private void createConnectionNameEditor(Composite container) {
-		
-		connectionNameEditor = new StringFieldEditor("", "Connection name:",container );
+	private void createAuthenticationEditor(Composite container, IConnection connection) {
+		authenticationEditor = new AuthenticationEditor(container);
+		authenticationEditor.setValue( ((Connection)connection).getAuthentication() );
+	}
 
-		connectionNameEditor.setPropertyChangeListener( new IPropertyChangeListener() {
+	private void createBindingEditor(Composite container, IConnection connection) {
+		bindingEditor = new BindingEditor(container);
+		bindingEditor.setValue( ((Connection)connection).getBindingType() );
+	}
 	
+	protected void createConnectionNameEditor(Composite container, IConnection connection) {
+
+		connectionNameEditor = new ConnectionNameEditor(container) {
+
 			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if ( event.getProperty().equals( FieldEditor.VALUE ) ) {
-					connectionName = (String) event.getNewValue();
-					updateControls();
-				}
+			protected void updateControls() {
+				ConnectionPropertyPage.this.updateControls();
 			}
-		});
+		};
 		
-		connectionNameEditor.setStringValue( connectionName );
-	}
-	
+		connectionNameEditor.setStringValue( connection.getDisplayName() );
+	}	
 	
 	@Override
 	protected void updateControls() {
+		
+		String connectionName = connectionNameEditor.getStringValue();
 		
 		if ( connectionName == null || connectionName.isEmpty() ) {
 			setValid(false);
@@ -101,10 +112,15 @@ public class ConnectionPropertyPage extends AbstractConnectionPropertyPage {
 		
 		Connection connection2 = (Connection) connection;
 
-		connection2.setDisplayName(connectionName);
+		connection2.setDisplayName( connectionNameEditor.getStringValue() );
 		connection2.setName( getUrl() );
 		connection2.setUrl( getUrl() );
 		connection2.setUsername( getUserName() );
 		connection2.setPassword( getPassword() );
+		connection2.setAuthentication( authenticationEditor.getValue() );
+		connection2.setBindingType( bindingEditor.getValue() );
 	}
 }
+
+
+

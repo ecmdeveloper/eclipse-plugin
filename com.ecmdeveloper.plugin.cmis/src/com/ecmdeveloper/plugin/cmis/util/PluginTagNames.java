@@ -37,4 +37,9 @@ public class PluginTagNames {
 	public static final String FILES_TAG = "files";
 	public static final String FILE_TAG = "file";
 	public static final String VERSION_TAG = "version";
+	public static final String BINDING_TYPE_TAG = "bindingType";
+	public static final String AUTHENTICATION_TAG = "authentication";
+	public static final String USE_COMPRESSION_TAG = "useCompression";
+	public static final String USE_CLIENT_COMPRESSION_TAG = "useClientCompression";
+	public static final String USE_COOKIES_TAG = "useCookies";
 }
