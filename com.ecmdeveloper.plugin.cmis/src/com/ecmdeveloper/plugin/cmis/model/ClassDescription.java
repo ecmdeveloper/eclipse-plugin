@@ -53,6 +53,7 @@ public class ClassDescription implements IClassDescription {
 	private ArrayList<Object> children;
 	List<IPropertyDescription> propertyDescriptions;
 	private boolean isAbstract;
+	private ClassesPlaceholder placeholder;
 
 	public ClassDescription(ObjectType objectType, Object parent, IObjectStore objectStore ) {
 		this.objectType = objectType;
@@ -65,8 +66,8 @@ public class ClassDescription implements IClassDescription {
 	private void refreshInternal() {
 		name = objectType.getQueryName();
 		displayName = objectType.getDisplayName();
-		hasChildren = objectType.getChildren().iterator().hasNext();
 		isAbstract = !objectType.isCreatable();
+		hasChildren = true;
 		children = null;
 		initializePropertyDescriptions();
 	}
@@ -96,12 +97,16 @@ public class ClassDescription implements IClassDescription {
 		return hasChildren;	
 	}
 
+	public void setHasChildren(boolean hasChildren) {
+		this.hasChildren = hasChildren;
+	}
+
 	@Override
 	public Collection<Object> getChildren() {
 
 		if ( children == null ) {
 			children = new ArrayList<Object>();
-			ClassesPlaceholder placeholder = new ClassesPlaceholder();
+			placeholder = new ClassesPlaceholder();
 			children.add( placeholder );
 
 			ITaskFactory taskFactory = objectStore.getTaskFactory();
@@ -112,6 +117,18 @@ public class ClassDescription implements IClassDescription {
 		return children;
 	}
 
+	public void addChild(ClassDescription childClassDescription ) {
+		if ( children == null ) {
+			children = new ArrayList<Object>();
+			hasChildren = true;
+		}
+		
+		if ( placeholder != null) {
+			children.remove(placeholder);
+		}
+		children.add(childClassDescription);
+	}
+	
 	@Override
 	public IObjectStore getObjectStore() {
 		return objectStore;
