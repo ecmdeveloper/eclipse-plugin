@@ -22,9 +22,12 @@ package com.ecmdeveloper.plugin.cmis.model.tasks;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.api.Tree;
 
 import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
@@ -33,6 +36,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.cmis.model.ClassDescription;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
+import com.ecmdeveloper.plugin.cmis.util.PluginLog;
 
 /**
  * @author Ricardo.Belfor
@@ -73,22 +77,42 @@ public class GetChildClassDescriptionsTask extends AbstractTask implements IGetC
 	private void getImmediateSubclassDescriptions() {
 		
 		ObjectType objectType = parent.getTypeDefinition();
+		Session session = ((ObjectStore)parent.getObjectStore()).getSession();
+		//
+		// WORKARROUND: for IBM FileNet P8 gave an exception when the children of the children were fetched, so
+		//				now the whole tree is fetched.
+		//
+		// ItemIterable<ObjectType> typeChildren = session.getTypeChildren(objectType.getId(), true);
+		List<Tree<ObjectType>> descendants = session.getTypeDescendants(objectType.getId(), -1, true );
+		
 		ArrayList<IClassDescription> children = new ArrayList<IClassDescription>();
 		oldChildren = parent.getChildren();
-
+		
 		try
 		{
-			for (ObjectType childObjectType : objectType.getChildren() ) {				
-				ClassDescription classDescription = new ClassDescription( childObjectType, parent, parent.getObjectStore());
-				children.add(classDescription);
-			}	
-
+            for (Tree<ObjectType> treeItem : descendants) {
+                addLevel(parent, treeItem);
+            }
+			
 		} catch (Exception e) {
 			ClassesPlaceholder classesPlaceholder = new ClassesPlaceholder(e);
 			classesPlaceholder.setParent(parent);
 			children.add( classesPlaceholder );
-			e.printStackTrace();
+			PluginLog.error(e);
 		}
-		parent.setChildren( children );
 	}
+
+    private void addLevel(ClassDescription parent, Tree<ObjectType> tree) {
+
+    	ObjectType childObjectType = tree.getItem();
+		ClassDescription classDescription = new ClassDescription( childObjectType, parent, parent.getObjectStore());
+        parent.addChild(classDescription);
+        classDescription.setHasChildren(false);
+        
+        if ( tree.getChildren() != null) {
+            for (Tree<ObjectType> treeItem : tree.getChildren()) {
+                addLevel(classDescription, treeItem);
+            }
+        }
+    }
 }

@@ -65,8 +65,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 
 	@Override
 	public String getMimeType() {
-		// TODO Auto-generated method stub
-		return null;
+		return mimeType;
 	}
 
 	@Override
@@ -136,8 +135,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		name = document.getName();
 		id = document.getId();
 		className = document.getType().getId();
-		
-//		mimeType = document.getMimeType();
+		mimeType = document.getContentStreamMimeType();
 		versionSeriesId = document.getVersionSeriesId();
 		if ( versionSeriesId != null ) {
 			reserved = document.isVersionSeriesCheckedOut();
