@@ -250,9 +250,9 @@ public class Query implements PropertyChangeListener {
 	}
 
 	private void appendTablePart(StringBuffer sql, IQueryTable queryTable) {
-		sql.append("[");
+		if ( queryTable.isContentEngineTable() ) sql.append("[");
 		sql.append( queryTable );
-		sql.append( "] ");
+		if ( queryTable.isContentEngineTable() ) sql.append( "] ");
 		if ( queryTable.getAlias() != null ) {
 			sql.append("AS ");
 			sql.append( getSafeAlias( queryTable.getAlias() ) );
