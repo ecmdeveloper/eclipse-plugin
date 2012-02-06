@@ -35,6 +35,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.IDisconnectConnectionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IDocumentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IAddObjectStoreTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IConnectConnectionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.ILoadChildrenTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IMoveTask;
@@ -44,6 +45,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.IRefreshTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskCompleteEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskListener;
 import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
+import com.ecmdeveloper.plugin.core.model.tasks.impl.TaskManager;
 
 /**
  * @author ricardo.belfor
@@ -191,11 +193,11 @@ public class ObjectStoreItemsModelController implements TaskListener {
 
 	private void refreshSimilarObjects(IObjectStoreItem objectStoreItem) {
 		Collection<IObjectStoreItem> objectStoreItems = objectStoreItemsModel.get(objectStoreItem);
+		ITaskFactory taskFactory = objectStoreItem.getTaskFactory();
 		for (IObjectStoreItem o : objectStoreItems ) {
 			if ( ! o.equals(objectStoreItem ) ) {
-// FIXME				
-//				RefreshTask refreshTask = new RefreshTask( o );
-//				TaskManager.getInstance().executeTaskASync(refreshTask);
+				IRefreshTask refreshTask = taskFactory.getRefreshTask( o );
+				TaskManager.getInstance().executeTaskASync(refreshTask);
 			}
 		}
 	}

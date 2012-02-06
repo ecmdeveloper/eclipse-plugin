@@ -79,6 +79,7 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		url = connection.getUrl();
 
 		createConnectionContents(container, connection);
+		createConnectButton(container);
 
 		if ( connection.isConnected() ) {
 			Label label = new Label(container, SWT.None);
@@ -96,7 +97,6 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		createUserNameEditor(container);
 		createPasswordEditor(container);
 		createUrlEditor(container);
-		createConnectButton(container);
 	}
 	
 	protected abstract IConnection getConnection();
