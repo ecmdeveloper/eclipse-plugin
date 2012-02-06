@@ -74,6 +74,11 @@ public abstract class QueryComponent extends QuerySubpart{
 	}
 
 	protected void appendField(StringBuffer result, boolean strict) {
+		
+		if ( !field.getQueryTable().isContentEngineTable() ) {
+			strict = false;
+		}
+		
 		if ( strict ) {
 			result.append("[");
 		}
