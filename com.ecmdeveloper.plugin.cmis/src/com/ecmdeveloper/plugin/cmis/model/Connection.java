@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 
 import com.ecmdeveloper.plugin.cmis.Activator;
-import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.AbstractConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
 
@@ -40,15 +40,10 @@ import com.ecmdeveloper.plugin.core.model.IObjectStores;
  * @author ricardo.belfor
  *
  */
-public class Connection implements IConnection {
+public class Connection extends AbstractConnection {
 
-	private String url;
-	private String username;
-	private String password;
 	private List<Repository> repositories;
 	private Map<String, String> parameters;
-	private String name;
-	private String displayName	;
 	private Authentication authentication;
 	private BindingType bindingType;
 	private boolean useCompression;
@@ -61,8 +56,8 @@ public class Connection implements IConnection {
 		SessionFactory sessionFactory = Activator.getDefault().getSessionFactory();
 		
 		parameters = new HashMap<String, String>();
-		parameters.put(SessionParameter.USER, username );
-		parameters.put(SessionParameter.PASSWORD, password );
+		parameters.put(SessionParameter.USER, getUsername() );
+		parameters.put(SessionParameter.PASSWORD, getPassword() );
 		parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 		
 		setUrlParameters();
@@ -86,12 +81,12 @@ public class Connection implements IConnection {
 	private void setAuthenticationParameters() {
 		switch (authentication) {
         case STANDARD:
-            parameters.put(SessionParameter.USER, username);
-            parameters.put(SessionParameter.PASSWORD, password);
+            parameters.put(SessionParameter.USER, getUsername() );
+            parameters.put(SessionParameter.PASSWORD, getPassword() );
         	break;
         case NTLM:
-            parameters.put(SessionParameter.USER, username);
-            parameters.put(SessionParameter.PASSWORD, password);
+            parameters.put(SessionParameter.USER, getUsername() );
+            parameters.put(SessionParameter.PASSWORD, getPassword() );
             parameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
         	break;
         }
@@ -101,18 +96,18 @@ public class Connection implements IConnection {
 
 		switch (bindingType) {
 		case ATOMPUB:
-			parameters.put(SessionParameter.ATOMPUB_URL, url );
+			parameters.put(SessionParameter.ATOMPUB_URL, getUrl() );
 			break;
 		case WEBSERVICES:
-            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url);
+            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, getUrl() );
+            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, getUrl() );
 			break;
 		default:
 			throw new IllegalArgumentException( "Invalid binding type " + bindingType );
@@ -130,28 +125,10 @@ public class Connection implements IConnection {
 		return repositories != null;
 	}
 
-	@Override
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
 	public Map<String, String> getParameters() {
 		Map<String,String> parametersCopy = new HashMap<String, String>();
 		parametersCopy.putAll(parameters);
 		return parametersCopy;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override
@@ -162,38 +139,6 @@ public class Connection implements IConnection {
 			objectStoreList.add(objectStore);
 		}
 		return objectStoreList.toArray( new IObjectStore[0] );
-	}
-
-	@Override
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	@Override
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	@Override
-	public String toString() {
-		return getDisplayName();
 	}
 
 	public void setAuthentication(Authentication authentication) {

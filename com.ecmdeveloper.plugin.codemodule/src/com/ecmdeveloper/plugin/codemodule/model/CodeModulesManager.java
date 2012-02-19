@@ -27,22 +27,18 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import com.ecmdeveloper.plugin.codemodule.Activator;
+import com.ecmdeveloper.plugin.core.model.IAction;
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
+import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
-import com.ecmdeveloper.plugin.model.Action;
-import com.ecmdeveloper.plugin.model.CodeModule;
-import com.ecmdeveloper.plugin.model.Document;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.model.tasks.CreateCodeModuleTask;
-import com.ecmdeveloper.plugin.model.tasks.GetCodeModuleActionsTask;
-import com.ecmdeveloper.plugin.model.tasks.GetCodeModulesTask;
-import com.ecmdeveloper.plugin.model.tasks.UpdateCodeModuleTask;
-import com.ecmdeveloper.plugin.model.tasks.UpdateTask;
 
 /**
  * This class is the manager class for Code Module Files. It is implemented as a
@@ -89,15 +85,15 @@ public class CodeModulesManager implements ITaskManagerListener {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<CodeModule> getNewCodeModules(ObjectStore objectStore ) throws ExecutionException {
+	public Collection<ICodeModule> getNewCodeModules(IObjectStore objectStore ) throws ExecutionException {
 
 		GetCodeModulesTask task = new GetCodeModulesTask( objectStore );
-		Collection<CodeModule> codeModules = 
-			(Collection<CodeModule>) getTaskManager().executeTaskSync(task);
+		Collection<ICodeModule> codeModules = 
+			(Collection<ICodeModule>) getTaskManager().executeTaskSync(task);
 
-		ArrayList<CodeModule> newCodeModules = new ArrayList<CodeModule>();
+		ArrayList<ICodeModule> newCodeModules = new ArrayList<ICodeModule>();
 		
-		for (CodeModule codeModule : codeModules) {
+		for (ICodeModule codeModule : codeModules) {
 			
 			boolean found = false;
 			
@@ -127,7 +123,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 	 * @param codeModuleFile
 	 * @return
 	 */
-	private boolean isSame(CodeModule codeModule, CodeModuleFile codeModuleFile) {
+	private boolean isSame(ICodeModule codeModule, CodeModuleFile codeModuleFile) {
 		return codeModule.getId().equalsIgnoreCase( codeModuleFile.getId() ) && 
 				codeModuleFile.getObjectStoreName().equals( codeModule.getObjectStore().getName() ) &&
 				codeModuleFile.getConnectionName().equals(codeModule.getObjectStore().getConnection().getName() );
@@ -143,7 +139,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 	    return codeModulefiles;
 	}
 
-	public CodeModuleFile createNewCodeModuleFile(ObjectStore objectStore, String name) {
+	public CodeModuleFile createNewCodeModuleFile(IObjectStore objectStore, String name) {
 
 		CodeModuleFile codeModuleFile = new CodeModuleFile(name, null,
 				objectStore.getConnection().getName(), objectStore.getConnection().getDisplayName(), 
@@ -152,7 +148,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 		return codeModuleFile;
 	}
 
-	public CodeModuleFile createCodeModuleFile(CodeModule codeModule, ObjectStore objectStore) {
+	public CodeModuleFile createCodeModuleFile(ICodeModule codeModule, IObjectStore objectStore) {
 
 		CodeModuleFile codeModuleFile = new CodeModuleFile( codeModule, objectStore );
 		codeModuleFile.setFilename( codeModuleFileStore.getCodeModuleFile(codeModuleFile).getPath() );
@@ -187,7 +183,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 		CreateCodeModuleTask task = new CreateCodeModuleTask(codeModuleFile
 				.getName(), codeModuleFile.getContentElementFiles(), objectStore );
 		
-		CodeModule codeModule = (CodeModule) getTaskManager().executeTaskSync(task);
+		ICodeModule codeModule = (ICodeModule) getTaskManager().executeTaskSync(task);
 		codeModuleFile.setId( codeModule.getId() );
 		
 		saveCodeModuleFile(codeModuleFile, true);
@@ -211,12 +207,12 @@ public class CodeModulesManager implements ITaskManagerListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Collection<Action> getCodeModuleActions( CodeModuleFile codeModuleFile ) throws ExecutionException {
+	public Collection<IAction> getCodeModuleActions( CodeModuleFile codeModuleFile ) throws ExecutionException {
 		
 		IObjectStore objectStore = getObjectStore(codeModuleFile);
 		objectStore.assertConnected();
 		GetCodeModuleActionsTask task = new GetCodeModuleActionsTask(codeModuleFile.getId(), objectStore );
-		return (Collection<Action>) getTaskManager().executeTaskSync(task);
+		return (Collection<IAction>) getTaskManager().executeTaskSync(task);
 	}
 	
 	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws Exception {
@@ -227,12 +223,13 @@ public class CodeModulesManager implements ITaskManagerListener {
 				.getId(), codeModuleFile.getName(), codeModuleFile.getContentElementFiles(),
 				objectStore);
 		
-		CodeModule codeModule = (CodeModule) getTaskManager().executeTaskSync(task);
+		ICodeModule codeModule = (ICodeModule) getTaskManager().executeTaskSync(task);
 
 		for ( Object objectStoreItem : selectedActions ) {
-			if (objectStoreItem instanceof Action ) {
-				((Action) objectStoreItem).setCodeModule( codeModule );
-				UpdateTask updateTask = new UpdateTask((IObjectStoreItem) objectStoreItem );
+			if (objectStoreItem instanceof IAction ) {
+				((IAction) objectStoreItem).setCodeModule( codeModule );
+				ITaskFactory taskFactory = ((IAction) objectStoreItem).getTaskFactory();
+				IUpdateTask updateTask = taskFactory.getUpdateTask((IObjectStoreItem) objectStoreItem );
 				getTaskManager().executeTaskSync(updateTask);
 			}
 		}
@@ -273,9 +270,9 @@ public class CodeModulesManager implements ITaskManagerListener {
 		
 		if ( event.getItemsRemoved() != null ) {
 			for ( IObjectStoreItem objectStoreItem : event.getItemsRemoved() ) {
-				if ( objectStoreItem instanceof Document ) {
+				if ( objectStoreItem instanceof IDocument ) {
 					removeDocumentCodeModuleFile(objectStoreItem);
-				} else if ( objectStoreItem instanceof ObjectStore ) {
+				} else if ( objectStoreItem instanceof IObjectStore ) {
 					updateObjectStoreCodeModuleFiles(objectStoreItem);
 				}
 			}
@@ -283,9 +280,9 @@ public class CodeModulesManager implements ITaskManagerListener {
 		
 		if ( event.getItemsUpdated() != null ) {
 			for ( IObjectStoreItem objectStoreItem : event.getItemsUpdated() ) {
-				if ( objectStoreItem instanceof Document ) {
+				if ( objectStoreItem instanceof IDocument ) {
 					// TODO check if this is a Code Module
-				} else if ( objectStoreItem instanceof ObjectStore ) {
+				} else if ( objectStoreItem instanceof IObjectStore ) {
 					updateObjectStoreCodeModuleFiles(objectStoreItem);
 				}
 			}
@@ -294,7 +291,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 
 	private void removeDocumentCodeModuleFile(IObjectStoreItem objectStoreItem) {
 
-		String id = ((Document)objectStoreItem).getVersionSeriesId(); 
+		String id = ((IDocument)objectStoreItem).getVersionSeriesId(); 
 		
 		for ( CodeModuleFile codeModuleFile: codeModulefiles ) {
 			if ( id.equalsIgnoreCase( codeModuleFile.getId() ) ) {
@@ -307,7 +304,7 @@ public class CodeModulesManager implements ITaskManagerListener {
 	private void updateObjectStoreCodeModuleFiles( IObjectStoreItem objectStoreItem) {
 		
 		String objectStoreName = objectStoreItem.getName();
-		String connectionName = ((ObjectStore) objectStoreItem).getConnection().getName();
+		String connectionName = ((IObjectStore) objectStoreItem).getConnection().getName();
 		Set<CodeModuleFile> removedItems = new HashSet<CodeModuleFile>();
 
 		for ( CodeModuleFile codeModuleFile: codeModulefiles ) {

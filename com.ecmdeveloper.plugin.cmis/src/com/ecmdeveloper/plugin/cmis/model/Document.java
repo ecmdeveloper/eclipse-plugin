@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.cmis.model;
 import java.util.Collection;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -46,6 +47,8 @@ public class Document extends ObjectStoreItem implements IDocument {
 	private String versionLabel;
 
 	private ContentStream contentStream;
+
+	private Boolean versionable;
 	
 	protected Document(Object document, IObjectStoreItem parent, ObjectStore objectStore, boolean saved ) {
 		super(parent, objectStore, saved);
@@ -136,6 +139,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 		id = document.getId();
 		className = document.getType().getId();
 		mimeType = document.getContentStreamMimeType();
+		versionable = ((DocumentType) document.getType()).isVersionable();
 		versionSeriesId = document.getVersionSeriesId();
 		if ( versionSeriesId != null ) {
 			reserved = document.isVersionSeriesCheckedOut();
@@ -170,7 +174,7 @@ public class Document extends ObjectStoreItem implements IDocument {
 
 	@Override
 	public boolean canCheckOut() {
-		return versionSeriesId != null;
+		return versionable != null && versionable;
 	}
 
 	public org.apache.chemistry.opencmis.client.api.Document getInternalDocument() {

@@ -173,6 +173,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 			content.add(  new File( filename) );
 			updateMimeType();
 			contentTable.refresh();
+			getWizard().getContainer().updateButtons();
 		}
 	}
 
@@ -220,6 +221,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 				content.add(file);
 				updateMimeType();
 				contentTable.refresh();
+				getWizard().getContainer().updateButtons();
 			}
 		}
 	}
@@ -288,6 +290,7 @@ public class ContentSelectionWizardPage extends WizardPage {
 		}
 		updateMimeType();
 		contentTable.refresh();
+		getWizard().getContainer().updateButtons();
 	}
 	
 	class TableLabelProvider extends WorkbenchLabelProvider {

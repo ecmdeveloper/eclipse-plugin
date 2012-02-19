@@ -15,6 +15,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.4.2",
  org.eclipse.jdt.ui;bundle-version="3.4.2",
  com.ecmdeveloper.plugin.core;bundle-version="1.0.0",
- com.ecmdeveloper.plugin;bundle-version="1.0.0"
+ com.ecmdeveloper.plugin.ui;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

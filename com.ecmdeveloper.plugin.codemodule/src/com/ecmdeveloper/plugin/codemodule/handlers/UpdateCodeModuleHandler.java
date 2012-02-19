@@ -54,8 +54,8 @@ import com.ecmdeveloper.plugin.codemodule.handlers.util.UpdateCodeModuleJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
-import com.ecmdeveloper.plugin.model.Action;
-import com.ecmdeveloper.plugin.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.IAction;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author Ricardo Belfor
@@ -157,7 +157,7 @@ public class UpdateCodeModuleHandler extends AbstractHandler implements IHandler
 			GetCodeModuleActionsJob job = (GetCodeModuleActionsJob) event.getJob();
 
 			for ( final CodeModuleFile codeModuleFile : list) {
-				Collection<Action> actions = job.getActions(codeModuleFile);
+				Collection<IAction> actions = job.getActions(codeModuleFile);
 				if ( actions == null ) {
 					continue;
 				}

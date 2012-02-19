@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
@@ -62,4 +63,6 @@ public interface IObjectStoresManager {
 	void registerObjectStoresStore(IObjectStoresStore objectStoresStore);
 
 	void deregisterObjectStoresStore(IObjectStoresStore objectStoresStore);
+	
+	boolean getCredentials( IObjectStore objectStore, Shell shell);
 }

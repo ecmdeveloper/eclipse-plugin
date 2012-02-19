@@ -24,7 +24,7 @@ import java.util.Iterator;
 
 import javax.security.auth.Subject;
 
-import com.ecmdeveloper.plugin.core.model.IConnection;
+import com.ecmdeveloper.plugin.core.model.AbstractConnection;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStores;
 import com.filenet.api.collection.ObjectStoreSet;
@@ -41,14 +41,8 @@ import com.filenet.api.util.UserContext;
  * @author Ricardo Belfor
  *
  */
-public class ContentEngineConnection implements IConnection
+public class ContentEngineConnection extends AbstractConnection
 {
-	private String url;
-	private String username;
-	private String password;
-	private String name;
-	private String displayName;
-	
 	private Connection connection;
 	private Domain domain;
 	private Subject subject;
@@ -67,18 +61,18 @@ public class ContentEngineConnection implements IConnection
 	public void connect() {
 		
 		if ( ! connected ) {
-			connection = Factory.Connection.getConnection(url);
+			connection = Factory.Connection.getConnection(getUrl() );
 	
-			subject = UserContext.createSubject(connection, username, password, null );
+			subject = UserContext.createSubject(connection, getUsername(), getPassword(), null );
 			UserContext uc = UserContext.get();
 			uc.pushSubject(subject);
 			
 			EntireNetwork entireNetwork = Factory.EntireNetwork.fetchInstance(connection, null);
 			domain = entireNetwork.get_LocalDomain();
 			
-			name = domain.get_Name();
-			if ( displayName == null ) {
-				displayName = domain.get_Name();
+			setName( domain.get_Name() );
+			if ( getDisplayName() == null ) {
+				setDisplayName( domain.get_Name() );
 			}
 			
 			connected = true;
@@ -98,41 +92,6 @@ public class ContentEngineConnection implements IConnection
 		return connected;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-	public void setUrl(String url) {
-		this.url = url;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
 	public Subject getSubject() {
 		return subject;
 	}
@@ -165,10 +124,5 @@ public class ContentEngineConnection implements IConnection
 		}
 		
 		return Factory.ObjectStore.getInstance( domain, objectStoreName );
-	}
-
-	@Override
-	public String toString() {
-		return getDisplayName();
 	}
 }

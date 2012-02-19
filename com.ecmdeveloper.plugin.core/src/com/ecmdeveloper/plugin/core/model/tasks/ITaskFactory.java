@@ -62,6 +62,8 @@ public interface ITaskFactory {
 
 	IGetContentTask getGetContentTask(IDocument document, int contentIndex);
 
+	IUpdateDocumentContentTask getUpdateDocumentContentTask(IDocument document, Collection<Object> content, String mimeType );
+	
 	ISaveTask getSaveTask(IDocument document, Collection<Object> content, String mimeType);
 
 	IGetContentInfoTask getGetContentInfoTask(IDocument document);

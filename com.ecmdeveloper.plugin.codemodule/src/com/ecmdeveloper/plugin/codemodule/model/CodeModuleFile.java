@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-import com.ecmdeveloper.plugin.model.CodeModule;
-import com.ecmdeveloper.plugin.model.ObjectStore;
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 
 public class CodeModuleFile {
 
@@ -46,7 +46,7 @@ public class CodeModuleFile {
 	private String objectStoreName;
 	private String objectStoreDisplayName;
 	
-	public CodeModuleFile(CodeModule codeModule, ObjectStore objectStore) {
+	public CodeModuleFile(ICodeModule codeModule, IObjectStore objectStore) {
 		this(codeModule.getName(), codeModule.getId(), objectStore.getConnection().getName(), objectStore.getConnection().getDisplayName(), objectStore.getName(), objectStore.getDisplayName() );
 	}
 	

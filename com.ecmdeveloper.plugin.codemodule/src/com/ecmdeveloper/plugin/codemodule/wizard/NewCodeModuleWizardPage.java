@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
 
 public class NewCodeModuleWizardPage extends WizardPage {
 
@@ -96,7 +96,7 @@ public class NewCodeModuleWizardPage extends WizardPage {
 
 				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 				if ( iterator.hasNext() ) {
-					wizard.setObjectStore( (ObjectStore) iterator.next() );
+					wizard.setObjectStore( (IObjectStore) iterator.next() );
 					connectButton.setEnabled( ! wizard.getObjectStore().isConnected() );
 				}
 			} 
@@ -116,7 +116,7 @@ public class NewCodeModuleWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				ObjectStore objectStore = wizard.getObjectStore();
+				IObjectStore objectStore = wizard.getObjectStore();
 				if ( ! objectStore.isConnected() ) {
 					wizard.connectObjectStore();
 					connectButton.setEnabled( ! wizard.getObjectStore().isConnected() );

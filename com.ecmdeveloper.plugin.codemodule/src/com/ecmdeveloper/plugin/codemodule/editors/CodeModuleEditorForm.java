@@ -92,7 +92,7 @@ import com.ecmdeveloper.plugin.codemodule.views.JavaElementContentProvider;
 public class CodeModuleEditorForm extends FormPage {
 
 	private static final String JAVA_ELEMENT_CANNOT_BE_REMOVED_MESSAGE = "The Java element \"{0}\" cannot be removed, try removing the top level parent element.";
-	private static final String JAVA_ELEMENT_SELECTION_MESSAGE = "Select a Java Element. If a project or package is selected\n then all the child classes will be dynamically added to the code module.";
+	private static final String JAVA_ELEMENT_SELECTION_MESSAGE = "Select a Java Element. If a project or package is selected\n then all the child classes will be \r\ndynamically added to the code module.";
 	private static final String JAVA_ELEMENTS_SELECTION_TITLE = "Add Java Elements";
 	private static final String REMOVE_LABEL = Messages.CodeModuleEditorForm_RemoveLabel;
 	private static final String ADD_LABEL = Messages.CodeModuleEditorForm_AddLabel;

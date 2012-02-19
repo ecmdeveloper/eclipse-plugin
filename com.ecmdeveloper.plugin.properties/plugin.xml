@@ -119,9 +119,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate></and>
                </with>
@@ -195,9 +200,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </and>
@@ -390,9 +400,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </and>
@@ -444,15 +459,74 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </and>
                </with>
             </visibleWhen>
          </command>
+         <menu
+               label="New">
+            <command
+                  commandId="com.ecmdeveloper.plugin.newFolder"
+                  icon="icons/folder.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.newDocument"
+                  icon="icons/page_white.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.newCustomObject"
+                  icon="icons/application_view_columns.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
