@@ -78,7 +78,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 
 	@Override
 	public String getName() {
-		return name + "(" + this.toString() + ")";
+		return name;
 	}
 
 	/**

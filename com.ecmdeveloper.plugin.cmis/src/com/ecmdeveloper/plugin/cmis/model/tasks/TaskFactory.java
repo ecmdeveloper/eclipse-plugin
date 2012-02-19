@@ -51,6 +51,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.IMoveTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IRefreshTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
+import com.ecmdeveloper.plugin.core.model.tasks.IUpdateDocumentContentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
@@ -166,6 +167,12 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public ISaveTask getSaveTask(IDocument document, Collection<Object> content, String mimeType) {
 		return new SaveTask((Document) document, content, mimeType );
+	}
+
+	@Override
+	public IUpdateDocumentContentTask getUpdateDocumentContentTask(IDocument document,
+			Collection<Object> content, String mimeType) {
+		return new UpdateDocumentContentTask((Document) document, content, mimeType);
 	}
 
 	@Override

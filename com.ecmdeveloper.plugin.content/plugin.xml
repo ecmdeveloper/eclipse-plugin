@@ -29,6 +29,11 @@
             name="Released Version With Local File">
       </command>
       <command
+            description="Compare Released Documents"
+            id="com.ecmdeveloper.plugin.compareDocuments"
+            name="Released Versions With Each Other">
+      </command>
+      <command
             description="Compare Document Versions"
             id="com.ecmdeveloper.plugin.compareDocumentVersions"
             name="Versions With Each Other...">
@@ -39,9 +44,14 @@
             name="Other Versions With Local File...">
       </command>
       <command
-            description="Compare Released Documents"
-            id="com.ecmdeveloper.plugin.compareDocuments"
-            name="Released Versions With Each Other">
+            description="Compare This Documents"
+            id="com.ecmdeveloper.plugin.compareThisDocuments"
+            name="Documents With Each Other">
+      </command>
+      <command
+            description="Compare This Document With Local File"
+            id="com.ecmdeveloper.plugin.compareThisDocumentLocal"
+            name="Document With Local File">
       </command>
       <command
             description="Download This Document Content"
@@ -97,6 +107,11 @@
             description="Save Tracked File"
             id="com.ecmdeveloper.plugin.saveTrackedFile"
             name="Save">
+      </command>
+      <command
+            description="Update Document Content"
+            id="com.ecmdeveloper.plugin.updateDocumentContent"
+            name="Update Content">
       </command>
    </extension>
    <extension
@@ -429,6 +444,55 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.content.handlers.CompareDocumentWithLocalFileHandler"
+            commandId="com.ecmdeveloper.plugin.compareThisDocumentLocal">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.core.model.IDocument">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.content.handlers.CompareDocumentsWithEachOtherHandler"
+            commandId="com.ecmdeveloper.plugin.compareThisDocuments">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <and>
+                  <count
+                        value="2">
+                  </count>
+                  <iterate
+                        ifEmpty="false">
+                     <instanceof
+                           value="com.ecmdeveloper.plugin.core.model.IDocument">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.content.handlers.UpdateDocumentContentHandler"
+            commandId="com.ecmdeveloper.plugin.updateDocumentContent">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <instanceof
+                        value="com.ecmdeveloper.plugin.core.model.IDocument">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -572,9 +636,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -590,9 +659,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -608,9 +682,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -630,9 +709,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -648,9 +732,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -666,9 +755,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -684,9 +778,64 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocumentLocal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocuments"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -756,6 +905,9 @@
                            <instanceof
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
                            <not>
                               <test
                                     forcePluginActivation="true"
@@ -785,6 +937,9 @@
                            <test
                                  forcePluginActivation="true"
                                  property="com.ecmdeveloper.plugin.content.isTracked">
+                           </test>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
                            </test>
                         </and>
                      </or>
@@ -842,6 +997,31 @@
                                  forcePluginActivation="true"
                                  property="com.ecmdeveloper.plugin.content.isTracked">
                            </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.updateDocumentContent"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
                         </and>
                      </or>
                   </iterate>
@@ -902,6 +1082,32 @@
       </menuContribution>
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoreFavorites?after=edit">
+         <command
+               commandId="com.ecmdeveloper.plugin.viewThisDocument"
+               label="View"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
          <menu
                label="View">
             <command
@@ -914,9 +1120,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -932,9 +1143,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -950,15 +1166,47 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
                </visibleWhen>
             </command>
          </menu>
+         <command
+               commandId="com.ecmdeveloper.plugin.downloadThisDocument"
+               icon="icons/page_save.png"
+               label="Download"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
          <menu
                icon="icons/page_save.png"
                label="Download">
@@ -972,9 +1220,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -990,9 +1243,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1008,9 +1266,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1030,9 +1293,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1048,9 +1316,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1066,9 +1339,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1084,9 +1362,64 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocumentLocal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocuments"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1106,9 +1439,14 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -1124,314 +1462,14 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.saveDocument"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.checkinDocument"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.search.ui.views.SearchView?after=additions">
-         <menu
-               label="View">
-            <command
-                  commandId="com.ecmdeveloper.plugin.viewThisDocument"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
+                        <and>
                            <instanceof
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.viewReleasedDocument"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.viewCurrentDocument"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.viewDocumentVersion"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-         </menu>
-         <menu
-               icon="icons/page_save.png"
-               label="Download">
-            <command
-                  commandId="com.ecmdeveloper.plugin.downloadThisDocument"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.downloadReleasedDocument"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.downloadCurrentDocument"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.downloadDocumentVersions"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-         </menu>
-         <menu
-               icon="icons/page_copy.png"
-               label="Compare">
-            <command
-                  commandId="com.ecmdeveloper.plugin.compareDocument"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.compareDocuments"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
-                        </or>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-         </menu>
-         <separator
-               name="editContentSeparator">
-         </separator>
-         <command
-               commandId="com.ecmdeveloper.plugin.checkoutDocument"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.cancelCheckoutDocument"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -1451,6 +1489,9 @@
                            <instanceof
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
                            <not>
                               <test
                                     forcePluginActivation="true"
@@ -1481,6 +1522,9 @@
                                  forcePluginActivation="true"
                                  property="com.ecmdeveloper.plugin.content.isTracked">
                            </test>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
                         </and>
                      </or>
                   </iterate>
@@ -1501,6 +1545,9 @@
                            <instanceof
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
                            <not>
                               <test
                                     forcePluginActivation="true"
@@ -1528,9 +1575,616 @@
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
                            <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                           <test
                                  forcePluginActivation="true"
                                  property="com.ecmdeveloper.plugin.content.isTracked">
                            </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.updateDocumentContent"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.search.ui.views.SearchView?after=additions">
+         <menu
+               label="View">
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewThisDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewReleasedDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewCurrentDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.viewDocumentVersion"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <command
+               commandId="com.ecmdeveloper.plugin.viewThisDocument"
+               label="View"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.downloadThisDocument"
+               icon="icons/page_save.png"
+               label="Download"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <menu
+               icon="icons/page_save.png"
+               label="Download">
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadThisDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadReleasedDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadCurrentDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.downloadDocumentVersions"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/page_copy.png"
+               label="Compare">
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocuments"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocumentVersionsLocal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareDocumentVersions"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocumentLocal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocuments"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <separator
+               name="editContentSeparator">
+         </separator>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkoutDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.cancelCheckoutDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                           <not>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="com.ecmdeveloper.plugin.content.isTracked">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.saveTrackedFile"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 forcePluginActivation="true"
+                                 property="com.ecmdeveloper.plugin.content.isTracked">
+                           </test>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkinDocument"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                           <not>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="com.ecmdeveloper.plugin.content.isTracked">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.checkinTrackedFile"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                           <test
+                                 forcePluginActivation="true"
+                                 property="com.ecmdeveloper.plugin.content.isTracked">
+                           </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.updateDocumentContent"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
                         </and>
                      </or>
                   </iterate>
@@ -1597,6 +2251,33 @@
                </visibleWhen>
             </command>
          </menu>
+         <command
+               commandId="com.ecmdeveloper.plugin.downloadThisDocument"
+               icon="icons/page_save.png"
+               label="Download"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
          <menu
                icon="icons/page_save.png"
                label="Download">
@@ -1610,9 +2291,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1628,9 +2314,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1646,9 +2337,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1668,9 +2364,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1686,9 +2387,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1704,9 +2410,14 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1722,9 +2433,64 @@
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <instanceof
-                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
-                           </instanceof>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocumentLocal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="com.ecmdeveloper.plugin.compareThisDocuments"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <not>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </not>
+                           </and>
                         </or>
                      </iterate>
                   </with>
@@ -1744,9 +2510,14 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -1762,9 +2533,14 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -1784,6 +2560,9 @@
                            <instanceof
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
                            <not>
                               <test
                                     forcePluginActivation="true"
@@ -1811,6 +2590,9 @@
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
                            <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                           <test
                                  forcePluginActivation="true"
                                  property="com.ecmdeveloper.plugin.content.isTracked">
                            </test>
@@ -1834,6 +2616,9 @@
                            <instanceof
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
                            <not>
                               <test
                                     forcePluginActivation="true"
@@ -1861,9 +2646,37 @@
                                  value="com.ecmdeveloper.plugin.core.model.IDocument">
                            </instanceof>
                            <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                           <test
                                  forcePluginActivation="true"
                                  property="com.ecmdeveloper.plugin.content.isTracked">
                            </test>
+                        </and>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.updateDocumentContent"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <not>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </not>
                         </and>
                      </or>
                   </iterate>

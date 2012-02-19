@@ -82,13 +82,13 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             id="com.ecmdeveloper.plugin.search.actionSet"
-            label="Open Content Engine Search"
+            label="Open Object Stores Search"
             visible="true">
          <action
                class="com.ecmdeveloper.plugin.search.handlers.ContentEngineSearchHandler"
                icon="icons/find_edit.png"
                id="com.ecmdeveloper.plugin.search.contentEngineSearch"
-               label="Content Engine"
+               label="Object Stores"
                menubarPath="org.eclipse.search.menu/dialogGroup"
                style="push">
          </action>

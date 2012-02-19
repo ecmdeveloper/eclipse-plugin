@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.core.model.IAction;
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
@@ -67,8 +68,8 @@ public class Action extends ObjectStoreItem implements IAction {
 		this.id = this.action.get_Id().toString();
 	}
 
-	public void setCodeModule(CodeModule codeModule) {
-		action.set_CodeModule((com.filenet.api.admin.CodeModule) codeModule
+	public void setCodeModule(ICodeModule codeModule) {
+		action.set_CodeModule((com.filenet.api.admin.CodeModule) ((Action) codeModule)
 						.getObjectStoreObject());
 	}
 	

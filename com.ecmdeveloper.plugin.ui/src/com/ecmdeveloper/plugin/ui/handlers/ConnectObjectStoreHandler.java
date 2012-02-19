@@ -31,12 +31,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.ui.Activator;
+import com.ecmdeveloper.plugin.core.dialogs.LoginDialog;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.ui.util.Messages;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
@@ -69,9 +72,14 @@ public class ConnectObjectStoreHandler extends AbstractHandler implements IHandl
 		while (iter.hasNext()) {
 			final Object selectedObject = iter.next();
 			if ( selectedObject instanceof IObjectStore ) {
-				ConnectObjectStoreJob job = new ConnectObjectStoreJob( (IObjectStore)selectedObject, window.getShell() );
-				job.setUser(true);
-				job.schedule();
+				
+				IObjectStore objectStore = (IObjectStore)selectedObject;
+				IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager();
+				if ( objectStoresManager.getCredentials(objectStore, window.getShell() ) ) {
+					ConnectObjectStoreJob job = new ConnectObjectStoreJob( objectStore, window.getShell() );
+					job.setUser(true);
+					job.schedule();
+				}
 			}
 		}
 
@@ -80,8 +88,8 @@ public class ConnectObjectStoreHandler extends AbstractHandler implements IHandl
 
 	class ConnectObjectStoreJob extends Job {
 
-		private IObjectStore objectStore;
-		private Shell shell;
+		private final IObjectStore objectStore;
+		private final Shell shell;
 
 		public ConnectObjectStoreJob(IObjectStore objectStore, Shell shell) {
 			super("Connect Object Store");

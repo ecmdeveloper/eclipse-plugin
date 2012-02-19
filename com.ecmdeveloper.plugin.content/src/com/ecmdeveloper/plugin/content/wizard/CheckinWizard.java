@@ -42,10 +42,10 @@ public class CheckinWizard extends Wizard {
 
 	private ConfigureCheckinWizardPage configureCheckinPage;
 	private ContentSelectionWizardPage contentSelectionPage;
-	private IDocument document;
+	private final IDocument document;
 	private IFile initialContent;
 	private String initialMimeType;
-	private boolean isTrackedDocument;
+	private final boolean isTrackedDocument;
 	
 	public CheckinWizard(IDocument document, boolean isTrackedDocument ) {
 		this.document = document;

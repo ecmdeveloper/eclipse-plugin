@@ -18,16 +18,13 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model;
+package com.ecmdeveloper.plugin.core.model.tasks;
+
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IAction extends IObjectStoreItem {
-
-	void setCodeModule(ICodeModule codeModule);
-
-	String getCodeModuleVersion();
+public interface IUpdateDocumentContentTask extends IDocumentTask {
 
 }

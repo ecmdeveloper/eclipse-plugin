@@ -1,5 +1,5 @@
 /**
- * Copyright 2011, Ricardo Belfor
+ * Copyright 2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,16 +18,29 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model;
+package com.ecmdeveloper.plugin.content.handlers;
+
+import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.wizard.WizardDialog;
+
+import com.ecmdeveloper.plugin.content.wizard.UpdateDocumentContentWizard;
+import com.ecmdeveloper.plugin.core.model.IDocument;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IAction extends IObjectStoreItem {
+public class UpdateDocumentContentHandler extends AbstractDocumentHandler implements IHandler {
 
-	void setCodeModule(ICodeModule codeModule);
+	@Override
+	protected void handleDocument(IDocument document) {
+		openUpdateDocumentContentWizard( document );
+	}
 
-	String getCodeModuleVersion();
-
+	private void openUpdateDocumentContentWizard(IDocument document) {
+		UpdateDocumentContentWizard wizard = new UpdateDocumentContentWizard( document );
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.create();
+		dialog.open();
+	}
 }

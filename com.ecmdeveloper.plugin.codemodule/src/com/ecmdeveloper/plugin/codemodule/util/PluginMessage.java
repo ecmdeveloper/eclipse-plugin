@@ -22,7 +22,7 @@ package com.ecmdeveloper.plugin.codemodule.util;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.codemodule.Activator;
-import com.ecmdeveloper.plugin.dialogs.ExceptionDetailsDialog;
+import com.ecmdeveloper.plugin.core.dialogs.ExceptionDetailsDialog;
 
 /**
  * Facade class for the error message dialog.

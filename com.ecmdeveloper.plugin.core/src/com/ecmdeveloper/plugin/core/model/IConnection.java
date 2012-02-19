@@ -29,7 +29,11 @@ public interface IConnection {
 
 	String getName();
 	String getUsername();
+	void setUsername(String username);
 	String getPassword();
+	void setPassword(String password);
+	boolean isStorePassword();
+	void setStorePassword(boolean storePassword );
 	String getUrl();
 	void connect();
 	IObjectStore[] getObjectStores(IObjectStores parent);

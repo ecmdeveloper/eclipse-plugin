@@ -30,7 +30,7 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.IconFiles;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
 
 /**
  * @author Ricardo Belfor

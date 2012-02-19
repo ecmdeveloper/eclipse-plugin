@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
-import com.ecmdeveloper.plugin.model.Action;
+import com.ecmdeveloper.plugin.core.model.IAction;
 
 public class GetCodeModuleActionsJob extends Job
 {
@@ -25,7 +25,7 @@ public class GetCodeModuleActionsJob extends Job
 	private static final String PROGRESS_MESSAGE = "Getting Action for \"{0}\"";
 
 	private ArrayList<CodeModuleFile> codeModuleFiles;
-	private Map<String,Collection<Action>> actions;
+	private Map<String,Collection<IAction>> actions;
 	private CodeModulesManager codeModulesManager;
 	private Shell shell;
 	
@@ -33,7 +33,7 @@ public class GetCodeModuleActionsJob extends Job
 
 		super(HANDLER_NAME);
 		this.codeModuleFiles = codeModuleFiles;
-		actions = new HashMap<String, Collection<Action>>();
+		actions = new HashMap<String, Collection<IAction>>();
 		codeModulesManager = CodeModulesManager.getManager();
 		this.shell = shell;
 	}
@@ -76,7 +76,7 @@ public class GetCodeModuleActionsJob extends Job
 			return false;
 		}
 	}
-	public Collection<Action> getActions(CodeModuleFile codeModuleFile) {
+	public Collection<IAction> getActions(CodeModuleFile codeModuleFile) {
 		if ( actions.containsKey(codeModuleFile.getId()) ) {
 			return actions.get(codeModuleFile.getId());
 		}

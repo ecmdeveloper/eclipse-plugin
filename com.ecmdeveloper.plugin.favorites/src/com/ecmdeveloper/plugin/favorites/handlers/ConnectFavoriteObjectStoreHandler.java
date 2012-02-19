@@ -39,6 +39,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.ecmdeveloper.plugin.favorites.Activator;
 import com.ecmdeveloper.plugin.favorites.model.FavoriteObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
@@ -66,9 +67,13 @@ public class ConnectFavoriteObjectStoreHandler extends AbstractHandler implement
 		Iterator<?> iter = ((IStructuredSelection) selection).iterator();			
 		while (iter.hasNext()) {
 			FavoriteObjectStore favoriteObjectStore = (FavoriteObjectStore) iter.next();
-			ConnectObjectStoreJob job = new ConnectObjectStoreJob( favoriteObjectStore.getObjectStore(), window.getShell() );
-			job.setUser(true);
-			job.schedule();
+			IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager();
+			IObjectStore objectStore = favoriteObjectStore.getObjectStore();
+			if ( objectStoresManager.getCredentials(objectStore, window.getShell() ) ) {
+				ConnectObjectStoreJob job = new ConnectObjectStoreJob( objectStore, window.getShell() );
+				job.setUser(true);
+				job.schedule();
+			}
 		}
 
 		return null;

@@ -26,21 +26,19 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
 import com.ecmdeveloper.plugin.cmis.model.Document;
-import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItemFactory;
-import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IUpdateDocumentContentTask;
 
 /**
  * @author Ricardo.Belfor
  * @param <reservation>
  *
  */
-public class SaveTask extends DocumentTask implements ISaveTask {
+public class UpdateDocumentContentTask extends DocumentTask implements IUpdateDocumentContentTask {
 
 	private Collection<Object> contents;
 	private String mimeType;
-	private Document reservationDocument;
 
-	public SaveTask(Document document, Collection<Object> contents, String mimeType ) {
+	public UpdateDocumentContentTask(Document document, Collection<Object> contents, String mimeType ) {
 		super(document);
 		this.contents = contents;
 		this.mimeType = mimeType;
@@ -49,37 +47,13 @@ public class SaveTask extends DocumentTask implements ISaveTask {
 	@Override
 	public Object call() throws Exception {
 
-		if ( getDocument().isSaved() ) {
-			setSavedContent();
-		} else {
-			setUnsavedContent();
-		}
-
-		return null;
-	}
-
-	private void setSavedContent() throws Exception {
-		org.apache.chemistry.opencmis.client.api.Document reservation = getReservation();
+		org.apache.chemistry.opencmis.client.api.Document reservation = getInternalDocument();
 		Session session = getDocument().getObjectStore().getSession();
 		ContentStream content = ContentStreamFactory.createContent(contents, mimeType, session );
-
 		if ( content != null ) {
 			reservation.setContentStream( content, true );
 		}
-		reservationDocument = ObjectStoreItemFactory.createDocument( reservation, getDocument().getParent(), getDocument().getObjectStore() );
-	}
 
-	private void setUnsavedContent() throws Exception {
-		Session session = getDocument().getObjectStore().getSession();
-		ContentStream content = ContentStreamFactory.createContent(contents, mimeType, session );
-
-		if ( content != null ) {
-			getDocument().setContentStream( content );
-		}
-		reservationDocument = getDocument();
-	}
-	
-	public Document getReservationDocument() {
-		return reservationDocument;
+		return null;
 	}
 }

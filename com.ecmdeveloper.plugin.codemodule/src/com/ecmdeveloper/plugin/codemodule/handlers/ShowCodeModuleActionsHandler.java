@@ -43,8 +43,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.ecmdeveloper.plugin.codemodule.handlers.util.CodeModuleActionLabelProvider;
 import com.ecmdeveloper.plugin.codemodule.handlers.util.GetCodeModuleActionsJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
-import com.ecmdeveloper.plugin.model.Action;
-import com.ecmdeveloper.plugin.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.IAction;
+import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * This handler handles the
@@ -100,7 +100,7 @@ public class ShowCodeModuleActionsHandler extends AbstractHandler implements
 
 					GetCodeModuleActionsJob job = (GetCodeModuleActionsJob) event.getJob();
 					for ( CodeModuleFile codeModuleFile : list) {
-						Collection<Action> actions = job.getActions(codeModuleFile);
+						Collection<IAction> actions = job.getActions(codeModuleFile);
 						if ( actions == null ) {
 							continue;
 						}

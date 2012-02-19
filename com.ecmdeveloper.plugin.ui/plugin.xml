@@ -570,9 +570,14 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -666,9 +671,14 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>
@@ -762,9 +772,14 @@
                   <iterate
                         ifEmpty="false">
                      <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <test
+                                 property="com.ecmdeveloper.plugin.canCheckout">
+                           </test>
+                        </and>
                      </or>
                   </iterate>
                </with>

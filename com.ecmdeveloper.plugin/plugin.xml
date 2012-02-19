@@ -125,6 +125,30 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.ui.parentFolderView?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.scripting.executeClass"
+               icon="icons/application_go.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Document">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.model.Folder">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import com.ecmdeveloper.plugin.model.CodeModule;
-import com.ecmdeveloper.plugin.model.ObjectStore;
-import com.ecmdeveloper.plugin.views.ObjectStoreItemLabelProvider;
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
 
 public class SelectCodeModuleWizardPage extends WizardPage {
 
@@ -74,7 +74,7 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 		codeModulesCombo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				CodeModule codeModule = (CodeModule) element;
+				ICodeModule codeModule = (ICodeModule) element;
 				return codeModule.getName();
 			}
 		});
@@ -90,7 +90,7 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 
 				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 				if ( iterator.hasNext() ) {
-					wizard.setCodeModule( (CodeModule) iterator.next() );
+					wizard.setCodeModule( (ICodeModule) iterator.next() );
 				}
 			} 
 		});
@@ -113,7 +113,7 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 
 				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 				if ( iterator.hasNext() ) {
-					wizard.setObjectStore( (ObjectStore) iterator.next() );
+					wizard.setObjectStore( (IObjectStore) iterator.next() );
 					connectButton.setEnabled( ! wizard.getObjectStore().isConnected() );
 					updateCodeModulesCombo( false );
 				}
@@ -123,6 +123,15 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 		objectStoresCombo.setInput( wizard.getObjectStores() );
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		objectStoresCombo.getCombo().setLayoutData( gd );
+//		objectStoresCombo.setFilters( new ViewerFilter() {
+//
+//			@Override
+//			public boolean select(Viewer viewer, Object parentElement, Object element) {
+//				if ( element instanceof IObjectStore ) {
+//					((IObjectStore) element).getConnection()
+//				}
+//				return false;
+//			} } );
 	}
 
 	private void createConnectButton( Composite parent ) {
@@ -143,7 +152,7 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 
 	protected void updateCodeModulesCombo( boolean connect ) {
 
-		ObjectStore objectStore = wizard.getObjectStore();
+		IObjectStore objectStore = wizard.getObjectStore();
 		setErrorMessage(null);
 		
 		if ( objectStore != null ) {
@@ -154,25 +163,27 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 					connectButton.setEnabled( ! wizard.getObjectStore().isConnected() );
 				} else {
 					codeModulesCombo.getCombo().setEnabled( false );
-					codeModulesCombo.setInput( new ArrayList<CodeModule>() );
+					codeModulesCombo.setInput( new ArrayList<ICodeModule>() );
 					wizard.setCodeModule(null);
 					return;
 				}
 			} 
 			
-			Collection<CodeModule> codeModules = wizard.getCodeModules();
-			codeModulesCombo.setInput( codeModules );
-			codeModulesCombo.getCombo().setEnabled( true );
-			wizard.setCodeModule(null);
-
-			if ( codeModules.isEmpty() ) {
-				setErrorMessage( "There are no more Code Modules left to import from this Object Store." );
+			if ( objectStore.isConnected() ) {
+				Collection<ICodeModule> codeModules = wizard.getCodeModules();
+				codeModulesCombo.setInput( codeModules );
+				codeModulesCombo.getCombo().setEnabled( true );
+				wizard.setCodeModule(null);
+	
+				if ( codeModules.isEmpty() ) {
+					setErrorMessage( "There are no more Code Modules left to import from this Object Store." );
+				}
 			}
 		} 
 		else 
 		{
 			codeModulesCombo.getCombo().setEnabled( false );
-			codeModulesCombo.setInput( new ArrayList<CodeModule>() );
+			codeModulesCombo.setInput( new ArrayList<ICodeModule>() );
 			wizard.setCodeModule(null);
 		}
 	}

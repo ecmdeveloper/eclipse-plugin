@@ -42,9 +42,9 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
-import com.ecmdeveloper.plugin.model.CodeModule;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
  * 
@@ -55,8 +55,8 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 
 	private static final String WIZARD_NAME = "Import Code Module";
 	private SelectCodeModuleWizardPage selectCodeModuleWizardPage;
-	private ObjectStore objectStore;
-	private CodeModule codeModule;
+	private IObjectStore objectStore;
+	private ICodeModule codeModule;
 	private	IObjectStoresManager objectStoresManager;
 	private IWorkbenchPage activePage;
 
@@ -86,24 +86,24 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 		return true;
 	}
 
-	public ObjectStore getObjectStore() {
+	public IObjectStore getObjectStore() {
 		return objectStore;
 	}
 
-	public void setObjectStore(ObjectStore objectStore) {
+	public void setObjectStore(IObjectStore objectStore) {
 		this.objectStore = objectStore;
 	}
 
-	public CodeModule getCodeModule() {
+	public ICodeModule getCodeModule() {
 		return codeModule;
 	}
 
-	public void setCodeModule(CodeModule codeModule) {
+	public void setCodeModule(ICodeModule codeModule) {
 		this.codeModule = codeModule;
 		getContainer().updateButtons();
 	}
 
-	public Collection<CodeModule> getCodeModules() {
+	public Collection<ICodeModule> getCodeModules() {
 		
 		if ( objectStore != null && objectStore.isConnected() ) {
 			
@@ -115,7 +115,7 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 			}
 			return runnable.getCodeModules();
 		} else {
-			return new ArrayList<CodeModule>();
+			return new ArrayList<ICodeModule>();
 		}
 	}
 
@@ -141,6 +141,11 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 		if (objectStore == null) {
 			return;
 		}
+		
+		if ( !objectStoresManager.getCredentials(objectStore, getShell() ) ) {
+			return;
+		}
+		
 		try {
 			getContainer().run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
@@ -163,14 +168,14 @@ public class ImportCodeModuleWizard  extends Wizard implements IImportWizard {
 	
 	class NewCodeModulesRunnable implements IRunnableWithProgress {
 
-		private ObjectStore objectStore;
-		private Collection<CodeModule> codeModules;
+		private IObjectStore objectStore;
+		private Collection<ICodeModule> codeModules;
 
-		public Collection<CodeModule> getCodeModules() {
+		public Collection<ICodeModule> getCodeModules() {
 			return codeModules;
 		}
 
-		public NewCodeModulesRunnable(ObjectStore objectStore) {
+		public NewCodeModulesRunnable(IObjectStore objectStore) {
 			super();
 			this.objectStore = objectStore;
 		}

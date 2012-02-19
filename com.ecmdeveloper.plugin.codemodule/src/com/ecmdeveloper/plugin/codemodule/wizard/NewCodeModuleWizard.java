@@ -42,8 +42,8 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModulesManager;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;
 import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
-import com.ecmdeveloper.plugin.model.ObjectStore;
 
 /**
  * @author Ricardo.Belfor
@@ -55,7 +55,7 @@ public class NewCodeModuleWizard extends Wizard implements INewWizard {
 	private static final String WIZARD_NAME = Messages.NewCodeModuleWizard_WizardName;
 
 	private NewCodeModuleWizardPage newCodeModuleWizardPage;
-	private ObjectStore objectStore;
+	private IObjectStore objectStore;
 	private	IObjectStoresManager objectStoresManager;
 	private IWorkbenchPage activePage;
 	private String name;
@@ -106,25 +106,29 @@ public class NewCodeModuleWizard extends Wizard implements INewWizard {
 		}
 	}
 	
-	public ObjectStore getObjectStore() {
+	public IObjectStore getObjectStore() {
 		return objectStore;
 	}
 
-	public void setObjectStore(ObjectStore objectStore) {
+	public void setObjectStore(IObjectStore objectStore) {
 		this.objectStore = objectStore;
 		getContainer().updateButtons();
 	}
 
 	public void connectObjectStore() {
 		if ( objectStore != null ) {
+			
+			if ( !objectStoresManager.getCredentials(objectStore, getShell() ) ) {
+				return;
+			}
+			
 			try {
 	         getContainer().run(true, false, new IRunnableWithProgress() {
 		            public void run(IProgressMonitor monitor) throws InvocationTargetException,
 		                  InterruptedException 
 					{
 		               try {
-							objectStoresManager.connectObjectStore(objectStore,
-									monitor);
+							objectStoresManager.connectObjectStore(objectStore,	monitor);
 						} catch (ExecutionException e) {
 				    	  PluginMessage.openErrorFromThread( getShell(), WIZARD_NAME, e.getLocalizedMessage(), e );
 						}
