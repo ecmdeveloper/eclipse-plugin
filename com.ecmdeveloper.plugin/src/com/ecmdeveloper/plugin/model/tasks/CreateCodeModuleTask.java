@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -34,7 +35,7 @@ import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.core.DynamicReferentialContainmentRelationship;
 import com.filenet.api.core.Factory;
 
-public class CreateCodeModuleTask extends CodeModuleTask {
+public class CreateCodeModuleTask extends CodeModuleTask implements ICreateCodeModuleTask {
 
 	protected String name;
 	protected Collection<File> files;

@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ecmdeveloper.plugin.core.Activator;

@@ -32,6 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.content.wizard.CheckinWizard;
 import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
@@ -42,8 +43,8 @@ public class CheckinTrackedFileJob extends AbstractTrackedFileJob {
 
 	private static final String JOB_NAME = "Checkin Tracked File";
 	
-	public CheckinTrackedFileJob(TrackedFile trackedFile, IFile file, IWorkbenchWindow window) {
-		super(JOB_NAME, trackedFile, file, window);
+	public CheckinTrackedFileJob(TrackedFile trackedFile, IFile file, IWorkbenchWindow window, IObjectStore objectStore ) {
+		super(JOB_NAME, trackedFile, file, window, objectStore );
 	}
 
 	@Override

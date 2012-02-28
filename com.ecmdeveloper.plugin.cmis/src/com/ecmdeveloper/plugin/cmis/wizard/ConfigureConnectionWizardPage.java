@@ -24,7 +24,6 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -147,15 +146,16 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 	@Override
 	public IConnection getConnection() {
 		
-		String url = getURL();
-		String username = getUsername();
-		String password = getPassword();
-
+		final String url = getURL();
+		final String username = getUsername();
+		final String password = getPassword();
+		final boolean storePassword = isStorePassword();
 		final Connection connection = new Connection();
 		
 		connection.setUrl(url);
 		connection.setUsername(username);
 		connection.setPassword(password);
+		connection.setStorePassword(storePassword);
 		connection.setName(url);
 		connection.setDisplayName( connectionNameEditor.getValue() );
 		connection.setAuthentication( authenticationEditor.getValue() );

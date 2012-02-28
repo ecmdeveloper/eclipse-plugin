@@ -21,8 +21,12 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -38,13 +42,14 @@ import com.filenet.api.query.SearchScope;
  * @author Ricardo.Belfor
  *
  */
-public class GetCodeModulesTask extends BaseTask {
+public class GetCodeModulesTask extends BaseTask implements IGetCodeModulesTask {
 
 	protected ObjectStore objectStore;
+	private ArrayList<ICodeModule> codeModules;
 
-	public GetCodeModulesTask(ObjectStore objectStore) {
+	public GetCodeModulesTask(IObjectStore objectStore) {
 		super();
-		this.objectStore = objectStore;
+		this.objectStore = (ObjectStore) objectStore;
 	}
 
 	/**
@@ -64,7 +69,7 @@ public class GetCodeModulesTask extends BaseTask {
 		CodeModuleSet codeModuleSet = (CodeModuleSet) scope.fetchObjects(new SearchSQL( query  ), null, null, null);
 		Iterator<?> iterator = codeModuleSet.iterator();
 		
-		ArrayList<CodeModule> codeModules = new ArrayList<CodeModule>();
+		codeModules = new ArrayList<ICodeModule>();
 
 		while (iterator.hasNext()) {
 			com.filenet.api.core.Document document = (Document) iterator.next(); 
@@ -78,5 +83,10 @@ public class GetCodeModulesTask extends BaseTask {
 	@Override
 	protected ContentEngineConnection getContentEngineConnection() {
 		return objectStore.getConnection();
+	}
+
+	@Override
+	public Collection<ICodeModule> getCodeModules() {
+		return codeModules;
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2010, Ricardo Belfor
+ * Copyright 2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,34 +18,14 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.jobs;
+package com.ecmdeveloper.plugin.core.model.tasks.codemodule;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.Job;
-
-import com.ecmdeveloper.plugin.Activator;
-import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.model.tasks.RefreshTask;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RefreshJob extends Job {
+public interface IUpdateCodeModuleTask extends IBaseTask {
 
-	private IObjectStoreItem[] objectStoreItems;
-
-	public RefreshJob(IObjectStoreItem[] objectStoreItems) {
-		super("refreshJob");
-		this.objectStoreItems = objectStoreItems;
-	}
-
-
-	@Override
-	protected IStatus run(IProgressMonitor monitor) {
-		RefreshTask refreshTask = new RefreshTask( objectStoreItems, true );
-		Activator.getDefault().getTaskManager().executeTaskASync(refreshTask);
-		return null;
-	}
 }

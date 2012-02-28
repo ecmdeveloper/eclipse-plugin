@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.cmis.model.tasks;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -57,6 +59,11 @@ import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptio
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateCodeModuleTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateEventActionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 
 /**
  * @author ricardo.belfor
@@ -235,5 +242,33 @@ public class TaskFactory implements ITaskFactory {
 			IPropertyDescription targetPropertyDescription, IObjectStore objectStore) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ICreateCodeModuleTask getCreateCodeModuleTask(String name,
+			ArrayList<File> contentElementFiles, IObjectStore objectStore) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public IGetCodeModulesTask getGetCodeModulesTask(IObjectStore objectStore) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public IUpdateCodeModuleTask getUpdateCodeModuleTask(String id, String name,
+			ArrayList<File> contentElementFiles, IObjectStore objectStore) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public IGetCodeModuleActionsTask getGetCodeModuleActionsTask(String id, IObjectStore objectStore) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ICreateEventActionTask getCreateEventActionTask(String id, String name,
+			String className, boolean enabled, IObjectStore objectStore) {
+		throw new UnsupportedOperationException();
 	}
 }

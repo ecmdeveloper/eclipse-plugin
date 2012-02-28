@@ -39,6 +39,11 @@ import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
 import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerEvent;
 import com.ecmdeveloper.plugin.core.model.tasks.ObjectStoresManagerRefreshEvent;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateCodeModuleTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateEventActionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 
 /**
  * This class is the manager class for Code Module Files. It is implemented as a
@@ -84,12 +89,12 @@ public class CodeModulesManager implements ITaskManagerListener {
       }
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Collection<ICodeModule> getNewCodeModules(IObjectStore objectStore ) throws ExecutionException {
 
-		GetCodeModulesTask task = new GetCodeModulesTask( objectStore );
-		Collection<ICodeModule> codeModules = 
-			(Collection<ICodeModule>) getTaskManager().executeTaskSync(task);
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IGetCodeModulesTask task = taskFactory.getGetCodeModulesTask( objectStore );
+		getTaskManager().executeTaskSync(task);
+		Collection<ICodeModule> codeModules = task.getCodeModules();
 
 		ArrayList<ICodeModule> newCodeModules = new ArrayList<ICodeModule>();
 		
@@ -180,7 +185,8 @@ public class CodeModulesManager implements ITaskManagerListener {
 		IObjectStore objectStore = getObjectStore(codeModuleFile);
 		objectStore.assertConnected();
 		
-		CreateCodeModuleTask task = new CreateCodeModuleTask(codeModuleFile
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		ICreateCodeModuleTask task = taskFactory.getCreateCodeModuleTask(codeModuleFile
 				.getName(), codeModuleFile.getContentElementFiles(), objectStore );
 		
 		ICodeModule codeModule = (ICodeModule) getTaskManager().executeTaskSync(task);
@@ -206,20 +212,22 @@ public class CodeModulesManager implements ITaskManagerListener {
 		return objectStore;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<IAction> getCodeModuleActions( CodeModuleFile codeModuleFile ) throws ExecutionException {
 		
 		IObjectStore objectStore = getObjectStore(codeModuleFile);
 		objectStore.assertConnected();
-		GetCodeModuleActionsTask task = new GetCodeModuleActionsTask(codeModuleFile.getId(), objectStore );
-		return (Collection<IAction>) getTaskManager().executeTaskSync(task);
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IGetCodeModuleActionsTask task = taskFactory.getGetCodeModuleActionsTask(codeModuleFile.getId(), objectStore );
+		getTaskManager().executeTaskSync(task);
+		return task.getActions();
 	}
 	
 	public void updateCodeModule(CodeModuleFile codeModuleFile, Object[] selectedActions ) throws Exception {
 		
 		IObjectStore objectStore = getObjectStore(codeModuleFile);
 		objectStore.assertConnected();
-		UpdateCodeModuleTask task = new UpdateCodeModuleTask(codeModuleFile
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IUpdateCodeModuleTask task = taskFactory.getUpdateCodeModuleTask(codeModuleFile
 				.getId(), codeModuleFile.getName(), codeModuleFile.getContentElementFiles(),
 				objectStore);
 		
@@ -228,7 +236,6 @@ public class CodeModulesManager implements ITaskManagerListener {
 		for ( Object objectStoreItem : selectedActions ) {
 			if (objectStoreItem instanceof IAction ) {
 				((IAction) objectStoreItem).setCodeModule( codeModule );
-				ITaskFactory taskFactory = ((IAction) objectStoreItem).getTaskFactory();
 				IUpdateTask updateTask = taskFactory.getUpdateTask((IObjectStoreItem) objectStoreItem );
 				getTaskManager().executeTaskSync(updateTask);
 			}
@@ -321,5 +328,19 @@ public class CodeModulesManager implements ITaskManagerListener {
 
 	@Override
 	public void objectStoreItemsRefreshed(ObjectStoresManagerRefreshEvent event) {
+	}
+
+
+	public void createEventAction(CodeModuleFile codeModuleFile, String name, String className,
+			boolean enabled) throws Exception {
+		
+		IObjectStore objectStore = getObjectStore(codeModuleFile);
+		objectStore.assertConnected();
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		
+		ICreateEventActionTask task = taskFactory.getCreateEventActionTask(codeModuleFile.getId(),
+				name, className, enabled, objectStore);
+		
+		getTaskManager().executeTaskSync(task);
 	}
 }

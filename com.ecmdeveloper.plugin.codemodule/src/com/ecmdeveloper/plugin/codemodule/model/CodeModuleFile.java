@@ -22,10 +22,15 @@ package com.ecmdeveloper.plugin.codemodule.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 
 import com.ecmdeveloper.plugin.core.model.ICodeModule;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
@@ -194,5 +199,32 @@ public class CodeModuleFile {
 			}
 		}
 		return true;
+	}
+
+	public Collection<String> getClassNames(String interfaceName ) throws Exception {
+		ArrayList<IType> contentElements = new ArrayList<IType>();
+		
+		JavaElementClassesFinder javaElementFilesFinder = new JavaElementClassesFinder();
+		for ( IJavaElement javaElement : javaElements) {
+			contentElements.addAll( javaElementFilesFinder.findClasses( javaElement, interfaceName) );
+		}
+
+		Set<String> classNames = new HashSet<String>();
+		for ( IType type : contentElements ) {
+			classNames.add( getTypeName(type)  );
+		}
+		
+		return classNames;
+	}
+	
+	private String getTypeName(IType type ) {
+		StringBuffer typeName =  new StringBuffer();
+		IPackageFragment pack= type.getPackageFragment();
+		if (!pack.isDefaultPackage()) {
+			typeName.append( pack.getElementName() );
+			typeName.append('.');
+		}
+		typeName.append( type.getElementName() );
+		return typeName.toString();
 	}
 }

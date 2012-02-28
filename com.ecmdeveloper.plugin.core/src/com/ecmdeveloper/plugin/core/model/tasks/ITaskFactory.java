@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.core.model.tasks;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -33,6 +35,11 @@ import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptio
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateCodeModuleTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateEventActionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 
 /**
  * @author ricardo.belfor
@@ -98,4 +105,14 @@ public interface ITaskFactory {
 	IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits );
 
 	IGetRequiredClassDescriptionTask getGetRequiredClassDescription(IPropertyDescription targetPropertyDescription, IObjectStore objectStore);
+
+	IUpdateCodeModuleTask getUpdateCodeModuleTask(String id, String name, ArrayList<File> contentElementFiles, IObjectStore objectStore);
+
+	IGetCodeModulesTask getGetCodeModulesTask(IObjectStore objectStore);
+
+	ICreateCodeModuleTask getCreateCodeModuleTask(String name, ArrayList<File> contentElementFiles, IObjectStore objectStore);
+
+	IGetCodeModuleActionsTask getGetCodeModuleActionsTask(String id, IObjectStore objectStore);
+
+	ICreateEventActionTask getCreateEventActionTask(String id, String name, String className, boolean enabled, IObjectStore objectStore);
 }

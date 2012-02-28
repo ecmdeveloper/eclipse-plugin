@@ -77,12 +77,14 @@ public class ExecuteSearchTask extends AbstractTask implements IExecuteSearchTas
 
 	private ItemIterable<QueryResult> getQueryResult(Session session) {
 		ItemIterable<QueryResult> queryResults;
+    	String safeQuery = query.replaceAll("\r", "").replaceAll("\n", " ").replace("\t", " ");
+    	
         if ( maxHits != null) {
         	OperationContext queryContext = new OperationContextImpl(null, false, false, false,
 					IncludeRelationships.NONE, null, false, null, false, maxHits);
-    		queryResults = session.query(query, true, queryContext );
+    		queryResults = session.query(safeQuery, true, queryContext );
         } else {
-    		queryResults = session.query(query, true );
+    		queryResults = session.query(safeQuery, true );
         }
 		return queryResults;
 	}

@@ -29,10 +29,14 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
 import com.ecmdeveloper.plugin.tracker.model.FilesTracker;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
@@ -62,7 +66,7 @@ public abstract class AbstractTrackedFileHandler extends AbstractHandler impleme
 		return null;
 	}
 
-	private void handleSelectedObject(IWorkbenchWindow window, Object selectedObject) {
+	private void handleSelectedObject(IWorkbenchWindow window, Object selectedObject) throws ExecutionException {
 		IFile file = null;
 		TrackedFile trackedFile;
 		if ( selectedObject instanceof IFile ) {
@@ -81,8 +85,27 @@ public abstract class AbstractTrackedFileHandler extends AbstractHandler impleme
 		} else {
 			throw new UnsupportedOperationException("Invalid selection for " + this.getClass().getName() );
 		}
-		handleSelectedFile(window, trackedFile, file);
+		
+		
+		IObjectStore objectStore = getObjectStore(trackedFile, window.getShell() );
+		if ( objectStore != null ) {
+			handleSelectedFile(window, trackedFile, file, objectStore );
+		}
 	}
 
-	protected abstract void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file);
+	private IObjectStore getObjectStore(TrackedFile trackedFile, Shell shell) throws ExecutionException {
+		String objectStoreName = trackedFile.getObjectStoreName();
+		String connectionName = trackedFile.getConnectionName();
+		IObjectStoresManager objectStoresManager = Activator.getDefault().getObjectStoresManager();
+		IObjectStore objectStore = objectStoresManager.getObjectStore(connectionName , objectStoreName );
+		if ( ! objectStore.isConnected() ) {
+			if ( !objectStoresManager.getCredentials(objectStore, shell ) ) {
+				return null;
+			}
+		}
+		return objectStore;
+	}
+	
+	protected abstract void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file, IObjectStore objectStore);
+
 }

@@ -14,5 +14,6 @@ Export-Package: com.ecmdeveloper.plugin.core.dialogs,
  com.ecmdeveloper.plugin.core.model.constants,
  com.ecmdeveloper.plugin.core.model.tasks,
  com.ecmdeveloper.plugin.core.model.tasks.classes,
+ com.ecmdeveloper.plugin.core.model.tasks.codemodule,
  com.ecmdeveloper.plugin.core.properties,
  com.ecmdeveloper.plugin.core.util

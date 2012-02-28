@@ -52,7 +52,6 @@ public class ImportObjectStoreWizard extends AbstractImportObjectStoreWizard
 					}
 				};
 			}
-			
 		};
 	}
 
@@ -65,15 +64,16 @@ public class ImportObjectStoreWizard extends AbstractImportObjectStoreWizard
 			@Override
 			public IConnection getConnection() {
 				
-				String url = getURL();
-				String username = getUsername();
-				String password = getPassword();
-
+				final String url = getURL();
+				final String username = getUsername();
+				final String password = getPassword();
+				final boolean storePassword = isStorePassword();
 				final ContentEngineConnection objectStoreConnection = new ContentEngineConnection();
 				
 				objectStoreConnection.setUrl(url);
 				objectStoreConnection.setUsername(username);
 				objectStoreConnection.setPassword(password);
+				objectStoreConnection.setStorePassword(storePassword);
 				
 				return objectStoreConnection;
 			}

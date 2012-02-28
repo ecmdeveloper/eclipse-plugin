@@ -93,6 +93,13 @@
             id="com.ecmdeveloper.plugin.showCodeModuleActions"
             name="Show Actions">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            defaultHandler="com.ecmdeveloper.plugin.codemodule.handlers.CreateEventActionHandler"
+            description="Create Event Action"
+            id="com.ecmdeveloper.plugin.createEventAction"
+            name="Create Event Action">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

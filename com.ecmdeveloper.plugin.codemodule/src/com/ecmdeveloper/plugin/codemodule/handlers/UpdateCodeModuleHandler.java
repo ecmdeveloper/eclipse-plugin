@@ -49,8 +49,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.codemodule.editors.CodeModuleEditorUtils;
 import com.ecmdeveloper.plugin.codemodule.handlers.util.CodeModuleActionLabelProvider;
-import com.ecmdeveloper.plugin.codemodule.handlers.util.GetCodeModuleActionsJob;
-import com.ecmdeveloper.plugin.codemodule.handlers.util.UpdateCodeModuleJob;
+import com.ecmdeveloper.plugin.codemodule.jobs.GetCodeModuleActionsJob;
+import com.ecmdeveloper.plugin.codemodule.jobs.UpdateCodeModuleJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.util.Messages;
 import com.ecmdeveloper.plugin.codemodule.util.PluginLog;

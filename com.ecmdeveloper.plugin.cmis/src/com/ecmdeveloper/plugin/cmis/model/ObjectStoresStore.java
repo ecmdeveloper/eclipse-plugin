@@ -130,7 +130,6 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		connection.setDisplayName( connectionChild.getString( PluginTagNames.DISPLAY_NAME_TAG ) );
 		connection.setUrl( connectionChild.getString( PluginTagNames.URL_TAG ) );
 		connection.setUsername( connectionChild.getString( PluginTagNames.USERNAME_TAG ) );
-		connection.setPassword( connectionChild.getString( PluginTagNames.PASSWORD_TAG ) );
 		String bindingTypeValue = connectionChild.getString( PluginTagNames.BINDING_TYPE_TAG  );
 		connection.setBindingType( BindingType.valueOf( bindingTypeValue ) );
 		String authenticationValue = connectionChild.getString( PluginTagNames.AUTHENTICATION_TAG );
@@ -139,12 +138,12 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		connection.setUseClientCompression( connectionChild.getBoolean( PluginTagNames.USE_CLIENT_COMPRESSION_TAG ) );
 		connection.setUseCookies( connectionChild.getBoolean( PluginTagNames.USE_COOKIES_TAG ) );
 
-//		connection.setBindingType( BindingType.ATOMPUB );
-//		connection.setAuthentication( Authentication.STANDARD );
-//		connection.setUseCompression( true );
-//		connection.setUseClientCompression( false );
-//		connection.setUseCookies( false );
-		
+		Boolean storePassword = connectionChild.getBoolean( PluginTagNames.STORE_PASSWORD_TAG );
+		connection.setStorePassword( storePassword == null || storePassword );
+		if ( connection.isStorePassword() ) {
+			connection.setPassword( connectionChild.getString( PluginTagNames.PASSWORD_TAG ) );
+		}
+				
 		return connection;
 	}
 
@@ -212,15 +211,17 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		connectionChild.putString( PluginTagNames.DISPLAY_NAME_TAG, connection.getDisplayName() );
 		connectionChild.putString( PluginTagNames.URL_TAG, connection.getUrl() );
 		connectionChild.putString( PluginTagNames.USERNAME_TAG, connection.getUsername() );
-				
-		String password = connection.getPassword();
-		// TODO add some basic encryption
-		connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
 		connectionChild.putString( PluginTagNames.BINDING_TYPE_TAG, connection.getBindingType().name() );
 		connectionChild.putString( PluginTagNames.AUTHENTICATION_TAG, connection.getAuthentication().name() );
 		connectionChild.putBoolean( PluginTagNames.USE_COMPRESSION_TAG, connection.isUseCompression() );
 		connectionChild.putBoolean( PluginTagNames.USE_CLIENT_COMPRESSION_TAG, connection.isUseClientCompression() );
 		connectionChild.putBoolean( PluginTagNames.USE_COOKIES_TAG, connection.isUseCookies() );
+		
+		connectionChild.putBoolean( PluginTagNames.STORE_PASSWORD_TAG, connection.isStorePassword() );
+		if ( connection.isStorePassword() ) {
+			String password = connection.getPassword();
+			connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
+		}
 	}
 
 	private void saveObjectStore(IMemento objectStoresChild, IObjectStoreItem objectStore) {

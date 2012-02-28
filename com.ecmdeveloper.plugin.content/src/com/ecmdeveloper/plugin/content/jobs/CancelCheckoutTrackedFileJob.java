@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
@@ -46,8 +47,8 @@ public class CancelCheckoutTrackedFileJob extends AbstractTrackedFileJob {
 	private static final String HANDLER_NAME = "Cancel Checkout";
 	private static final String FAILED_MESSAGE = "Canceling Checkout \"{0}\" failed";
 
-	public CancelCheckoutTrackedFileJob(TrackedFile trackedFile, IFile file, IWorkbenchWindow window) {
-		super(HANDLER_NAME, trackedFile, file, window);
+	public CancelCheckoutTrackedFileJob(TrackedFile trackedFile, IFile file, IWorkbenchWindow window, IObjectStore objectStore) {
+		super(HANDLER_NAME, trackedFile, file, window, objectStore );
 	}
 
 	@Override

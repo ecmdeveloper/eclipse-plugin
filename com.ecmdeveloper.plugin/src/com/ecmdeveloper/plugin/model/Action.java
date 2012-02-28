@@ -69,7 +69,7 @@ public class Action extends ObjectStoreItem implements IAction {
 	}
 
 	public void setCodeModule(ICodeModule codeModule) {
-		action.set_CodeModule((com.filenet.api.admin.CodeModule) ((Action) codeModule)
+		action.set_CodeModule((com.filenet.api.admin.CodeModule) ((ObjectStoreItem) codeModule)
 						.getObjectStoreObject());
 	}
 	

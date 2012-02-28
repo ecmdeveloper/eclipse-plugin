@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.jobs.SaveTrackedFileJob;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
@@ -40,10 +41,10 @@ public class SaveTrackedFileHandler extends AbstractTrackedFileHandler {
 	private static final String HANDLER_NAME = "Save Tracked File";
 
 	@Override
-	protected void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file) {
+	protected void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file, IObjectStore objectStore) {
 		if ( trackedFile != null ) {
 			String mimeType = getMimeType(window, file);
-			SaveTrackedFileJob job = new SaveTrackedFileJob(trackedFile, file, window, mimeType );
+			SaveTrackedFileJob job = new SaveTrackedFileJob(trackedFile, file, window, mimeType, objectStore );
 			job.setUser(true);
 			job.schedule();
 		}
