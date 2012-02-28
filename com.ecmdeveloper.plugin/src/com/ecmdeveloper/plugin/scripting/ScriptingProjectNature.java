@@ -38,7 +38,7 @@ import com.ecmdeveloper.plugin.util.PluginLog;
  */
 public class ScriptingProjectNature implements IProjectNature {
 
-	public static final String NATURE_ID = Activator.PLUGIN_ID + ".scripting.contentEngineScript";
+	public static final String NATURE_ID = Activator.PLUGIN_ID + ".contentEngineScript";
 	
 	private IProject project;
 

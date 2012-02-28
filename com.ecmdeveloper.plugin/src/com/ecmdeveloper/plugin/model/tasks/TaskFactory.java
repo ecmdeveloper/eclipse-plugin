@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.model.tasks;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -56,8 +58,14 @@ import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptio
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateCodeModuleTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateEventActionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.Document;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 
 /**
@@ -232,5 +240,34 @@ public class TaskFactory implements ITaskFactory {
 	public IUpdateDocumentContentTask getUpdateDocumentContentTask(IDocument document,
 			Collection<Object> content, String mimeType) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ICreateCodeModuleTask getCreateCodeModuleTask(String name,
+			ArrayList<File> contentElementFiles, IObjectStore objectStore) {
+		return new CreateCodeModuleTask(name, contentElementFiles, objectStore );
+	}
+
+	@Override
+	public IGetCodeModuleActionsTask getGetCodeModuleActionsTask(String id, IObjectStore objectStore) {
+		return new GetCodeModuleActionsTask(id, objectStore);
+	}
+
+	@Override
+	public IGetCodeModulesTask getGetCodeModulesTask(IObjectStore objectStore) {
+		return new GetCodeModulesTask(objectStore);
+	}
+
+	@Override
+	public IUpdateCodeModuleTask getUpdateCodeModuleTask(String id, String name,
+			ArrayList<File> contentElementFiles, IObjectStore objectStore) {
+		return new UpdateCodeModuleTask(id, name, contentElementFiles, objectStore );
+	}
+
+	@Override
+	public ICreateEventActionTask getCreateEventActionTask(String codeModuleId, String name,
+			String className, boolean enabled, IObjectStore objectStore) {
+		return new CreateEventActionTask(codeModuleId, name, className, enabled,
+				(ObjectStore) objectStore);
 	}
 }

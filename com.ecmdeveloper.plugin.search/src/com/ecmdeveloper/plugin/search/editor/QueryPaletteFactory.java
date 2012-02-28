@@ -154,8 +154,9 @@ public class QueryPaletteFactory extends org.eclipse.ui.plugin.AbstractUIPlugin 
 		entry = createEntry(FreeText.DESCRIPTION, queryProxy);
 		entries.add(entry);
 
-		entry = createEntry(FullTextQuery.DESCRIPTION, queryProxy);
-		entries.add(entry);
+// FIXME does not work for CMIS and CE (no join)		
+//		entry = createEntry(FullTextQuery.DESCRIPTION, queryProxy);
+//		entries.add(entry);
 
 		drawer.addAll(entries);
 		return drawer;

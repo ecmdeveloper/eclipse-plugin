@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ecmdeveloper.plugin.codemodule.handlers.util;
+package com.ecmdeveloper.plugin.codemodule.jobs;
 
 import java.text.MessageFormat;
 

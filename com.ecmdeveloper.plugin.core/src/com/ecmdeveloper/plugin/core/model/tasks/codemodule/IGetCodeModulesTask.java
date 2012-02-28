@@ -1,5 +1,5 @@
 /**
- * Copyright 2010, Ricardo Belfor
+ * Copyright 2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,28 +18,19 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.content.handlers;
+package com.ecmdeveloper.plugin.core.model.tasks.codemodule;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.IWorkbenchWindow;
+import java.util.Collection;
 
-import com.ecmdeveloper.plugin.content.jobs.CheckinTrackedFileJob;
-import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
+import com.ecmdeveloper.plugin.core.model.ICodeModule;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
- * @author Ricardo.Belfor
+ * @author ricardo.belfor
  *
  */
-public class CheckinTrackedFileHandler extends AbstractTrackedFileHandler {
+public interface IGetCodeModulesTask extends IBaseTask {
 
-	@Override
-	protected void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file, IObjectStore objectStore) {
-		if ( trackedFile != null ) {
-			CheckinTrackedFileJob job = new CheckinTrackedFileJob(trackedFile, file, window, objectStore);
-			job.setUser(true);
-			job.schedule();
-		}
-	}
+	Collection<ICodeModule> getCodeModules();
 
 }

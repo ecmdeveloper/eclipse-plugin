@@ -42,4 +42,5 @@ public class PluginTagNames {
 	public static final String USE_COMPRESSION_TAG = "useCompression";
 	public static final String USE_CLIENT_COMPRESSION_TAG = "useClientCompression";
 	public static final String USE_COOKIES_TAG = "useCookies";
+	public static final String STORE_PASSWORD_TAG = "storePassword";
 }

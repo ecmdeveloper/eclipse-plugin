@@ -41,7 +41,7 @@ import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.codemodule.handlers.util.CodeModuleActionLabelProvider;
-import com.ecmdeveloper.plugin.codemodule.handlers.util.GetCodeModuleActionsJob;
+import com.ecmdeveloper.plugin.codemodule.jobs.GetCodeModuleActionsJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.core.model.IAction;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;

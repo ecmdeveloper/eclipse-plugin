@@ -71,7 +71,7 @@ public class LoginDialog extends TitleAreaDialog {
 		Control control = super.createDialogArea(parent);
 		setTitle("Credentials");
 		String message = MessageFormat.format(
-				"Provide the credentials for the connection to the ''{0}''\nObject Store.", objectStore
+				"Provide the credentials for the connection to the ''{0}''\nObject Store. Passwords are not stored encrypted.", objectStore
 						.getDisplayName());
 		setMessage( message );
 		

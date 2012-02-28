@@ -34,7 +34,6 @@ import com.ecmdeveloper.plugin.core.model.constants.ClassDescriptionFolderType;
 import com.ecmdeveloper.plugin.core.model.constants.ClassType;
 import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.model.tasks.LoadChildrenTask;
-import com.ecmdeveloper.plugin.util.Messages;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentlyPersistableObject;
 
@@ -49,7 +48,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	private static final String DEFAULT_DOCUMENT_CLASS_NAME = "Document";
 	private static final String DEFAULT_CUSTOM_OBJECT_CLASS_NAME = "CustomObject";
 	
-	private static final String NOT_CONNECTED_MESSAGE = Messages.ObjectStore_NotConnectedMessage;
+	private static final String NOT_CONNECTED_MESSAGE = "Object Store '{0}:{1}' is not connected.\nConnect to the Object Store before trying this action";
 	protected ContentEngineConnection connection;
 	protected com.filenet.api.core.ObjectStore objectStore;
 	

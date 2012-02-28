@@ -120,6 +120,7 @@ public class CodeModuleEditorForm extends FormPage {
 
 	private static final String UPDATE_CODE_MODULE_COMMAND_ID = "com.ecmdeveloper.plugin.updateCodeModule"; //$NON-NLS-1$
 	private static final String SHOW_CODE_MODULES_ACTIONS_COMMAND_ID = "com.ecmdeveloper.plugin.showCodeModuleActions";
+	private static final String CREATE_EVENT_ACTION_COMMAND_ID = "com.ecmdeveloper.plugin.createEventAction";
 	
 	private Text nameText;
 	private Label objectStoreLabel;
@@ -249,6 +250,7 @@ public class CodeModuleEditorForm extends FormPage {
 
 		createUpdateCodeModuleLink(toolkit, client);
 		createShowCodeModuleActionsLink(toolkit, client);
+		createAddEventActionLink(toolkit, client );
 		//createAddActionLink(toolkit, client);
 		
 		section.setClient(client);
@@ -278,6 +280,23 @@ public class CodeModuleEditorForm extends FormPage {
 	    });
 	}
 
+	private void createAddEventActionLink(FormToolkit toolkit, Composite client) {
+
+		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
+		link.setText("Create Event Action");
+		link.setImage( Activator.getImage(IconFiles.ICON_ADD_EVENT_ACTION) );
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(CREATE_EVENT_ACTION_COMMAND_ID, null );
+				} catch (Exception exception) {
+					PluginLog.error( exception );
+				}
+			}
+	    });
+	}
+	
 	private void createShowCodeModuleActionsLink(FormToolkit toolkit,
 			Composite client) {
 

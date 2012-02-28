@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.Activator;
 import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.tasks.IDocumentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
@@ -52,8 +53,8 @@ public class SaveTrackedFileJob extends AbstractTrackedFileJob {
 	private String mimeType;
 
 	public SaveTrackedFileJob(TrackedFile trackedFile, IFile file,
-			IWorkbenchWindow window, String mimeType) {
-		super(JOB_NAME, trackedFile, file, window);
+			IWorkbenchWindow window, String mimeType, IObjectStore objectStore ) {
+		super(JOB_NAME, trackedFile, file, window, objectStore);
 		this.mimeType = mimeType;
 	}
 

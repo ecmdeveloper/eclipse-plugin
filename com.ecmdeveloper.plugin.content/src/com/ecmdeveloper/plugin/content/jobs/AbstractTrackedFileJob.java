@@ -43,15 +43,17 @@ public abstract class AbstractTrackedFileJob extends Job {
 
 	private static final String FETCHING_DOCUMENT_TASK = "Fetching document \"{0}\"";
 
-	private TrackedFile trackedFile;
-	private IWorkbenchWindow window;
-	private IFile file;
+	private final TrackedFile trackedFile;
+	private final IWorkbenchWindow window;
+	private final IFile file;
+	private final IObjectStore objectStore;
 	
-	public AbstractTrackedFileJob(String name, TrackedFile trackedFile, IFile file, IWorkbenchWindow window) {
+	public AbstractTrackedFileJob(String name, TrackedFile trackedFile, IFile file, IWorkbenchWindow window, IObjectStore objectStore ) {
 		super(name);
 		this.trackedFile = trackedFile;
 		this.window = window;
 		this.file = file;
+		this.objectStore = objectStore;
 	}
 
 	public IWorkbenchWindow getWindow() {
@@ -67,24 +69,20 @@ public abstract class AbstractTrackedFileJob extends Job {
 	}
 	protected IDocument getDocument(IProgressMonitor monitor) throws ExecutionException {
 		
-		IObjectStore objectStore = getObjectStore(monitor);
+		connectObjectStore(monitor);
 		String message = MessageFormat.format(FETCHING_DOCUMENT_TASK, trackedFile.getName());
 		monitor.beginTask(message, IProgressMonitor.UNKNOWN );
 		ITaskFactory taskFactory = objectStore.getTaskFactory();
 		IFetchObjectTask task = taskFactory.getFetchObjectTask(objectStore, trackedFile.getId(), trackedFile
-				.getClassName(), "Document");
+				.getClassName(), IFetchObjectTask.DOCUMENT_OBJECT_TYPE );
 		IDocument document = (IDocument) Activator.getDefault().getTaskManager().executeTaskSync(task);
 		monitor.done();
 		return document;
 	}
 
-	private IObjectStore getObjectStore(IProgressMonitor monitor) throws ExecutionException {
-		String objectStoreName = trackedFile.getObjectStoreName();
-		String connectionName = trackedFile.getConnectionName();
-		IObjectStore objectStore = Activator.getDefault().getObjectStoresManager().getObjectStore(connectionName , objectStoreName );
+	private void connectObjectStore(IProgressMonitor monitor) throws ExecutionException {
 		if ( ! objectStore.isConnected() ) {
-			Activator.getDefault().getObjectStoresManager().connectConnection(objectStore.getConnection(), monitor );
+			Activator.getDefault().getObjectStoresManager().connectObjectStore( objectStore, monitor );
 		}
-		return objectStore;
 	}
 }

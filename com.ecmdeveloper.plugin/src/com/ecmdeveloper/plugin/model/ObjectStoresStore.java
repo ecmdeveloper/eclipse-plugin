@@ -127,7 +127,11 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		contentEngineConnection.setDisplayName( connectionChild.getString( PluginTagNames.DISPLAY_NAME_TAG ) );
 		contentEngineConnection.setUrl( connectionChild.getString( PluginTagNames.URL_TAG ) );
 		contentEngineConnection.setUsername( connectionChild.getString( PluginTagNames.USERNAME_TAG ) );
-		contentEngineConnection.setPassword( connectionChild.getString( PluginTagNames.PASSWORD_TAG ) );
+		Boolean storePassword = connectionChild.getBoolean( PluginTagNames.STORE_PASSWORD_TAG );
+		contentEngineConnection.setStorePassword( storePassword == null || storePassword );
+		if ( contentEngineConnection.isStorePassword() ) {
+			contentEngineConnection.setPassword( connectionChild.getString( PluginTagNames.PASSWORD_TAG ) );
+		}
 		return contentEngineConnection;
 	}
 
@@ -195,9 +199,11 @@ public class ObjectStoresStore implements IObjectStoresStore {
 		connectionChild.putString( PluginTagNames.DISPLAY_NAME_TAG, contentEngineConnection.getDisplayName() );
 		connectionChild.putString( PluginTagNames.URL_TAG, contentEngineConnection.getUrl() );
 		connectionChild.putString( PluginTagNames.USERNAME_TAG, contentEngineConnection.getUsername() );
-		String password = contentEngineConnection.getPassword();
-		// TODO add some basic encryption
-		connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
+		connectionChild.putBoolean( PluginTagNames.STORE_PASSWORD_TAG, contentEngineConnection.isStorePassword() );
+		if ( contentEngineConnection.isStorePassword() ) {
+			String password = contentEngineConnection.getPassword();
+			connectionChild.putString( PluginTagNames.PASSWORD_TAG, password );
+		}
 	}
 
 	private void saveObjectStore(IMemento objectStoresChild, IObjectStoreItem objectStore) {

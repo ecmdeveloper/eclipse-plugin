@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ecmdeveloper.plugin.content.jobs.CancelCheckoutTrackedFileJob;
+import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 
 /**
@@ -33,9 +34,9 @@ import com.ecmdeveloper.plugin.tracker.model.TrackedFile;
 public class CancelCheckoutTrackedFileHandler extends AbstractTrackedFileHandler {
 
 	@Override
-	protected void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file) {
+	protected void handleSelectedFile(IWorkbenchWindow window, TrackedFile trackedFile, IFile file, IObjectStore objectStore) {
 		if ( trackedFile != null ) {
-			CancelCheckoutTrackedFileJob job = new CancelCheckoutTrackedFileJob(trackedFile,file,window);
+			CancelCheckoutTrackedFileJob job = new CancelCheckoutTrackedFileJob(trackedFile, file, window, objectStore );
 			job.setUser(true);
 			job.schedule();
 		}

@@ -194,13 +194,15 @@
       </category>
       <wizard
             category="com.ecmdeveloper.plugin.category.contentEngine"
-            class="com.ecmdeveloper.plugin.scripting.wizard.NewScriptingProjectWizard"
+            class="com.ecmdeveloper.plugin.wizard.NewContentEngineScriptProjectWizard"
+            descriptionImage="icons/application.png"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            icon="icons/application.png"
             id="com.ecmdeveloper.plugin.scripting.newScriptingProjectWizard"
             name="Content Engine Console Project"
             project="true">
          <description>
-            Creates a new Content Engine Console Project
+            Creates a new Content Engine Console Project.
          </description>
       </wizard>
    </extension>

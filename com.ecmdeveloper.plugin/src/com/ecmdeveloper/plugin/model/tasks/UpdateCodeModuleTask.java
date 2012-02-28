@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.model.CodeModule;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -41,7 +42,7 @@ import com.filenet.api.util.Id;
  * @author Ricardo.Belfor
  *
  */
-public class UpdateCodeModuleTask extends CodeModuleTask {
+public class UpdateCodeModuleTask extends CodeModuleTask implements IUpdateCodeModuleTask {
 
 	protected String name;
 	protected Collection<File> files;
@@ -59,10 +60,7 @@ public class UpdateCodeModuleTask extends CodeModuleTask {
 	@Override
 	protected Object execute() throws Exception {
 
-		com.filenet.api.core.ObjectStore objectStoreObject = (com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
-		
-		VersionSeries versionSeries = Factory.VersionSeries.getInstance(objectStoreObject, new Id( codeModuleId ) ); 
-		versionSeries.fetchProperties( new String[]  { PropertyNames.CURRENT_VERSION } );
+		VersionSeries versionSeries = getCodeModuleVersionSeries(objectStore, codeModuleId );
 		Document document = (Document) versionSeries.get_CurrentVersion();
 		
 		document.checkout(ReservationType.EXCLUSIVE, null, document.getClassName(), null);

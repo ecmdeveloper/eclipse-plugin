@@ -19,11 +19,14 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.ecmdeveloper.plugin.core.model.IAction;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
 import com.ecmdeveloper.plugin.model.Action;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
@@ -37,15 +40,21 @@ import com.filenet.api.property.FilterElement;
 import com.filenet.api.property.PropertyFilter;
 import com.filenet.api.util.Id;
 
-public class GetCodeModuleActionsTask extends BaseTask {
+public class GetCodeModuleActionsTask extends BaseTask implements IGetCodeModuleActionsTask {
 
 	protected String codeModuleId;
 	protected ObjectStore objectStore;
+	private Set<IAction> actions;
 
 	public GetCodeModuleActionsTask(String codeModuleId, IObjectStore objectStore2 ) {
 		super();
 		this.codeModuleId = codeModuleId;
 		this.objectStore = (ObjectStore) objectStore2;
+	}
+
+	@Override
+	public Collection<IAction> getActions() {
+		return actions;
 	}
 
 	@Override
@@ -64,7 +73,7 @@ public class GetCodeModuleActionsTask extends BaseTask {
 		
 		VersionableSet versions = versionSeries.get_Versions();
 		Iterator<?> versionsIterator = versions.iterator();
-		Set<Action> actions = new HashSet<Action>();
+		actions = new HashSet<IAction>();
 		
 		while ( versionsIterator.hasNext() ) {
 			

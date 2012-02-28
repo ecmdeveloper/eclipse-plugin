@@ -36,5 +36,6 @@ public class PluginTagNames {
 	public static final String OBJECT_STORE_NAME_TAG = "objectStoreName";
 	public static final String FILES_TAG = "files";
 	public static final String FILE_TAG = "file";
-	public static final String VERSION_TAG = "version";
+	public static final String VERSION_TAG = "version";	
+	public static final String STORE_PASSWORD_TAG = "storePassword";
 }

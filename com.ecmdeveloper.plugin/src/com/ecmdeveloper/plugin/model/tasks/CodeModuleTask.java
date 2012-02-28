@@ -24,9 +24,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.collection.ContentElementList;
+import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.ContentTransfer;
 import com.filenet.api.core.Factory;
+import com.filenet.api.core.VersionSeries;
+import com.filenet.api.util.Id;
 
 /**
  * @author Ricardo.Belfor
@@ -68,5 +72,13 @@ public abstract class CodeModuleTask extends BaseTask {
 			content.set_ContentType( "application/java" );
 		}
 		return content;
+	}
+
+	protected VersionSeries getCodeModuleVersionSeries(ObjectStore objectStore, String codeModuleId ) {
+		com.filenet.api.core.ObjectStore objectStoreObject = (com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
+		
+		VersionSeries versionSeries = Factory.VersionSeries.getInstance(objectStoreObject, new Id( codeModuleId ) ); 
+		versionSeries.fetchProperties( new String[]  { PropertyNames.CURRENT_VERSION } );
+		return versionSeries;
 	}
 }
