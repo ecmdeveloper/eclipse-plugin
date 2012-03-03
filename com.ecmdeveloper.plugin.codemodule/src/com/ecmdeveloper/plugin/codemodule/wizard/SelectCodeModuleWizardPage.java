@@ -11,6 +11,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,6 +25,8 @@ import org.eclipse.swt.widgets.Label;
 
 import com.ecmdeveloper.plugin.core.model.ICodeModule;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.constants.Feature;
 import com.ecmdeveloper.plugin.ui.views.ObjectStoreItemLabelProvider;
 
 public class SelectCodeModuleWizardPage extends WizardPage {
@@ -123,15 +127,16 @@ public class SelectCodeModuleWizardPage extends WizardPage {
 		objectStoresCombo.setInput( wizard.getObjectStores() );
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		objectStoresCombo.getCombo().setLayoutData( gd );
-//		objectStoresCombo.setFilters( new ViewerFilter() {
-//
-//			@Override
-//			public boolean select(Viewer viewer, Object parentElement, Object element) {
-//				if ( element instanceof IObjectStore ) {
-//					((IObjectStore) element).getConnection()
-//				}
-//				return false;
-//			} } );
+		objectStoresCombo.addFilter( new ViewerFilter() {
+
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if ( element instanceof IObjectStore ) {
+					return ((IObjectStoreItem)element).isSupportedFeature(Feature.CODE_MODULES);
+				}
+				return false;
+			}
+		});
 	}
 
 	private void createConnectButton( Composite parent ) {
