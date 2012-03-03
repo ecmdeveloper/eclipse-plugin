@@ -25,7 +25,7 @@ package com.ecmdeveloper.plugin.core.model.constants;
  *
  */
 public enum Feature {
-
-	VERSIONING,
-	CLASS_FILTER
+	CODE_MODULES,
+	CLASS_FILTER,
+	CUSTOM_OBJECTS,
 }
