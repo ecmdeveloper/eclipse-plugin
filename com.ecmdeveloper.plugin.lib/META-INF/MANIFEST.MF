@@ -9,12 +9,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/Jace.jar,
- .,
- lib/log4j.jar,
- lib/stax-api.jar,
- lib/xlxpScanner.jar,
- lib/xlxpScannerUtils.jar
 Export-Package: com.ecmdeveloper.plugin.lib,
  com.filenet.api.action,
  com.filenet.api.admin,
@@ -33,3 +27,9 @@ Export-Package: com.ecmdeveloper.plugin.lib,
  com.filenet.api.replication,
  com.filenet.api.security,
  com.filenet.api.util
+Bundle-ClassPath: .,
+ lib/Jace.jar,
+ lib/stax-api.jar,
+ lib/xlxpScanner.jar,
+ lib/xlxpScannerUtils.jar,
+ lib/log4j.jar
