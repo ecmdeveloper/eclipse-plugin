@@ -174,8 +174,8 @@ public class LoginDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		
-		connection.setPassword( password.isEmpty() ? null : password );
-		connection.setUsername( username.isEmpty() ? null : username );
+		connection.setPassword( password == null || password.isEmpty() ? null : password );
+		connection.setUsername( username == null || username.isEmpty() ? null : username );
 		connection.setStorePassword(storePassword);
 		
 		super.okPressed();

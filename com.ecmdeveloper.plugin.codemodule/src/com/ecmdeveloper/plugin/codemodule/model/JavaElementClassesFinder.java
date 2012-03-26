@@ -49,7 +49,6 @@ public class JavaElementClassesFinder {
 			if ( child instanceof IType ) {
 				IType type = (IType) child;
 				for ( String typeInterfaceName : type.getSuperInterfaceNames() ) {
-					System.out.println( typeInterfaceName );
 					if ( isImplementsInterface(interfaceName, typeInterfaceName) ) {
 						files.add(type);
 					}

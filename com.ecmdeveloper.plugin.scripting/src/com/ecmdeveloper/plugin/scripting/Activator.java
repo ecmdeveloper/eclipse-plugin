@@ -47,6 +47,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public void stop(BundleContext context) throws Exception {
+		scriptingContextSerializer.clear();
 		plugin = null;
 		super.stop(context);
 	}
@@ -58,13 +59,6 @@ public class Activator extends AbstractUIPlugin {
 	public String getBaseMethodRunnerLocation() throws Exception {
 		Bundle bundle = getBundle();
 		URL locationUrl = FileLocator.find(bundle, new Path("/dist/com.ecmdeveloper.scripting_1.0.0.jar"), null);
-		URL fileUrl = FileLocator.toFileURL(locationUrl);
-		return fileUrl.getFile();
-	}
-
-	public String getLog4JLocation() throws Exception {
-		Bundle bundle = getBundle();
-		URL locationUrl = FileLocator.find(bundle, new Path("/dist/log4j.properties"), null);
 		URL fileUrl = FileLocator.toFileURL(locationUrl);
 		return fileUrl.getFile();
 	}

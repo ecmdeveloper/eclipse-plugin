@@ -191,10 +191,20 @@
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
             icon="icons/application.png"
             id="com.ecmdeveloper.plugin.cmis.scripting.newScriptingProjectWizard"
-            name="Open CMIS Console Project"
+            name="CMIS Console Project"
             project="true">
          <description>
             Creates a new Open CMIS Console Project. This type of project contains classes that accept documents or folders as input.
+         </description>
+      </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.cmis.category"
+            class="com.ecmdeveloper.plugin.cmis.wizard.NewCMISScriptClassWizard"
+            icon="icons/application_class.png"
+            id="com.ecmdeveloper.plugin.cmis.scripting.newScriptingProjectClassWizard"
+            name="CMIS Console Project Class">
+         <description>
+            Creates a new Content Engine Console Project Class.
          </description>
       </wizard>
    </extension>

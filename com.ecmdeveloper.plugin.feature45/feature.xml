@@ -2,7 +2,7 @@
 <feature
       id="com.ecmdeveloper.plugin.45"
       label="ECM Developer Plug-in for CE 4.5"
-      version="1.5.0"
+      version="2.0.0"
       provider-name="ECMDEVELOPER">
 
    <description url="http://www.ecmdeveloper.com">
@@ -10,14 +10,14 @@
 of applications using FileNet P8 system. It approaches the system
 from a developers point of view and tries to find solutions for
 day to day tasks. At this moment features include Object Store
-browsing, a Code Module editor,a Properties editor, a Class Diagram
+browsing and searching, a Code Module editor,a Properties editor, a Class Diagram
 Editor and Java code generation.
 This plug-in uses the great &apos;Silk icon set 1.3&apos; by Mark James
 at http://www.famfamfam.com/lab/icons/silk/
    </description>
 
    <copyright url="http://www.ecmdeveloper.com/copyright.shtml">
-      Copyright 2009,2010, Ricardo Belfor
+      Copyright 2009-2012, Ricardo Belfor
 This file is part of the ECM Developer plug-in. The ECM Developer
 plug-in is
 free software: you can redistribute it and/or modify it under
@@ -285,6 +285,20 @@ Library.
 
    <plugin
          id="com.ecmdeveloper.plugin.search"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.scripting"
          download-size="0"
          install-size="0"
          version="0.0.0"

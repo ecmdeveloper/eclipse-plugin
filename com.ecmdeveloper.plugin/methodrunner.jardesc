@@ -11,6 +11,7 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <file path="/com.ecmdeveloper.plugin/log4j.properties"/>
         <javaElement handleIdentifier="=com.ecmdeveloper.plugin/src&lt;com.ecmdeveloper.plugin.scripting{MethodRunner.java"/>
     </selectedElements>
     <fatjar builder="org.eclipse.jdt.ui.plain_jar_builder" launchConfig=""/>

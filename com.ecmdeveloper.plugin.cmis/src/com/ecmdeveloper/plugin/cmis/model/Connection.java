@@ -125,6 +125,7 @@ public class Connection extends AbstractConnection {
 		return repositories != null;
 	}
 
+	@Override
 	public Map<String, String> getParameters() {
 		Map<String,String> parametersCopy = new HashMap<String, String>();
 		parametersCopy.putAll(parameters);

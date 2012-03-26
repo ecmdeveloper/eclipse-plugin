@@ -62,4 +62,10 @@ public class ScriptingContextSerializer {
 			}
 		}
 	}
+	
+	public void clear() {
+		for ( File file : dataPath.toFile().listFiles() ) {
+			file.delete();
+		}
+	}
 }

@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            category="com.ecmdeveloper.plugin.category.contentEngine"
+            category="com.ecmdeveloper.plugin.actionClasses"
             class="com.ecmdeveloper.plugin.java.wizard.NewEventActionClassWizard"
             icon="icons/script_lightning.png"
             id="com.ecmdeveloper.plugin.wizard.newEventAction"
@@ -14,7 +14,7 @@
          </description>
       </wizard>
       <wizard
-            category="com.ecmdeveloper.plugin.category.contentEngine"
+            category="com.ecmdeveloper.plugin.actionClasses"
             class="com.ecmdeveloper.plugin.java.wizard.NewDocumentLifecycleActionHandlerWizard"
             icon="icons/page_white_gear.png"
             id="com.ecmdeveloper.plugin.wizard.newDocumentLifecycleActionHandler"
@@ -24,7 +24,7 @@
          </description>
       </wizard>
       <wizard
-            category="com.ecmdeveloper.plugin.category.contentEngine"
+            category="com.ecmdeveloper.plugin.actionClasses"
             class="com.ecmdeveloper.plugin.java.wizard.NewDocumentClassifierClassWizard"
             icon="icons/page_white_code_red.png"
             id="com.ecmdeveloper.plugin.wizard.newDocumentClassifier"
@@ -34,8 +34,13 @@
          </description>
       </wizard>
       <category
-            id="com.ecmdeveloper.plugin.category.contentEngine"
-            name="Content Engine">
+            id="com.ecmdeveloper.plugin.category.main"
+            name="ECM Developer">
+      </category>
+      <category
+            id="com.ecmdeveloper.plugin.actionClasses"
+            name="Action Classes"
+            parentCategory="com.ecmdeveloper.plugin.category.main">
       </category>
    </extension>
 

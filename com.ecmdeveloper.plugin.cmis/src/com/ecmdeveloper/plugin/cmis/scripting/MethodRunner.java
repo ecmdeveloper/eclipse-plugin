@@ -20,14 +20,12 @@
 
 package com.ecmdeveloper.plugin.cmis.scripting;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.enums.BindingType;
 
 import com.ecmdeveloper.plugin.scripting.engine.AbstractMethodRunner;
 import com.ecmdeveloper.plugin.scripting.engine.ScriptingContext;
@@ -59,12 +57,9 @@ public class MethodRunner extends AbstractMethodRunner {
 	protected void connect(ScriptingContext scriptingContext) {
 		SessionFactoryImpl sessionFactory = SessionFactoryImpl.newInstance();
 		
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = scriptingContext.getParameters();
 		parameters.put(SessionParameter.USER, scriptingContext.getUsername() );
 		parameters.put(SessionParameter.PASSWORD, scriptingContext.getPassword() );
-		parameters.put(SessionParameter.ATOMPUB_URL, scriptingContext.getUrl() );
-		// FIXME make this configurable
-		parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 		parameters.put(SessionParameter.REPOSITORY_ID, scriptingContext.getObjectStoreName() );
 		
 		session = sessionFactory.createSession(parameters);

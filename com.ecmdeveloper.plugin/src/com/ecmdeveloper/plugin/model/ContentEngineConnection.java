@@ -20,7 +20,9 @@
 package com.ecmdeveloper.plugin.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -124,5 +126,10 @@ public class ContentEngineConnection extends AbstractConnection
 		}
 		
 		return Factory.ObjectStore.getInstance( domain, objectStoreName );
+	}
+
+	@Override
+	public Map<String, String> getParameters() {
+		return new HashMap<String, String>();
 	}
 }

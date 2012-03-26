@@ -1,5 +1,5 @@
 /**
- * Copyright 2011, Ricardo Belfor
+ * Copyright 2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -18,30 +18,35 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model;
-
-import java.util.Map;
-
+package com.ecmdeveloper.plugin.scripting.wizard;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IConnection {
-
-	String getName();
-	String getUsername();
-	void setUsername(String username);
-	String getPassword();
-	void setPassword(String password);
-	boolean isStorePassword();
-	void setStorePassword(boolean storePassword );
-	String getUrl();
-	void connect();
-	IObjectStore[] getObjectStores(IObjectStores parent);
-	String getDisplayName();
-	boolean isConnected();
-	void disconnect();
-	Map<String, String> getParameters();
-
-}
+public enum TargetType {
+	ANY { 		
+		@Override
+		public String toString() {
+			return "Any";
+		}
+	},
+	DOCUMENT { 		
+		@Override
+		public String toString() {
+			return "Document";
+		}
+	},
+	FOLDER { 		
+		@Override
+		public String toString() {
+			return "Folder";
+		}
+	},
+	CUSTOM_OBJECT { 		
+		@Override
+		public String toString() {
+			return "Custom Object";
+		}
+	}
+};

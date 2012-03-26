@@ -205,6 +205,16 @@
             Creates a new Content Engine Console Project.
          </description>
       </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.contentEngine"
+            class="com.ecmdeveloper.plugin.wizard.NewContentEngineScriptClassWizard"
+            icon="icons/application_class.png"
+            id="com.ecmdeveloper.plugin.scripting.newScriptingProjectClassWizard"
+            name="Content Engine Console Project Class">
+         <description>
+            Creates a new Content Engine Console Project Class.
+         </description>
+      </wizard>
    </extension>
    <extension
          id="contentEngineScript"
