@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.scripting.engine;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @author ricardo.belfor
@@ -37,17 +38,22 @@ public class ScriptingContext implements Serializable {
 	private final String objectStore;
 	private final ArrayList<String> ids;
 	private final ArrayList<String> classNames;
+	private final Map<String,String> parameters;
+	
 	private String scriptClassName;
 	private String scriptMethodName;
 	
-	public ScriptingContext(String username, String password, String url, String objectStore) {
+	public ScriptingContext(String username, String password, String url, Map<String, String> parameters, String objectStore) {
+		
 		this.username = username;
 		this.password = password;
 		this.url = url;
+		this.parameters = parameters;
 		this.objectStore = objectStore;
 		
 		ids = new ArrayList<String>();
 		classNames = new ArrayList<String>();
+		
 	}
 
 	public String getUsername() {
@@ -60,6 +66,10 @@ public class ScriptingContext implements Serializable {
 
 	public String getUrl() {
 		return url;
+	}
+
+	public Map<String,String> getParameters() {
+		return parameters;
 	}
 
 	public ArrayList<String> getIds() {

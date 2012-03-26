@@ -16,9 +16,9 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            description="Commands related to the Content Engine"
+            description="Commands related to the ECM Developer plug-in"
             id="com.ecmdeveloper.plugin.category"
-            name="Content Engine Commands">
+            name="ECM Developer Commands">
       </category>
       <command
             categoryId="com.ecmdeveloper.plugin.category"
@@ -318,7 +318,7 @@
       </view>
       <category
             id="com.ecmdeveloper.plugin.contentEngine"
-            name="Content Engine">
+            name="ECM Developer">
       </category>
       <view
             allowMultiple="true"

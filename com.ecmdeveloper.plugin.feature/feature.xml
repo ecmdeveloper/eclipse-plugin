@@ -2,7 +2,7 @@
 <feature
       id="com.ecmdeveloper.plugin"
       label="ECM Developer Plug-in for CE 4.5.1 and beyond"
-      version="1.5.0"
+      version="2.0.0"
       provider-name="ECMDEVELOPER">
 
    <description url="http://www.ecmdeveloper.com">
@@ -16,25 +16,19 @@ at http://www.famfamfam.com/lab/icons/silk/
    </description>
 
    <copyright url="http://www.ecmdeveloper.com/copyright.shtml">
-      Copyright 2009,2010,2011, Ricardo Belfor
+      Copyright 2009-2012, Ricardo Belfor
 This file is part of the ECM Developer plug-in. The ECM Developer
-plug-in is
-free software: you can redistribute it and/or modify it under
-the terms of
-the GNU Lesser General Public License as published by the Free
-Software
-Foundation, either version 3 of the License, or (at your option)
-any later
-version.
+plug-in is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free
+Software Foundation, either version 3 of the License, or (at
+your option) any later version.
 The ECM Developer plug-in is distributed in the hope that it
-will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser
-General Public License for more details.
-You should have received a copy of the GNU Lesser General Public
-License
-along with the ECM Developer plug-in. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details. You
+should have received a copy of the GNU Lesser General Public
+License along with the ECM Developer plug-in. If not, see &lt;http://www.gnu.org/licenses/&gt;.
    </copyright>
 
    <license url="http://www.gnu.org/licenses/lgpl.txt">
@@ -210,8 +204,7 @@ Library.
          id="com.ecmdeveloper.plugin"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="com.ecmdeveloper.plugin.codemodule"
@@ -288,5 +281,18 @@ Library.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.scripting"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

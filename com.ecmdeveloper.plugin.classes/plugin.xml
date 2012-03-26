@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <category
             id="com.ecmdeveloper.plugin.contentEngine"
-            name="Content Engine">
+            name="ECM Developer">
       </category>
       <view
             category="com.ecmdeveloper.plugin.contentEngine"

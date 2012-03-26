@@ -95,7 +95,7 @@ public class ExecuteMethodJob extends Job {
 			if ( scriptingContext == null ) {
 				IObjectStore objectStore = objectStoreItem.getObjectStore();
 				IConnection connection = objectStore.getConnection();
-				scriptingContext = new ScriptingContext(username, password, connection.getUrl(),
+				scriptingContext = new ScriptingContext(username, password, connection.getUrl(), connection.getParameters(),
 						objectStore.getName());
 			}
 			scriptingContext.addObject(objectStoreItem.getId(), objectStoreItem.getClassName() );

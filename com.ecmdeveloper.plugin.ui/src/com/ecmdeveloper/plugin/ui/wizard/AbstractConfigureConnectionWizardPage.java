@@ -48,9 +48,9 @@ public abstract class AbstractConfigureConnectionWizardPage extends WizardPage {
 	protected String username;
 	protected String password;
 	protected String url;
+	protected boolean storePassword;
 
 	protected Composite container;
-	protected Boolean storePassword;
 	
 	public AbstractConfigureConnectionWizardPage() {
 		super("configureConnection");

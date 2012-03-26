@@ -21,7 +21,7 @@
             finalPerspective="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
             icon="icons/table_edit.png"
             id="com.ecmdeveloper.plugin.diagrams.wizards.NewClassDiagramWizard"
-            name="Content Engine Class Diagram"
+            name="Object Store Class Diagram"
             preferredPerspectives="com.ecmdeveloper.plugin.diagrams.classDiagramPerspective"
             project="false">
          <description>
