@@ -37,6 +37,7 @@ public class Query implements PropertyChangeListener {
 	public static final String TABLE_ADDED = "TableAdded";
 	public static final String TABLE_REMOVED = "TableAdded";
 	public static final String TOGGLE_INCLUDE_SUBCLASSES = "ToggleIncludeSubclasses";
+	public static final String TOGGLE_SEARCH_ALL_VERSIONS = "ToggleSearchAllVersions";
 	private static final String TOGGLE_DISTINCT = "ToggleDistinct";
 	private static final String MAX_COUNT = "MaxCount";
 	private static final String TIME_LIMIT = "TimeLimit";
@@ -50,6 +51,7 @@ public class Query implements PropertyChangeListener {
 	private Integer timeLimit;
 	private String name;
 	private Boolean contentEngineQuery;
+	private boolean searchAllVersions;
 	
 	transient protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	
@@ -195,7 +197,7 @@ public class Query implements PropertyChangeListener {
 			sql.append("DISTINCT ");
 		}
 
-		if ( maxCount != null) {
+		if ( maxCount != null && isContentEngineQuery() ) {
 			sql.append("TOP ");
 			sql.append( maxCount );
 			sql.append(" ");
@@ -275,9 +277,16 @@ public class Query implements PropertyChangeListener {
 		String concat = "\nORDER BY ";
 		for ( IQueryField queryField : orderByFields ) {
 			sql.append(concat);
-			sql.append( "[" );
+			
+			if ( isContentEngineQuery() ) {
+				sql.append( "[" );
+			}
 			sql.append( queryField.getName() );
-			sql.append( "] " );
+			
+			if( isContentEngineQuery() ) {
+				sql.append( "]" );
+			}
+			sql.append(" ");
 			sql.append( queryField.getSortType().name() );
 			concat = ",";
 		}
@@ -381,5 +390,14 @@ public class Query implements PropertyChangeListener {
 
 	public Boolean isContentEngineQuery() {
 		return contentEngineQuery;
+	}
+
+	public void setSearchAllVersions(boolean searchAllVersions) {
+		this.searchAllVersions = searchAllVersions;
+		listeners.firePropertyChange(TOGGLE_SEARCH_ALL_VERSIONS, searchAllVersions,  null);
+	}
+
+	public boolean isSearchAllVersions() {
+		return searchAllVersions;
 	}
 }

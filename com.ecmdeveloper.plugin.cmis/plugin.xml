@@ -2,26 +2,17 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            class="com.ecmdeveloper.plugin.cmis.views.RepositoryView"
-            id="com.ecmdeveloper.plugin.cmis.repositoryView"
-            name="Repository View"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
          point="org.eclipse.ui.importWizards">
       <category
-            id="com.ecmdeveloper.plugin.cmis.category"
-            name="CMIS">
+            id="com.ecmdeveloper.plugin.category.main"
+            name="ECM Developer">
       </category>
       <wizard
-            category="com.ecmdeveloper.plugin.cmis.category"
+            category="com.ecmdeveloper.plugin.category.main"
             class="com.ecmdeveloper.plugin.cmis.wizard.ImportRepositoryWizard"
             icon="icons/database.png"
             id="com.ecmdeveloper.plugin.cmis.wizard.importRepository"
-            name="Repository">
+            name="CMIS Repository">
          <description>
             Import a CMIS Repository
          </description>
@@ -137,7 +128,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            description="Import Repository"
+            description="Import CMIS Repository"
             id="com.ecmdeveloper.plugin.cmis.importRepository"
             name="Import CMIS Repository">
       </command>
@@ -181,11 +172,11 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="com.ecmdeveloper.plugin.cmis.category"
-            name="CMIS">
+            id="com.ecmdeveloper.plugin.category.main"
+            name="ECM Developer">
       </category>
       <wizard
-            category="com.ecmdeveloper.plugin.cmis.category"
+            category="com.ecmdeveloper.plugin.category.main"
             class="com.ecmdeveloper.plugin.cmis.wizard.NewOpenCMISScriptProjectWizard"
             descriptionImage="icons/application.png"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
@@ -198,7 +189,7 @@
          </description>
       </wizard>
       <wizard
-            category="com.ecmdeveloper.plugin.cmis.category"
+            category="com.ecmdeveloper.plugin.category.main"
             class="com.ecmdeveloper.plugin.cmis.wizard.NewCMISScriptClassWizard"
             icon="icons/application_class.png"
             id="com.ecmdeveloper.plugin.cmis.scripting.newScriptingProjectClassWizard"

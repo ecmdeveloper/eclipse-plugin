@@ -116,9 +116,9 @@ public class QueryFile {
 		}
 		memento.putBoolean( PluginTagNames.DISTINCT, query.isDistinct() );
 		memento.putBoolean( PluginTagNames.INCLUDE_SUBCLASSES, query.isIncludeSubclasses() );
+		memento.putBoolean( PluginTagNames.SEARCH_ALL_VERSIONS, query.isSearchAllVersions() );
 		memento.putString( PluginTagNames.NAME, query.getName() );
 		memento.putString( PluginTagNames.SQL, query.toSQL() );
-		
 		initializeTablesChild(query.getQueryTables(), memento);
 		initializeDiagramChild(query, memento);
 		
@@ -342,6 +342,7 @@ public class QueryFile {
 		query.setMaxCount( memento.getInteger( PluginTagNames.MAX_COUNT ) );
 		query.setDistinct( memento.getBoolean( PluginTagNames.DISTINCT ) );
 		query.setIncludeSubclasses( memento.getBoolean( PluginTagNames.INCLUDE_SUBCLASSES ) );
+		query.setSearchAllVersions( memento.getBoolean( PluginTagNames.SEARCH_ALL_VERSIONS ) );
 		query.setName( memento.getString( PluginTagNames.NAME ) );
 
 		IMemento tablesChild = memento.getChild(PluginTagNames.TABLES); 

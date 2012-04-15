@@ -44,6 +44,7 @@ public class PluginTagNames {
 	public static final String CONTAINABLE = "containable";
 	public static final String DISTINCT = "distinct";
 	public static final String INCLUDE_SUBCLASSES = "include_subclasses";
+	public static final String SEARCH_ALL_VERSIONS = "searchAllVersions";
 	public static final String SQL = "sql";
 	public static final String WIDTH = "width";
 	public static final String HEIGHT = "height";
