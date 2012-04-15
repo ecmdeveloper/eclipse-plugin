@@ -46,10 +46,12 @@ public class ExecuteSearchTask extends AbstractTask implements IExecuteSearchTas
 	private String query;
 	private ArrayList<ISearchResultRow> searchResultList;
 	private final Integer maxHits;
+	private final boolean searchAllVersions;
 	
-	public ExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits) {
+	public ExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits, boolean searchAllVersions) {
 		this.query = query;
 		this.maxHits = maxHits;
+		this.searchAllVersions = searchAllVersions;
 		this.objectStore = (ObjectStore) objectStore;
 		searchResultList = new ArrayList<ISearchResultRow>(); 
 	}
@@ -81,10 +83,10 @@ public class ExecuteSearchTask extends AbstractTask implements IExecuteSearchTas
     	
         if ( maxHits != null) {
         	OperationContext queryContext = new OperationContextImpl(null, false, false, false,
-					IncludeRelationships.NONE, null, false, null, false, maxHits);
-    		queryResults = session.query(safeQuery, true, queryContext );
+					IncludeRelationships.NONE, null, false, null, true, maxHits);
+    		queryResults = session.query(safeQuery, searchAllVersions, queryContext );
         } else {
-    		queryResults = session.query(safeQuery, true );
+    		queryResults = session.query(safeQuery, searchAllVersions );
         }
 		return queryResults;
 	}

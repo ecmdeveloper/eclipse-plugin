@@ -102,7 +102,7 @@ public interface ITaskFactory {
 
 	ICreateCustomObjectTask getCreateCustomObjectTask(IObjectStoreItem parent, String className, Map<String, Object> propertiesMap);
 	
-	IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits );
+	IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits, boolean searchAllVersions );
 
 	IGetRequiredClassDescriptionTask getGetRequiredClassDescription(IPropertyDescription targetPropertyDescription, IObjectStore objectStore);
 

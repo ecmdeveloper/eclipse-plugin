@@ -36,6 +36,7 @@ public class IconFiles {
 	public static final String TABLE_DELETE = "icons/table_delete.png";
 	public static final String TABLE_SUBCLASSES = "icons/table_multiple.png";
 	public static final String SEARCHABLE_QUERY_FIELD = "icons/page_find.png";
+	public static final String SEARCH_ALL_VERSIONS = "icons/page_copy.png";
 	
 	private IconFiles() {
 	}

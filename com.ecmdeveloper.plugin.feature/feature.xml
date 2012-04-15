@@ -224,7 +224,7 @@ Library.
          id="com.ecmdeveloper.plugin.lib"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="2.1.0"/>
 
    <plugin
          id="com.ecmdeveloper.plugin.properties"

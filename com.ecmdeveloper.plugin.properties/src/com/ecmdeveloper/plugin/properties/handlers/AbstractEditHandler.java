@@ -56,12 +56,19 @@ public abstract class AbstractEditHandler extends AbstractHandler {
 	protected void showEditor(IObjectStoreItem objectStoreItem, IWorkbenchWindow window, String editorId ) {
 		
 		try {
-			IWorkbenchPage activePage = window.getActivePage();
-			IEditorReference objectStoreItemEditor = getObjectStoreItemEditor(activePage, objectStoreItem );
+			final IWorkbenchPage activePage = window.getActivePage();
+			final IEditorReference objectStoreItemEditor = getObjectStoreItemEditor(activePage, objectStoreItem );
 			if ( objectStoreItemEditor == null ) {
 				openEditor(objectStoreItem, window, editorId);
 			} else {
-				activePage.activate( objectStoreItemEditor.getEditor(true) );
+				activePage.getActivePart().getSite().getShell().getDisplay().asyncExec( new Runnable() {
+
+					@Override
+					public void run() {
+						activePage.activate( objectStoreItemEditor.getEditor(true) );
+					}
+					
+				});
 			}
 		} catch (PartInitException e) {
 			PluginLog.error(e);

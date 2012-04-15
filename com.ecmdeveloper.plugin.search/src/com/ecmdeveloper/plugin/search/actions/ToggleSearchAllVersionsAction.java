@@ -18,41 +18,38 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.cmis.views;
+package com.ecmdeveloper.plugin.search.actions;
 
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.gef.ui.actions.SelectionAction;
+import org.eclipse.ui.IWorkbenchPart;
+
+import com.ecmdeveloper.plugin.search.editor.GraphicalQueryEditor;
+import com.ecmdeveloper.plugin.search.model.Query;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class RepositoryView extends ViewPart {
+public class ToggleSearchAllVersionsAction extends SelectionAction {
 
-	private TreeViewer viewer;
-	private RepositoryViewContentProvider contentProvider;
+	public static final String ID = "com.ecmdeveloper.plugin.search.actions.toggleSearchAllVersionsAction";
+	private static final String ACTION_NAME = "Toggle search all versions";
 
-	public RepositoryView() {
+	public ToggleSearchAllVersionsAction(IWorkbenchPart part) {
+		super(part);
+		setId( ID );
+		setText( ACTION_NAME );
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		contentProvider = new RepositoryViewContentProvider();
-		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(new CmisObjectLabelProvider());
-		viewer.setInput( "Bla" );
-//		viewer.setSorter( new ObjectStoresViewSorter() );
-//		hookContextMenu();
-//		hookMouse();
-		
-		getSite().setSelectionProvider(viewer);
+	protected boolean calculateEnabled() {
+		return true;
 	}
 
 	@Override
-	public void setFocus() {
-		viewer.getControl().setFocus();
+	public void run() {
+		GraphicalQueryEditor editor = (GraphicalQueryEditor) getWorkbenchPart();
+		Query query = editor.getQuery();
+		query.setSearchAllVersions( !query.isSearchAllVersions() );
 	}
 }

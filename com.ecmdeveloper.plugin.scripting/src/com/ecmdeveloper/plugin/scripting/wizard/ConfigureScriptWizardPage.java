@@ -49,7 +49,7 @@ public class ConfigureScriptWizardPage extends AbstractFieldEditorWizardPage {
 	private static final String LAUNCH_DEBUG_PREF_KEY = "LaunchDebug";
 	
 	private static final String NO_SCRIPTING_PROJECTS_MESSAGE = "The Workspace does not contain open scripting projects. Use the \r\nNew Project wizard to create a new Content Engine Scripting Project.";
-	private static final String TITLE = "Configure Script";
+	private static final String TITLE = "Select Method";
 
 	private JavaElementLabelProvider javaElementLabelProvider;
 	private StringButtonFieldEditor methodEditor;

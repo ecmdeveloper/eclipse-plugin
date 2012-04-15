@@ -147,7 +147,7 @@ public class SearchQuery implements ISearchQuery {
 		
 		ITaskFactory taskFactory = objectStore.getTaskFactory();
 		objectStore.assertConnected();
-		IExecuteSearchTask task = taskFactory.getExecuteSearchTask(query.toSQL(), objectStore, query.getMaxCount() );
+		IExecuteSearchTask task = taskFactory.getExecuteSearchTask(query.toSQL(), objectStore, query.getMaxCount(), query.isSearchAllVersions() );
 		Activator.getDefault().getTaskManager().executeTaskSync(task);
 		
 		ArrayList<ISearchResultRow> searchResultRows = task.getSearchResult();

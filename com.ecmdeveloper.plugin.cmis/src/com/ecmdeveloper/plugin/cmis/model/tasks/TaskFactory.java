@@ -233,8 +233,8 @@ public class TaskFactory implements ITaskFactory {
 	}
 
 	@Override
-	public IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits) {
-		return new ExecuteSearchTask(query, objectStore, maxHits );
+	public IExecuteSearchTask getExecuteSearchTask(String query, IObjectStore objectStore, Integer maxHits, boolean searchAllVersions) {
+		return new ExecuteSearchTask(query, objectStore, maxHits, searchAllVersions );
 	}
 
 	@Override

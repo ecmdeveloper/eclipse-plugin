@@ -80,6 +80,7 @@ import com.ecmdeveloper.plugin.search.actions.ShowPartSqlAction;
 import com.ecmdeveloper.plugin.search.actions.ShowSqlAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleDistinctAction;
 import com.ecmdeveloper.plugin.search.actions.ToggleIncludeSubclassesAction;
+import com.ecmdeveloper.plugin.search.actions.ToggleSearchAllVersionsAction;
 import com.ecmdeveloper.plugin.search.dnd.QueryDropTargetListener;
 import com.ecmdeveloper.plugin.search.dnd.TextTransferDropTargetListener;
 import com.ecmdeveloper.plugin.search.model.Query;
@@ -110,7 +111,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 			new EditQueryComponentAction(this), new ToggleIncludeSubclassesAction(this),
 			new ToggleDistinctAction(this), new ShowSqlAction(this), new SetMainQueryAction(this),
 			new ConvertToTextAction(this), new ExecuteSearchAction(this), 
-			new SetMaxCountAction(this), new SetTimeLimitAction(this), new ShowPartSqlAction(this) };
+			new SetMaxCountAction(this), new SetTimeLimitAction(this), new ShowPartSqlAction(this),
+			new ToggleSearchAllVersionsAction(this) };
 
 	private Text maxCountText;
 
@@ -118,6 +120,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 
 	private ToolItem distinctButton;
 	private ToolItem includeSubClassesButton;
+
+	private ToolItem searchAllVersionsButton;
 	
 	public GraphicalQueryEditor() {
 		setEditDomain(new DefaultEditDomain(this));
@@ -176,8 +180,6 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 			setCeEntriesVisibility(paletteDrawer, false);
 			setCmisEntriesVisibility(paletteDrawer, true);
 		}
-		
-		
 	}
 
 	private void setCmisEntriesVisibility(PaletteDrawer paletteDrawer, boolean visibility) {
@@ -185,6 +187,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 			PaletteEntry paletteEntry = getPaletteEntry(paletteDrawer, entryId );
 			paletteEntry.setVisible( visibility );
 		}
+		searchAllVersionsButton.setEnabled(visibility);
 	}
 
 	private void setCeEntriesVisibility(PaletteDrawer paletteDrawer, boolean visibility) {
@@ -195,6 +198,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		distinctButton.setEnabled( visibility );
 		includeSubClassesButton.setEnabled(visibility);
 		timeLimitText.setEnabled(visibility);
+		searchAllVersionsButton.setEnabled(visibility);
+		maxCountText.setEnabled(visibility);
 	}
 
 	private PaletteEntry getPaletteEntry(PaletteDrawer paletteDrawer, String entryId) {
@@ -257,6 +262,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		createAddTableButton(toolBar);
 		removeTableItem = createDeleteTableButton(toolBar);
 		createIncludeSubClassesButton(toolBar);
+		createSearchAllVersionsButton(toolBar);
 		createDistinctButton(toolBar);
 		createShowSQLButton(toolBar);
 		
@@ -399,6 +405,20 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		);
 	}
 
+	private void createSearchAllVersionsButton(ToolBar toolBar) {
+		searchAllVersionsButton = new ToolItem(toolBar, SWT.CHECK);
+		searchAllVersionsButton.setImage( Activator.getImage(IconFiles.SEARCH_ALL_VERSIONS) );
+		searchAllVersionsButton.setToolTipText("Search All Versions");
+		searchAllVersionsButton.setSelection( query.isSearchAllVersions() );
+		searchAllVersionsButton.addSelectionListener( new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IAction action = getActionRegistry().getAction( ToggleSearchAllVersionsAction.ID );
+				action.run();
+			}} 
+		);
+	}
+	
 	private void createDistinctButton(ToolBar toolBar) {
 		distinctButton = new ToolItem(toolBar, SWT.CHECK);
 		distinctButton.setImage( Activator.getImage( IconFiles.DISTINCT ) );

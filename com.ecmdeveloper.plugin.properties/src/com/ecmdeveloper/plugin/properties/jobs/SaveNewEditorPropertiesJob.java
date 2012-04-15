@@ -100,15 +100,15 @@ public class SaveNewEditorPropertiesJob extends AbstractEditorJob {
 	private ICreateTask createCreateTask(NewObjectStoreItemEditorInput editorInput) {
 	
 		IClassDescription classDescription = (IClassDescription) editorInput.getAdapter( IClassDescription.class);
-		String className = classDescription.getName();
+		String classId = classDescription.getId();
 		
 		ITaskFactory taskFactory = editorInput.getParent().getTaskFactory();
 		if ( editorInput instanceof NewFolderEditorInput ) {
-			return taskFactory.getCreateFolderTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
+			return taskFactory.getCreateFolderTask( editorInput.getParent(), classId, editorInput.getPropertiesMap() );
 		} else if ( editorInput instanceof NewDocumentEditorInput ) {
-			return taskFactory.getCreateDocumentTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
+			return taskFactory.getCreateDocumentTask( editorInput.getParent(), classId, editorInput.getPropertiesMap() );
 		} else if ( editorInput instanceof NewCustomObjectEditorInput ) {
-			return taskFactory.getCreateCustomObjectTask( editorInput.getParent(), className, editorInput.getPropertiesMap() );
+			return taskFactory.getCreateCustomObjectTask( editorInput.getParent(), classId, editorInput.getPropertiesMap() );
 		} else {
 			throw new UnsupportedOperationException( "Creation using the class " + editorInput.getName() + " not yet implemented" );
 		}

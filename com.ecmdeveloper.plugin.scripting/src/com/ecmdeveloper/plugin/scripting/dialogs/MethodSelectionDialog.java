@@ -69,7 +69,7 @@ public class MethodSelectionDialog extends FilteredItemsSelectionDialog {
 	
 	public MethodSelectionDialog(Shell shell, String projectNatureId ) {
 		super(shell);
-		setTitle("Script Selection");
+		setTitle("Method Selection");
 		setListLabelProvider(new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT | 
 				JavaElementLabelProvider.SHOW_ROOT) );
 
