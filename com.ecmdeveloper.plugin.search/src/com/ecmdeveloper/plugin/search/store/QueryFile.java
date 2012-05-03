@@ -342,7 +342,8 @@ public class QueryFile {
 		query.setMaxCount( memento.getInteger( PluginTagNames.MAX_COUNT ) );
 		query.setDistinct( memento.getBoolean( PluginTagNames.DISTINCT ) );
 		query.setIncludeSubclasses( memento.getBoolean( PluginTagNames.INCLUDE_SUBCLASSES ) );
-		query.setSearchAllVersions( memento.getBoolean( PluginTagNames.SEARCH_ALL_VERSIONS ) );
+		Boolean searchAllVersions = memento.getBoolean( PluginTagNames.SEARCH_ALL_VERSIONS );
+		query.setSearchAllVersions( searchAllVersions == null ? true : searchAllVersions );
 		query.setName( memento.getString( PluginTagNames.NAME ) );
 
 		IMemento tablesChild = memento.getChild(PluginTagNames.TABLES); 

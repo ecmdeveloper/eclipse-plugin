@@ -59,12 +59,13 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 	private StringFieldEditor userNameEditor;
 	private StringFieldEditor passwordEditor;
 	private StringFieldEditor urlEditor;
+	private StorePasswordEditor storePasswordEditor;
 	private Button connectButton;
 
 	private String userName;
 	private String password;
 	private String url;
-
+	
 	public AbstractConnectionPropertyPage() {
 	}
 
@@ -77,7 +78,7 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		userName = connection.getUsername();
 		password = connection.getPassword();
 		url = connection.getUrl();
-
+		
 		createConnectionContents(container, connection);
 		createConnectButton(container);
 
@@ -96,6 +97,7 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		
 		createUserNameEditor(container);
 		createPasswordEditor(container);
+		createStorePasswordEditor(container, connection.isStorePassword() );
 		createUrlEditor(container);
 	}
 	
@@ -182,6 +184,11 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		passwordEditor.setStringValue(password);
 	}
 
+	private void createStorePasswordEditor(Composite container, boolean storePassword ) {
+		storePasswordEditor = new StorePasswordEditor(container);
+		storePasswordEditor.setValue( storePassword );
+	}
+	
 	protected void createUrlEditor(Composite container) {
 		
 		urlEditor = new StringFieldEditor("", "URL:",container );
@@ -231,7 +238,8 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 		userNameEditor.setStringValue( connection.getUsername() );
 		passwordEditor.setStringValue( connection.getPassword() );
 		urlEditor.setStringValue( connection.getUrl() );
-		
+		storePasswordEditor.setValue( connection.isStorePassword() );
+
 		super.performDefaults();
 	}
 
@@ -257,5 +265,9 @@ public abstract class AbstractConnectionPropertyPage extends PropertyPage implem
 
 	public String getUrl() {
 		return url;
+	}
+	
+	public boolean isStorePassword() {
+		return storePasswordEditor.getValue();
 	}
 }

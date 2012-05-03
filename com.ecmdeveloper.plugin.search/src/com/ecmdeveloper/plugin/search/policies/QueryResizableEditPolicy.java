@@ -32,7 +32,6 @@ import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import com.ecmdeveloper.plugin.search.figures.QueryColorConstants;
 import com.ecmdeveloper.plugin.search.figures.QueryContainerFeedbackFigure;
 import com.ecmdeveloper.plugin.search.figures.RoundedCornerFeedbackFigure;
-import com.ecmdeveloper.plugin.search.model.Comparison;
 import com.ecmdeveloper.plugin.search.model.QueryComponent;
 import com.ecmdeveloper.plugin.search.model.QueryContainer;
 

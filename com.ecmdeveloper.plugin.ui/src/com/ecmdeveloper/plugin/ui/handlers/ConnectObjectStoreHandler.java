@@ -31,17 +31,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.ecmdeveloper.plugin.ui.Activator;
-import com.ecmdeveloper.plugin.core.dialogs.LoginDialog;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
-import com.ecmdeveloper.plugin.ui.util.Messages;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
+import com.ecmdeveloper.plugin.ui.Activator;
+import com.ecmdeveloper.plugin.ui.util.Messages;
 
 /**
  * @author Ricardo Belfor

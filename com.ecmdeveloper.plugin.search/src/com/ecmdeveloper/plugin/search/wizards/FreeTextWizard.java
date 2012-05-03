@@ -20,15 +20,7 @@
 
 package com.ecmdeveloper.plugin.search.wizards;
 
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
-
 import org.eclipse.jface.wizard.Wizard;
-
-import com.ecmdeveloper.plugin.search.model.IQueryField;
-import com.ecmdeveloper.plugin.search.model.IQueryTable;
-import com.ecmdeveloper.plugin.search.model.QueryFieldType;
-import com.ecmdeveloper.plugin.search.model.SortType;
 
 /**
  * @author ricardo.belfor
