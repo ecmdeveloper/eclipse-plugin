@@ -19,7 +19,6 @@
  */
 package com.ecmdeveloper.plugin.ui.wizard;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -48,9 +47,9 @@ public abstract class AbstractConfigureConnectionWizardPage extends WizardPage {
 	protected String username;
 	protected String password;
 	protected String url;
-	protected boolean storePassword;
 
 	protected Composite container;
+	private StorePasswordEditor storePasswordEditor;
 	
 	public AbstractConfigureConnectionWizardPage() {
 		super("configureConnection");
@@ -144,7 +143,7 @@ public abstract class AbstractConfigureConnectionWizardPage extends WizardPage {
 	}
 	
 	public boolean isStorePassword() {
-		return storePassword;
+		return storePasswordEditor.getValue();
 	}
 	
 	public abstract IConnection getConnection();
@@ -196,20 +195,8 @@ public abstract class AbstractConfigureConnectionWizardPage extends WizardPage {
 	}
 
 	private void createStorePasswordEditor() {
-		
-		BooleanFieldEditor editor = new BooleanFieldEditor("", "Store password", container ) {
-			@Override
-			public int getNumberOfControls() {
-				return 2;
-			}
-		};
-
-		editor.setPropertyChangeListener( new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				storePassword = (Boolean) event.getNewValue();
-			}
-		});
+		storePasswordEditor = new StorePasswordEditor(container);
+		storePasswordEditor.setValue(false);
 	}
 	
 	protected void createUrlEditor() {

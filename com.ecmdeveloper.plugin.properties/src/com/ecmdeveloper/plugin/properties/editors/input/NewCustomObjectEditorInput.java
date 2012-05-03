@@ -24,7 +24,6 @@ import java.text.MessageFormat;
 
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-import com.ecmdeveloper.plugin.properties.model.UnsavedPropertiesObject;
 
 /**
  * @author ricardo.belfor

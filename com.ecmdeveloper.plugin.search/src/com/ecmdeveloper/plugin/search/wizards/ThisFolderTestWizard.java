@@ -32,6 +32,7 @@ public class ThisFolderTestWizard extends Wizard {
 
 	private String folder;
 	private ObjectValueWizardPage objectValueWizardPage;
+	@SuppressWarnings("unused")
 	private final Query query;
 	
 	public ThisFolderTestWizard(Query query) {

@@ -30,7 +30,6 @@ import java.util.Set;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 
 import com.ecmdeveloper.plugin.core.model.ICodeModule;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;

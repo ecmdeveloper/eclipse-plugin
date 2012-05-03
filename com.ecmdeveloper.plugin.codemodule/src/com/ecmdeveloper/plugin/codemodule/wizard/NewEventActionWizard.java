@@ -22,7 +22,6 @@ package com.ecmdeveloper.plugin.codemodule.wizard;
 
 import org.eclipse.jface.wizard.Wizard;
 
-import com.ecmdeveloper.plugin.codemodule.jobs.CreateEventActionJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 
 /**

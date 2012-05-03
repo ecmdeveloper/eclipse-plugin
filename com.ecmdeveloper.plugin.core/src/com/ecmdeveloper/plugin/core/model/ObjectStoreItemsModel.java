@@ -77,6 +77,9 @@ public class ObjectStoreItemsModel {
 			}
 		}
 		String objectStoreItemKey = objectStoreItem.getId();
+//		if ( objectStoreItemKey == null ) {
+//			System.out.println( "Trouble!");
+//		}
 		return objectStoreItemKey;
 	}
 

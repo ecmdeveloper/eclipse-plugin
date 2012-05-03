@@ -22,14 +22,9 @@ package com.ecmdeveloper.plugin.core.model;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
-import org.eclipse.swt.graphics.Image;
-
-import com.ecmdeveloper.plugin.core.Activator;
-import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.constants.Feature;
 import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
-import com.ecmdeveloper.plugin.core.util.IconFiles;
 
 /**
  * 

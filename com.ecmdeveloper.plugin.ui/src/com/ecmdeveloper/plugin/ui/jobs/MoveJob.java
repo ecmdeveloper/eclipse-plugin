@@ -29,12 +29,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ecmdeveloper.plugin.ui.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.tasks.IMoveTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
-import com.ecmdeveloper.plugin.core.model.tasks.IMoveTask;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
+import com.ecmdeveloper.plugin.ui.Activator;
 
 public class MoveJob extends Job {
 	

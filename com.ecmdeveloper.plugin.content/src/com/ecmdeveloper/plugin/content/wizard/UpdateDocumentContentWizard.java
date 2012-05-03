@@ -26,7 +26,6 @@ import java.util.Collection;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 
-import com.ecmdeveloper.plugin.content.jobs.CheckinJob;
 import com.ecmdeveloper.plugin.content.jobs.UpdateDocumentContentJob;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 

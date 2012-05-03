@@ -12,7 +12,6 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoresStore;
 import com.ecmdeveloper.plugin.core.model.impl.ObjectStoresManager;
 import com.ecmdeveloper.plugin.core.util.ImageCache;
 import com.ecmdeveloper.plugin.core.util.PluginLog;
-import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 public class Activator extends AbstractUIPlugin {
 
