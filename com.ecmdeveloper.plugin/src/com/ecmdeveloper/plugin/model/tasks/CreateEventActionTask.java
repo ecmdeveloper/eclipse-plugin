@@ -25,7 +25,6 @@ import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.admin.CodeModule;
 import com.filenet.api.constants.RefreshMode;
-import com.filenet.api.core.Document;
 import com.filenet.api.core.Factory;
 import com.filenet.api.core.VersionSeries;
 import com.filenet.api.events.EventAction;

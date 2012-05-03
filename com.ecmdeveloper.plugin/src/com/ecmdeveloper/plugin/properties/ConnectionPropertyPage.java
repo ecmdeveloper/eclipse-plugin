@@ -49,5 +49,6 @@ public class ConnectionPropertyPage extends AbstractConnectionPropertyPage {
 		connection2.setUrl(getUrl());
 		connection2.setUsername(getUserName());
 		connection2.setPassword(getPassword());
+		connection2.setStorePassword( isStorePassword() );
 	}
 }

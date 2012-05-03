@@ -30,13 +30,10 @@ import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.filenet.api.collection.ContentElementList;
 import com.filenet.api.constants.AutoClassify;
 import com.filenet.api.constants.CheckinType;
-import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.RefreshMode;
 import com.filenet.api.constants.ReservationType;
 import com.filenet.api.core.Document;
-import com.filenet.api.core.Factory;
 import com.filenet.api.core.VersionSeries;
-import com.filenet.api.util.Id;
 
 /**
  * @author Ricardo.Belfor
