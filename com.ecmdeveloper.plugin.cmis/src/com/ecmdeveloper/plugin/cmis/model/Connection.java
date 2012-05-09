@@ -58,7 +58,7 @@ public class Connection extends AbstractConnection {
 		parameters = new HashMap<String, String>();
 		parameters.put(SessionParameter.USER, getUsername() );
 		parameters.put(SessionParameter.PASSWORD, getPassword() );
-		parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+		parameters.put(SessionParameter.BINDING_TYPE, bindingType.value() );
 		
 		setUrlParameters();
         setAuthenticationParameters();

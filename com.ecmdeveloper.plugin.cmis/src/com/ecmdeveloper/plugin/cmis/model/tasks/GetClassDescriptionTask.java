@@ -25,17 +25,16 @@ import java.util.Collection;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 
+import com.ecmdeveloper.plugin.cmis.model.ClassDescription;
+import com.ecmdeveloper.plugin.cmis.model.ClassDescriptionFolder;
+import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
 import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IClassDescriptionFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
-import com.ecmdeveloper.plugin.cmis.model.ClassDescription;
-import com.ecmdeveloper.plugin.cmis.model.ClassDescriptionFolder;
-import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
 
 /**
  * 

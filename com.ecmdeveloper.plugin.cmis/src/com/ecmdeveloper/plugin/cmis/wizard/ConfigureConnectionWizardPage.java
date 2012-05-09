@@ -21,11 +21,6 @@
 package com.ecmdeveloper.plugin.cmis.wizard;
 
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import com.ecmdeveloper.plugin.cmis.model.Authentication;
@@ -33,6 +28,9 @@ import com.ecmdeveloper.plugin.cmis.model.Connection;
 import com.ecmdeveloper.plugin.cmis.ui.AuthenticationEditor;
 import com.ecmdeveloper.plugin.cmis.ui.BindingEditor;
 import com.ecmdeveloper.plugin.cmis.ui.ConnectionNameEditor;
+import com.ecmdeveloper.plugin.cmis.ui.UseClientCompressionEditor;
+import com.ecmdeveloper.plugin.cmis.ui.UseCompressionEditor;
+import com.ecmdeveloper.plugin.cmis.ui.UseCookiesEditor;
 import com.ecmdeveloper.plugin.core.model.IConnection;
 import com.ecmdeveloper.plugin.ui.wizard.AbstractConfigureConnectionWizardPage;
 
@@ -45,12 +43,11 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 	private static final String CONNECTION_NAME_FIELD = "CONNECTION_NAME";
 	
 	private ConnectionNameEditor connectionNameEditor;
-	private boolean useCompression = true;
-	private boolean useClientCompression = false;
-	private boolean useCookies = false;
-	private PreferenceStore preferenceStore = new PreferenceStore();
 	private AuthenticationEditor authenticationEditor;
 	private BindingEditor bindingEditor;
+	private UseCompressionEditor useCompressionEditor;
+	private UseClientCompressionEditor useClientCompressionEditor;
+	private UseCookiesEditor useCookiesEditor;
 	
 	@Override
 	protected void createExtraControls(Composite container2) {
@@ -59,7 +56,7 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 		createAuthenticationEditor( container2 );
 		createCompressEditor(container2);
 		createClientCompressEditor(container2);
-		createCookiesEditor(container2);
+		createUseCookiesEditor(container2);
 	}
 
 	protected void createConnectionNameEditor() {
@@ -84,63 +81,18 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 	}
 	
 	private void createCompressEditor(Composite container) {
-		
-		final String preferenceName = "Compression";
-		
-		BooleanFieldEditor editor = getBooleanFieldEditor(preferenceName, container, "Use &Compression" );
-
-		setFieldEditorValue(preferenceName, useCompression, editor );
-		editor.setPropertyChangeListener( new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				useCompression = (Boolean) event.getNewValue();
-			}
-		});
+		useCompressionEditor = new UseCompressionEditor(container);
+		useCompressionEditor.setValue(true);
 	}
 
-	private void setFieldEditorValue(String preferenceName, boolean value, FieldEditor editor) {
-		preferenceStore.setValue(preferenceName, value );
-		editor.setPreferenceStore( preferenceStore );
-		editor.load();
-	}
-
-	private void createClientCompressEditor(Composite container) {
-		
-		final String preferenceName = "Client Compression";
-
-		BooleanFieldEditor editor = getBooleanFieldEditor(preferenceName, container, "Use Client C&ompression" );
-		
-		setFieldEditorValue(preferenceName, useClientCompression, editor );
-		editor.setPropertyChangeListener( new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				useClientCompression = (Boolean) event.getNewValue();
-			}
-		});
-	}
-
-	private void createCookiesEditor(Composite container) {
-		
-		final String preferenceName = "Use Cookies";
-
-		BooleanFieldEditor editor = getBooleanFieldEditor(preferenceName, container, "Use Coo&kies" );
-		
-		setFieldEditorValue(preferenceName, useCookies, editor );
-		editor.setPropertyChangeListener( new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				useCookies = (Boolean) event.getNewValue();
-			}
-		});
+	private void createUseCookiesEditor(Composite container) {
+		useCookiesEditor = new UseCookiesEditor(container);
+		useCookiesEditor.setValue(false);
 	}
 	
-	private BooleanFieldEditor getBooleanFieldEditor(String preferenceName, Composite container, String labelText) {
-		return new BooleanFieldEditor(preferenceName, labelText, container ) {
-			@Override
-			public int getNumberOfControls() {
-				return 2;
-			}
-		};
+	private void createClientCompressEditor(Composite container) {
+		useClientCompressionEditor = new UseClientCompressionEditor(container);
+		useClientCompressionEditor.setValue(false);
 	}
 	
 	@Override
@@ -160,9 +112,9 @@ public class ConfigureConnectionWizardPage extends AbstractConfigureConnectionWi
 		connection.setDisplayName( connectionNameEditor.getValue() );
 		connection.setAuthentication( authenticationEditor.getValue() );
 		connection.setBindingType( bindingEditor.getValue() );
-		connection.setUseCompression(useCompression);
-		connection.setUseClientCompression(useClientCompression);
-		connection.setUseCookies(useCookies);
+		connection.setUseCompression( useCompressionEditor.getValue() );
+		connection.setUseClientCompression( useClientCompressionEditor.getValue() );
+		connection.setUseCookies( useCookiesEditor.getValue() );
 		
 		return connection;
 	}

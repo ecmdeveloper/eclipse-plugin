@@ -28,7 +28,6 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItemFactory;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.core.model.ObjectNotFoundException;
 import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchObjectTask;
 

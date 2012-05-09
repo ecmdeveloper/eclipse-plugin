@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.cmis.model.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 
 import com.ecmdeveloper.plugin.cmis.model.Folder;
@@ -65,7 +66,7 @@ public class CreateFolderTask extends AbstractTask implements ICreateFolderTask 
 	@Override
 	public Object call() throws Exception {
 
-		org.apache.chemistry.opencmis.client.api.Folder internalFolder = ((Folder)parent).getInternalFolder();
+		org.apache.chemistry.opencmis.client.api.Folder internalFolder = getParentFolder();
 		
 		Map<String, Object> folderPropertiesMap = new HashMap<String, Object>();
 		folderPropertiesMap.putAll( propertiesMap );
@@ -78,18 +79,18 @@ public class CreateFolderTask extends AbstractTask implements ICreateFolderTask 
 		return null;
 	}
 
-//	private com.filenet.api.core.Folder getInternalParent() {
-//		ObjectStoreItem parent = getParent();
-//		if ( parent instanceof Folder ) {
-//			return (com.filenet.api.core.Folder) getParent().getObjectStoreObject();
-//		} else if ( parent instanceof ObjectStore ) {
-//			com.filenet.api.core.ObjectStore internalObjectStore = (com.filenet.api.core.ObjectStore) parent.getObjectStoreObject();
-//			internalObjectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
-//			return internalObjectStore.get_RootFolder();
-//		} else {
-//			throw new UnsupportedOperationException("Invalid parent type" );
-//		}
-//	}
+	private org.apache.chemistry.opencmis.client.api.Folder getParentFolder() {
+		org.apache.chemistry.opencmis.client.api.Folder internalFolder;
+		if ( parent instanceof Folder ) {
+			internalFolder = ((Folder)parent).getInternalFolder();
+		} else if (parent instanceof ObjectStore) {
+			Session session = ((ObjectStore) parent).getSession();
+			internalFolder = session.getRootFolder();
+		} else {
+			throw new IllegalArgumentException( parent.toString() );
+		}
+		return internalFolder;
+	}
 
 	@Override
 	public IObjectStoreItem getParent() {

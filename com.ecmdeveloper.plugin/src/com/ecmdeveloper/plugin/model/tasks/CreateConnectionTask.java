@@ -27,6 +27,7 @@ import com.ecmdeveloper.plugin.model.ContentEngineConnection;
  * @author ricardo.belfor
  *
  */
+@SuppressWarnings("unused")
 public class CreateConnectionTask extends AbstractTask {
 
 	private String url;
