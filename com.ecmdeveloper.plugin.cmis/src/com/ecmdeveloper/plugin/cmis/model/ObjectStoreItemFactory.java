@@ -37,7 +37,7 @@ public class ObjectStoreItemFactory {
 		return newDocument;
 	}
 
-	private static void addToModel(ObjectStoreItem objectStoreItem) {
+	public static void addToModel(ObjectStoreItem objectStoreItem) {
 		objectStoreItemsModel.add(objectStoreItem);
 	}
 }

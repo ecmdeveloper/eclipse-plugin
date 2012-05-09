@@ -20,17 +20,11 @@
 
 package com.ecmdeveloper.plugin.cmis.scripting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
 import com.ecmdeveloper.plugin.cmis.Activator;
-import com.ecmdeveloper.plugin.cmis.util.PluginLog;
 
 /**
  * @author ricardo.belfor

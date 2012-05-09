@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 import com.ecmdeveloper.plugin.cmis.model.Document;
+import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItemFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 
@@ -45,16 +46,19 @@ public class CheckinTask extends DocumentTask implements ICheckinTask {
 
 	public Object call() throws Exception {
 
-		if ( getDocument().isSaved() ) {
+		Document document = getDocument();
+		
+		if ( document.isSaved() ) {
 			org.apache.chemistry.opencmis.client.api.Document internalDocument = getInternalDocument();
 			ObjectId objectId = internalDocument.checkIn(majorVersion, null, null, null);
-			Session session = getDocument().getObjectStore().getSession();
+			Session session = document.getObjectStore().getSession();
 			CmisObject newDocument = session.getObject(objectId);
-			getDocument().refresh((org.apache.chemistry.opencmis.client.api.Document) newDocument);
+			document.refresh((org.apache.chemistry.opencmis.client.api.Document) newDocument);
 		} else {
-			Session session = getDocument().getObjectStore().getSession();
-			DocumentType typeDefinition = (DocumentType) session.getTypeDefinition( getDocument().getClassName() );
-			getDocument().saveNew( getVersioningState(typeDefinition) );
+			Session session = document.getObjectStore().getSession();
+			DocumentType typeDefinition = (DocumentType) session.getTypeDefinition( document.getClassName() );
+			document.saveNew( getVersioningState(typeDefinition) );
+			ObjectStoreItemFactory.addToModel(document);
 		}
 		
 		fireTaskCompleteEvent( TaskResult.COMPLETED );

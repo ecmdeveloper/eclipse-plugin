@@ -20,7 +20,6 @@
 package com.ecmdeveloper.plugin.ui.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -35,8 +34,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.ui.wizard.DeleteWizard;
-import com.ecmdeveloper.plugin.ui.util.Messages;
-import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
 
 /**
  * 
@@ -44,9 +41,6 @@ import com.ecmdeveloper.plugin.ui.views.ObjectStoresViewContentProvider;
  *
  */
 public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHandler {
-
-	private static final String HANDLER_NAME = Messages.DeleteObjectStoreItemHandler_HandlerName;
-	private static final String DELETE_MESSAGE = Messages.DeleteObjectStoreItemHandler_DeleteMessage;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -64,31 +58,6 @@ public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHa
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();
 		dialog.open();
-
-//		ILabelProvider labelProvider = new ObjectStoreItemLabelProvider();
-		
-//		ITreeContentProvider contentProvider = new DeletedItemsContentProvider(itemsDeleted);
-//		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(window.getShell(), labelProvider, contentProvider );
-		
-			
-//			if ( ! objectStoreItem.hasChildren() ) {
-//
-//				String name = objectStoreItem.getName();
-//				boolean answerTrue = MessageDialog.openQuestion(window
-//						.getShell(), HANDLER_NAME, MessageFormat.format(
-//						DELETE_MESSAGE, name) );
-//				if (answerTrue) {
-//					itemsDeleted.add(objectStoreItem);
-//				}
-//			} else {
-//				// TODO: show a new confirmation dialog
-//				MessageDialog.openInformation( window.getShell(), HANDLER_NAME, "Deleting objects with children is not yet supported" ); //$NON-NLS-1$
-//			}
-//		}
-
-//		Job deleteJob = new DeleteJob(itemsDeleted, window.getShell() );
-//		deleteJob.setUser(true);
-//		deleteJob.schedule();
 		
 		return null;
 	}
@@ -108,22 +77,5 @@ public class DeleteObjectStoreItemHandler extends AbstractHandler implements IHa
 			itemsDeleted.add(objectStoreItem);
 		}
 		return itemsDeleted;
-	}
-	
-	class DeletedItemsContentProvider extends ObjectStoresViewContentProvider {
-		
-		Collection<IObjectStoreItem> deletedItems;
-		
-		public DeletedItemsContentProvider(Collection<IObjectStoreItem> deletedItems) {
-			this.deletedItems = deletedItems;
-		}
-
-		public Object[] getElements(Object parent) {
-			if ( ! ( parent instanceof IObjectStoreItem ) ) {
-				return deletedItems.toArray();
-			} else {
-				return super.getElements(parent);
-			}
-		}		
 	}
 }

@@ -24,6 +24,7 @@ import java.util.Collection;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -199,10 +200,24 @@ public class Document extends ObjectStoreItem implements IDocument {
 			throw new IllegalStateException("Document is already saved" );
 		}
 		
-		org.apache.chemistry.opencmis.client.api.Folder internalFolder = ((Folder)parent).getInternalFolder();
+		org.apache.chemistry.opencmis.client.api.Folder internalFolder = getParentFolder();
 		document = internalFolder.createDocument(changedProperties, contentStream, versioningState );
 		saved = true;
 		changedProperties.clear();
 		refresh();
 	}
+	
+	private org.apache.chemistry.opencmis.client.api.Folder getParentFolder() {
+		org.apache.chemistry.opencmis.client.api.Folder internalFolder;
+		if ( parent instanceof Folder ) {
+			internalFolder = ((Folder)parent).getInternalFolder();
+		} else if (parent instanceof ObjectStore) {
+			Session session = ((ObjectStore) parent).getSession();
+			internalFolder = session.getRootFolder();
+		} else {
+			throw new IllegalArgumentException( parent.toString() );
+		}
+		return internalFolder;
+	}
+	
 }

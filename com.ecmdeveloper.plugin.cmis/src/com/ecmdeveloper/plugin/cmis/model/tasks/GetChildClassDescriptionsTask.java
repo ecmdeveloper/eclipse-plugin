@@ -21,22 +21,20 @@ package com.ecmdeveloper.plugin.cmis.model.tasks;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 
+import com.ecmdeveloper.plugin.cmis.model.ClassDescription;
+import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
+import com.ecmdeveloper.plugin.cmis.util.PluginLog;
 import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
-import com.ecmdeveloper.plugin.cmis.model.ClassDescription;
-import com.ecmdeveloper.plugin.cmis.model.ObjectStore;
-import com.ecmdeveloper.plugin.cmis.util.PluginLog;
 
 /**
  * @author Ricardo.Belfor

@@ -40,7 +40,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ecmdeveloper.plugin.core.model.IDocument;
-import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IGetDocumentVersionsTask;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.ui.Activator;

@@ -23,8 +23,6 @@ package com.ecmdeveloper.plugin.ui.model;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
-
 /**
  * @author ricardo.belfor
  *

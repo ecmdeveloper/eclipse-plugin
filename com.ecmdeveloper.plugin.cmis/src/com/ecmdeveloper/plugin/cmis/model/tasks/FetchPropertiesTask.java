@@ -20,13 +20,12 @@
 package com.ecmdeveloper.plugin.cmis.model.tasks;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.Property;
 
+import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.TaskResult;
-import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
 
 /**
  * @author Ricardo Belfor
