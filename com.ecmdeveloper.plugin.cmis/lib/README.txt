@@ -1,0 +1,1 @@
+Here you have to place the Apache Chemistry CMIS client libraries. This distribution of the source code uses version 0.7. The file can be downloaded from http://chemistry.apache.org.
