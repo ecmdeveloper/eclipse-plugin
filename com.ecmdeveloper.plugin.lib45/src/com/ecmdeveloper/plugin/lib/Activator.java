@@ -20,9 +20,12 @@
 package com.ecmdeveloper.plugin.lib;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Dictionary;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -153,4 +156,34 @@ public class Activator extends Plugin {
 					.getLocalizedMessage());
 		}              
 	}     
+
+	public String[] getLibraries() throws IOException {
+		
+		String[] pathParts = getPathParts();
+		ArrayList<String> pathPartsList = new ArrayList<String>(); 
+		for ( String pathPart : pathParts ) {
+			if ( !pathPart.equals(".") )
+			{
+				pathPartsList.add( getPathPartPath(pathPart) );
+			}
+		}
+
+		return pathPartsList.toArray( new String[0] );
+	}
+
+	@SuppressWarnings("unchecked")
+	private String[] getPathParts() {
+		Dictionary headers = getBundle().getHeaders();
+		String bundleClassPath = (String) headers.get("Bundle-ClassPath");
+		System.out.println( bundleClassPath.toString() );
+		String[] pathParts = bundleClassPath.split(",");
+		return pathParts;
+	}
+
+	private String getPathPartPath(String pathPart) throws IOException {
+		URL locationUrl = FileLocator.find(getBundle(), new Path(pathPart), null);
+		URL fileUrl = FileLocator.toFileURL(locationUrl);
+		String file = fileUrl.getFile();
+		return file;
+	}
 }

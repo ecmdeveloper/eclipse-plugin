@@ -48,6 +48,7 @@
             locationURI="menu:com.ecmdeveloper.plugin.ui.importObjectStore">
          <command
                commandId="com.ecmdeveloper.plugin.importObjectStore"
+               label="Import Content Engine Object Store"
                style="push">
          </command>
       </menuContribution>
@@ -88,7 +89,8 @@
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <or>
                         <instanceof
                               value="com.ecmdeveloper.plugin.model.Document">
@@ -104,6 +106,27 @@
                </with>
             </visibleWhen>
          </command>
+         <menu
+               icon="icons/database_add.png"
+               id="com.ecmdeveloper.plugin.import"
+               label="Import">
+            <command
+                  commandId="com.ecmdeveloper.plugin.importObjectStore"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="true">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.IObjectStore">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoreFavorites?after=additions">
@@ -115,7 +138,8 @@
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <or>
                         <instanceof
                               value="com.ecmdeveloper.plugin.model.Document">

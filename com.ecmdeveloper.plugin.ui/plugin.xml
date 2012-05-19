@@ -456,7 +456,8 @@
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <or>
                         <instanceof
                               value="com.ecmdeveloper.plugin.core.model.IFolder">

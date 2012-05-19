@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECM Developer 4.5 Libraries Plug-in
 Bundle-SymbolicName: com.ecmdeveloper.plugin.lib
-Bundle-Version: 1.1.0
+Bundle-Version: 2.0.0
 Bundle-Activator: com.ecmdeveloper.plugin.lib.Activator
 Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.core.runtime,
@@ -28,7 +28,8 @@ Bundle-ClassPath: lib/Jace.jar,
  wsi/lib/xercesImpl.jar,
  wsi/lib/xml-apis.jar,
  wsi/lib/xmlParserAPIs.jar
-Export-Package: com.filenet.api.action,
+Export-Package: com.ecmdeveloper.plugin.lib,
+ com.filenet.api.action,
  com.filenet.api.admin,
  com.filenet.api.authentication.jboss.login,
  com.filenet.api.collection,
