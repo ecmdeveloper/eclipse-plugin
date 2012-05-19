@@ -1,9 +1,18 @@
 Install this plugin using the Eclipse update site http://www.ecmdeveloper.com/update
 
-Release notes for version 1.5.0.0:
+Release notes for version 2.0.0.0:
 
 Changes:
 
-* Searching of folders, documents and custom objects.
-* Fixed bug with empty code module after initial creation
-* Multiple Java elements can be added at once to a code module
+* Support for CMIS repositories using the Apache Chemistry OpenCMIS client libraries.
+* In the terminology the label "Content Engine" is in most places changed to "Object Store" or "ECM Developer".
+* Console Projects for the execution of Java code with the selection as input.
+* In the property editor changes are immediatly reflected and not after lost focus.
+* Creating Event Actions based on the Code Module being edited.
+* Storing passwords is optional, each time a connection is made the credentials can be changed.
+* Content search is temporarily disabled, did not work in the previous version.
+* Added support for the IN keyword in the query designer.
+* New properties dialog for Object Stores. The configuration of the connection can be edited here.
+* Various small bug fixes.
+* Tested with FileNet Content Engine 4.5, 4.5.1, 5.0 and 5.1 and various CMIS enabled repositories.
+* Web site updated.

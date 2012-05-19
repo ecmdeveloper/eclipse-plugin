@@ -38,7 +38,8 @@
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <or>
                         <instanceof
                               value="com.ecmdeveloper.plugin.cmis.model.Document">
@@ -51,6 +52,27 @@
                </with>
             </visibleWhen>
          </command>
+         <menu
+               icon="icons/database_add.png"
+               id="com.ecmdeveloper.plugin.import"
+               label="Import">
+            <command
+                  commandId="com.ecmdeveloper.plugin.cmis.importRepository"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="true">
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.IObjectStore">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoreFavorites?after=additions">
@@ -62,7 +84,8 @@
                   checkEnabled="false">
                <with
                      variable="selection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <or>
                         <instanceof
                               value="com.ecmdeveloper.plugin.cmis.model.Document">
