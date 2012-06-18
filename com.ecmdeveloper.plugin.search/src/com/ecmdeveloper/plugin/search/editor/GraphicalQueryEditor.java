@@ -188,6 +188,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 			paletteEntry.setVisible( visibility );
 		}
 		searchAllVersionsButton.setEnabled(visibility);
+		maxCountText.setEnabled(visibility);
 	}
 
 	private void setCeEntriesVisibility(PaletteDrawer paletteDrawer, boolean visibility) {
