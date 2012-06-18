@@ -28,4 +28,9 @@ public class DocumentEditor extends ObjectStoreItemEditor {
 
 	public static final String EDITOR_ID = "com.ecmdeveloper.plugin.editors.documentEditor";
 
+	@Override
+	protected String getEditorName() {
+		return "Document Editor";
+	}
+
 }
