@@ -50,7 +50,7 @@ import com.ecmdeveloper.plugin.properties.util.PluginLog;
  * @author Ricardo.Belfor
  *
  */
-public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener, ITaskManagerListener {
+public abstract class ObjectStoreItemEditor extends FormEditor implements PropertyChangeListener, ITaskManagerListener {
 
 	private static final String SAVE_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveProperties";
 	private static final String SAVE_NEW_PROPERTIES_COMMAND_ID = "com.ecmdeveloper.plugin.saveNewProperties";
@@ -162,10 +162,7 @@ public class ObjectStoreItemEditor extends FormEditor implements PropertyChangeL
 		}
 	}
 
-	private String getEditorName() {
-		// TODO fix this for other object types
-		return "Folder Editor";
-	}
+	protected abstract String getEditorName();
 
 	private String getSaveCommandId() {
 		String commandId;

@@ -27,4 +27,9 @@ package com.ecmdeveloper.plugin.properties.editors;
 public class CustomObjectEditor extends ObjectStoreItemEditor {
 
 	public static final String EDITOR_ID = "com.ecmdeveloper.plugin.editors.customObjectEditor";
+
+	@Override
+	protected String getEditorName() {
+		return "Custom Object Editor";
+	}
 }

@@ -28,5 +28,10 @@ package com.ecmdeveloper.plugin.properties.editors;
 public class FolderEditor extends ObjectStoreItemEditor {
 
 	public static final String EDITOR_ID = "com.ecmdeveloper.plugin.editors.folderEditor";
+
+	@Override
+	protected String getEditorName() {
+		return "Folder Editor";
+	}
 }
 

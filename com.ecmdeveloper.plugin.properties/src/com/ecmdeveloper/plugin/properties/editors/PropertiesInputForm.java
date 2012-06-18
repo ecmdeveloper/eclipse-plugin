@@ -9,11 +9,15 @@ import com.ecmdeveloper.plugin.core.model.IClassDescription;
 
 public class PropertiesInputForm extends FormPage {
 
+	private static final String TITLE = "Properties";
+	private static final String ID = "propertiesInputPage";
+	
 	private IClassDescription classDescription;
 	private PropertiesInputBlock propertiesInputBlock;
 
 	public PropertiesInputForm(FormEditor editor, IClassDescription classDescription) {
-		super(editor, "propertiesInputPage", "Properties");
+		super(editor, ID, TITLE);
+		
 		this.classDescription = classDescription;
 	}
 	
