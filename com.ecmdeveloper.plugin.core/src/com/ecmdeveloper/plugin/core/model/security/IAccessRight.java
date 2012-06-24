@@ -20,16 +20,12 @@
 
 package com.ecmdeveloper.plugin.core.model.security;
 
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
-
 /**
  * @author ricardo.belfor
  *
  */
-public interface IAccessControlEntries {
-	Collection<IPrincipal> getPrincipals();
-	
-	public void removePropertyChangeListener(PropertyChangeListener listener);
-	public void addPropertyChangeListener(PropertyChangeListener listener);
+public interface IAccessRight {
+	String getName();
+	boolean isGranted();
+	void setGranted(boolean granted);
 }

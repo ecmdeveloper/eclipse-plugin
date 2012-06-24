@@ -18,18 +18,13 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model.security;
-
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
+package com.ecmdeveloper.plugin.core.model.constants;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IAccessControlEntries {
-	Collection<IPrincipal> getPrincipals();
-	
-	public void removePropertyChangeListener(PropertyChangeListener listener);
-	public void addPropertyChangeListener(PropertyChangeListener listener);
+public enum AccessControlEntryType {
+	ALLOW,
+	DENY
 }
