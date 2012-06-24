@@ -33,4 +33,7 @@ public class IconFiles {
 	public static final String USER = "icons/user.png";
 	public static final String INHERITED = "icons/arrow_up.png";
 	public static final String DIRECT = "icons/arrow_right.png";
+	public static final String HORIZONTAL = "icons/application_tile_horizontal.png";
+	public static final String VERTICAL = "icons/application_tile_vertical.png";
+	
 }

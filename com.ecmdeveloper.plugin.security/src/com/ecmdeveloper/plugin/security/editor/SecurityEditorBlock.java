@@ -21,29 +21,27 @@
 package com.ecmdeveloper.plugin.security.editor;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.forms.DetailsPart;
@@ -55,12 +53,14 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
@@ -71,6 +71,12 @@ import com.ecmdeveloper.plugin.security.util.PluginLog;
  */
 public class SecurityEditorBlock extends MasterDetailsBlock {
 
+	private static final String PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES = "The principal ''{0}'' contains no deletable access control entries.";
+	private static final String CONFIRM_PRINCIPAL_ENTRIES_DELETE = "Are you sure you want to delete all the deletable access control entries for principal ''{0}''?";
+	private static final String CONFIRM_ENTRY_DELETE = "Are you sure you want to delete this access control entries for principal ''{0}''?";
+	private static final String NOT_EDITABLE_ENTRY = "This access control entry cannot be deleted.";
+
+	private static final String SECURITY_EDITOR_TITLE = "Security editor";
 	private static final String PRINCIPAL = "Principal";
 	private static final String REFRESH_LABEL = "Refresh Security";
 	private static final String ADD_GROUP_LABEL = "Add Entry";
@@ -145,14 +151,66 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		link.setImage( Activator.getImage(IconFiles.GROUP_DELETE) );
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				performDeleteGroup();
+				if ( performDeleteSelection() ) {
+					viewer.refresh();
+				}
 			}
 	    });
 	}
 	
-	protected void performDeleteGroup() {
-		// TODO Auto-generated method stub
+	protected boolean performDeleteSelection() {
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		if ( !selection.isEmpty() ) {
+			Object object = selection.iterator().next();
+			if (object instanceof IPrincipal ) {
+				return deletePrincipalEntries((IPrincipal) object );
+			} else if ( object instanceof IAccessControlEntry ) {
+				return deleteAccessControlEntry(object);
+			}
+		}
+		return false;
+	}
+
+	private boolean deletePrincipalEntries(IPrincipal principal) {
+	
+		List<IAccessControlEntry> deletableEntries = getDeletableEntries(principal);
+		if ( !deletableEntries.isEmpty() ) {
+			String message = MessageFormat.format(CONFIRM_PRINCIPAL_ENTRIES_DELETE, principal.getName() );
+			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
+				principal.getAccessControlEntries().removeAll( deletableEntries );
+				return true;
+			}
+		} else {
+			String message = MessageFormat.format(PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES, principal.getName() );
+			MessageDialog.openWarning(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message);
+		}
+		return false;
+	}
+
+	private List<IAccessControlEntry> getDeletableEntries(IPrincipal principal) {
+		List<IAccessControlEntry> deletableEntries = new ArrayList<IAccessControlEntry>(); 
+		for (IAccessControlEntry accessControlEntry : principal.getAccessControlEntries() ) {
+			if ( accessControlEntry.canDelete() ) {
+				deletableEntries.add(accessControlEntry);
+			}
+		}
+		return deletableEntries;
+	}
+
+	private boolean deleteAccessControlEntry(Object object) {
+		IAccessControlEntry accessControlEntry = (IAccessControlEntry) object;
 		
+		if ( accessControlEntry.canDelete() ) {
+			String message = MessageFormat.format(CONFIRM_ENTRY_DELETE, accessControlEntry.getPrincipal().getName());
+			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
+				IPrincipal principal = accessControlEntry.getPrincipal();
+				principal.getAccessControlEntries().remove(accessControlEntry);
+				return true;
+			}
+		} else {
+			MessageDialog.openWarning(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, NOT_EDITABLE_ENTRY);
+		}
+		return false;
 	}
 
 	private void createRefreshLink(FormToolkit toolkit, Composite client) {
@@ -344,14 +402,35 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	
 	@Override
 	protected void createToolBarActions(IManagedForm managedForm) {
-//		final ScrolledForm form = managedForm.getForm();
-//		Action commitAction = new Action("hor", Action.AS_PUSH_BUTTON) { 
-//			public void run() {
-//			}
-//		};
-//		commitAction.setToolTipText("Commit changes");
-//		commitAction.setImageDescriptor( Activator.getImageDescriptor( IconFiles.READ_ONLY ) );
-//		form.getToolBarManager().add(commitAction);
+		final ScrolledForm form = managedForm.getForm();
+		form.getToolBarManager().add( createTileHorizontalAction(form) );
+		form.getToolBarManager().add( createTileVerticalAction(form) );
+	}
+
+	private Action createTileVerticalAction(final ScrolledForm form) {
+		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+			public void run() {
+				sashForm.setOrientation(SWT.VERTICAL);
+				form.reflow(true);
+			}
+		};
+		vaction.setChecked(false);
+		vaction.setToolTipText("Vertical orientation");
+		vaction.setImageDescriptor(Activator.getImageDescriptor(IconFiles.VERTICAL) );
+		return vaction;
+	}
+
+	private Action createTileHorizontalAction(final ScrolledForm form) {
+		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+			public void run() {
+				sashForm.setOrientation(SWT.HORIZONTAL);
+				form.reflow(true);
+			}
+		};
+		haction.setChecked(true);
+		haction.setToolTipText("Horizontal orientation");
+		haction.setImageDescriptor(Activator.getImageDescriptor(IconFiles.HORIZONTAL) );
+		return haction;
 	}
 
 	@Override

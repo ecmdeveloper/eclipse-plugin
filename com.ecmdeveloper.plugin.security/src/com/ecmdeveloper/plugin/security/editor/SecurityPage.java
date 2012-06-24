@@ -40,6 +40,7 @@ public class SecurityPage extends FormPage {
 		super(editor, ID, TITLE);
 	}
 
+	
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		propertiesInputBlock = new SecurityEditorBlock(this);
@@ -49,5 +50,15 @@ public class SecurityPage extends FormPage {
 	public void refreshFormContent() {
 		IEditorInput editorInput = getEditor().getEditorInput();
 		propertiesInputBlock.setInput( editorInput );
+		setContentDescription("Security Editor");
 	}
+
+
+	@Override
+	public boolean isDirty() {
+		// TODO Auto-generated method stub
+		return super.isDirty();
+	}
+	
+	
 }

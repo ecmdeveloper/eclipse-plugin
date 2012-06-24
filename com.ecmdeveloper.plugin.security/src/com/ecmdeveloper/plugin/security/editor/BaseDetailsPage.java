@@ -22,8 +22,12 @@ package com.ecmdeveloper.plugin.security.editor;
 
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,6 +37,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -41,6 +46,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
@@ -60,6 +66,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	private boolean commitChanges;
 
 	private Label titleImage;
+	private LabelProvider labelProvider = new SecurityLabelProvider();
 	
 	@Override
 	public void initialize(IManagedForm form) {
@@ -76,9 +83,8 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	}
 
 	protected void createClientContent(Composite client) {
-		createEmptyValueButton(client, form.getToolkit() );
 	}
-	
+
 	protected abstract int getNumClientColumns();
 
 	@Override
@@ -182,7 +188,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		Object object = getPropertyFromSelection(selection);
+		Object object = getSelection(selection);
 		
 	    if ( object != null ) {
 	    	
@@ -192,7 +198,6 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 		    	setPrincipalInformation(principal);
 	    	}
 	    	
-
 //	    	commitChanges = false;
 //	    	propertyChanged( property );
 //			setEmptyValueButtonState(property);
@@ -202,16 +207,16 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	    }
 	}
 
-	private void setPrincipalInformation(IPrincipal principal) {
-		setTitle( principal.getName() );
-		setDescription( "Lorem ipsum dolor sit amet" );
-		if ( principal.isGroup() != null && principal.isGroup() ) {
-			titleImage.setImage(Activator.getImage(IconFiles.GROUP ) );
-		} else { 
-			titleImage.setImage(Activator.getImage(IconFiles.USER ) );
-		}
+	protected void setPrincipalInformation(IPrincipal principal) {
+		setTitle( "Principal" );
+		setDescription( labelProvider.getText(principal) );
+		setTitleImage(principal);
 	}
 
+	protected void setTitleImage(Object object) {
+		titleImage.setImage( labelProvider.getImage(object)  );
+	}
+	
 	private IPrincipal getSelectedPrincipal(Object object) {
 		IPrincipal principal = null;
 		if ( object instanceof IPrincipal ) {
@@ -241,7 +246,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 //		handleEmptyValueButton( emptyValueButton.getSelection() );
 //	}
 //
-	protected Object getPropertyFromSelection(ISelection selection) {
+	protected Object getSelection(ISelection selection) {
 
 		if ( selection.isEmpty() ) {
 	    	return null;

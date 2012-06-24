@@ -87,7 +87,7 @@ public class SecurityContentProvider implements IStructuredContentProvider,  ITr
 			Collection<IPrincipal> principals = ((IAccessControlEntries) element).getPrincipals();
 			return principals != null && principals.isEmpty();
 		} else if ( element instanceof IPrincipal ) {
-			List<IAccessControlEntry> accessControlEntries = ((IPrincipal) element).getAccessControlEntries();
+			Collection<IAccessControlEntry> accessControlEntries = ((IPrincipal) element).getAccessControlEntries();
 			return accessControlEntries != null && !accessControlEntries.isEmpty();
 		}
 		return false;

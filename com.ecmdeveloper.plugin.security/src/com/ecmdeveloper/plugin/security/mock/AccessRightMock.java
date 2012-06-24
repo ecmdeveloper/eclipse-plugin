@@ -21,38 +21,44 @@
 package com.ecmdeveloper.plugin.security.mock;
 
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class PrincipalMock implements IPrincipal {
+public class AccessRightMock implements IAccessRight {
 
 	private final String name;
-	private final List<IAccessControlEntry> accessControlEntries = new ArrayList<IAccessControlEntry>();
+	private final PropertyChangeSupport listeners;
+
+	private boolean granted;
 	
-	public PrincipalMock(String name, PropertyChangeSupport listeners) {
+	public AccessRightMock(String name, boolean granted, PropertyChangeSupport listeners) {
 		this.name = name;
-		accessControlEntries.add(new AccessControlEntryMock(this, listeners) );
+		this.granted = granted;
+		this.listeners = listeners;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	public Boolean isGroup() {
-		return name.startsWith("C");
+	public boolean isGranted() {
+		return granted;
 	}
 
 	@Override
-	public List<IAccessControlEntry> getAccessControlEntries() {
-		return accessControlEntries;
+	public String toString() {
+		return name;
+	}
+
+	@Override
+	public void setGranted(boolean granted) {
+		this.granted = granted;
+		listeners.firePropertyChange(name, granted, !granted );
 	}
 }

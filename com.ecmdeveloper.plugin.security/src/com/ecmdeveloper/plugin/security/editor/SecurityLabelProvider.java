@@ -71,7 +71,7 @@ public class SecurityLabelProvider extends LabelProvider implements IBaseLabelPr
 		if ( element instanceof IPrincipal ) {
 			return ((IPrincipal) element).getName();
 		} else if ( element instanceof IAccessControlEntry ) {
-			return ((IAccessControlEntry) element).getPermission();
+			return ((IAccessControlEntry) element).getAccessLevel().getName();
 		}
 		return super.getText(element);
 	}

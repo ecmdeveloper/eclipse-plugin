@@ -23,24 +23,62 @@ package com.ecmdeveloper.plugin.security.editor;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+
 /**
  * @author ricardo.belfor
  *
  */
 public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 
+	private static final String ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY = "accessControlEntryPage";
+	private static final String ACCESS_CONTROL_ENTRY_EDIT_PAGE_KEY = "accessControlEditEntryPage";
+	private static final String PRINCIPAL_PAGE_KEY = "principalPage";
 	private IDetailsPage unknownDetailsPage;
+	private IDetailsPage accessControlEntryDetailsViewPage;
+	private IDetailsPage accessControlEntryDetailsEditPage;
 	
 	@Override
 	public IDetailsPage getPage(Object key) {
+
+		if ( ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY.equals(key) ) {
+			return getAccessControlEntryDetailsViewPage();
+		} else if ( ACCESS_CONTROL_ENTRY_EDIT_PAGE_KEY.equals(key) ) {
+			return getAccessControlEntryDetailsEditPage();
+		}
+		
 		if ( unknownDetailsPage == null ) {
 			unknownDetailsPage = new PermissionDetailsPage();
 		}
 		return unknownDetailsPage;
 	}
 
+	private IDetailsPage getAccessControlEntryDetailsEditPage() {
+		if ( accessControlEntryDetailsEditPage == null ) {
+			accessControlEntryDetailsEditPage = new AccessControlEntryDetailsEditPage();
+		}
+		return accessControlEntryDetailsEditPage;
+	}
+
+	private IDetailsPage getAccessControlEntryDetailsViewPage() {
+		if ( accessControlEntryDetailsViewPage == null) {
+			accessControlEntryDetailsViewPage = new AccessControlEntryDetailsViewPage();
+		}
+		return accessControlEntryDetailsViewPage;
+	}
+
 	@Override
 	public Object getPageKey(Object object) {
-		return "key";
+		if (object instanceof IPrincipal ) {
+			return PRINCIPAL_PAGE_KEY;
+		} else if (object instanceof IAccessControlEntry ) {
+			if ( ((IAccessControlEntry) object).isEditable() ) {
+				return ACCESS_CONTROL_ENTRY_EDIT_PAGE_KEY;
+			} else {
+				return ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY;
+			}
+		}
+		return null;
 	}
 }

@@ -20,6 +20,8 @@
 
 package com.ecmdeveloper.plugin.security.mock;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -33,18 +35,29 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 public class AccessControlEntriesMock implements IAccessControlEntries {
 
 	private ArrayList<IPrincipal> principals;
+	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 
 	String names[] = {"Peter Griffin","Lois Griffin","Meg Griffin","Chris Griffin","Stewie Griffin","Brian Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson" };
 	
 	public AccessControlEntriesMock() {
 		principals = new ArrayList<IPrincipal>();
 		for ( String name : names ) {
-			principals.add( new PrincipalMock(name) );
+			principals.add( new PrincipalMock(name, listeners) );
 		}
 	}
 
 	@Override
 	public Collection<IPrincipal> getPrincipals() {
 		return principals;
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		listeners.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		listeners.removePropertyChangeListener(listener);
 	}
 }
