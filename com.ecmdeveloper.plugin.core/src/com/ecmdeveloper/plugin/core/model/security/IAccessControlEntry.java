@@ -20,14 +20,26 @@
 
 package com.ecmdeveloper.plugin.core.model.security;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
+import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
 
 /**
  * @author ricardo.belfor
  *
  */
 public interface IAccessControlEntry {
+//	String getName();
+	IAccessLevel getAccessLevel();
+	Collection<IAccessLevel> getAllowedAccessLevels();
+	AccessControlEntryType getType();
+	void setType(AccessControlEntryType accessControlEntryType );
 	AccessControlEntrySource getSource();
 	IPrincipal getPrincipal();
-	String getPermission();
+	List<IAccessRight> getAccessRights();
+	boolean isEditable();
+	boolean canDelete();
+	
 }

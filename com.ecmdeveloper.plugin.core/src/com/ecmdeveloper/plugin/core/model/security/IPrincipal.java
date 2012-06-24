@@ -1,10 +1,10 @@
 package com.ecmdeveloper.plugin.core.model.security;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface IPrincipal {
 
 	String getName();
 	Boolean isGroup();
-	List<IAccessControlEntry> getAccessControlEntries(); 
+	Collection<IAccessControlEntry> getAccessControlEntries(); 
 }
