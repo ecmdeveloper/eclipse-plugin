@@ -20,30 +20,40 @@
 
 package com.ecmdeveloper.plugin.security.editor;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SecurityEditor extends FormEditor {
+public class SecurityEditor extends FormEditor implements PropertyChangeListener {
 
 	public static final String EDITOR_ID = "com.ecmdeveloper.plugin.security.securityEditor";
 	
 	private SecurityPage securityPage;
 	private IObjectStoreItem objectStoreItem;
-	private IObjectStoreItem accessControlEntries;
+	private IAccessControlEntries accessControlEntries;
+	private boolean isPageModified;
 
 	@Override
 	protected void addPages() {
 		try {
 			addSecurityPage();
 			objectStoreItem = (IObjectStoreItem) getEditorInput().getAdapter( IObjectStoreItem.class);
+			accessControlEntries = (IAccessControlEntries) getEditorInput().getAdapter( IAccessControlEntries.class);
+			accessControlEntries.addPropertyChangeListener(this);
+			isPageModified = false;
+			
 			updateTitle();
 		} catch (PartInitException e) {
 			PluginLog.error( e );
@@ -68,8 +78,7 @@ public class SecurityEditor extends FormEditor {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		
+		isPageModified = false;
 	}
 
 	@Override
@@ -79,5 +88,19 @@ public class SecurityEditor extends FormEditor {
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent arg0) {
+		if ( !isPageModified ) {
+			firePropertyChange(IEditorPart.PROP_DIRTY);
+			isPageModified = true;
+		}
+	}
+
+	@Override
+	public void dispose() {
+		accessControlEntries.removePropertyChangeListener(this);
+		super.dispose();
 	}
 }

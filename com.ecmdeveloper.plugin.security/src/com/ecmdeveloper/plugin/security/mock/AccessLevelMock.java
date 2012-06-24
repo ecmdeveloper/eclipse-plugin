@@ -20,39 +20,27 @@
 
 package com.ecmdeveloper.plugin.security.mock;
 
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class PrincipalMock implements IPrincipal {
+public class AccessLevelMock implements IAccessLevel {
 
 	private final String name;
-	private final List<IAccessControlEntry> accessControlEntries = new ArrayList<IAccessControlEntry>();
 	
-	public PrincipalMock(String name, PropertyChangeSupport listeners) {
+	public AccessLevelMock(String name) {
 		this.name = name;
-		accessControlEntries.add(new AccessControlEntryMock(this, listeners) );
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	public Boolean isGroup() {
-		return name.startsWith("C");
-	}
-
-	@Override
-	public List<IAccessControlEntry> getAccessControlEntries() {
-		return accessControlEntries;
+	public String toString() {
+		return getName();
 	}
 }
