@@ -22,12 +22,9 @@ package com.ecmdeveloper.plugin.security.editor;
 
 import java.util.Iterator;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,8 +34,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -46,10 +41,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
-import com.ecmdeveloper.plugin.security.Activator;
-import com.ecmdeveloper.plugin.security.util.IconFiles;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author Ricardo.Belfor
@@ -62,7 +54,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	protected IManagedForm form;
 	private Section section;
 	protected Button emptyValueButton;
-	private boolean isDirty;
+	protected boolean isDirty;
 	private boolean commitChanges;
 
 	private Label titleImage;
@@ -102,6 +94,8 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 
 	@Override
 	public void commit(boolean onSave) {
+		System.out.println( "Commit!");
+		setDirty(false);
 //		if (property != null ) {
 //			commitPropertyValue();
 //		}
@@ -138,9 +132,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 //			property.setValue( getValue() );
 //		}
 //	}
-	
-	protected abstract Object getValue();
-	
+		
 	protected void createEmptyValueButton(Composite client, FormToolkit toolkit) {
 		
 		emptyValueButton = toolkit.createButton(client, EMPTY_VALUE_BUTTON_TEXT, SWT.CHECK );
@@ -192,10 +184,10 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 		
 	    if ( object != null ) {
 	    	
-	    	IPrincipal principal = getSelectedPrincipal(object);
+	    	ISecurityPrincipal securityPrincipal = getSelectedPrincipal(object);
 
-	    	if ( principal != null ) {
-		    	setPrincipalInformation(principal);
+	    	if ( securityPrincipal != null ) {
+		    	setPrincipalInformation(securityPrincipal);
 	    	}
 	    	
 //	    	commitChanges = false;
@@ -207,45 +199,26 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	    }
 	}
 
-	protected void setPrincipalInformation(IPrincipal principal) {
+	protected void setPrincipalInformation(ISecurityPrincipal securityPrincipal) {
 		setTitle( "Principal" );
-		setDescription( labelProvider.getText(principal) );
-		setTitleImage(principal);
+		setDescription( labelProvider.getText(securityPrincipal) );
+		setTitleImage(securityPrincipal);
 	}
 
 	protected void setTitleImage(Object object) {
 		titleImage.setImage( labelProvider.getImage(object)  );
 	}
 	
-	private IPrincipal getSelectedPrincipal(Object object) {
-		IPrincipal principal = null;
-		if ( object instanceof IPrincipal ) {
-			principal = (IPrincipal) object;
+	private ISecurityPrincipal getSelectedPrincipal(Object object) {
+		ISecurityPrincipal securityPrincipal = null;
+		if ( object instanceof ISecurityPrincipal ) {
+			securityPrincipal = (ISecurityPrincipal) object;
 		} else if ( object instanceof IAccessControlEntry ) {
-			principal = ((IAccessControlEntry) object).getPrincipal();
+			securityPrincipal = ((IAccessControlEntry) object).getPrincipal();
 		}
-		return principal;
+		return securityPrincipal;
 	}
 
-//	protected abstract void propertyChanged( Property property );
-//
-//	private void setEmptyValueButtonState(Property property) {
-//		
-//		if ( emptyValueButton == null ) {
-//			return;
-//		}
-//		
-//		emptyValueButton.setEnabled( !property.isRequired() );
-//
-//		if ( ! property.isRequired() ) {
-//			emptyValueButton.setSelection( property.getValue() == null );
-//		} else {
-//			emptyValueButton.setSelection(false);
-//		}
-//		
-//		handleEmptyValueButton( emptyValueButton.getSelection() );
-//	}
-//
 	protected Object getSelection(ISelection selection) {
 
 		if ( selection.isEmpty() ) {

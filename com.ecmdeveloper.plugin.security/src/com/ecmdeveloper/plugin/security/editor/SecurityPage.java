@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.security.editor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -59,6 +60,20 @@ public class SecurityPage extends FormPage {
 		// TODO Auto-generated method stub
 		return super.isDirty();
 	}
+
+
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		super.doSave(monitor);
+	}
+
+
+	@Override
+	public boolean isEditor() {
+		return true;
+	}
+	
 	
 	
 }

@@ -79,6 +79,7 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		isPageModified = false;
+		firePropertyChange(IEditorPart.PROP_DIRTY);
 	}
 
 	@Override
@@ -102,5 +103,10 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 	public void dispose() {
 		accessControlEntries.removePropertyChangeListener(this);
 		super.dispose();
+	}
+
+	@Override
+	public boolean isDirty() {
+		return isPageModified;
 	}
 }
