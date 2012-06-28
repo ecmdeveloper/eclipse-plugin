@@ -25,6 +25,19 @@ package com.ecmdeveloper.plugin.core.model.constants;
  *
  */
 public enum AccessControlEntryType {
-	ALLOW,
-	DENY
+	ALLOW { 		
+		@Override
+		public String toString() {
+			return ALLOW_STRING;
+		}
+	},
+	DENY { 		
+		@Override
+		public String toString() {
+			return DENY_STRING;
+		}
+	};
+
+	private static final String DENY_STRING = "Deny";
+	private static final String ALLOW_STRING = "Allow";
 }
