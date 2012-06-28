@@ -24,8 +24,10 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,8 +39,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
+import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
 import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author ricardo.belfor
@@ -46,8 +50,8 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
  */
 public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 
-	private static final String DENY_LABEL = "Deny";
-	private static final String ALLOW_LABEL = "Allow";
+	private static final String DENY_LABEL = AccessControlEntryType.DENY.toString();
+	private static final String ALLOW_LABEL = AccessControlEntryType.ALLOW.toString();
 	
 	private Button allowButton;
 	private Button denyButton;
@@ -55,7 +59,13 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 	
 	private IAccessControlEntry accessControlEntry;
 	private AccessRightsTable accessRightsTable;
+	private ComboViewer propagationCombo;
+	private final SecurityEditorBlock securityEditorBlock;
 	
+	public AccessControlEntryDetailsEditPage(SecurityEditorBlock securityEditorBlock) {
+		this.securityEditorBlock = securityEditorBlock;
+	}
+
 	protected void createClientContent(Composite client) {
 		super.createClientContent(client);
 		
@@ -90,8 +100,7 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 		allowButton.addSelectionListener( new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				accessControlEntry.setType(AccessControlEntryType.ALLOW );
-				setDirty(true);
+				handleTypeButtonSelection(e, AccessControlEntryType.ALLOW);
 			}
 		} );
 	}
@@ -101,12 +110,18 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 		denyButton.addSelectionListener( new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				accessControlEntry.setType(AccessControlEntryType.DENY );
-				setDirty(true);
+				handleTypeButtonSelection(e, AccessControlEntryType.DENY );
 			}
 		} );
 	}
 
+	
+	private void handleTypeButtonSelection(SelectionEvent e, AccessControlEntryType accessControlEntryType) {
+		if ( ((Button)e.widget).getSelection() ) { 
+			accessControlEntry.setType(accessControlEntryType);
+			setDirty(true);
+		}
+	}	
 	private void createLevelControls(Composite container) {
 
 		form.getToolkit().createLabel(container, "Level: ");
@@ -117,38 +132,49 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		layoutData.horizontalSpan = 3;
 		levelCombo.getCombo().setLayoutData(layoutData);
-		levelCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+		levelCombo.addSelectionChangedListener( getLevelComboListener() );
+	}
+
+	private ISelectionChangedListener getLevelComboListener() {
+		return new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) levelCombo.getSelection();
+				if ( !selection.isEmpty() ) {
+					accessControlEntry.setAccessLevel((IAccessLevel) selection.getFirstElement());
+					setDirty(true);
+				}
 			}
-		}
-		);
-		
+		};
 	}
 
 	private void createApplyToControls(Composite container) {
 
 		form.getToolkit().createLabel(container, "Apply To: ");
 
-		ComboViewer comboViewer = new ComboViewer(container, SWT.VERTICAL
-				| SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		comboViewer.setContentProvider(new ArrayContentProvider());
-		comboViewer.setLabelProvider(new LabelProvider());
-//		connectionsCombo.setInput(connections);
+		propagationCombo = new ComboViewer(container, SWT.VERTICAL | SWT.DROP_DOWN
+				| SWT.BORDER | SWT.READ_ONLY);
+		propagationCombo.setContentProvider(new ArrayContentProvider());
+		propagationCombo.setLabelProvider(new LabelProvider());
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		layoutData.horizontalSpan = 3;
-		comboViewer.getCombo().setLayoutData(layoutData);
-//		connectionsCombo.getCombo().setEnabled(!connections.isEmpty());
-//		connectionsCombo.setFilters( new ViewerFilter[] { getConnectionsFilter() } );
-		comboViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-//						updateConnectButton();
-//						updatePageComplete();					
-					}
-				});
-		
+		propagationCombo.getCombo().setLayoutData(layoutData);
+		propagationCombo.addSelectionChangedListener( getPropagationComboListener() );
+	}
+
+	private ISelectionChangedListener getPropagationComboListener() {
+		return new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) propagationCombo.getSelection();
+				if ( !selection.isEmpty() ) {
+					accessControlEntry
+					.setAccessControlEntryPropagation((IAccessControlEntryPropagation) selection
+							.getFirstElement());
+					setDirty(true);
+				}
+			}
+		};
 	}
 	
 	@Override
@@ -159,22 +185,18 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 	    	
 	    	accessControlEntry = (IAccessControlEntry) object;
 	    	setTitle("Access Control Entry");
-	    	IPrincipal principal = accessControlEntry.getPrincipal();
+	    	ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
 
-	    	if ( principal != null ) {
-	    		setDescription( "Access Control Entry for principal '" + principal.getName() + "'.");
+	    	if ( securityPrincipal != null ) {
+	    		setDescription( "Access Control Entry for principal '" + securityPrincipal.getName() + "'.");
 		    	setTitleImage(accessControlEntry);
 	    	}
 	    	
-			accessRightsTable.setInput( accessControlEntry.getAccessRights() );
-    		for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
-    			accessRightsTable.setChecked(accessRight, accessRight.isGranted() );
-    		}
-    		accessRightsTable.setEnabled( accessControlEntry.isEditable() );
-    		levelCombo.setInput( accessControlEntry.getAllowedAccessLevels() );
-//    		ISelection selection2 = new St;
-//			levelCombo.setSelection(selection2  );
-
+			setAccessRightsTableValues();
+    		setLevelControlValue();
+			setTypeControlsValue();
+			setPropagationControlValue();
+			
 //	    	commitChanges = false;
 //	    	propertyChanged( property );
 //			setEmptyValueButtonState(property);
@@ -183,20 +205,55 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 //			form.getMessageManager().removeAllMessages();
 	    }
 	}
+
+	private void setPropagationControlValue() {
+		propagationCombo.setInput( accessControlEntry.getAllowedAccessControlEntryPropagations() );
+		ISelection propagationSelection = new StructuredSelection( accessControlEntry.getAccessControlEntryPropagation() );
+		propagationCombo.setSelection( propagationSelection  );
+	}
+
+	private void setAccessRightsTableValues() {
+		accessRightsTable.setInput( accessControlEntry.getAccessRights() );
+		for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
+			accessRightsTable.setChecked(accessRight, accessRight.isGranted() );
+		}
+		accessRightsTable.setEnabled( accessControlEntry.isEditable() );
+	}
+
+	private void setLevelControlValue() {
+		levelCombo.setInput( accessControlEntry.getAllowedAccessLevels() );
+		ISelection levelSelection = new StructuredSelection( accessControlEntry.getAccessLevel() );
+		levelCombo.setSelection(levelSelection  );
+	}
+
+	private void setTypeControlsValue() {
+		if ( accessControlEntry != null ) {
+			boolean allow = accessControlEntry.getType().equals( AccessControlEntryType.ALLOW );
+			allowButton.setSelection(allow);
+			denyButton.setSelection(!allow);
+		} else {
+			allowButton.setSelection(false);
+			denyButton.setSelection(false);
+		}
+	}
 	
 	
+	@Override
+	protected void setDirty(boolean isDirty) {
+
+		this.isDirty = isDirty;
+
+		if ( isDirty ) {
+			form.dirtyStateChanged();
+			securityEditorBlock.refresh(accessControlEntry);
+			setTitleImage(accessControlEntry);
+			commit(false);
+		}
+	}
+
 	@Override
 	protected int getNumClientColumns() {
 		return 4;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.ecmdeveloper.plugin.security.editor.BaseDetailsPage#getValue()
-	 */
-	@Override
-	protected Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/* (non-Javadoc)

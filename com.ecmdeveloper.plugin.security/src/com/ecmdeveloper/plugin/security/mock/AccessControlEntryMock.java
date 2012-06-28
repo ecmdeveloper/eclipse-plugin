@@ -28,9 +28,10 @@ import java.util.List;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
 import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
 import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author ricardo.belfor
@@ -38,16 +39,24 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
  */
 public class AccessControlEntryMock implements IAccessControlEntry {
 
-	private final IPrincipal principal;
+	private static final String ACCESS_LEVEL_CHANGED = "ACCESS_LEVEL";
+	private static final String ACCESS_CONTROL_ENTRY_PROPAGATION_CHANGED = "ACCESS_CONTROL_ENTRY_PROPAGATION";
+	private final ISecurityPrincipal securityPrincipal;
 	private final List<IAccessRight> accessRights;
 	private AccessControlEntryType accessControlEntryType;
-	private final IAccessLevel accessLevel;
+	private IAccessControlEntryPropagation accessControlEntryPropagation;
+	private IAccessLevel accessLevel;
 	private final Collection<IAccessLevel> allowedAccessLevels;
-	
-	public AccessControlEntryMock(IPrincipal principal, PropertyChangeSupport listeners) {
-		this.principal = principal;
+	private final Collection<IAccessControlEntryPropagation> accessControlEntryPropagations;
+	private final PropertyChangeSupport listeners; 
+
+	public AccessControlEntryMock(ISecurityPrincipal securityPrincipal, PropertyChangeSupport listeners) {
+		
+		this.securityPrincipal = securityPrincipal;
+		this.listeners = listeners;
+		
 		accessRights = new ArrayList<IAccessRight>();
-		boolean granted = principal.getName().endsWith("n");
+		boolean granted = securityPrincipal.getName().endsWith("n");
 		accessRights.add( new AccessRightMock("Read", granted, listeners) );
 		accessRights.add( new AccessRightMock("Write", true, listeners ) );
 		accessRights.add( new AccessRightMock("Delete", granted, listeners ) );
@@ -62,17 +71,25 @@ public class AccessControlEntryMock implements IAccessControlEntry {
 		allowedAccessLevels.add( new AccessLevelMock("Link" ) );
 		allowedAccessLevels.add( new AccessLevelMock("View properties" ) );
 		allowedAccessLevels.add( new AccessLevelMock("Custom" ) );
+		
+		accessControlEntryType = AccessControlEntryType.ALLOW;
+		
+		accessControlEntryPropagation = new AccessControlEntryPropagationMock("This object only");
+		accessControlEntryPropagations = new ArrayList<IAccessControlEntryPropagation>();
+		accessControlEntryPropagations.add(accessControlEntryPropagation);
+		accessControlEntryPropagations.add( new AccessControlEntryPropagationMock("This object and immediate children") );
+		accessControlEntryPropagations.add( new AccessControlEntryPropagationMock("This object and all children") );
 	}
 
 	@Override
 	public AccessControlEntrySource getSource() {
-		return principal.getName().startsWith("C") ? AccessControlEntrySource.INHERITED
+		return securityPrincipal.getName().startsWith("C") ? AccessControlEntrySource.INHERITED
 				: AccessControlEntrySource.DIRECT;
 	}
 
 	@Override
-	public IPrincipal getPrincipal() {
-		return principal;
+	public ISecurityPrincipal getPrincipal() {
+		return securityPrincipal;
 	}
 
 	@Override
@@ -97,7 +114,9 @@ public class AccessControlEntryMock implements IAccessControlEntry {
 
 	@Override
 	public void setType(AccessControlEntryType accessControlEntryType) {
+		AccessControlEntryType oldValue = this.accessControlEntryType;
 		this.accessControlEntryType = accessControlEntryType;
+		listeners.firePropertyChange("ACCESS_CONTROL_ENTRY_TYPE", oldValue, accessControlEntryType );
 	}
 
 	@Override
@@ -106,7 +125,33 @@ public class AccessControlEntryMock implements IAccessControlEntry {
 	}
 
 	@Override
+	public void setAccessLevel(IAccessLevel accessLevel) {
+		IAccessLevel oldValue = this.accessLevel;
+		this.accessLevel = accessLevel;
+		listeners.firePropertyChange(ACCESS_LEVEL_CHANGED, oldValue, accessLevel );
+	}
+
+	@Override
 	public Collection<IAccessLevel> getAllowedAccessLevels() {
 		return allowedAccessLevels;
 	}
+
+	@Override
+	public IAccessControlEntryPropagation getAccessControlEntryPropagation() {
+		return accessControlEntryPropagation;
+	}
+
+	@Override
+	public void setAccessControlEntryPropagation(
+			IAccessControlEntryPropagation accessControlEntryPropagation) {
+		IAccessControlEntryPropagation oldValue = this.accessControlEntryPropagation; 
+		this.accessControlEntryPropagation = accessControlEntryPropagation;
+		listeners.firePropertyChange(ACCESS_CONTROL_ENTRY_PROPAGATION_CHANGED, oldValue, accessControlEntryPropagation );
+	}
+
+	@Override
+	public Collection<IAccessControlEntryPropagation> getAllowedAccessControlEntryPropagations() {
+		return accessControlEntryPropagations;
+	}
+
 }

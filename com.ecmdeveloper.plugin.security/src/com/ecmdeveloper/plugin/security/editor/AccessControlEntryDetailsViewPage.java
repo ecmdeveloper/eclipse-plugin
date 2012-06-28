@@ -28,7 +28,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author ricardo.belfor
@@ -36,6 +36,7 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
  */
 public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
 
+	private static final String EMPTY_STRING = "";
 	private IAccessControlEntry accessControlEntry;
 	private AccessRightsTable accessRightsTable;
 	private Label levelLabel;
@@ -64,17 +65,17 @@ public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
 
 	private void createTypeControls(Composite client, FormToolkit toolkit) {
 		toolkit.createLabel(client, "Type: ");
-		typeLabel = toolkit.createLabel(client, "");
+		typeLabel = toolkit.createLabel(client, EMPTY_STRING);
 	}
 
 	private void createLevelControls(Composite container) {
 		form.getToolkit().createLabel(container, "Level: ");
-		levelLabel = form.getToolkit().createLabel(container, "");
+		levelLabel = form.getToolkit().createLabel(container, EMPTY_STRING);
 	}
 
 	private void createApplyToControls(Composite container) {
 		form.getToolkit().createLabel(container, "Apply To: ");
-		applyToLabel = form.getToolkit().createLabel(container, "");
+		applyToLabel = form.getToolkit().createLabel(container, EMPTY_STRING);
 	}
 	
 	@Override
@@ -85,36 +86,37 @@ public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
 	    	
 	    	accessControlEntry = (IAccessControlEntry) object;
 	    	setTitle("Access Control Entry");
-	    	IPrincipal principal = accessControlEntry.getPrincipal();
+	    	ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
 
-	    	if ( principal != null ) {
-	    		setDescription( "Access Control Entry for principal '" + principal.getName() + "'.");
+	    	if ( securityPrincipal != null ) {
+	    		setDescription( "Access Control Entry for principal '" + securityPrincipal.getName() + "'.");
 		    	setTitleImage(accessControlEntry);
 	    	}
 	    	
-			accessRightsTable.setInput( accessControlEntry.getAccessRights() );
-    		for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
-    			accessRightsTable.setChecked(accessRight, accessRight.isGranted() );
-    		}
+			setAccessRightsTableValues();
     		
     		levelLabel.setText( accessControlEntry.getAccessLevel().getName() );
-    		accessRightsTable.setEnabled( false );
-	    }
+			typeLabel.setText(accessControlEntry.getType() != null ? accessControlEntry.getType()
+					.toString() : EMPTY_STRING);
+
+			applyToLabel.setText(accessControlEntry.getAccessControlEntryPropagation() != null ? 
+					accessControlEntry.getAccessControlEntryPropagation().toString()
+							: EMPTY_STRING);
+			}
+	}
+
+	private void setAccessRightsTableValues() {
+		accessRightsTable.setInput( accessControlEntry.getAccessRights() );
+		for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
+			accessRightsTable.setChecked(accessRight, accessRight.isGranted() );
+		}
+		accessRightsTable.setEnabled( false );
 	}
 	
 	
 	@Override
 	protected int getNumClientColumns() {
 		return 2;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.ecmdeveloper.plugin.security.editor.BaseDetailsPage#getValue()
-	 */
-	@Override
-	protected Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/* (non-Javadoc)

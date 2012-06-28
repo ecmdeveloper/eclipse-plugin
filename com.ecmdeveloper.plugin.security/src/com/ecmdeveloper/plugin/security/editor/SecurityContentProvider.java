@@ -32,7 +32,7 @@ import org.eclipse.ui.IEditorInput;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author ricardo.belfor
@@ -69,8 +69,8 @@ public class SecurityContentProvider implements IStructuredContentProvider,  ITr
 	public Object[] getChildren(Object parentElement) {
 		if ( parentElement instanceof IAccessControlEntries ) {
 			return ((IAccessControlEntries) parentElement).getPrincipals().toArray();
-		} else if ( parentElement instanceof IPrincipal ) {
-			return ((IPrincipal) parentElement).getAccessControlEntries().toArray();
+		} else if ( parentElement instanceof ISecurityPrincipal ) {
+			return ((ISecurityPrincipal) parentElement).getAccessControlEntries().toArray();
 		}
 
 		return null;
@@ -84,10 +84,10 @@ public class SecurityContentProvider implements IStructuredContentProvider,  ITr
 	@Override
 	public boolean hasChildren(Object element) {
 		if ( element instanceof IAccessControlEntries ) {
-			Collection<IPrincipal> principals = ((IAccessControlEntries) element).getPrincipals();
-			return principals != null && principals.isEmpty();
-		} else if ( element instanceof IPrincipal ) {
-			Collection<IAccessControlEntry> accessControlEntries = ((IPrincipal) element).getAccessControlEntries();
+			Collection<ISecurityPrincipal> securityPrincipals = ((IAccessControlEntries) element).getPrincipals();
+			return securityPrincipals != null && securityPrincipals.isEmpty();
+		} else if ( element instanceof ISecurityPrincipal ) {
+			Collection<IAccessControlEntry> accessControlEntries = ((ISecurityPrincipal) element).getAccessControlEntries();
 			return accessControlEntries != null && !accessControlEntries.isEmpty();
 		}
 		return false;

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author ricardo.belfor
@@ -34,21 +34,21 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
  */
 public class AccessControlEntriesMock implements IAccessControlEntries {
 
-	private ArrayList<IPrincipal> principals;
+	private ArrayList<ISecurityPrincipal> securityPrincipals;
 	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 
 	String names[] = {"Peter Griffin","Lois Griffin","Meg Griffin","Chris Griffin","Stewie Griffin","Brian Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson" };
 	
 	public AccessControlEntriesMock() {
-		principals = new ArrayList<IPrincipal>();
+		securityPrincipals = new ArrayList<ISecurityPrincipal>();
 		for ( String name : names ) {
-			principals.add( new PrincipalMock(name, listeners) );
+			securityPrincipals.add( new SecurityPrincipalMock(name, listeners) );
 		}
 	}
 
 	@Override
-	public Collection<IPrincipal> getPrincipals() {
-		return principals;
+	public Collection<ISecurityPrincipal> getPrincipals() {
+		return securityPrincipals;
 	}
 
 	@Override

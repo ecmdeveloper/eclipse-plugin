@@ -24,7 +24,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author ricardo.belfor
@@ -38,7 +38,12 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 	private IDetailsPage unknownDetailsPage;
 	private IDetailsPage accessControlEntryDetailsViewPage;
 	private IDetailsPage accessControlEntryDetailsEditPage;
+	private final SecurityEditorBlock securityEditorBlock;
 	
+	public SecurityInputDetailsPageProvider(SecurityEditorBlock securityEditorBlock) {
+		this.securityEditorBlock = securityEditorBlock;
+	}
+
 	@Override
 	public IDetailsPage getPage(Object key) {
 
@@ -56,7 +61,7 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 
 	private IDetailsPage getAccessControlEntryDetailsEditPage() {
 		if ( accessControlEntryDetailsEditPage == null ) {
-			accessControlEntryDetailsEditPage = new AccessControlEntryDetailsEditPage();
+			accessControlEntryDetailsEditPage = new AccessControlEntryDetailsEditPage(securityEditorBlock);
 		}
 		return accessControlEntryDetailsEditPage;
 	}
@@ -70,7 +75,7 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 
 	@Override
 	public Object getPageKey(Object object) {
-		if (object instanceof IPrincipal ) {
+		if (object instanceof ISecurityPrincipal ) {
 			return PRINCIPAL_PAGE_KEY;
 		} else if (object instanceof IAccessControlEntry ) {
 			if ( ((IAccessControlEntry) object).isEditable() ) {

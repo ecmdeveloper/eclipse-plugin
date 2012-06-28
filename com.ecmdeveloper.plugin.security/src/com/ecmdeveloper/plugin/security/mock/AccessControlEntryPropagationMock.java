@@ -20,33 +20,27 @@
 
 package com.ecmdeveloper.plugin.security.mock;
 
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class PrincipalMock implements IPrincipal {
+public class AccessControlEntryPropagationMock implements IAccessControlEntryPropagation {
 
 	private final String name;
 
-	public PrincipalMock(String name) {
-		this.name = name;
-	}
-	
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
-	public Boolean isGroup() {
-		return name.startsWith("C");
+	public AccessControlEntryPropagationMock(String name) {
+		this.name = name;
 	}
 
 	@Override
 	public String toString() {
 		return getName();
 	}
-	
 }

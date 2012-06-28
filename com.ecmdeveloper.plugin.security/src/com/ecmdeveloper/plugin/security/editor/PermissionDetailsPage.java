@@ -32,11 +32,6 @@ public class PermissionDetailsPage extends BaseDetailsPage {
 	}
 
 	@Override
-	protected Object getValue() {
-		return null;
-	}
-
-	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 

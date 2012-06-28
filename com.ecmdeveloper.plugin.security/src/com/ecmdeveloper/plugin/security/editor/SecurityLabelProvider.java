@@ -20,13 +20,17 @@
 
 package com.ecmdeveloper.plugin.security.editor;
 
-import org.eclipse.jface.viewers.IBaseLabelProvider;
+import java.text.MessageFormat;
+
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
+import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
 
@@ -34,7 +38,9 @@ import com.ecmdeveloper.plugin.security.util.IconFiles;
  * @author ricardo.belfor
  *
  */
-public class SecurityLabelProvider extends LabelProvider implements IBaseLabelProvider {
+public class SecurityLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+	private static final String EMPTY_STRING = "";
 
 	@Override
 	public Image getImage(Object element) {
@@ -52,7 +58,11 @@ public class SecurityLabelProvider extends LabelProvider implements IBaseLabelPr
 		if ( ace.getSource().equals( AccessControlEntrySource.INHERITED ) ) {
 			return Activator.getImage(IconFiles.INHERITED);
 		} else if ( ace.getSource().equals( AccessControlEntrySource.DIRECT) ) {
-			return Activator.getImage(IconFiles.DIRECT);
+			if ( ace.getType().equals(AccessControlEntryType.ALLOW) ) {
+				return Activator.getImage(IconFiles.DIRECT);
+			} else {
+				return Activator.getImage(IconFiles.DIRECT_DENY);
+			}
 		}
 		return null;
 	}
@@ -71,8 +81,31 @@ public class SecurityLabelProvider extends LabelProvider implements IBaseLabelPr
 		if ( element instanceof IPrincipal ) {
 			return ((IPrincipal) element).getName();
 		} else if ( element instanceof IAccessControlEntry ) {
-			return ((IAccessControlEntry) element).getAccessLevel().getName();
+			IAccessControlEntry accessControlEntry = (IAccessControlEntry) element;
+			String propagation = accessControlEntry.getAccessControlEntryPropagation().getName();
+			String name = accessControlEntry.getAccessLevel().getName();
+			return MessageFormat.format("{0} ({1})", name, propagation) ;
 		}
 		return super.getText(element);
+	}
+
+	@Override
+	public Image getColumnImage(Object element, int columnIndex) {
+		if ( columnIndex == 0 ) {
+			return getImage(element);
+		}
+		return null;
+	}
+
+	@Override
+	public String getColumnText(Object element, int columnIndex) {
+		if ( columnIndex == 0 ) {
+			return getText(element);
+		} else if ( columnIndex == 1 ) {
+			if ( element instanceof IAccessControlEntry ) {
+				return ((IAccessControlEntry) element).getAccessControlEntryPropagation().getName();
+			}
+		}
+		return EMPTY_STRING;
 	}
 }

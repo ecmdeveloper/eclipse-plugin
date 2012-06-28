@@ -32,7 +32,9 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -41,9 +43,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -60,8 +64,9 @@ import org.eclipse.ui.handlers.IHandlerService;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
+import com.ecmdeveloper.plugin.security.dialogs.PrincipalSelectionDialog;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
 
@@ -142,6 +147,13 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	}
 
 	protected void performAddGroup() {
+
+		Shell shell = Display.getCurrent().getActiveShell();
+		
+		FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell);
+		dialog.setInitialPattern("a");
+		dialog.open();
+		   
 		viewer.refresh();
 	}
 
@@ -162,8 +174,8 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		if ( !selection.isEmpty() ) {
 			Object object = selection.iterator().next();
-			if (object instanceof IPrincipal ) {
-				return deletePrincipalEntries((IPrincipal) object );
+			if (object instanceof ISecurityPrincipal ) {
+				return deletePrincipalEntries((ISecurityPrincipal) object );
 			} else if ( object instanceof IAccessControlEntry ) {
 				return deleteAccessControlEntry(object);
 			}
@@ -171,25 +183,25 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		return false;
 	}
 
-	private boolean deletePrincipalEntries(IPrincipal principal) {
+	private boolean deletePrincipalEntries(ISecurityPrincipal securityPrincipal) {
 	
-		List<IAccessControlEntry> deletableEntries = getDeletableEntries(principal);
+		List<IAccessControlEntry> deletableEntries = getDeletableEntries(securityPrincipal);
 		if ( !deletableEntries.isEmpty() ) {
-			String message = MessageFormat.format(CONFIRM_PRINCIPAL_ENTRIES_DELETE, principal.getName() );
+			String message = MessageFormat.format(CONFIRM_PRINCIPAL_ENTRIES_DELETE, securityPrincipal.getName() );
 			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
-				principal.getAccessControlEntries().removeAll( deletableEntries );
+				securityPrincipal.getAccessControlEntries().removeAll( deletableEntries );
 				return true;
 			}
 		} else {
-			String message = MessageFormat.format(PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES, principal.getName() );
+			String message = MessageFormat.format(PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES, securityPrincipal.getName() );
 			MessageDialog.openWarning(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message);
 		}
 		return false;
 	}
 
-	private List<IAccessControlEntry> getDeletableEntries(IPrincipal principal) {
+	private List<IAccessControlEntry> getDeletableEntries(ISecurityPrincipal securityPrincipal) {
 		List<IAccessControlEntry> deletableEntries = new ArrayList<IAccessControlEntry>(); 
-		for (IAccessControlEntry accessControlEntry : principal.getAccessControlEntries() ) {
+		for (IAccessControlEntry accessControlEntry : securityPrincipal.getAccessControlEntries() ) {
 			if ( accessControlEntry.canDelete() ) {
 				deletableEntries.add(accessControlEntry);
 			}
@@ -203,8 +215,8 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		if ( accessControlEntry.canDelete() ) {
 			String message = MessageFormat.format(CONFIRM_ENTRY_DELETE, accessControlEntry.getPrincipal().getName());
 			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
-				IPrincipal principal = accessControlEntry.getPrincipal();
-				principal.getAccessControlEntries().remove(accessControlEntry);
+				ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
+				securityPrincipal.getAccessControlEntries().remove(accessControlEntry);
 				return true;
 			}
 		} else {
@@ -294,10 +306,11 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		
 //		createSourceAndTypeColumn();
 //		createPrincipalColumn();		
-		
+//		createPrincipalColumn();
+//		createPrincipalColumn();
 		viewer.setLabelProvider( new SecurityLabelProvider() );
 		viewer.setContentProvider( new SecurityContentProvider() );
-		tree.setHeaderVisible(true);
+		tree.setHeaderVisible(false);
 		
 //		viewer.addFilter( new ViewerFilter() {
 //
@@ -345,12 +358,12 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		};
 	}
 
-//	private void createPrincipalColumn() {
-//		final TableViewerColumn col = new TableViewerColumn(viewer, SWT.NONE);
-//		col.getColumn().setWidth(200);
-//		col.getColumn().setText(PRINCIPAL);
+	private void createPrincipalColumn() {
+		final TreeViewerColumn col = new TreeViewerColumn(viewer, SWT.NONE);
+		col.getColumn().setWidth(200);
+		col.getColumn().setText(PRINCIPAL);
 //		col.setLabelProvider( getPrincipalLabelProvider() );
-//	}
+	}
 //
 //	private ColumnLabelProvider getPrincipalLabelProvider() {
 //
@@ -436,6 +449,10 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 
-		detailsPart.setPageProvider( new SecurityInputDetailsPageProvider() );
+		detailsPart.setPageProvider( new SecurityInputDetailsPageProvider(this) );
+	}
+
+	public void refresh(IAccessControlEntry accessControlEntry) {
+		viewer.update(accessControlEntry, null);
 	}
 }
