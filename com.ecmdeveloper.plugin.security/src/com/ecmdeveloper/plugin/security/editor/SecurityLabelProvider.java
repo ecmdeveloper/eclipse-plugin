@@ -69,8 +69,10 @@ public class SecurityLabelProvider extends LabelProvider implements ITableLabelP
 
 	private Image getPrincipalImage(Object element) {
 		final IPrincipal ace = (IPrincipal) element;
-		if ( ace.isGroup() == null || ace.isGroup() ) {
+		if ( ace.isGroup() ) {
 			return Activator.getImage(IconFiles.GROUP);
+		} else if ( ace.isSpecialAccount() ) {
+			return Activator.getImage(IconFiles.SPECIAL_ACCOUNT);
 		} else {
 			return Activator.getImage(IconFiles.USER);
 		}

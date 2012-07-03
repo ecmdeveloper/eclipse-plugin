@@ -27,14 +27,14 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
  * @author ricardo.belfor
  *
  */
-public class PrincipalMock implements IPrincipal {
+public class SpecialAccountPrincipalMock implements IPrincipal {
 
 	private final String name;
 
-	public PrincipalMock(String name) {
+	public SpecialAccountPrincipalMock(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -47,7 +47,7 @@ public class PrincipalMock implements IPrincipal {
 
 	@Override
 	public PrincipalType getType() {
-		return name.startsWith("C")? PrincipalType.GROUP : PrincipalType.USER;
+		return PrincipalType.SPECIAL_ACCOUNT;
 	}
 
 	@Override

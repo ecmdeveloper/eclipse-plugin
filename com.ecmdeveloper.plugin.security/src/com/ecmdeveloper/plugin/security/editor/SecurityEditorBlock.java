@@ -64,6 +64,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.dialogs.PrincipalSelectionDialog;
@@ -148,13 +149,31 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 
 	protected void performAddGroup() {
 
+		IPrincipal initialPrincipal = getInitialPrincipal();
+		
 		Shell shell = Display.getCurrent().getActiveShell();
 		
-		FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell);
-		dialog.setInitialPattern("a");
+		FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell, initialPrincipal );
+		if ( initialPrincipal != null ) {
+			dialog.setInitialPattern( initialPrincipal.getName() );
+		}
 		dialog.open();
 		   
 		viewer.refresh();
+	}
+
+	private IPrincipal getInitialPrincipal() {
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		IPrincipal initialPrincipal = null;
+		if ( !selection.isEmpty() ) {
+			Object object = selection.iterator().next();
+			if (object instanceof ISecurityPrincipal ) {
+				initialPrincipal = (ISecurityPrincipal) object;
+			} else if ( object instanceof IAccessControlEntry ) {
+				initialPrincipal = ((IAccessControlEntry) object).getPrincipal();
+			}
+		}
+		return initialPrincipal;
 	}
 
 	private void createDeleteGroupLink(FormToolkit toolkit, Composite client) {
