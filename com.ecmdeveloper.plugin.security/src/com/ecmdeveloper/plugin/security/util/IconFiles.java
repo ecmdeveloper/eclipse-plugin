@@ -31,6 +31,7 @@ public class IconFiles {
 	public static final String REFRESH = "icons/arrow_refresh.png";
 	public static final String GROUP = "icons/group.png";
 	public static final String USER = "icons/user.png";
+	public static final String SPECIAL_ACCOUNT = "icons/report_user.png";
 	public static final String INHERITED = "icons/arrow_up.png";
 	public static final String DIRECT = "icons/arrow_right.png";
 	public static final String DIRECT_DENY = "icons/arrow_right_stop.png";
