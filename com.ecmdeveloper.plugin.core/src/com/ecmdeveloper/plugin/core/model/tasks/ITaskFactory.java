@@ -25,12 +25,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
@@ -40,6 +44,8 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateEventActionTas
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 
 /**
  * @author ricardo.belfor
@@ -115,4 +121,8 @@ public interface ITaskFactory {
 	IGetCodeModuleActionsTask getGetCodeModuleActionsTask(String id, IObjectStore objectStore);
 
 	ICreateEventActionTask getCreateEventActionTask(String id, String name, String className, boolean enabled, IObjectStore objectStore);
+	
+	IGetRealmsTask getGetRealmsTask(IObjectStore objectStore);
+
+	IFindPrincipalsTask getFindPrincipalsTask(IRealm realm, String pattern, PrincipalType type, IProgressMonitor progressMonitor );
 }

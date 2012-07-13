@@ -20,12 +20,15 @@
 
 package com.ecmdeveloper.plugin.security.editor;
 
+import java.util.Collection;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 
 /**
  * @author ricardo.belfor
@@ -35,10 +38,12 @@ public class SecurityEditorInput implements IEditorInput {
 
 	private final IObjectStoreItem objectStoreItem;
 	private final IAccessControlEntries accessControlEntries;
+	private final Collection<IRealm> realms;
 
-	public SecurityEditorInput(IObjectStoreItem objectStoreItem, IAccessControlEntries accessControlEntries) {
+	public SecurityEditorInput(IObjectStoreItem objectStoreItem, IAccessControlEntries accessControlEntries, Collection<IRealm> realms) {
 		this.objectStoreItem = objectStoreItem;
 		this.accessControlEntries = accessControlEntries;
+		this.realms = realms;
 	}	
 
 	@Override
@@ -76,5 +81,9 @@ public class SecurityEditorInput implements IEditorInput {
 			return accessControlEntries;
 		}
 		return null;
+	}
+
+	public Collection<IRealm> getRealms() {
+		return realms;
 	}
 }

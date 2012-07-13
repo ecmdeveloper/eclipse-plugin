@@ -18,6 +18,10 @@
             id="com.ecmdeveloper.plugin.security.editSecurity"
             name="Edit Security">
       </command>
+      <command
+            id="com.ecmdeveloper.plugin.security.editor.toolbar"
+            name="Actions">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -43,6 +47,10 @@
                </iterate>
             </with>
          </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.security.handlers.HelloHandler"
+            commandId="com.ecmdeveloper.plugin.security.editor.toolbar">
       </handler>
    </extension>
    <extension
@@ -74,6 +82,15 @@
                   </iterate>
                </with>
             </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:formsToolBar">
+         <command
+               commandId="com.ecmdeveloper.plugin.security.editor.toolbar"
+               icon="icons/wrench_orange.png"
+               style="pulldown"
+               tooltip="Actions">
          </command>
       </menuContribution>
    </extension>

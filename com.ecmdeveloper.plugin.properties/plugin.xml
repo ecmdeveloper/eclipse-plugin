@@ -528,6 +528,65 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:com.ecmdeveloper.plugin.security.editor.toolbar">
+         <command
+               commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+               icon="icons/pencil.png"
+               label="Edit..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <or>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.IFolder">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.IDocument">
+                        </instanceof>
+                        <instanceof
+                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.ecmdeveloper.plugin.editDocumentVersion"
+               icon="icons/versions_edit.png"
+               label="Edit Document Version..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <and>
+                     <count
+                           value="1">
+                     </count>
+                     <iterate
+                           ifEmpty="false">
+                        <or>
+                           <and>
+                              <instanceof
+                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
+                              </instanceof>
+                              <test
+                                    property="com.ecmdeveloper.plugin.canCheckout">
+                              </test>
+                           </and>
+                        </or>
+                     </iterate>
+                  </and>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

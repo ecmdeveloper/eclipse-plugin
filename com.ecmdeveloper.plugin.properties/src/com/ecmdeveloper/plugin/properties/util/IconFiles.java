@@ -30,4 +30,6 @@ public class IconFiles {
 	public static final String OBJECT_STORE = "icons/database.png";
 	public static final String FOLDER = "icons/folder.png";
 	public static final String FOLDER_ERROR = "icons/folder_error.png";
+	public static final String HEADER_IMAGE = "icons/application_form.png";
+	
 }

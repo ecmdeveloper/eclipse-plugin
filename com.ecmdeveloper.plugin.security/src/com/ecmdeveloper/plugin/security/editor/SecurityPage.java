@@ -21,10 +21,17 @@
 package com.ecmdeveloper.plugin.security.editor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.menus.IMenuService;
+
+import com.ecmdeveloper.plugin.security.Activator;
+import com.ecmdeveloper.plugin.security.util.IconFiles;
 
 /**
  * @author ricardo.belfor
@@ -32,6 +39,7 @@ import org.eclipse.ui.forms.editor.FormPage;
  */
 public class SecurityPage extends FormPage {
 
+	private static final String SECURITY_EDITOR_TITLE = "Security Editor";
 	private static final String TITLE = "Security";
 	private static final String ID = "securityPage";
 
@@ -44,14 +52,37 @@ public class SecurityPage extends FormPage {
 	
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
+
+		setFormTitle(managedForm);
+		setFormToolbar(managedForm);
+		
 		propertiesInputBlock = new SecurityEditorBlock(this);
 		propertiesInputBlock.createContent(managedForm);
-	}	
+	}
+
+
+	private void setFormTitle(IManagedForm managedForm) {
+		ScrolledForm form = managedForm.getForm();
+		managedForm.getToolkit().decorateFormHeading( form.getForm() );
+		form.setText( SECURITY_EDITOR_TITLE );
+		form.setImage( Activator.getImage( IconFiles.GROUP ) );
+	}
+
+
+	private void setFormToolbar(IManagedForm managedForm) {
+		ToolBarManager manager = (ToolBarManager) managedForm.getForm().getToolBarManager();
+		Separator action = new Separator("Actions");
+		IMenuService menuService = (IMenuService) Activator.getDefault().getWorkbench().getService(IMenuService.class);
+		menuService.populateContributionManager(manager, "popup:formsToolBar");
+		manager.update(true);
+		manager.add(action );
+	}
+
 
 	public void refreshFormContent() {
 		IEditorInput editorInput = getEditor().getEditorInput();
 		propertiesInputBlock.setInput( editorInput );
-		setContentDescription("Security Editor");
+		setContentDescription(SECURITY_EDITOR_TITLE);
 	}
 
 
@@ -73,7 +104,4 @@ public class SecurityPage extends FormPage {
 	public boolean isEditor() {
 		return true;
 	}
-	
-	
-	
 }
