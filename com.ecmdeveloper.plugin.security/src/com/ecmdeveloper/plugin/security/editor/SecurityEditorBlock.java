@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.security.editor;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -32,10 +33,11 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.window.ToolTip;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -46,7 +48,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -65,6 +66,7 @@ import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.dialogs.PrincipalSelectionDialog;
@@ -94,15 +96,17 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	
 	private FormPage page;
 	private TreeViewer viewer;
+	private IAccessControlEntries accessControlEntries;
+	private Collection<IRealm> realms;
 	
 	public SecurityEditorBlock(FormPage page) {
 		this.page = page;
 	}
 
 	public void setInput(Object input) {
-		IEditorInput  editorInput = (IEditorInput) input;
-		IAccessControlEntries accessControlEntries = (IAccessControlEntries) editorInput
-				.getAdapter(IAccessControlEntries.class);
+		SecurityEditorInput editorInput = (SecurityEditorInput) input;
+		accessControlEntries = (IAccessControlEntries) editorInput.getAdapter(IAccessControlEntries.class);
+		realms = editorInput.getRealms();
 		viewer.setInput(accessControlEntries);
 		viewer.expandAll();
 	}
@@ -142,22 +146,32 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		link.setImage( Activator.getImage(IconFiles.GROUP_ADD) );
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				performAddGroup();
+				performAddAccessControlEntry();
 			}
 	    });
 	}
 
-	protected void performAddGroup() {
+	protected void performAddAccessControlEntry() {
 
-		IPrincipal initialPrincipal = getInitialPrincipal();
-		
-		Shell shell = Display.getCurrent().getActiveShell();
-		
-		FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell, initialPrincipal );
-		if ( initialPrincipal != null ) {
-			dialog.setInitialPattern( initialPrincipal.getName() );
+		final IPrincipal initialPrincipal = getInitialPrincipal();
+		final Shell shell = Display.getCurrent().getActiveShell();
+
+		if ( realms != null) {
+			final FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell, realms, initialPrincipal );
+			if ( initialPrincipal != null ) {
+				dialog.setInitialPattern( initialPrincipal.getName() );
+			}
+			
+			if ( dialog.open() == Window.OK ) {
+				final IPrincipal principal = (IPrincipal) dialog.getFirstResult();
+				IAccessControlEntry accessControlEntry = accessControlEntries.addAccessControlEntry(principal);
+				viewer.refresh();
+				viewer.expandToLevel(accessControlEntry.getPrincipal(), 2);
+				viewer.setSelection( new StructuredSelection( accessControlEntry ) );
+			}
+		} else {
+			MessageDialog.openError(shell, SECURITY_EDITOR_TITLE, "Not yet supported");
 		}
-		dialog.open();
 		   
 		viewer.refresh();
 	}

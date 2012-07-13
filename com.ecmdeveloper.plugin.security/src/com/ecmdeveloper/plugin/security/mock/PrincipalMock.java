@@ -30,9 +30,11 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 public class PrincipalMock implements IPrincipal {
 
 	private final String name;
-
-	public PrincipalMock(String name) {
+	private final PrincipalType type;
+	
+	public PrincipalMock(String name, PrincipalType type ) {
 		this.name = name;
+		this.type = type;
 	}
 	
 	@Override
@@ -47,7 +49,7 @@ public class PrincipalMock implements IPrincipal {
 
 	@Override
 	public PrincipalType getType() {
-		return name.startsWith("C")? PrincipalType.GROUP : PrincipalType.USER;
+		return type;
 	}
 
 	@Override
@@ -63,5 +65,18 @@ public class PrincipalMock implements IPrincipal {
 	@Override
 	public boolean isUser() {
 		return PrincipalType.USER.equals( getType() );
+	}
+
+	@Override
+	public boolean equals(Object arg0) {
+		if ( arg0 instanceof IPrincipal ) {
+			return getName().equals(((IPrincipal) arg0).getName() );
+		}
+		return super.equals(arg0);
+	}
+
+	@Override
+	public String getDisplayName() {
+		return getName();
 	}
 }

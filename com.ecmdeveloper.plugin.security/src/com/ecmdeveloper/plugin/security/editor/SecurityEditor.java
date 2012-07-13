@@ -24,7 +24,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 
@@ -94,8 +100,8 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
 		if ( !isPageModified ) {
-			firePropertyChange(IEditorPart.PROP_DIRTY);
 			isPageModified = true;
+			firePropertyChange(IEditorPart.PROP_DIRTY);
 		}
 	}
 
@@ -108,5 +114,37 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 	@Override
 	public boolean isDirty() {
 		return isPageModified;
+	}
+
+	@Override
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		super.init(site, input);
+
+		if ( ! (input instanceof SecurityEditorInput ) )
+	         throw new PartInitException( "Invalid Input: Must be CodeModuleEditorInput");
+		
+		site.setSelectionProvider( new ISelectionProvider() {
+
+			@Override
+			public void addSelectionChangedListener( ISelectionChangedListener listener) {
+				// No changing selection
+			}
+
+			@Override
+			public ISelection getSelection() {
+				return new StructuredSelection( getEditorInput().getAdapter( IObjectStoreItem.class ) );
+			}
+
+			@Override
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+				// No changing selection
+			}
+
+			@Override
+			public void setSelection(ISelection selection) {
+				// No changing selection
+			}
+		});
 	}
 }

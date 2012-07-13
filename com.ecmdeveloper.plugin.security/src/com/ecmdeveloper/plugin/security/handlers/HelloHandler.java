@@ -18,19 +18,27 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model.security;
+package com.ecmdeveloper.plugin.security.handlers;
 
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IAccessControlEntries {
-	Collection<ISecurityPrincipal> getPrincipals();
-	
-	public void removePropertyChangeListener(PropertyChangeListener listener);
-	public void addPropertyChangeListener(PropertyChangeListener listener);
-	public IAccessControlEntry addAccessControlEntry(IPrincipal principal);
+public class HelloHandler extends AbstractHandler implements IHandler {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
+		System.out.println("Hello!");
+		return null;
+	}
+
 }

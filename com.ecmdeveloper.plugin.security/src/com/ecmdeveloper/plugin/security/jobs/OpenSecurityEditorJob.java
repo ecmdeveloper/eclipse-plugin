@@ -21,6 +21,8 @@
 package com.ecmdeveloper.plugin.security.jobs;
 
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,9 +35,13 @@ import org.eclipse.ui.ide.IDE;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
+import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.editor.SecurityEditorInput;
 import com.ecmdeveloper.plugin.security.mock.AccessControlEntriesMock;
+import com.ecmdeveloper.plugin.security.mock.RealmMock;
 
 /**
  * @author Ricardo.Belfor
@@ -73,9 +79,23 @@ public class OpenSecurityEditorJob extends Job {
 
 	private void openNewEditor(IProgressMonitor monitor) throws Exception {
 		
+		Collection<IRealm> realms = getRealms();
 		IAccessControlEntries accessControlEntries = new AccessControlEntriesMock(); 
-		IEditorInput input = new SecurityEditorInput( objectStoreItem, accessControlEntries );
+		IEditorInput input = new SecurityEditorInput( objectStoreItem, accessControlEntries, realms );
 		openEditorWindow(input, editorId);
+	}
+
+	private Collection<IRealm> getRealms() {
+		
+		IGetRealmsTask getRealmsTask = objectStoreItem.getTaskFactory().getGetRealmsTask( objectStoreItem.getObjectStore() );
+		if ( getRealmsTask != null ) {
+			Activator.getDefault().getTaskManager().executeTaskASync(getRealmsTask);
+			return getRealmsTask.getRealms();
+		} else {
+			Collection<IRealm> realms = new HashSet<IRealm>();
+			realms.add( new RealmMock("MyRealm", objectStoreItem.getObjectStore() ) );
+			return realms;
+		}
 	}
 
 	private void openEditorWindow(final IEditorInput input, final String editorId) {

@@ -18,19 +18,18 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model.security;
+package com.ecmdeveloper.plugin.core.model.tasks.security;
 
-import java.beans.PropertyChangeListener;
 import java.util.Collection;
+
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IAccessControlEntries {
-	Collection<ISecurityPrincipal> getPrincipals();
-	
-	public void removePropertyChangeListener(PropertyChangeListener listener);
-	public void addPropertyChangeListener(PropertyChangeListener listener);
-	public IAccessControlEntry addAccessControlEntry(IPrincipal principal);
+public interface IGetRealmsTask extends IBaseTask {
+
+	Collection<IRealm> getRealms();
 }

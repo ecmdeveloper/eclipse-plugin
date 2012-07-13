@@ -21,11 +21,14 @@
 package com.ecmdeveloper.plugin.security.mock;
 
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
+import com.ecmdeveloper.plugin.core.util.collections.AbstractArrayListObserver;
+import com.ecmdeveloper.plugin.core.util.collections.ObservableArrayList;
 
 /**
  * @author ricardo.belfor
@@ -33,11 +36,40 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
  */
 public class SecurityPrincipalMock extends PrincipalMock implements ISecurityPrincipal{
 
-	private final List<IAccessControlEntry> accessControlEntries = new ArrayList<IAccessControlEntry>();
+	public static final String ACCESS_CONTROL_ENTRY_ADDED = "ACCESS_CONTROL_ENTRY_ADDED";
+	public static final String ACCESS_CONTROL_ENTRY_REMOVED = "ACCESS_CONTROL_ENTRY_REMOVED";
 	
-	public SecurityPrincipalMock(String name, PropertyChangeSupport listeners) {
-		super(name);
+	private final ObservableArrayList<IAccessControlEntry> accessControlEntries = new ObservableArrayList<IAccessControlEntry>();
+	private final PropertyChangeSupport listeners;
+	
+	public SecurityPrincipalMock(String name, PrincipalType principalType, PropertyChangeSupport listeners) {
+		super(name, principalType);
+		this.listeners = listeners;
+		accessControlEntries.registerObserver( getAccessControlEntriesListener() );
 		accessControlEntries.add(new AccessControlEntryMock(this, listeners) );
+	}
+
+	private AbstractArrayListObserver<IAccessControlEntry> getAccessControlEntriesListener() {
+
+		return new AbstractArrayListObserver<IAccessControlEntry>() {
+
+			@Override
+			public void onAdd(IAccessControlEntry element) {
+				SecurityPrincipalMock.this.listeners.firePropertyChange(ACCESS_CONTROL_ENTRY_ADDED, null, element);
+			}
+
+			@Override
+			public void onRemove(Object obj) {
+				SecurityPrincipalMock.this.listeners.firePropertyChange(ACCESS_CONTROL_ENTRY_REMOVED, null, obj);
+			}
+
+			@Override
+			public void onRemoveAll(Collection<?> c) {
+				for ( Object object : c) {
+					onRemove(object);
+				}
+			}
+		};
 	}
 
 	@Override

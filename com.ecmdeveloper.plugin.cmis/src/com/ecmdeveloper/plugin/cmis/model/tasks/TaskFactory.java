@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import com.ecmdeveloper.plugin.cmis.model.Document;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
@@ -33,6 +35,8 @@ import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckoutTask;
@@ -64,6 +68,8 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateEventActionTas
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 
 /**
  * @author ricardo.belfor
@@ -270,5 +276,15 @@ public class TaskFactory implements ITaskFactory {
 	public ICreateEventActionTask getCreateEventActionTask(String id, String name,
 			String className, boolean enabled, IObjectStore objectStore) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public IGetRealmsTask getGetRealmsTask(IObjectStore objectStore) {
+		return null;
+	}
+
+	@Override
+	public IFindPrincipalsTask getFindPrincipalsTask(IRealm realm, String pattern, PrincipalType type, IProgressMonitor progressMonitor) {
+		return null;
 	}
 }

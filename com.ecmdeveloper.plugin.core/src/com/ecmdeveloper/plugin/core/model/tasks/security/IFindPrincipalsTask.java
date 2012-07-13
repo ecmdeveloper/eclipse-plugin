@@ -18,55 +18,17 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.security.mock;
+package com.ecmdeveloper.plugin.core.model.tasks.security;
 
-import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import java.util.Collection;
+
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SpecialAccountPrincipalMock implements IPrincipal {
-
-	private final String name;
-
-	public SpecialAccountPrincipalMock(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public String toString() {
-		return getName();
-	}
-
-	@Override
-	public PrincipalType getType() {
-		return PrincipalType.SPECIAL_ACCOUNT;
-	}
-
-	@Override
-	public boolean isGroup() {
-		return PrincipalType.GROUP.equals(getType() );
-	}
-
-	@Override
-	public boolean isSpecialAccount() {
-		return PrincipalType.SPECIAL_ACCOUNT.equals( getType() );
-	}
-
-	@Override
-	public boolean isUser() {
-		return PrincipalType.USER.equals( getType() );
-	}
-
-	@Override
-	public String getDisplayName() {
-		return getName();
-	}
+public interface IFindPrincipalsTask extends IBaseTask {
+	Collection<IPrincipal> getPrincipals();
 }
