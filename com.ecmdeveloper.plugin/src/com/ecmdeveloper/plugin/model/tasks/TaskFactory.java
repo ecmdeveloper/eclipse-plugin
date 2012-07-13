@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import com.ecmdeveloper.plugin.core.model.ClassesPlaceholder;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
@@ -32,6 +34,8 @@ import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckoutTask;
@@ -63,10 +67,15 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateEventActionTas
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 import com.ecmdeveloper.plugin.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.security.Realm;
+import com.ecmdeveloper.plugin.model.tasks.security.FindPrincipalsTask;
+import com.ecmdeveloper.plugin.model.tasks.security.GetRealmsTask;
 
 /**
  * @author ricardo.belfor
@@ -269,5 +278,16 @@ public class TaskFactory implements ITaskFactory {
 			String className, boolean enabled, IObjectStore objectStore) {
 		return new CreateEventActionTask(codeModuleId, name, className, enabled,
 				(ObjectStore) objectStore);
+	}
+
+	@Override
+	public IGetRealmsTask getGetRealmsTask(IObjectStore objectStore) {
+		return new GetRealmsTask( (ObjectStore) objectStore );
+	}
+
+	@Override
+	public IFindPrincipalsTask getFindPrincipalsTask(IRealm realm, String pattern,
+			PrincipalType type, IProgressMonitor progressMonitor) {
+		return new FindPrincipalsTask((Realm) realm, pattern,type, progressMonitor);
 	}
 }
