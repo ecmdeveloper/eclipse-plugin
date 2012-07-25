@@ -32,6 +32,12 @@ public enum AccessControlEntrySource {
 			return DIRECT_STRING;
 		}
 	},
+	DEFAULT { 		
+		@Override
+		public String toString() {
+			return DEFAULT_STRING;
+		}
+	},
 	INHERITED { 		
 		@Override
 		public String toString() {
@@ -39,6 +45,7 @@ public enum AccessControlEntrySource {
 		}
 	};
 
-	private static final String INHERITED_STRING = "Inherited";
-	private static final String DIRECT_STRING = "Direct";
+	private static final String INHERITED_STRING = "inherited entry";
+	private static final String DIRECT_STRING = "direct entry";
+	private static final String DEFAULT_STRING = "direct entry from the default instance security";
 }

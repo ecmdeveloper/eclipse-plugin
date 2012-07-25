@@ -45,6 +45,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActions
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 
 /**
@@ -125,4 +126,6 @@ public interface ITaskFactory {
 	IGetRealmsTask getGetRealmsTask(IObjectStore objectStore);
 
 	IFindPrincipalsTask getFindPrincipalsTask(IRealm realm, String pattern, PrincipalType type, IProgressMonitor progressMonitor );
+	
+	IGetAccessControlEntriesTask getGetAccessControlEntriesTask(IObjectStoreItem objectStoreItem, Collection<IRealm> realms );
 }
