@@ -40,10 +40,17 @@ public class Principal implements IPrincipal {
 	public Principal(String name, String shortName, String displayName, PrincipalType type) {
 		this.name = name;
 		this.displayName = displayName;
-		this.type = type;
+		this.type = isSpecialAccountName(name) ? PrincipalType.SPECIAL_ACCOUNT : type;
 		this.shortName = shortName;
 	}
 
+	public Principal(String name, PrincipalType type) {
+		this.name = name;
+		this.displayName = name;
+		this.type = isSpecialAccountName(name) ? PrincipalType.SPECIAL_ACCOUNT : type;
+		this.shortName = name;
+	}
+	
 	public Principal(Object internalPrincipal) {
 		
 		this.internalPrincipal = internalPrincipal;
@@ -53,7 +60,11 @@ public class Principal implements IPrincipal {
 			displayName = group.get_DisplayName();
 			name = group.get_Name();
 			shortName = group.get_ShortName();
-			type = PrincipalType.GROUP;
+			if ( isSpecialAccountName(name) ) {
+				type = PrincipalType.SPECIAL_ACCOUNT;
+			} else {
+				type = PrincipalType.GROUP;
+			}
 		} else if (internalPrincipal instanceof User ) {
 			User user = (User) internalPrincipal;
 			displayName = user.get_DisplayName();
@@ -68,9 +79,14 @@ public class Principal implements IPrincipal {
 		}
 	}
 
+	protected boolean isSpecialAccountName(String name) {
+		return name.equals( com.filenet.api.constants.SpecialPrincipal.AUTHENTICATED_USERS.getValue() ) ||
+				name.equals( com.filenet.api.constants.SpecialPrincipal.CREATOR_OWNER.getValue() );
+	}
+
 	@Override
 	public String getName() {
-		return shortName;
+		return name;
 	}
 
 	@Override
@@ -101,5 +117,10 @@ public class Principal implements IPrincipal {
 	@Override
 	public String getDisplayName() {
 		return displayName;
+	}
+
+	@Override
+	public String getShortName() {
+		return shortName;
 	}
 }

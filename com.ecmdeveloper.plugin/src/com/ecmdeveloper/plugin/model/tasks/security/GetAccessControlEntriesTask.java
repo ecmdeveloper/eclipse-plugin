@@ -20,12 +20,12 @@
 
 package com.ecmdeveloper.plugin.model.tasks.security;
 
-import java.security.AccessControlContext;
+import java.util.Collection;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
-import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.CustomObject;
@@ -33,13 +33,20 @@ import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.security.AccessControlEntries;
+import com.ecmdeveloper.plugin.model.security.AccessLevel;
+import com.ecmdeveloper.plugin.model.security.AccessRightDescription;
 import com.ecmdeveloper.plugin.model.security.Principal;
-import com.ecmdeveloper.plugin.model.security.SecurityPrincipal;
+import com.ecmdeveloper.plugin.model.security.Realm;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
+import com.filenet.api.collection.AccessPermissionDescriptionList;
 import com.filenet.api.collection.AccessPermissionList;
-import com.filenet.api.constants.SecurityPrincipalType;
+import com.filenet.api.constants.PermissionType;
+import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Containable;
+import com.filenet.api.meta.ClassDescription;
+import com.filenet.api.property.PropertyFilter;
 import com.filenet.api.security.AccessPermission;
+import com.filenet.api.security.AccessPermissionDescription;
 
 /**
  * @author ricardo.belfor
@@ -48,10 +55,12 @@ import com.filenet.api.security.AccessPermission;
 public class GetAccessControlEntriesTask extends BaseTask implements IGetAccessControlEntriesTask {
 
 	private AccessControlEntries accessControlEntries;
-	private ObjectStoreItem objectStoreItem;
+	private final ObjectStoreItem objectStoreItem;
+	private final Collection<IRealm> realms;
 	
-	public GetAccessControlEntriesTask(ObjectStoreItem objectStoreItem) {
+	public GetAccessControlEntriesTask(ObjectStoreItem objectStoreItem, Collection<IRealm> realms) {
 		this.objectStoreItem = objectStoreItem;
+		this.realms = realms;
 	}
 
 	@Override
@@ -59,16 +68,55 @@ public class GetAccessControlEntriesTask extends BaseTask implements IGetAccessC
 		
 		accessControlEntries = new AccessControlEntries();
 		
+		PropertyFilter pf = new PropertyFilter();
+		pf.addIncludeProperty(0, null, null, PropertyNames.CLASS_DESCRIPTION, null);
+		pf.addIncludeProperty(0, null, null, PropertyNames.PERMISSIONS, null);
+		objectStoreItem.getObjectStoreObject().refresh(pf);
+		
+		intializeDescriptions();
+		
 		if ( objectStoreItem instanceof Document || objectStoreItem instanceof Folder || objectStoreItem instanceof CustomObject ) {
 			Containable containable = (Containable) objectStoreItem.getObjectStoreObject();
 			AccessPermissionList permissions = containable.get_Permissions();
+			
 			for ( AccessPermission permission : getAccessPermissionListIterator(permissions) ) {
-				accessControlEntries.addPermission(permission);
+				Principal principal = getPrincipal(permission);
+				
+				accessControlEntries.addPermission(permission, principal );
 			}
-
 		}
-		// TODO Auto-generated method stub
+
 		return null;
+	}
+
+	private Principal getPrincipal(AccessPermission permission) {
+		for ( IRealm realm : realms) {
+			Principal principal = ((Realm)realm).getPrincipal( permission );
+			if ( principal != null ) {
+				return principal;
+			}
+		}
+		return new Principal(permission.get_GranteeName(), PrincipalType.UNKNOWN );
+	}
+
+	private void intializeDescriptions() {
+		ClassDescription classDescription = objectStoreItem.getObjectStoreObject().get_ClassDescription();
+		AccessPermissionDescriptionList descriptions = classDescription.get_PermissionDescriptions();
+		for ( AccessPermissionDescription description : getAccessPermissionDescriptionListIterator(descriptions) ) {
+			initializeDescription(description);
+		}
+	}
+
+	private void initializeDescription(AccessPermissionDescription description) {
+		PermissionType permissionType = description.get_PermissionType();
+		if (permissionType.equals(PermissionType.LEVEL)
+				|| permissionType.equals(PermissionType.LEVEL_DEFAULT)) {
+			AccessLevel accessLevel = new AccessLevel(description);
+			accessControlEntries.addAccessLevel(accessLevel);
+		} else {
+			AccessRightDescription accessRightDescription = new AccessRightDescription(description);
+			accessControlEntries.addAccessRightDescription(accessRightDescription);
+		}
 	}
 
 	@Override
@@ -80,7 +128,7 @@ public class GetAccessControlEntriesTask extends BaseTask implements IGetAccessC
 	public IAccessControlEntries getAccessControlEntries() {
 		return accessControlEntries;
 	}
-	
+
 	private Iterable<AccessPermission> getAccessPermissionListIterator(final AccessPermissionList accessPermissionList) {
 		return new Iterable<AccessPermission>() {
 
@@ -88,6 +136,17 @@ public class GetAccessControlEntriesTask extends BaseTask implements IGetAccessC
 			@Override
 			public Iterator<AccessPermission> iterator() {
 				return accessPermissionList.iterator();
+			}
+		};
+	}
+
+	private Iterable<AccessPermissionDescription> getAccessPermissionDescriptionListIterator(final AccessPermissionDescriptionList accessPermissionDescriptionList) {
+		return new Iterable<AccessPermissionDescription>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public Iterator<AccessPermissionDescription> iterator() {
+				return accessPermissionDescriptionList.iterator();
 			}
 		};
 	}

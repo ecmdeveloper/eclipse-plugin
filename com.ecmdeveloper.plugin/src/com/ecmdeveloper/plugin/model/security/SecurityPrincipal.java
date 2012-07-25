@@ -26,6 +26,7 @@ import java.util.List;
 
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.core.util.collections.AbstractArrayListObserver;
 import com.ecmdeveloper.plugin.core.util.collections.ObservableArrayList;
@@ -43,20 +44,31 @@ public class SecurityPrincipal extends Principal implements ISecurityPrincipal{
 	
 	private final ObservableArrayList<IAccessControlEntry> accessControlEntries = new ObservableArrayList<IAccessControlEntry>();
 	private final PropertyChangeSupport listeners;
-	
-	public SecurityPrincipal(String name, PrincipalType principalType, PropertyChangeSupport listeners) {
-		super(name, name, name, principalType);
+
+	public SecurityPrincipal(IPrincipal principal, PropertyChangeSupport listeners ) {
+		super( principal.getName(), principal.getShortName(), principal.getDisplayName(), principal.getType() );
 		this.listeners = listeners;
 		accessControlEntries.registerObserver( getAccessControlEntriesListener() );
-//		accessControlEntries.add(new AccessControlEntryMock(this, listeners) );
 	}
+	
+//	public SecurityPrincipal(Object internalPrincipal, PropertyChangeSupport listeners ) {
+//		super( internalPrincipal);
+//		this.listeners = listeners;
+//		accessControlEntries.registerObserver( getAccessControlEntriesListener() );
+//	}
+//	
+//	public SecurityPrincipal(String name, PrincipalType principalType, PropertyChangeSupport listeners) {
+//		super(name, name, name, principalType);
+//		this.listeners = listeners;
+//		accessControlEntries.registerObserver( getAccessControlEntriesListener() );
+//	}
 
-	public SecurityPrincipal(AccessPermission permission, PropertyChangeSupport listeners) {
-		this(permission.get_GranteeName(), SecurityPrincipal.getPrincipalType(permission), listeners );
-		// TODO Auto-generated constructor stub
-	}
+//	public SecurityPrincipal(AccessPermission permission, PropertyChangeSupport listeners) {
+//		this(permission.get_GranteeName(), SecurityPrincipal.getPrincipalType(permission), listeners );
+//		// TODO Auto-generated constructor stub
+//	}
 
-	private static PrincipalType getPrincipalType(AccessPermission permission) {
+	public static PrincipalType getPrincipalType(AccessPermission permission) {
 		return permission.get_GranteeType().equals(SecurityPrincipalType.GROUP) ? PrincipalType.GROUP
 				: (permission.get_GranteeType().equals(SecurityPrincipalType.USER) ? PrincipalType.USER
 						: PrincipalType.UNKNOWN);
@@ -89,5 +101,4 @@ public class SecurityPrincipal extends Principal implements ISecurityPrincipal{
 	public List<IAccessControlEntry> getAccessControlEntries() {
 		return accessControlEntries;
 	}
-
 }

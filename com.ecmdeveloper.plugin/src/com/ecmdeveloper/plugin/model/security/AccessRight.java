@@ -20,24 +20,26 @@
 
 package com.ecmdeveloper.plugin.model.security;
 
-import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
+import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SpecialPrincipal implements IPrincipal {
+public class AccessRight implements IAccessRight {
 
 	private final String name;
-	
-	public SpecialPrincipal(String name) {
-		this.name = name;
-	}
+	private final Integer mask;
+	private final AccessControlEntry parent;
 
-	@Override
-	public String getDisplayName() {
-		return getName();
+	private boolean granted;
+	
+	public AccessRight(AccessControlEntry parent, String name, Integer mask, boolean granted) {
+		this.parent = parent;
+		this.name = name;
+		this.mask = mask;
+		this.granted = granted;
 	}
 
 	@Override
@@ -46,27 +48,28 @@ public class SpecialPrincipal implements IPrincipal {
 	}
 
 	@Override
-	public PrincipalType getType() {
-		return PrincipalType.SPECIAL_ACCOUNT;
+	public boolean isGranted() {
+		return granted;
+	}
+
+	public int getMask() {
+		return mask;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 
 	@Override
-	public boolean isGroup() {
-		return false;
+	public void setGranted(boolean granted) {
+		this.granted = granted;
+		parent.onAccessRightChanged(this);
+//		listeners.firePropertyChange(name, granted, !granted );
 	}
 
 	@Override
-	public boolean isSpecialAccount() {
-		return true;
-	}
-
-	@Override
-	public boolean isUser() {
-		return false;
-	}
-
-	@Override
-	public String getShortName() {
-		return getName();
+	public void setGranted(IAccessLevel accessLevel) {
+		granted = (((AccessLevel)accessLevel).getAccessMask() & mask) != 0; 
 	}
 }

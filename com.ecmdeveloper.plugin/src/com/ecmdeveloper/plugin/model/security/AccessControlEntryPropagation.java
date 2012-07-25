@@ -20,53 +20,34 @@
 
 package com.ecmdeveloper.plugin.model.security;
 
-import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SpecialPrincipal implements IPrincipal {
+public class AccessControlEntryPropagation implements IAccessControlEntryPropagation {
 
 	private final String name;
+	private final Integer value;
 	
-	public SpecialPrincipal(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String getDisplayName() {
-		return getName();
-	}
-
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
-	public PrincipalType getType() {
-		return PrincipalType.SPECIAL_ACCOUNT;
+	public AccessControlEntryPropagation(String name, Integer value) {
+		this.name = name;
+		this.value = value;
 	}
 
 	@Override
-	public boolean isGroup() {
-		return false;
-	}
-
-	@Override
-	public boolean isSpecialAccount() {
-		return true;
-	}
-
-	@Override
-	public boolean isUser() {
-		return false;
-	}
-
-	@Override
-	public String getShortName() {
+	public String toString() {
 		return getName();
+	}
+
+	@Override
+	public Integer getValue() {
+		return value;
 	}
 }

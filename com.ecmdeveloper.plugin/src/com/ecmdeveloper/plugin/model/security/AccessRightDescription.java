@@ -20,53 +20,37 @@
 
 package com.ecmdeveloper.plugin.model.security;
 
-import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.filenet.api.constants.PermissionType;
+import com.filenet.api.security.AccessPermissionDescription;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SpecialPrincipal implements IPrincipal {
+public class AccessRightDescription {
 
 	private final String name;
-	
-	public SpecialPrincipal(String name) {
-		this.name = name;
+	private final Integer accessMask;
+
+	public AccessRightDescription(AccessPermissionDescription description) {
+		if ( description.get_PermissionType().equals( PermissionType.RIGHT_INHERIT_ONLY ) ) {
+			name = description.get_DisplayName() + " (Inherit Only)";
+		} else {
+			name = description.get_DisplayName();
+		}
+		accessMask = description.get_AccessMask();
 	}
 
-	@Override
-	public String getDisplayName() {
-		return getName();
-	}
-
-	@Override
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	public PrincipalType getType() {
-		return PrincipalType.SPECIAL_ACCOUNT;
-	}
-
-	@Override
-	public boolean isGroup() {
-		return false;
-	}
-
-	@Override
-	public boolean isSpecialAccount() {
-		return true;
-	}
-
-	@Override
-	public boolean isUser() {
-		return false;
-	}
-
-	@Override
-	public String getShortName() {
+	public String toString() {
 		return getName();
+	}
+
+	public Integer getAccessMask() {
+		return accessMask;
 	}
 }
