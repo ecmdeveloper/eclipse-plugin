@@ -69,4 +69,9 @@ public class SpecialAccountPrincipalMock implements IPrincipal {
 	public String getDisplayName() {
 		return getName();
 	}
+
+	@Override
+	public String getShortName() {
+		return getName();
+	}
 }

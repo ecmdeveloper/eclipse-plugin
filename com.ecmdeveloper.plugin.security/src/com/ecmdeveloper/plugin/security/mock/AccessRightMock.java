@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.security.mock;
 
 import java.beans.PropertyChangeSupport;
 
+import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
 import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
 
 /**
@@ -60,5 +61,11 @@ public class AccessRightMock implements IAccessRight {
 	public void setGranted(boolean granted) {
 		this.granted = granted;
 		listeners.firePropertyChange(name, granted, !granted );
+	}
+
+	@Override
+	public void setGranted(IAccessLevel accessLevel) {
+		// TODO Auto-generated method stub
+		
 	}
 }

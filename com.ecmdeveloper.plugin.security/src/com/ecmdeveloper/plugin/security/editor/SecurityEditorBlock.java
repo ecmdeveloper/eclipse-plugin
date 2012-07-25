@@ -158,9 +158,6 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 
 		if ( realms != null) {
 			final FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell, realms, initialPrincipal );
-			if ( initialPrincipal != null ) {
-				dialog.setInitialPattern( initialPrincipal.getName() );
-			}
 			
 			if ( dialog.open() == Window.OK ) {
 				final IPrincipal principal = (IPrincipal) dialog.getFirstResult();
@@ -220,13 +217,13 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	
 		List<IAccessControlEntry> deletableEntries = getDeletableEntries(securityPrincipal);
 		if ( !deletableEntries.isEmpty() ) {
-			String message = MessageFormat.format(CONFIRM_PRINCIPAL_ENTRIES_DELETE, securityPrincipal.getName() );
+			String message = MessageFormat.format(CONFIRM_PRINCIPAL_ENTRIES_DELETE, securityPrincipal.getDisplayName() );
 			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
 				securityPrincipal.getAccessControlEntries().removeAll( deletableEntries );
 				return true;
 			}
 		} else {
-			String message = MessageFormat.format(PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES, securityPrincipal.getName() );
+			String message = MessageFormat.format(PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES, securityPrincipal.getDisplayName() );
 			MessageDialog.openWarning(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message);
 		}
 		return false;
@@ -246,7 +243,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		IAccessControlEntry accessControlEntry = (IAccessControlEntry) object;
 		
 		if ( accessControlEntry.canDelete() ) {
-			String message = MessageFormat.format(CONFIRM_ENTRY_DELETE, accessControlEntry.getPrincipal().getName());
+			String message = MessageFormat.format(CONFIRM_ENTRY_DELETE, accessControlEntry.getPrincipal().getDisplayName());
 			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
 				ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
 				securityPrincipal.getAccessControlEntries().remove(accessControlEntry);

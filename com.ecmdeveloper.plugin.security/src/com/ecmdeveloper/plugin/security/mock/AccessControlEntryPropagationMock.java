@@ -43,4 +43,10 @@ public class AccessControlEntryPropagationMock implements IAccessControlEntryPro
 	public String toString() {
 		return getName();
 	}
+
+	@Override
+	public Object getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

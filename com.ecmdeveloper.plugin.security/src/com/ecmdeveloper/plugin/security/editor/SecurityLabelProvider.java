@@ -55,16 +55,34 @@ public class SecurityLabelProvider extends LabelProvider implements ITableLabelP
 
 	private Image getAccessControlEntryImage(Object element) {
 		final IAccessControlEntry ace = (IAccessControlEntry) element;
-		if ( ace.getSource().equals( AccessControlEntrySource.INHERITED ) ) {
-			return Activator.getImage(IconFiles.INHERITED);
-		} else if ( ace.getSource().equals( AccessControlEntrySource.DIRECT) ) {
+//		if ( ace.getSource().equals( AccessControlEntrySource.INHERITED ) ) {
+//			return Activator.getImage(IconFiles.INHERITED);
+//		} else if ( ace.getSource().equals( AccessControlEntrySource.DEFAULT) ) {
+//			if ( ace.getType().equals(AccessControlEntryType.ALLOW) ) {
+//				return Activator.getImage(IconFiles.DEFAULT);
+//			} else {
+//				return Activator.getImage(IconFiles.DIRECT_DENY);
+//			}
+//		} else if ( ace.getSource().equals( AccessControlEntrySource.DIRECT) ) {
+//			if ( ace.getType().equals(AccessControlEntryType.ALLOW) ) {
+//				return Activator.getImage(IconFiles.DIRECT);
+//			} else {
+//				return Activator.getImage(IconFiles.DIRECT_DENY);
+//			}
+//		}
+		if ( ace.isEditable() ) {
 			if ( ace.getType().equals(AccessControlEntryType.ALLOW) ) {
-				return Activator.getImage(IconFiles.DIRECT);
+				return Activator.getImage(IconFiles.ALLOW);
 			} else {
-				return Activator.getImage(IconFiles.DIRECT_DENY);
+				return Activator.getImage(IconFiles.DENY);
+			}
+		} else {
+			if ( ace.getType().equals(AccessControlEntryType.ALLOW) ) {
+				return Activator.getImage(IconFiles.ALLOW_READ_ONY);
+			} else {
+				return Activator.getImage(IconFiles.DENY_READ_ONLY);
 			}
 		}
-		return null;
 	}
 
 	private Image getPrincipalImage(Object element) {
@@ -81,12 +99,12 @@ public class SecurityLabelProvider extends LabelProvider implements ITableLabelP
 	@Override
 	public String getText(Object element) {
 		if ( element instanceof IPrincipal ) {
-			return ((IPrincipal) element).getName();
+			return ((IPrincipal) element).getDisplayName();
 		} else if ( element instanceof IAccessControlEntry ) {
 			IAccessControlEntry accessControlEntry = (IAccessControlEntry) element;
 			String propagation = accessControlEntry.getAccessControlEntryPropagation().getName();
 			String name = accessControlEntry.getAccessLevel().getName();
-			return MessageFormat.format("{0} ({1})", name, propagation) ;
+			return MessageFormat.format("{0} - {1}", name, propagation) ;
 		}
 		return super.getText(element);
 	}
