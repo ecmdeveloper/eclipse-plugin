@@ -69,6 +69,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActions
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 
 /**
@@ -285,6 +286,11 @@ public class TaskFactory implements ITaskFactory {
 
 	@Override
 	public IFindPrincipalsTask getFindPrincipalsTask(IRealm realm, String pattern, PrincipalType type, IProgressMonitor progressMonitor) {
+		return null;
+	}
+
+	@Override
+	public IGetAccessControlEntriesTask getGetAccessControlEntriesTask(IObjectStoreItem objectStoreItem, Collection<IRealm> realms) {
 		return null;
 	}
 }
