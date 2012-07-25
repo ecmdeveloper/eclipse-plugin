@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IMemento;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
@@ -38,4 +39,6 @@ public interface IRealm {
 	Collection<IPrincipal> findPrincipals(String pattern, PrincipalType type) throws ExecutionException;
 	Collection<IPrincipal> findPrincipals(String pattern, PrincipalType type, IProgressMonitor progressMonitor) throws ExecutionException;
 	IObjectStore getObjectStore();
+	void store(IPrincipal item, IMemento memento);
+	IPrincipal restore(IMemento memento);
 }

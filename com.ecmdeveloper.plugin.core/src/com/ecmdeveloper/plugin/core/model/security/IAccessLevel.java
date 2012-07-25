@@ -26,4 +26,5 @@ package com.ecmdeveloper.plugin.core.model.security;
  */
 public interface IAccessLevel {
 	String getName();
+	boolean isDefaultLevel();
 }

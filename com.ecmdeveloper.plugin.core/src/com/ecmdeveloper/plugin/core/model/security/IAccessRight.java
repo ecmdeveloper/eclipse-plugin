@@ -28,4 +28,5 @@ public interface IAccessRight {
 	String getName();
 	boolean isGranted();
 	void setGranted(boolean granted);
+	void setGranted(IAccessLevel accessLevel);
 }

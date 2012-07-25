@@ -26,4 +26,5 @@ package com.ecmdeveloper.plugin.core.model.security;
  */
 public interface IAccessControlEntryPropagation {
 	String getName();
+	Object getValue();
 }
