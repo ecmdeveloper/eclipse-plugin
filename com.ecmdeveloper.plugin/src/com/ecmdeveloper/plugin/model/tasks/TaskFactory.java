@@ -68,6 +68,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModuleActions
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 import com.ecmdeveloper.plugin.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.Document;
@@ -75,6 +76,7 @@ import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.security.Realm;
 import com.ecmdeveloper.plugin.model.tasks.security.FindPrincipalsTask;
+import com.ecmdeveloper.plugin.model.tasks.security.GetAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.model.tasks.security.GetRealmsTask;
 
 /**
@@ -289,5 +291,10 @@ public class TaskFactory implements ITaskFactory {
 	public IFindPrincipalsTask getFindPrincipalsTask(IRealm realm, String pattern,
 			PrincipalType type, IProgressMonitor progressMonitor) {
 		return new FindPrincipalsTask((Realm) realm, pattern,type, progressMonitor);
+	}
+
+	@Override
+	public IGetAccessControlEntriesTask getGetAccessControlEntriesTask(IObjectStoreItem objectStoreItem, Collection<IRealm> realms) {
+		return new GetAccessControlEntriesTask((ObjectStoreItem) objectStoreItem, realms);
 	}
 }

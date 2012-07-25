@@ -24,7 +24,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IMemento;
 
 import com.ecmdeveloper.plugin.Activator;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
@@ -33,6 +38,13 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.filenet.api.collection.GroupSet;
+import com.filenet.api.collection.UserSet;
+import com.filenet.api.constants.PrincipalSearchAttribute;
+import com.filenet.api.constants.PrincipalSearchSortType;
+import com.filenet.api.constants.PrincipalSearchType;
+import com.filenet.api.constants.SecurityPrincipalType;
+import com.filenet.api.security.AccessPermission;
 
 /**
  * @author ricardo.belfor
@@ -40,6 +52,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
  */
 public class Realm implements IRealm {
 
+	private static final String COMMON_NAME_TYPE = "CN";
 	private com.filenet.api.security.Realm realm;
 	private final IObjectStore objectStore;
 
@@ -88,5 +101,71 @@ public class Realm implements IRealm {
 	
 	public com.filenet.api.security.Realm getInternalRealm() {
 		return realm;
+	}
+
+	@Override
+	public void store(IPrincipal principal, IMemento memento) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public IPrincipal restore(IMemento memento) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Principal getPrincipal(AccessPermission permission) {
+		
+		String granteeName = permission.get_GranteeName();
+		if ( !isSpecialAccountName(granteeName ) ) {
+			granteeName = parseGranteeName(granteeName);
+			if (permission.get_GranteeType().equals(SecurityPrincipalType.GROUP)) {
+				return getGroupPrincipal(granteeName );
+			} else if (permission.get_GranteeType().equals(SecurityPrincipalType.USER)) {
+				return getUserPrincipal(granteeName );
+			}
+		} else {
+			return new Principal(granteeName, PrincipalType.SPECIAL_ACCOUNT );
+		}
+		
+		return null;
+	}
+
+	private String parseGranteeName(String granteeName) {
+		try {
+			LdapName ldapName = new LdapName(granteeName);
+			for ( Rdn rdn : ldapName.getRdns() ) {
+				if ( rdn.getType().equalsIgnoreCase(COMMON_NAME_TYPE) ) {
+					granteeName = (String) rdn.getValue();
+				}
+			}
+		} catch (InvalidNameException e) {
+		}
+		return granteeName;
+	}
+
+	private Principal getUserPrincipal(String granteeName) {
+		UserSet users = realm.findUsers(granteeName,
+				PrincipalSearchType.EXACT, PrincipalSearchAttribute.SHORT_NAME,
+				PrincipalSearchSortType.NONE, null, null);
+		if (!users.isEmpty()) {
+			return new Principal( users.iterator().next() );
+		}
+		return null;
+	}
+
+	private Principal getGroupPrincipal(String granteeName) {
+		GroupSet groups = realm.findGroups(granteeName,
+				PrincipalSearchType.EXACT, PrincipalSearchAttribute.SHORT_NAME,
+				PrincipalSearchSortType.NONE, null, null);
+		if (!groups.isEmpty()) {
+			return new Principal( groups.iterator().next() );
+		}
+		return null;
+	}
+
+	private boolean isSpecialAccountName(String name) {
+		return name.equals( com.filenet.api.constants.SpecialPrincipal.AUTHENTICATED_USERS.getValue() ) ||
+				name.equals( com.filenet.api.constants.SpecialPrincipal.CREATOR_OWNER.getValue() );
 	}
 }

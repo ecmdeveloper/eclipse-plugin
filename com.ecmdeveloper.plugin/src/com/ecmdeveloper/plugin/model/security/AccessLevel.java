@@ -20,24 +20,32 @@
 
 package com.ecmdeveloper.plugin.model.security;
 
-import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
+import com.filenet.api.constants.PermissionType;
+import com.filenet.api.security.AccessPermissionDescription;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SpecialPrincipal implements IPrincipal {
+public class AccessLevel implements IAccessLevel {
+
+	public static final String CUSTOM_ACCESS_LEVEL_NAME = "Custom";
 
 	private final String name;
+	private final boolean defaultLevel;
+	private Integer accessMask;
 	
-	public SpecialPrincipal(String name) {
+	public AccessLevel(String name, Integer accessMask) {
 		this.name = name;
+		this.accessMask = accessMask;
+		this.defaultLevel = false;
 	}
 
-	@Override
-	public String getDisplayName() {
-		return getName();
+	public AccessLevel(AccessPermissionDescription description) {
+		name = description.get_DisplayName();
+		accessMask = description.get_AccessMask();
+		defaultLevel = description.get_PermissionType().equals( PermissionType.LEVEL_DEFAULT );
 	}
 
 	@Override
@@ -46,27 +54,20 @@ public class SpecialPrincipal implements IPrincipal {
 	}
 
 	@Override
-	public PrincipalType getType() {
-		return PrincipalType.SPECIAL_ACCOUNT;
-	}
-
-	@Override
-	public boolean isGroup() {
-		return false;
-	}
-
-	@Override
-	public boolean isSpecialAccount() {
-		return true;
-	}
-
-	@Override
-	public boolean isUser() {
-		return false;
-	}
-
-	@Override
-	public String getShortName() {
+	public String toString() {
 		return getName();
+	}
+
+	public Integer getAccessMask() {
+		return accessMask;
+	}
+
+	public void setAccessMask(Integer accessMask) {
+		this.accessMask = accessMask;
+	}
+	
+	@Override
+	public boolean isDefaultLevel() {
+		return defaultLevel;
 	}
 }
