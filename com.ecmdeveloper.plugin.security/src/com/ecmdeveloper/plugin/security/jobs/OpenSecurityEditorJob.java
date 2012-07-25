@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.security.jobs;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,6 +37,7 @@ import org.eclipse.ui.ide.IDE;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.security.Activator;
@@ -80,21 +82,32 @@ public class OpenSecurityEditorJob extends Job {
 	private void openNewEditor(IProgressMonitor monitor) throws Exception {
 		
 		Collection<IRealm> realms = getRealms();
-		IAccessControlEntries accessControlEntries = new AccessControlEntriesMock(); 
+		IAccessControlEntries accessControlEntries = getAccessControlEntries(realms);
 		IEditorInput input = new SecurityEditorInput( objectStoreItem, accessControlEntries, realms );
 		openEditorWindow(input, editorId);
 	}
 
-	private Collection<IRealm> getRealms() {
+	private Collection<IRealm> getRealms() throws ExecutionException {
 		
 		IGetRealmsTask getRealmsTask = objectStoreItem.getTaskFactory().getGetRealmsTask( objectStoreItem.getObjectStore() );
 		if ( getRealmsTask != null ) {
-			Activator.getDefault().getTaskManager().executeTaskASync(getRealmsTask);
+			Activator.getDefault().getTaskManager().executeTaskSync(getRealmsTask);
 			return getRealmsTask.getRealms();
 		} else {
 			Collection<IRealm> realms = new HashSet<IRealm>();
 			realms.add( new RealmMock("MyRealm", objectStoreItem.getObjectStore() ) );
 			return realms;
+		}
+	}
+
+	private IAccessControlEntries getAccessControlEntries(Collection<IRealm> realms) throws ExecutionException {
+		IGetAccessControlEntriesTask task = objectStoreItem.getTaskFactory()
+				.getGetAccessControlEntriesTask(objectStoreItem, realms);
+		if ( task != null ) {
+			Activator.getDefault().getTaskManager().executeTaskSync(task);
+			return task.getAccessControlEntries();
+		} else {
+			return new AccessControlEntriesMock(); 
 		}
 	}
 

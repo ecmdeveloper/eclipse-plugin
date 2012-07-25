@@ -79,9 +79,7 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 	private static final String SHOW_USERS_LABEL = "Show Users";
 	private static final String TITLE = "Principal Selection";
 	private static final String SEPARATOR_LABEL = "Previous matches";
-	private static final String NAME_TAG = "name";
 	private static final String DIALOG_SETTINGS = "PrincipalSelectionDialogSettings";
-	protected static final String TYPE_TAG = "type";		
 	private boolean showSpecialAccounts = true;
 	private boolean showGroups = false;
 	private boolean showUsers = false;
@@ -111,8 +109,8 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 				if ( element instanceof IPrincipal ) {
 					IPrincipal principal = (IPrincipal) element;
 					StringBuilder stringBuilder = new StringBuilder();
-					stringBuilder.append(principal.getName());
-					if ( !principal.getName().equals(principal.getDisplayName()) ) {
+					stringBuilder.append(principal.getShortName());
+					if ( !principal.getShortName().equals(principal.getDisplayName()) ) {
 						stringBuilder.append(LABEL_PROVIDER_STRING_1);
 						stringBuilder.append(principal.getDisplayName());
 						stringBuilder.append(LABEL_PROVIDER_STRING_2);
@@ -128,6 +126,11 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 		setDetailsLabelProvider(labelProvider);
 		setSeparatorLabel(SEPARATOR_LABEL);
 		setInitialSelection(initialPrincipal);
+
+		if ( initialPrincipal != null ) {
+			setInitialPattern( searchShortNames ? initialPrincipal.getShortName() : initialPrincipal.getDisplayName() );
+		}
+		
 		setSelectionHistory(getPrincipalSelectionHistory()  );
 	}
 
@@ -157,27 +160,12 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 			
 			@Override
 			protected Object restoreItemFromMemento(IMemento memento) {
-				String name = memento.getString(NAME_TAG);
-				String type = memento.getString(TYPE_TAG);
-				PrincipalType principalType = null;
-				
-				if ( type != null ) {
-					principalType = PrincipalType.valueOf(type);
-				}
-				
-				if ( PrincipalType.SPECIAL_ACCOUNT.equals(principalType) ) {
-					return null;
-				}
-				return new PrincipalMock(name, principalType);
+				return realm.restore(memento);
 			}
 
 			@Override
 			protected void storeItemToMemento(Object item, IMemento memento) {
-				memento.putString(NAME_TAG, ((IPrincipal)item).getName() );
-				PrincipalType type = ((IPrincipal)item).getType();
-				if ( type != null ) {
-					memento.putString(TYPE_TAG, type.name() );
-				}
+				realm.store( (IPrincipal)item, memento );
 			}
 
 			@Override
@@ -442,7 +430,7 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 			}
 			
 			if ( searchShortNames ) {
-				return matches( principal.getName() );
+				return matches( principal.getShortName() );
 			} else if (searchDisplayNames) {
 				return matches( principal.getDisplayName() );
 			} else {

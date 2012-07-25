@@ -84,6 +84,8 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 			protected void accessRightChanged(IAccessRight accessRight, boolean checked ) {
 				setDirty(true);
 				accessRight.setGranted( checked );
+				setLevelControlValue();
+				setChecked(accessRight, checked);
 			}
 		};
 	}
@@ -142,6 +144,9 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 				IStructuredSelection selection = (IStructuredSelection) levelCombo.getSelection();
 				if ( !selection.isEmpty() ) {
 					accessControlEntry.setAccessLevel((IAccessLevel) selection.getFirstElement());
+					for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
+						accessRightsTable.setChecked(accessRight, accessRight.isGranted());
+					}
 					setDirty(true);
 				}
 			}
@@ -188,7 +193,8 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 	    	ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
 
 	    	if ( securityPrincipal != null ) {
-	    		setDescription( "Access Control Entry for principal '" + securityPrincipal.getName() + "'.");
+	    		String description = getyDescription(securityPrincipal);
+				setDescription( description);
 		    	setTitleImage(accessControlEntry);
 	    	}
 	    	
@@ -204,6 +210,16 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 //			commitChanges = true;
 //			form.getMessageManager().removeAllMessages();
 	    }
+	}
+
+	private String getyDescription(ISecurityPrincipal securityPrincipal) {
+		StringBuilder description = new StringBuilder();
+		description.append("Access Control Entry for principal '");
+		description.append(securityPrincipal.getName());
+		description.append("'. This is a ");
+		description.append(accessControlEntry.getSource().toString());
+		description.append(".");
+		return description.toString();
 	}
 
 	private void setPropagationControlValue() {

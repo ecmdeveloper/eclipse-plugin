@@ -94,7 +94,6 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 
 	@Override
 	public void commit(boolean onSave) {
-		System.out.println( "Commit!");
 		setDirty(false);
 //		if (property != null ) {
 //			commitPropertyValue();

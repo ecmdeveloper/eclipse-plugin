@@ -79,4 +79,9 @@ public class PrincipalMock implements IPrincipal {
 	public String getDisplayName() {
 		return getName();
 	}
+
+	@Override
+	public String getShortName() {
+		return getName();
+	}
 }

@@ -51,7 +51,7 @@ public abstract class AccessRightsTable {
 	
 	private void createAccessRightsTable(Composite client, IManagedForm form, int columns) {
 		form.getToolkit().createLabel(client, PERMISSIONS_LABEL);
-		Table table = form.getToolkit().createTable(client, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION/*| SWT.V_SCROLL */ | SWT.CHECK );
+		Table table = form.getToolkit().createTable(client, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.CHECK );
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL );
 		layoutData.horizontalSpan = columns;
 		table.setLayoutData( layoutData );
@@ -88,5 +88,9 @@ public abstract class AccessRightsTable {
 	
 	public void setEnabled(boolean enabled) {
 		accessRightsTable.getTable().setEnabled( enabled );
+	}
+	
+	public void refresh() {
+		accessRightsTable.refresh();
 	}
 }

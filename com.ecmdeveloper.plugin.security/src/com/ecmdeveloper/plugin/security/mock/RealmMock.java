@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IMemento;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
@@ -37,6 +38,8 @@ import com.ecmdeveloper.plugin.core.model.security.IRealm;
 public class RealmMock implements IRealm {
 
 	private static ArrayList<IPrincipal> resources = new ArrayList<IPrincipal>();
+	private static final String NAME_TAG = "name";
+	private static final String TYPE_TAG = "type";		
 
 	static {
 		generateRescourcesTestCases('A', 'C', 8, ""); //$NON-NLS-1$
@@ -118,5 +121,31 @@ public class RealmMock implements IRealm {
 	@Override
 	public IObjectStore getObjectStore() {
 		return objectStore;
+	}
+
+	@Override
+	public void store(IPrincipal item, IMemento memento) {
+		memento.putString(NAME_TAG, ((IPrincipal)item).getName() );
+		PrincipalType type = ((IPrincipal)item).getType();
+		if ( type != null ) {
+			memento.putString(TYPE_TAG, type.name() );
+		}
+	}
+
+	@Override
+	public IPrincipal restore(IMemento memento) {
+		
+		String name = memento.getString(NAME_TAG);
+		String type = memento.getString(TYPE_TAG);
+		PrincipalType principalType = null;
+		
+		if ( type != null ) {
+			principalType = PrincipalType.valueOf(type);
+		}
+		
+		if ( PrincipalType.SPECIAL_ACCOUNT.equals(principalType) ) {
+			return null;
+		}
+		return new PrincipalMock(name, principalType);
 	}
 }

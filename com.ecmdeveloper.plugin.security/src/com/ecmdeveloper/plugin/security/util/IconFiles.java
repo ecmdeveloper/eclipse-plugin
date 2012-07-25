@@ -31,11 +31,15 @@ public class IconFiles {
 	public static final String REFRESH = "icons/arrow_refresh.png";
 	public static final String GROUP = "icons/group.png";
 	public static final String USER = "icons/user.png";
-	public static final String SPECIAL_ACCOUNT = "icons/report_user.png";
+	public static final String SPECIAL_ACCOUNT = "icons/group_link.png";
 	public static final String INHERITED = "icons/arrow_up.png";
 	public static final String DIRECT = "icons/arrow_right.png";
 	public static final String DIRECT_DENY = "icons/arrow_right_stop.png";
 	public static final String HORIZONTAL = "icons/application_tile_horizontal.png";
 	public static final String VERTICAL = "icons/application_tile_vertical.png";
-	
+	public static final String DEFAULT = "icons/arrow_out.png";
+	public static final String ALLOW = "icons/flag_green.png";
+	public static final String DENY = "icons/flag_red.png";
+	public static final String ALLOW_READ_ONY = "icons/flag_green_fade.png";;
+	public static final String DENY_READ_ONLY = "icons/flag_red_fade.png";
 }

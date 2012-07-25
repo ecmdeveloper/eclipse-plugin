@@ -43,4 +43,10 @@ public class AccessLevelMock implements IAccessLevel {
 	public String toString() {
 		return getName();
 	}
+
+	@Override
+	public boolean isDefaultLevel() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
