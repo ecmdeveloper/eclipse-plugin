@@ -39,6 +39,7 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 	private IDetailsPage accessControlEntryDetailsViewPage;
 	private IDetailsPage accessControlEntryDetailsEditPage;
 	private final SecurityEditorBlock securityEditorBlock;
+	private IDetailsPage securityPrincipalDetailsPage;
 	
 	public SecurityInputDetailsPageProvider(SecurityEditorBlock securityEditorBlock) {
 		this.securityEditorBlock = securityEditorBlock;
@@ -53,10 +54,21 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 			return getAccessControlEntryDetailsEditPage();
 		}
 		
+		if ( PRINCIPAL_PAGE_KEY.equals(key ) ) {
+			return getSecurityPrincipalDetailsPage();
+		}
+		
 		if ( unknownDetailsPage == null ) {
 			unknownDetailsPage = new PermissionDetailsPage();
 		}
 		return unknownDetailsPage;
+	}
+
+	private IDetailsPage getSecurityPrincipalDetailsPage() {
+		if (securityPrincipalDetailsPage == null ) {
+			securityPrincipalDetailsPage = new SecurityPrincipalDetailsPage();
+		}
+		return securityPrincipalDetailsPage;
 	}
 
 	private IDetailsPage getAccessControlEntryDetailsEditPage() {

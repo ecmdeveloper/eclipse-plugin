@@ -148,4 +148,10 @@ public class RealmMock implements IRealm {
 		}
 		return new PrincipalMock(name, principalType);
 	}
+
+	@Override
+	public Collection<IPrincipal> getMembers(IPrincipal principal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

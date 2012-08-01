@@ -26,8 +26,8 @@ package com.ecmdeveloper.plugin.security.util;
  */
 public class IconFiles {
 
-	public static final String GROUP_ADD = "icons/group_add.png";
-	public static final String GROUP_DELETE = "icons/group_delete.png";
+	public static final String GROUP_ADD = "icons/shield_add.png";
+	public static final String GROUP_DELETE = "icons/shield_delete.png";
 	public static final String REFRESH = "icons/arrow_refresh.png";
 	public static final String GROUP = "icons/group.png";
 	public static final String USER = "icons/user.png";
@@ -38,8 +38,10 @@ public class IconFiles {
 	public static final String HORIZONTAL = "icons/application_tile_horizontal.png";
 	public static final String VERTICAL = "icons/application_tile_vertical.png";
 	public static final String DEFAULT = "icons/arrow_out.png";
-	public static final String ALLOW = "icons/flag_green.png";
-	public static final String DENY = "icons/flag_red.png";
-	public static final String ALLOW_READ_ONY = "icons/flag_green_fade.png";;
-	public static final String DENY_READ_ONLY = "icons/flag_red_fade.png";
+	public static final String ALLOW = "icons/shield.png";
+	public static final String DENY = "icons/shield_stop.png";
+	public static final String ALLOW_READ_ONY = "icons/shield_go.png";;
+	public static final String DENY_READ_ONLY = "icons/shield_go_stop.png";
+	public static final String MEMBERSHIPS = "icons/folder_user.png";
+	
 }

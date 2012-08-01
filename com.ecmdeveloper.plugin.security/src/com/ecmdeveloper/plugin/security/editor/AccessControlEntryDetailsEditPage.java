@@ -215,7 +215,7 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 	private String getyDescription(ISecurityPrincipal securityPrincipal) {
 		StringBuilder description = new StringBuilder();
 		description.append("Access Control Entry for principal '");
-		description.append(securityPrincipal.getName());
+		description.append(securityPrincipal.getDisplayName() );
 		description.append("'. This is a ");
 		description.append(accessControlEntry.getSource().toString());
 		description.append(".");

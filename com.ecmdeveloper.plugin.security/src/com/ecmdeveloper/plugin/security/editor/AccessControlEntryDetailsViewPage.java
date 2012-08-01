@@ -89,7 +89,7 @@ public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
 	    	ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
 
 	    	if ( securityPrincipal != null ) {
-	    		setDescription( "Access Control Entry for principal '" + securityPrincipal.getName() + "'.");
+	    		setDescription( "Access Control Entry for principal '" + securityPrincipal.getDisplayName() + "'.");
 		    	setTitleImage(accessControlEntry);
 	    	}
 	    	
