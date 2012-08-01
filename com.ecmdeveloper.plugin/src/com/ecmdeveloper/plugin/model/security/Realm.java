@@ -38,13 +38,18 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.util.CEIterable;
 import com.filenet.api.collection.GroupSet;
 import com.filenet.api.collection.UserSet;
 import com.filenet.api.constants.PrincipalSearchAttribute;
 import com.filenet.api.constants.PrincipalSearchSortType;
 import com.filenet.api.constants.PrincipalSearchType;
+import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.SecurityPrincipalType;
+import com.filenet.api.core.Factory;
+import com.filenet.api.property.PropertyFilter;
 import com.filenet.api.security.AccessPermission;
+import com.filenet.api.security.Group;
 
 /**
  * @author ricardo.belfor
@@ -168,4 +173,23 @@ public class Realm implements IRealm {
 		return name.equals( com.filenet.api.constants.SpecialPrincipal.AUTHENTICATED_USERS.getValue() ) ||
 				name.equals( com.filenet.api.constants.SpecialPrincipal.CREATOR_OWNER.getValue() );
 	}
+
+	@Override
+	public Collection<IPrincipal> getMembers(IPrincipal principal) {
+		ArrayList<IPrincipal> members = new ArrayList<IPrincipal>();
+//
+//		PropertyFilter MEMBERS_PROPERTY_FILTER = new PropertyFilter();
+//		membersPropertyFilter.addIncludeProperty(0, null, null, PropertyNames.GROUPS, null);
+//		membersPropertyFilter.addIncludeProperty(0, null, null, PropertyNames.USERS, null);
+//
+//		Group parentGroup = Factory.Group.fetchInstance(realm.getConnection(), principal.getName(),
+//				membersPropertyFilter);
+//		for ( Group group : new CEIterable<Group>( parentGroup.get_Groups() ) ) {
+//			members.add( new Principal(group) );
+//		}
+	
+		return null;
+	}
+	
+	
 }

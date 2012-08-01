@@ -18,28 +18,17 @@
  * 
  */
 
-package com.ecmdeveloper.plugin.core.model.security;
+package com.ecmdeveloper.plugin.core.model.tasks.security;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IMemento;
-
-import com.ecmdeveloper.plugin.core.model.IObjectStore;
-import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IRealm {
-
-	String getName();
-	Collection<IPrincipal> findPrincipals(String pattern, PrincipalType type) throws ExecutionException;
-	Collection<IPrincipal> findPrincipals(String pattern, PrincipalType type, IProgressMonitor progressMonitor) throws ExecutionException;
-	IObjectStore getObjectStore();
-	void store(IPrincipal item, IMemento memento);
-	IPrincipal restore(IMemento memento);
-	Collection<IPrincipal> getMembers(IPrincipal principal);
+public interface IGetMembersTask extends IBaseTask {
+	Collection<IPrincipal> getMembers();
 }
