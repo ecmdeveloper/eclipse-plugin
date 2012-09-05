@@ -43,5 +43,5 @@ public class IconFiles {
 	public static final String ALLOW_READ_ONY = "icons/shield_go.png";;
 	public static final String DENY_READ_ONLY = "icons/shield_go_stop.png";
 	public static final String MEMBERSHIPS = "icons/folder_user.png";
-	
+	public static final String MEMBERS = "icons/user_suit.png";
 }

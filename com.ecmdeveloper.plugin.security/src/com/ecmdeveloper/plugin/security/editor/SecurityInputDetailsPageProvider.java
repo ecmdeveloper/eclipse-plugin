@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
@@ -66,7 +67,7 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 
 	private IDetailsPage getSecurityPrincipalDetailsPage() {
 		if (securityPrincipalDetailsPage == null ) {
-			securityPrincipalDetailsPage = new SecurityPrincipalDetailsPage();
+			securityPrincipalDetailsPage = new SecurityPrincipalDetailsPage( securityEditorBlock.getShell() );
 		}
 		return securityPrincipalDetailsPage;
 	}

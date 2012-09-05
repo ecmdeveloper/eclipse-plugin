@@ -1,5 +1,5 @@
 /**
- * Copyright 2009,2010, Ricardo Belfor
+ * Copyright 2009-2012, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -26,20 +26,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
@@ -51,14 +44,12 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
  */
 public abstract class BaseDetailsPage implements IDetailsPage {
 
-	private static final String EMPTY_VALUE_BUTTON_TEXT = "Use Empty Value";
-	
+	private static final String PERIOD = ".";
+	private static final String ACE_DESCRIPTION_2 = "'. This is a ";
+	private static final String ACE_DESCRIPTION_1 = "Access Control Entry for principal '";
 	protected IManagedForm form;
 	private Section section;
-	protected Button emptyValueButton;
 	protected boolean isDirty;
-	private boolean commitChanges;
-
 	private Label titleImage;
 	private LabelProvider labelProvider = new SecurityLabelProvider();
 	
@@ -88,70 +79,13 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 
 	protected void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
-//		if (property != null ) {
-//			commitPropertyValue();
-//		}
-		//commit(false);
 	}
 
 	@Override
 	public void commit(boolean onSave) {
 		setDirty(false);
-//		if (property != null ) {
-//			commitPropertyValue();
-//		}
 	}
 
-//	private void commitPropertyValue() {
-//		if ( commitChanges ) {
-//			try {
-//				if ( emptyValueButton != null && emptyValueButton.getSelection() ) {
-//					property.setValue( null );
-//				} else {
-//					commitNotNullPropertyValue();
-//				}
-//			} catch (Exception e) {
-//				throw new RuntimeException(e);
-//			}
-//		}
-//	}
-
-//	@SuppressWarnings("unchecked")
-//	private void commitNotNullPropertyValue() throws Exception {
-//		Object value = getValue();
-//		if ( value instanceof Object[] ) {
-//			if ( property.isMultivalue() ) {
-//				List valuesList = property.getList();
-//				for ( Object valueElement : (Object[]) value ) {
-//					valuesList.add( valueElement );
-//				}
-//				property.setValue( valuesList );
-//			} else { 
-//				property.setValue( ((Object[])value)[0] );
-//			}
-//		} else {
-//			property.setValue( getValue() );
-//		}
-//	}
-		
-	protected void createEmptyValueButton(Composite client, FormToolkit toolkit) {
-		
-		emptyValueButton = toolkit.createButton(client, EMPTY_VALUE_BUTTON_TEXT, SWT.CHECK );
-		emptyValueButton.addSelectionListener( new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean selected = ((Button)e.getSource()).getSelection();
-//				handleEmptyValueButton(selected);
-				setDirty(true);
-			}
-		} );
-
-		GridData gridData = new GridData();
-		gridData.horizontalSpan = getNumClientColumns();
-		emptyValueButton.setLayoutData( gridData );
-	}
-	
-//	protected abstract void handleEmptyValueButton(boolean selected);
 
 	private Section createSection(Composite parent) {
 		section = form.getToolkit().createSection(parent,
@@ -167,6 +101,7 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = getNumClientColumns();
 		client.setLayout(layout);
+		
 		form.getToolkit().paintBordersFor(client);
 		
 		return client;
@@ -190,13 +125,6 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 	    	if ( securityPrincipal != null ) {
 		    	setPrincipalInformation(securityPrincipal);
 	    	}
-	    	
-//	    	commitChanges = false;
-//	    	propertyChanged( property );
-//			setEmptyValueButtonState(property);
-//			this.isDirty = false;
-//			commitChanges = true;
-//			form.getMessageManager().removeAllMessages();
 	    }
 	}
 
@@ -206,6 +134,29 @@ public abstract class BaseDetailsPage implements IDetailsPage {
 		setTitleImage(securityPrincipal);
 	}
 
+	protected void setAccessControlEntryInformation(IAccessControlEntry accessControlEntry ) {
+		setTitle("Access Control Entry");
+		ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
+
+		if ( securityPrincipal != null ) {
+			String description = getAccessControlEntryDescription(securityPrincipal, accessControlEntry);
+			setDescription( description);
+			setTitleImage(accessControlEntry);
+		}
+	}
+	
+	protected String getAccessControlEntryDescription(ISecurityPrincipal securityPrincipal, IAccessControlEntry accessControlEntry) {
+		StringBuilder description = new StringBuilder();
+		
+		description.append(ACE_DESCRIPTION_1);
+		description.append(securityPrincipal.getDisplayName() );
+		description.append(ACE_DESCRIPTION_2);
+		description.append(accessControlEntry.getSource().toString());
+		description.append(PERIOD);
+		
+		return description.toString();
+	}
+	
 	protected void setTitleImage(Object object) {
 		titleImage.setImage( labelProvider.getImage(object)  );
 	}

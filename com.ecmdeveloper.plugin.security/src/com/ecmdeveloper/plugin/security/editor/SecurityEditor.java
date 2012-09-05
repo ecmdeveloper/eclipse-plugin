@@ -24,6 +24,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -36,6 +39,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
+import com.ecmdeveloper.plugin.security.jobs.SaveAccessControlEntriesJob;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
 
 /**
@@ -84,8 +88,23 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		isPageModified = false;
-		firePropertyChange(IEditorPart.PROP_DIRTY);
+		Job job = new SaveAccessControlEntriesJob(objectStoreItem, accessControlEntries, getSite().getShell() );
+		job.setUser(true);
+		job.addJobChangeListener( new JobChangeAdapter() {
+
+			@Override
+			public void done(IJobChangeEvent event) {
+				if ( event.getResult().isOK() ) {
+					isPageModified = false;
+					getSite().getShell().getDisplay().syncExec( new Runnable() {
+						@Override
+						public void run() {
+							firePropertyChange(IEditorPart.PROP_DIRTY);
+						}}  
+					);
+				}
+			} } );
+		job.schedule();
 	}
 
 	@Override

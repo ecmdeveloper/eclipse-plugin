@@ -85,14 +85,7 @@ public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
 	    if ( object != null ) {
 	    	
 	    	accessControlEntry = (IAccessControlEntry) object;
-	    	setTitle("Access Control Entry");
-	    	ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
-
-	    	if ( securityPrincipal != null ) {
-	    		setDescription( "Access Control Entry for principal '" + securityPrincipal.getDisplayName() + "'.");
-		    	setTitleImage(accessControlEntry);
-	    	}
-	    	
+	    	setAccessControlEntryInformation(accessControlEntry);
 			setAccessRightsTableValues();
     		
     		levelLabel.setText( accessControlEntry.getAccessLevel().getName() );

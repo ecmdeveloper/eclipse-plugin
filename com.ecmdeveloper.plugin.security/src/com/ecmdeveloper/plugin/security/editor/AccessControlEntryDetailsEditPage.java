@@ -189,37 +189,12 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 	    if ( object != null ) {
 	    	
 	    	accessControlEntry = (IAccessControlEntry) object;
-	    	setTitle("Access Control Entry");
-	    	ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
-
-	    	if ( securityPrincipal != null ) {
-	    		String description = getyDescription(securityPrincipal);
-				setDescription( description);
-		    	setTitleImage(accessControlEntry);
-	    	}
-	    	
+	    	setAccessControlEntryInformation(accessControlEntry);
 			setAccessRightsTableValues();
     		setLevelControlValue();
 			setTypeControlsValue();
 			setPropagationControlValue();
-			
-//	    	commitChanges = false;
-//	    	propertyChanged( property );
-//			setEmptyValueButtonState(property);
-//			this.isDirty = false;
-//			commitChanges = true;
-//			form.getMessageManager().removeAllMessages();
 	    }
-	}
-
-	private String getyDescription(ISecurityPrincipal securityPrincipal) {
-		StringBuilder description = new StringBuilder();
-		description.append("Access Control Entry for principal '");
-		description.append(securityPrincipal.getDisplayName() );
-		description.append("'. This is a ");
-		description.append(accessControlEntry.getSource().toString());
-		description.append(".");
-		return description.toString();
 	}
 
 	private void setPropagationControlValue() {

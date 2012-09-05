@@ -22,6 +22,10 @@
             id="com.ecmdeveloper.plugin.security.editor.toolbar"
             name="Actions">
       </command>
+      <command
+            id="com.ecmdeveloper.plugin.security.showMemberships"
+            name="Show Memberships">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -51,6 +55,10 @@
       <handler
             class="com.ecmdeveloper.plugin.security.handlers.HelloHandler"
             commandId="com.ecmdeveloper.plugin.security.editor.toolbar">
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.security.handlers.ShowMembershipsHandler"
+            commandId="com.ecmdeveloper.plugin.security.showMemberships">
       </handler>
    </extension>
    <extension
