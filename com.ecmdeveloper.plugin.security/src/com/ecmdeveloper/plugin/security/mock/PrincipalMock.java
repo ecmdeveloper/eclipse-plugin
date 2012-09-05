@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.security.mock;
 
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 
 /**
  * @author ricardo.belfor
@@ -83,5 +84,10 @@ public class PrincipalMock implements IPrincipal {
 	@Override
 	public String getShortName() {
 		return getName();
+	}
+
+	@Override
+	public IRealm getRealm() {
+		return null;
 	}
 }

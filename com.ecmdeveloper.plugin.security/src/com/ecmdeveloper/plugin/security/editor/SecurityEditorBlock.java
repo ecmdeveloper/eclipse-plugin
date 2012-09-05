@@ -27,27 +27,31 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -62,7 +66,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
@@ -79,13 +82,14 @@ import com.ecmdeveloper.plugin.security.util.PluginLog;
  */
 public class SecurityEditorBlock extends MasterDetailsBlock {
 
+	private static final String DELETE_MENU_TEXT = "&Delete";
+	private static final String ADD_MENU_TEXT = "&Add";
 	private static final String PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES = "The principal ''{0}'' contains no deletable access control entries.";
 	private static final String CONFIRM_PRINCIPAL_ENTRIES_DELETE = "Are you sure you want to delete all the deletable access control entries for principal ''{0}''?";
 	private static final String CONFIRM_ENTRY_DELETE = "Are you sure you want to delete this access control entries for principal ''{0}''?";
 	private static final String NOT_EDITABLE_ENTRY = "This access control entry cannot be deleted.";
 
 	private static final String SECURITY_EDITOR_TITLE = "Security editor";
-	private static final String PRINCIPAL = "Principal";
 	private static final String REFRESH_LABEL = "Refresh Security";
 	private static final String ADD_GROUP_LABEL = "Add Entry";
 	private static final String DELETE_GROUP_LABEL = "Delete Entry";
@@ -128,9 +132,54 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		Tree tree = createTree(toolkit, client);
 		managedForm.addPart(spart);
 		createTableViewer(managedForm, spart, tree);
+		createContextMenu(client);
 		section.setClient(client);
 	}
 
+	private void createContextMenu(Composite client) {
+		final Menu menu = new Menu(client);
+		
+		menu.addMenuListener( new MenuAdapter() {
+
+			@Override
+			public void menuShown(MenuEvent e) {
+		        IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+				MenuItem item = menu.getItem(1);
+				item.setEnabled( !selection.isEmpty() );
+			}
+		} );
+		
+		createAddMenuItem(menu);
+		createDeleteMenuItem(menu);
+		viewer.getTree().setMenu( menu );
+	}
+
+	private void createAddMenuItem(final Menu menu) {
+		
+		MenuItem menuItem = new MenuItem(menu, SWT.PUSH );
+		menuItem.setText(ADD_MENU_TEXT);
+		menuItem.setImage( Activator.getImage(IconFiles.GROUP_ADD) );
+		menuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				performAddAccessControlEntry();
+			}
+		} );
+	}
+
+	private void createDeleteMenuItem(final Menu menu) {
+		
+		MenuItem menuItem = new MenuItem(menu, SWT.PUSH );
+		menuItem.setText(DELETE_MENU_TEXT);
+		menuItem.setImage( Activator.getImage(IconFiles.GROUP_DELETE) );
+		menuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				performDeleteSelection();
+			}
+		} );
+	}
+	
 	private Composite createLinksClient(Composite client) {
 		Composite buttons = new Composite(client, SWT.NONE );
 		FillLayout fillLayout = new FillLayout();
@@ -201,16 +250,21 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	}
 	
 	protected boolean performDeleteSelection() {
+		boolean result = false;
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		if ( !selection.isEmpty() ) {
 			Object object = selection.iterator().next();
 			if (object instanceof ISecurityPrincipal ) {
-				return deletePrincipalEntries((ISecurityPrincipal) object );
+				result = deletePrincipalEntries((ISecurityPrincipal) object );
 			} else if ( object instanceof IAccessControlEntry ) {
-				return deleteAccessControlEntry(object);
+				result = deleteAccessControlEntry(object);
 			}
 		}
-		return false;
+		
+		if ( result ) {
+			viewer.refresh();
+		}
+		return result;
 	}
 
 	private boolean deletePrincipalEntries(ISecurityPrincipal securityPrincipal) {
@@ -275,43 +329,6 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		}
 	}
 
-	private void createToolbar(Section section) {
-		ToolBar tbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
-//		createFilterReadOnlyButton(tbar);
-//		createRefreshButton(tbar);        
-        section.setTextClient(tbar);
-	}
-
-//	private void createFilterReadOnlyButton(ToolBar tbar) {
-//		ToolItem titem = new ToolItem(tbar, SWT.CHECK );
-//        titem.setImage(Activator.getImage( IconFiles.READ_ONLY ));
-//        titem.setToolTipText(FILTER_LABEL);
-//        titem.setSelection( filterReadOnly );
-//        titem.addSelectionListener( new SelectionAdapter() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				ToolItem toolItem = (ToolItem) e.getSource();
-//				filterReadOnly = toolItem.getSelection();
-//				viewer.refresh();
-//			}
-//			} 
-//        );
-//	}
-
-//	private void createRefreshButton(ToolBar tbar) {
-//		ToolItem titem = new ToolItem(tbar, SWT.PUSH );
-//        titem.setToolTipText(REFRESH_LABEL);
-//        titem.addSelectionListener( new SelectionAdapter() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				performRefresh();
-//			}} 
-//        );
-//        titem.setImage(Activator.getImage( IconFiles.REFRESH ));
-//	}
-
 	private Tree createTree(FormToolkit toolkit, Composite client) {
 		
 		Tree tree = toolkit.createTree(client, SWT.FULL_SELECTION | SWT.BORDER );
@@ -334,92 +351,10 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		});
 		ColumnViewerToolTipSupport.enableFor(viewer, ToolTip.NO_RECREATE);
 		
-//		createSourceAndTypeColumn();
-//		createPrincipalColumn();		
-//		createPrincipalColumn();
-//		createPrincipalColumn();
 		viewer.setLabelProvider( new SecurityLabelProvider() );
 		viewer.setContentProvider( new SecurityContentProvider() );
 		tree.setHeaderVisible(false);
-		
-//		viewer.addFilter( new ViewerFilter() {
-//
-//			@Override
-//			public boolean select(Viewer viewer, Object parentElement, Object element) {
-//				if ( ((Property) element).isSettableOnEdit() || ! filterReadOnly ) {
-//					return true;
-//				}
-//				return false;
-//			}
-//			} 
-//		);
 	}
-
-//	private void createSourceAndTypeColumn() {
-//		final TableViewerColumn col = new TableViewerColumn(viewer, SWT.NONE);
-//		col.getColumn().setWidth(20);
-//		col.getColumn().setText("");
-//		col.setLabelProvider( getSourceAndTypeLabelProvider() );
-//	}
-	
-	private CellLabelProvider getSourceAndTypeLabelProvider() {
-		
-		return new ColumnLabelProvider() {
-
-			@Override
-			public Image getImage(Object element) {
-				final IAccessControlEntry ace = (IAccessControlEntry) element;
-				if ( ace.getSource().equals( AccessControlEntrySource.INHERITED ) ) {
-					return Activator.getImage(IconFiles.INHERITED);
-				}
-				return null;
-			}
-
-			@Override
-			public String getToolTipText(Object element) {
-				final IAccessControlEntry ace = (IAccessControlEntry) element;
-				return ace.getSource().toString();
-			}
-
-			@Override
-			public String getText(Object element) {
-				return "";
-			}
-		};
-	}
-
-	private void createPrincipalColumn() {
-		final TreeViewerColumn col = new TreeViewerColumn(viewer, SWT.NONE);
-		col.getColumn().setWidth(200);
-		col.getColumn().setText(PRINCIPAL);
-//		col.setLabelProvider( getPrincipalLabelProvider() );
-	}
-//
-//	private ColumnLabelProvider getPrincipalLabelProvider() {
-//
-//		return new ColumnLabelProvider() {
-//			@Override
-//			public String getText(Object element) {
-//				IAccessControlEntry ace = (IAccessControlEntry) element;
-//				return ace.getPrincipal() + "\r\n" + "nog een keer!";
-//			}
-//
-//			@Override
-//			public Image getImage(Object element) {
-//				IAccessControlEntry ace = (IAccessControlEntry) element;
-//				if ( ace.isGroup() == null || ace.isGroup() ) {
-//					return Activator.getImage(IconFiles.GROUP);
-//				} else {
-//					return Activator.getImage(IconFiles.USER);
-//				}
-//			}
-//
-//			@Override
-//			public String getToolTipText(Object element) {
-//				return element.toString();
-//			}
-//		};
-//	}
 
 	private Composite createClient(FormToolkit toolkit, Section section) {
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
@@ -484,5 +419,11 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 
 	public void refresh(IAccessControlEntry accessControlEntry) {
 		viewer.update(accessControlEntry, null);
+	}
+	
+	public Shell getShell() {
+		IWorkbench wb = PlatformUI.getWorkbench();
+		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+		return win.getShell();
 	}
 }

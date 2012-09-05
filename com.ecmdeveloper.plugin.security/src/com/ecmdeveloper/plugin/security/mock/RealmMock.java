@@ -154,4 +154,10 @@ public class RealmMock implements IRealm {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Collection<IPrincipal> getMemberships(IPrincipal principal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

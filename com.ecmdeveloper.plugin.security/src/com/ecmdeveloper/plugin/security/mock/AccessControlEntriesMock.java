@@ -126,4 +126,10 @@ public class AccessControlEntriesMock implements IAccessControlEntries, Property
 			securityPrincipals.remove(principal);
 		}
 	}
+
+	@Override
+	public Collection<IAccessControlEntry> getAccessControlEntries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

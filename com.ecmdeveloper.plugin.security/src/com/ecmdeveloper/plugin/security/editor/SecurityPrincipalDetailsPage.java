@@ -20,22 +20,29 @@
 
 package com.ecmdeveloper.plugin.security.editor;
 
+import java.text.MessageFormat;
+import java.util.Collection;
+
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
-import org.eclipse.ui.forms.widgets.Section;
 
-import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
+import com.ecmdeveloper.plugin.security.jobs.GetMembersJob;
+import com.ecmdeveloper.plugin.security.jobs.GetMembershipsJob;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
 
 /**
@@ -44,9 +51,21 @@ import com.ecmdeveloper.plugin.security.util.IconFiles;
  */
 public class SecurityPrincipalDetailsPage extends BaseDetailsPage {
 
+	private static final String MEMBERSHIPS_MESSAGE = "Memberships of {1} {0}.";
+	private static final String MEMBERS_MESSAGE = "Members of group {0}.";
+	private static final String SHOW_MEMBERSHIPS = "Show Memberships";
+	private static final String SHOW_MEMBERS = "Show Members";
 	private static final String EMPTY_STRING = "";
 	private Label nameLabel;
 	private ImageHyperlink showMembersLink;
+	private ImageHyperlink showMembershipsLink;
+	private Label displayNameLabel;
+	private final Shell shell;
+	private ISecurityPrincipal securityPrincipal;
+
+	public SecurityPrincipalDetailsPage(Shell shell) {
+		this.shell = shell;
+	}
 
 	@Override
 	protected int getNumClientColumns() {
@@ -85,35 +104,87 @@ public class SecurityPrincipalDetailsPage extends BaseDetailsPage {
 
 	@Override
 	protected void createClientContent(Composite client) {
-//		super.createClientContent(client);
+
+//		Color color1 = new Color(Display.getCurrent(), 0, 128, 0 );
+//		client.setBackground(color1);
+		
 		Composite linksClient = createLinksClient(client);
+		createShowMembershipsLink(linksClient);
+		createShowMembersLink(linksClient);
 		
-		showMembersLink = form.getToolkit().createImageHyperlink(linksClient, SWT.WRAP);
-		showMembersLink.setText("Show Members");
-		showMembersLink.setImage( Activator.getImage(IconFiles.GROUP) );
-		showMembersLink.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-			}
-	    });
-		
-		ImageHyperlink showMembershipsLink = form.getToolkit().createImageHyperlink(linksClient, SWT.WRAP);
-		showMembershipsLink.setText("Show Members");
+		form.getToolkit().createLabel(client, "Name: ");
+		nameLabel = form.getToolkit().createLabel(client, EMPTY_STRING, SWT.WRAP );
+		GridData layoutData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+
+		form.getToolkit().createLabel(client, "Display Name: ");
+		displayNameLabel = form.getToolkit().createLabel(client, EMPTY_STRING, SWT.WRAP );
+		displayNameLabel.setLayoutData(layoutData);
+	}
+
+	private void createShowMembershipsLink(Composite linksClient) {
+		showMembershipsLink = form.getToolkit().createImageHyperlink(linksClient, SWT.WRAP);
+		showMembershipsLink.setText(SHOW_MEMBERSHIPS);
 		showMembershipsLink.setImage( Activator.getImage(IconFiles.MEMBERSHIPS) );
 		showMembershipsLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
+
+				GetMembershipsJob job = new GetMembershipsJob(securityPrincipal, shell);
+				job.setUser(true);
+				job.addJobChangeListener( new JobChangeAdapter() {
+
+					@Override
+					public void done(IJobChangeEvent event) {
+						GetMembershipsJob job2 = (GetMembershipsJob) event.getJob();
+						if ( job2.getResult().isOK() ) {
+							String message = MessageFormat.format(MEMBERSHIPS_MESSAGE, securityPrincipal.getDisplayName(), securityPrincipal.isGroup() ? "group" : "user" );
+							showPrincipalsList( job2.getMemberships(), "Show Memberships",  message );
+						}
+					}
+
+				} );
+				job.schedule();
 			}
 	    });
+	}
+
+	private void showPrincipalsList(final Collection<IPrincipal> members, final String title, final String message) {
 		
-		FormToolkit toolkit = form.getToolkit();
+		shell.getDisplay().syncExec( new Runnable() {
+			@Override
+			public void run() {
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new SecurityLabelProvider() );
+				dialog.setTitle(title);
+				dialog.setMessage(message);
+				dialog.setElements( members.toArray() );
+				dialog.open();
+			}
+		} );
+	}
 
+	private void createShowMembersLink(Composite linksClient) {
+		showMembersLink = form.getToolkit().createImageHyperlink(linksClient, SWT.WRAP);
+		showMembersLink.setText(SHOW_MEMBERS);
+		showMembersLink.setImage( Activator.getImage(IconFiles.MEMBERS) );
+		showMembersLink.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
 
-		form.getToolkit().createLabel(client, "Name: ");
-		nameLabel = form.getToolkit().createLabel(client, EMPTY_STRING);
+				GetMembersJob job = new GetMembersJob(securityPrincipal, shell);
+				job.setUser(true);
+				job.addJobChangeListener( new JobChangeAdapter() {
 
-		
-//		GridData layoutData = new GridData();
-//		layoutData.horizontalSpan = getNumClientColumns();
-//		showMembersLink.setLayoutData(layoutData);
+					@Override
+					public void done(IJobChangeEvent event) {
+						GetMembersJob job2 = (GetMembersJob) event.getJob();
+						if ( job2.getResult().isOK() ) {
+							String message = MessageFormat.format(MEMBERS_MESSAGE, securityPrincipal.getDisplayName());
+							showPrincipalsList( job2.getMembers(), "Show Members", message );
+						}
+					}
+
+				} );
+				job.schedule();
+			}
+	    });
 	}
 
 	private Composite createLinksClient(Composite client) {
@@ -140,10 +211,15 @@ public class SecurityPrincipalDetailsPage extends BaseDetailsPage {
 	    if ( object != null ) {
 	    	
 			if ( object instanceof ISecurityPrincipal ) {
-				ISecurityPrincipal securityPrincipal = (ISecurityPrincipal) object;
+				securityPrincipal = (ISecurityPrincipal) object;
 				nameLabel.setText( securityPrincipal.getName() );
-				
+				nameLabel.pack(true);
+
+				displayNameLabel.setText( securityPrincipal.getDisplayName() );
+				displayNameLabel.pack(true);
+
 				showMembersLink.setVisible(securityPrincipal.isGroup() );
+				showMembershipsLink.setVisible(securityPrincipal.isGroup() || securityPrincipal.isUser() );
 			}
 	    }
 	}
