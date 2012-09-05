@@ -25,12 +25,13 @@ import java.util.Collection;
 
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
-import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembersTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembershipsTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.security.Principal;
 import com.ecmdeveloper.plugin.model.security.Realm;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.ecmdeveloper.plugin.util.CEIterable;
+import com.filenet.api.collection.GroupSet;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Factory;
 import com.filenet.api.property.PropertyFilter;
@@ -41,37 +42,47 @@ import com.filenet.api.security.User;
  * @author ricardo.belfor
  *
  */
-public class GetMembersTask extends BaseTask implements IGetMembersTask {
+public class GetMembershipsTask extends BaseTask implements IGetMembershipsTask {
 
+	private static final PropertyFilter MEMBERSHIPS_PROPERTY_FILTER = new PropertyFilter();
+	{
+		MEMBERSHIPS_PROPERTY_FILTER.addIncludeProperty(0, null, null, PropertyNames.MEMBER_OF_GROUPS, null);
+	}
+	
 	private final Realm realm;
 	private final Principal principal;
-	private static final PropertyFilter MEMBERS_PROPERTY_FILTER = new PropertyFilter();
-	{
-		MEMBERS_PROPERTY_FILTER.addIncludeProperty(0, null, null, PropertyNames.GROUPS, null);
-		MEMBERS_PROPERTY_FILTER.addIncludeProperty(0, null, null, PropertyNames.USERS, null);
-	}
-	private Collection<IPrincipal> members = new ArrayList<IPrincipal>();
+	private Collection<IPrincipal> memberships = new ArrayList<IPrincipal>();
 	
-	public GetMembersTask(IRealm realm, IPrincipal principal) {
+	public GetMembershipsTask(IRealm realm, IPrincipal principal) {
 		this.realm = (Realm) realm;
 		this.principal = (Principal) principal;
 	}
 
 	@Override
 	protected Object execute() throws Exception {
-		
-		com.filenet.api.security.Realm internalRealm = realm.getInternalRealm();
-		Group parentGroup = Factory.Group.fetchInstance(internalRealm.getConnection(), principal.getName(),
-				MEMBERS_PROPERTY_FILTER);
-		
-		for ( Group group : new CEIterable<Group>( parentGroup.get_Groups() ) ) {
-			members.add( new Principal(group, realm) );
-		}
 
-		for ( User user : new CEIterable<User>( parentGroup.get_Users() ) ) {
-			members.add( new Principal(user, realm) );
-		}
+		com.filenet.api.security.Realm internalRealm = realm.getInternalRealm();
+		GroupSet groups = getGroups(internalRealm);
 		
+		if ( groups != null ) {
+			for ( Group group : new CEIterable<Group>( groups ) ) {
+				memberships.add( new Principal(group, realm) );
+			}
+		}
+			
+		return null;
+	}
+
+	private GroupSet getGroups(com.filenet.api.security.Realm internalRealm) {
+		if ( principal.isGroup() ) {
+			Group group = Factory.Group.fetchInstance(internalRealm.getConnection(), principal.getName(),
+					MEMBERSHIPS_PROPERTY_FILTER);
+			return group.get_MemberOfGroups();
+		} else if (principal.isUser() ) {
+			User user = Factory.User.fetchInstance(internalRealm.getConnection(), principal.getName(),
+					MEMBERSHIPS_PROPERTY_FILTER);
+			return user.get_MemberOfGroups();
+		}
 		return null;
 	}
 
@@ -81,7 +92,7 @@ public class GetMembersTask extends BaseTask implements IGetMembersTask {
 	}
 
 	@Override
-	public Collection<IPrincipal> getMembers() {
-		return members;
+	public Collection<IPrincipal> getMemberships() {
+		return memberships;
 	}
 }

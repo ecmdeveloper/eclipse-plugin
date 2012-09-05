@@ -70,7 +70,7 @@ public class FindPrincipalsTask  extends BaseTask implements IFindPrincipalsTask
 
 		if ( iterator != null ) {
 			while ( iterator.hasNext() ) {
-				principals.add( new Principal(iterator.next() ) );
+				principals.add( new Principal(iterator.next(), realm ) );
 			}
 		}
 		

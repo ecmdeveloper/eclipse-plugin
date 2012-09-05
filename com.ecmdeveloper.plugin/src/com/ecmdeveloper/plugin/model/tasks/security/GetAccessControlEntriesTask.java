@@ -96,7 +96,7 @@ public class GetAccessControlEntriesTask extends BaseTask implements IGetAccessC
 				return principal;
 			}
 		}
-		return new Principal(permission.get_GranteeName(), PrincipalType.UNKNOWN );
+		return new Principal(permission.get_GranteeName(), PrincipalType.UNKNOWN, null );
 	}
 
 	private void intializeDescriptions() {

@@ -155,7 +155,7 @@ public class AccessControlEntry implements IAccessControlEntry {
 		return customAccessLevel;
 	}
 
-	private Integer getAccessMask() {
+	public Integer getAccessMask() {
 		Integer accessMask = 0;
 		for ( IAccessRight accessRight : accessRights ) {
 			if ( accessRight.isGranted() ) {

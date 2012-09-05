@@ -38,6 +38,8 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembersTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembershipsTask;
 import com.ecmdeveloper.plugin.util.CEIterable;
 import com.filenet.api.collection.GroupSet;
 import com.filenet.api.collection.UserSet;
@@ -130,7 +132,7 @@ public class Realm implements IRealm {
 				return getUserPrincipal(granteeName );
 			}
 		} else {
-			return new Principal(granteeName, PrincipalType.SPECIAL_ACCOUNT );
+			return new Principal(granteeName, PrincipalType.SPECIAL_ACCOUNT, this );
 		}
 		
 		return null;
@@ -154,7 +156,7 @@ public class Realm implements IRealm {
 				PrincipalSearchType.EXACT, PrincipalSearchAttribute.SHORT_NAME,
 				PrincipalSearchSortType.NONE, null, null);
 		if (!users.isEmpty()) {
-			return new Principal( users.iterator().next() );
+			return new Principal( users.iterator().next(), this );
 		}
 		return null;
 	}
@@ -164,7 +166,7 @@ public class Realm implements IRealm {
 				PrincipalSearchType.EXACT, PrincipalSearchAttribute.SHORT_NAME,
 				PrincipalSearchSortType.NONE, null, null);
 		if (!groups.isEmpty()) {
-			return new Principal( groups.iterator().next() );
+			return new Principal( groups.iterator().next(), this );
 		}
 		return null;
 	}
@@ -175,21 +177,19 @@ public class Realm implements IRealm {
 	}
 
 	@Override
-	public Collection<IPrincipal> getMembers(IPrincipal principal) {
-		ArrayList<IPrincipal> members = new ArrayList<IPrincipal>();
-//
-//		PropertyFilter MEMBERS_PROPERTY_FILTER = new PropertyFilter();
-//		membersPropertyFilter.addIncludeProperty(0, null, null, PropertyNames.GROUPS, null);
-//		membersPropertyFilter.addIncludeProperty(0, null, null, PropertyNames.USERS, null);
-//
-//		Group parentGroup = Factory.Group.fetchInstance(realm.getConnection(), principal.getName(),
-//				membersPropertyFilter);
-//		for ( Group group : new CEIterable<Group>( parentGroup.get_Groups() ) ) {
-//			members.add( new Principal(group) );
-//		}
-	
-		return null;
+	public Collection<IPrincipal> getMembers(IPrincipal principal) throws Exception {
+		
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IGetMembersTask task = taskFactory.getGetMembersTask(principal);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
+		return task.getMembers();
 	}
-	
-	
+
+	@Override
+	public Collection<IPrincipal> getMemberships(IPrincipal principal) throws Exception {
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		IGetMembershipsTask task = taskFactory.getGetMembershipsTask(principal);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
+		return task.getMemberships();
+	}
 }
