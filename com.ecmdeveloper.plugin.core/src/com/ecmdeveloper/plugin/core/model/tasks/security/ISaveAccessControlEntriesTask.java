@@ -20,15 +20,12 @@
 
 package com.ecmdeveloper.plugin.core.model.tasks.security;
 
-import java.util.Collection;
-
-import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 
 /**
  * @author ricardo.belfor
  *
  */
-public interface IGetMembershipsTask extends IBaseTask {
-	Collection<IPrincipal> getMemberships();
+public interface ISaveAccessControlEntriesTask extends IBaseTask {
+
 }
