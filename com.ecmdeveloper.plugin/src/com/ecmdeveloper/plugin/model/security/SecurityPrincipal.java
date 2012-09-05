@@ -46,7 +46,7 @@ public class SecurityPrincipal extends Principal implements ISecurityPrincipal{
 	private final PropertyChangeSupport listeners;
 
 	public SecurityPrincipal(IPrincipal principal, PropertyChangeSupport listeners ) {
-		super( principal.getName(), principal.getShortName(), principal.getDisplayName(), principal.getType() );
+		super( principal.getName(), principal.getShortName(), principal.getDisplayName(), principal.getType(), principal.getRealm() );
 		this.listeners = listeners;
 		accessControlEntries.registerObserver( getAccessControlEntriesListener() );
 	}

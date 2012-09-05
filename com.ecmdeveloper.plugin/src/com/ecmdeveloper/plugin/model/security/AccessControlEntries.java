@@ -26,7 +26,9 @@ import java.beans.PropertyChangeSupport;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
@@ -286,5 +288,16 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 
 	public void addAccessRightDescription(AccessRightDescription accessRightDescription) {
 		accessRightDescriptions.add(accessRightDescription);
+	}
+
+	@Override
+	public Collection<IAccessControlEntry> getAccessControlEntries() {
+		Set<IAccessControlEntry> accessControlEntries = new HashSet<IAccessControlEntry>();
+		
+		for ( ISecurityPrincipal principal : securityPrincipals ) {
+			accessControlEntries.addAll( principal.getAccessControlEntries() );
+		}
+
+		return accessControlEntries;
 	}
 }

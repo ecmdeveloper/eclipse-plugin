@@ -35,6 +35,8 @@ import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
@@ -69,15 +71,22 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetAccessControlEntriesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembersTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembershipsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.ISaveAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.model.ClassDescription;
 import com.ecmdeveloper.plugin.model.Document;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.model.security.AccessControlEntries;
 import com.ecmdeveloper.plugin.model.security.Realm;
 import com.ecmdeveloper.plugin.model.tasks.security.FindPrincipalsTask;
 import com.ecmdeveloper.plugin.model.tasks.security.GetAccessControlEntriesTask;
+import com.ecmdeveloper.plugin.model.tasks.security.GetMembersTask;
+import com.ecmdeveloper.plugin.model.tasks.security.GetMembershipsTask;
 import com.ecmdeveloper.plugin.model.tasks.security.GetRealmsTask;
+import com.ecmdeveloper.plugin.model.tasks.security.SaveAccessControlEntriesTask;
 
 /**
  * @author ricardo.belfor
@@ -296,5 +305,22 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public IGetAccessControlEntriesTask getGetAccessControlEntriesTask(IObjectStoreItem objectStoreItem, Collection<IRealm> realms) {
 		return new GetAccessControlEntriesTask((ObjectStoreItem) objectStoreItem, realms);
+	}
+
+	@Override
+	public IGetMembersTask getGetMembersTask(IPrincipal principal) {
+		return new GetMembersTask( principal.getRealm(), principal);
+	}
+
+	@Override
+	public IGetMembershipsTask getGetMembershipsTask(IPrincipal principal) {
+		return new GetMembershipsTask(principal.getRealm(), principal);
+	}
+
+	@Override
+	public ISaveAccessControlEntriesTask getSaveAccessControlEntriesTask(
+			IObjectStoreItem objectStoreItem, IAccessControlEntries accessControlEntries) {
+		return new SaveAccessControlEntriesTask((ObjectStoreItem) objectStoreItem,
+				(AccessControlEntries) accessControlEntries);
 	}
 }

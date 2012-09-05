@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.model.security;
 
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
+import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.filenet.api.security.Group;
 import com.filenet.api.security.User;
 
@@ -36,24 +37,28 @@ public class Principal implements IPrincipal {
 	private final String displayName;
 	private final PrincipalType type;
 	private final String shortName;
+	private final IRealm realm;
 	
-	public Principal(String name, String shortName, String displayName, PrincipalType type) {
+	public Principal(String name, String shortName, String displayName, PrincipalType type, IRealm realm) {
 		this.name = name;
 		this.displayName = displayName;
+		this.realm = realm;
 		this.type = isSpecialAccountName(name) ? PrincipalType.SPECIAL_ACCOUNT : type;
 		this.shortName = shortName;
 	}
 
-	public Principal(String name, PrincipalType type) {
+	public Principal(String name, PrincipalType type, IRealm realm) {
 		this.name = name;
 		this.displayName = name;
+		this.realm = realm;
 		this.type = isSpecialAccountName(name) ? PrincipalType.SPECIAL_ACCOUNT : type;
 		this.shortName = name;
 	}
 	
-	public Principal(Object internalPrincipal) {
+	public Principal(Object internalPrincipal, IRealm realm) {
 		
 		this.internalPrincipal = internalPrincipal;
+		this.realm = realm;
 		
 		if (internalPrincipal instanceof Group) {
 			Group group = (Group) internalPrincipal;
@@ -122,5 +127,10 @@ public class Principal implements IPrincipal {
 	@Override
 	public String getShortName() {
 		return shortName;
+	}
+
+	@Override
+	public IRealm getRealm() {
+		return realm;
 	}
 }
