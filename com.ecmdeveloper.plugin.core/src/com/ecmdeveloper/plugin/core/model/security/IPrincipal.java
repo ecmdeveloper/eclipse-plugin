@@ -10,4 +10,5 @@ public interface IPrincipal {
 	boolean isGroup();
 	boolean isSpecialAccount();
 	boolean isUser();
+	IRealm getRealm();
 }

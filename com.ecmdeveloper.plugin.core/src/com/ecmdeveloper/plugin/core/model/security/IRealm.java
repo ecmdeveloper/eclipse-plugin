@@ -41,5 +41,6 @@ public interface IRealm {
 	IObjectStore getObjectStore();
 	void store(IPrincipal item, IMemento memento);
 	IPrincipal restore(IMemento memento);
-	Collection<IPrincipal> getMembers(IPrincipal principal);
+	Collection<IPrincipal> getMembers(IPrincipal principal) throws Exception;
+	Collection<IPrincipal> getMemberships(IPrincipal principal) throws Exception;
 }

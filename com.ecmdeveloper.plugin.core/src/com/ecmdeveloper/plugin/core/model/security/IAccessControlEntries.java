@@ -29,8 +29,8 @@ import java.util.Collection;
  */
 public interface IAccessControlEntries {
 	Collection<ISecurityPrincipal> getPrincipals();
-	
-	public void removePropertyChangeListener(PropertyChangeListener listener);
-	public void addPropertyChangeListener(PropertyChangeListener listener);
-	public IAccessControlEntry addAccessControlEntry(IPrincipal principal);
+	void removePropertyChangeListener(PropertyChangeListener listener);
+	void addPropertyChangeListener(PropertyChangeListener listener);
+	IAccessControlEntry addAccessControlEntry(IPrincipal principal);
+	Collection<IAccessControlEntry> getAccessControlEntries();
 }

@@ -34,6 +34,8 @@ import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
@@ -46,7 +48,10 @@ import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IGetCodeModulesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.IUpdateCodeModuleTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetAccessControlEntriesTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembersTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembershipsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
+import com.ecmdeveloper.plugin.core.model.tasks.security.ISaveAccessControlEntriesTask;
 
 /**
  * @author ricardo.belfor
@@ -128,4 +133,10 @@ public interface ITaskFactory {
 	IFindPrincipalsTask getFindPrincipalsTask(IRealm realm, String pattern, PrincipalType type, IProgressMonitor progressMonitor );
 	
 	IGetAccessControlEntriesTask getGetAccessControlEntriesTask(IObjectStoreItem objectStoreItem, Collection<IRealm> realms );
+	
+	IGetMembershipsTask getGetMembershipsTask(IPrincipal principal);
+
+	IGetMembersTask getGetMembersTask(IPrincipal principal);
+	
+	ISaveAccessControlEntriesTask getSaveAccessControlEntriesTask(IObjectStoreItem objectStoreItem, IAccessControlEntries accessControlEntries);
 }
