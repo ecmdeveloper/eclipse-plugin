@@ -40,18 +40,13 @@ import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IFindPrincipalsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembersTask;
 import com.ecmdeveloper.plugin.core.model.tasks.security.IGetMembershipsTask;
-import com.ecmdeveloper.plugin.util.CEIterable;
 import com.filenet.api.collection.GroupSet;
 import com.filenet.api.collection.UserSet;
 import com.filenet.api.constants.PrincipalSearchAttribute;
 import com.filenet.api.constants.PrincipalSearchSortType;
 import com.filenet.api.constants.PrincipalSearchType;
-import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.constants.SecurityPrincipalType;
-import com.filenet.api.core.Factory;
-import com.filenet.api.property.PropertyFilter;
 import com.filenet.api.security.AccessPermission;
-import com.filenet.api.security.Group;
 
 /**
  * @author ricardo.belfor
