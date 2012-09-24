@@ -276,12 +276,6 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		return null;
 	}
 
-	private PrincipalType getPrincipalType(AccessPermission permission) {
-		return permission.get_GranteeType().equals(SecurityPrincipalType.GROUP) ? PrincipalType.GROUP
-				: (permission.get_GranteeType().equals(SecurityPrincipalType.USER) ? PrincipalType.USER
-						: PrincipalType.UNKNOWN);
-	}
-
 	public void addAccessLevel(AccessLevel accessLevel) {
 		accessLevels.add(accessLevel);
 	}

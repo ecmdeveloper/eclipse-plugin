@@ -19,6 +19,7 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -31,10 +32,12 @@ import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
+import com.ecmdeveloper.plugin.util.ObjectDumper;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentObject;
 import com.filenet.api.core.ReferentialContainmentRelationship;
+import com.filenet.api.property.PropertyFilter;
 
 /**
  * This task is used for loading the children of an item.
@@ -44,6 +47,14 @@ import com.filenet.api.core.ReferentialContainmentRelationship;
  */
 public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 
+	private static final PropertyFilter propertyFilter = new PropertyFilter();
+	{
+		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.CONTAINEES, null);
+		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.SUB_FOLDERS, null);
+		propertyFilter.addIncludeProperty(2, null, true, PropertyNames.HEAD, 1 );
+		propertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
+	}
+	
 	private ObjectStoreItem objectStoreItem;
 	private ArrayList<IObjectStoreItem> children;
 	
@@ -107,7 +118,7 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 		
 		while (iterator.hasNext() ) {
 			ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
-			relation.fetchProperties( new String[]{ PropertyNames.HEAD, PropertyNames.CONTAINMENT_NAME } );
+//			relation.fetchProperties( new String[]{ PropertyNames.HEAD, PropertyNames.CONTAINMENT_NAME } );
 			IndependentObject object = relation.get_Head();
 			addContainee(object, objectStore, relation.get_ContainmentName() );
 		}
@@ -149,11 +160,19 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 			com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) objectStoreItem.getObjectStoreObject();
 			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
 			folder = objectStore.get_RootFolder();
-			folder.fetchProperties( new String[] { PropertyNames.CONTAINEES, PropertyNames.SUB_FOLDERS } );
 		} else if ( objectStoreItem instanceof Folder ) {
 			folder = (com.filenet.api.core.Folder) objectStoreItem.getObjectStoreObject();
 		} else {
 			return null;
+		}
+
+		folder.fetchProperties( propertyFilter );
+		
+		ObjectDumper od = new ObjectDumper();
+		try {
+			od.dump(folder);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return folder;
 	}
