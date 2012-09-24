@@ -27,10 +27,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -39,6 +41,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
+import com.ecmdeveloper.plugin.security.jobs.RefreshSecurityEditorJob;
 import com.ecmdeveloper.plugin.security.jobs.SaveAccessControlEntriesJob;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
 
@@ -52,7 +55,7 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 	
 	private SecurityPage securityPage;
 	private IObjectStoreItem objectStoreItem;
-	private IAccessControlEntries accessControlEntries;
+//	private IAccessControlEntries accessControlEntries;
 	private boolean isPageModified;
 
 	@Override
@@ -60,8 +63,7 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 		try {
 			addSecurityPage();
 			objectStoreItem = (IObjectStoreItem) getEditorInput().getAdapter( IObjectStoreItem.class);
-			accessControlEntries = (IAccessControlEntries) getEditorInput().getAdapter( IAccessControlEntries.class);
-			accessControlEntries.addPropertyChangeListener(this);
+			getAccessControlEntries().addPropertyChangeListener(this);
 			isPageModified = false;
 			
 			updateTitle();
@@ -88,7 +90,7 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		Job job = new SaveAccessControlEntriesJob(objectStoreItem, accessControlEntries, getSite().getShell() );
+		Job job = new SaveAccessControlEntriesJob(objectStoreItem, getAccessControlEntries(), getSite().getShell() );
 		job.setUser(true);
 		job.addJobChangeListener( new JobChangeAdapter() {
 
@@ -96,15 +98,14 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 			public void done(IJobChangeEvent event) {
 				if ( event.getResult().isOK() ) {
 					isPageModified = false;
-					getSite().getShell().getDisplay().syncExec( new Runnable() {
-						@Override
-						public void run() {
-							firePropertyChange(IEditorPart.PROP_DIRTY);
-						}}  
-					);
+					doRefresh();
 				}
 			} } );
 		job.schedule();
+	}
+
+	private IAccessControlEntries getAccessControlEntries() {
+		return ((SecurityEditorInput)getEditorInput()).getAccessControlEntries();
 	}
 
 	@Override
@@ -126,7 +127,7 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 
 	@Override
 	public void dispose() {
-		accessControlEntries.removePropertyChangeListener(this);
+		getAccessControlEntries().removePropertyChangeListener(this);
 		super.dispose();
 	}
 
@@ -165,5 +166,42 @@ public class SecurityEditor extends FormEditor implements PropertyChangeListener
 				// No changing selection
 			}
 		});
+	}
+
+	protected void doRefresh() {
+
+		if ( isDirty() ) {
+			String message = "This editor contains changes, ary you sure you want to refresh?";
+			if ( !MessageDialog.openConfirm(getSite().getShell(), getTitle(), message ) ) {
+				return;
+			}	
+		}
+		getAccessControlEntries().removePropertyChangeListener(this);
+		
+		try {
+			final Shell shell = getSite().getShell();
+			Job job = new RefreshSecurityEditorJob((SecurityEditorInput) getEditorInput(), shell );
+			job.setUser(true);
+			job.addJobChangeListener( new JobChangeAdapter() {
+
+				@Override
+				public void done(IJobChangeEvent event) {
+					if ( event.getResult().isOK() ) {
+						
+						getAccessControlEntries().addPropertyChangeListener(SecurityEditor.this);
+						shell.getDisplay().syncExec( new Runnable() {
+
+							@Override
+							public void run() {
+								securityPage.refreshFormContent();
+								isPageModified = false;
+								firePropertyChange(IEditorPart.PROP_DIRTY);
+							} } );
+					}
+				}} );
+			job.schedule();
+		} catch (Exception exception) {
+			PluginLog.error( exception );
+		}
 	}
 }

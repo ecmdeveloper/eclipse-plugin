@@ -41,7 +41,7 @@ public class GetMembersJob extends Job {
 
 	private static final String FETCHING_MEMBERS = "Fetching Members";
 	private static final String TITLE = "Show Members";
-	private static final String NO_MEMBERS_MESSAGE = "This princial has no members";
+	private static final String NO_MEMBERS_MESSAGE = "This group has no members";
 	private final IPrincipal principal;
 	private final Shell shell;
 	private Collection<IPrincipal> members;
@@ -64,6 +64,10 @@ public class GetMembersJob extends Job {
 		try {
 			monitor.beginTask(FETCHING_MEMBERS, IProgressMonitor.UNKNOWN);
 			members = realm.getMembers(principal);
+			if ( members.isEmpty() ) {
+				showNoMembersMessage();
+				return Status.CANCEL_STATUS;
+			}
 			monitor.done();
 		} catch (Exception e) {
 			PluginMessage.openErrorFromThread(TITLE, e.getLocalizedMessage(), e);

@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -33,6 +36,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -64,7 +68,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.handlers.IHandlerService;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
@@ -73,6 +76,7 @@ import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.dialogs.PrincipalSelectionDialog;
+import com.ecmdeveloper.plugin.security.jobs.RefreshSecurityEditorJob;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
 
@@ -102,13 +106,14 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	private TreeViewer viewer;
 	private IAccessControlEntries accessControlEntries;
 	private Collection<IRealm> realms;
+	private SecurityEditorInput editorInput;
 	
 	public SecurityEditorBlock(FormPage page) {
 		this.page = page;
 	}
 
 	public void setInput(Object input) {
-		SecurityEditorInput editorInput = (SecurityEditorInput) input;
+		editorInput = (SecurityEditorInput) input;
 		accessControlEntries = (IAccessControlEntries) editorInput.getAdapter(IAccessControlEntries.class);
 		realms = editorInput.getRealms();
 		viewer.setInput(accessControlEntries);
@@ -120,7 +125,6 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = createSection(parent, toolkit);
-		//createToolbar(section);
 		Composite client = createClient(toolkit, section);
 
 		Composite buttons = createLinksClient(client);
@@ -131,7 +135,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		final SectionPart spart = new SectionPart(section);
 		Tree tree = createTree(toolkit, client);
 		managedForm.addPart(spart);
-		createTableViewer(managedForm, spart, tree);
+		createTreeViewer(managedForm, spart, tree);
 		createContextMenu(client);
 		section.setClient(client);
 	}
@@ -203,7 +207,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	protected void performAddAccessControlEntry() {
 
 		final IPrincipal initialPrincipal = getInitialPrincipal();
-		final Shell shell = Display.getCurrent().getActiveShell();
+		final Shell shell = getShell();
 
 		if ( realms != null) {
 			final FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell, realms, initialPrincipal );
@@ -272,13 +276,13 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		List<IAccessControlEntry> deletableEntries = getDeletableEntries(securityPrincipal);
 		if ( !deletableEntries.isEmpty() ) {
 			String message = MessageFormat.format(CONFIRM_PRINCIPAL_ENTRIES_DELETE, securityPrincipal.getDisplayName() );
-			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
+			if ( MessageDialog.openConfirm(getShell(), SECURITY_EDITOR_TITLE, message) ) {
 				securityPrincipal.getAccessControlEntries().removeAll( deletableEntries );
 				return true;
 			}
 		} else {
 			String message = MessageFormat.format(PRINCIPAL_CONTAINS_NO_EDITABLE_ENTRIES, securityPrincipal.getDisplayName() );
-			MessageDialog.openWarning(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message);
+			MessageDialog.openWarning(getShell(), SECURITY_EDITOR_TITLE, message);
 		}
 		return false;
 	}
@@ -298,13 +302,13 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		
 		if ( accessControlEntry.canDelete() ) {
 			String message = MessageFormat.format(CONFIRM_ENTRY_DELETE, accessControlEntry.getPrincipal().getDisplayName());
-			if ( MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, message) ) {
+			if ( MessageDialog.openConfirm(getShell(), SECURITY_EDITOR_TITLE, message) ) {
 				ISecurityPrincipal securityPrincipal = accessControlEntry.getPrincipal();
 				securityPrincipal.getAccessControlEntries().remove(accessControlEntry);
 				return true;
 			}
 		} else {
-			MessageDialog.openWarning(Display.getCurrent().getActiveShell(), SECURITY_EDITOR_TITLE, NOT_EDITABLE_ENTRY);
+			MessageDialog.openWarning(getShell(), SECURITY_EDITOR_TITLE, NOT_EDITABLE_ENTRY);
 		}
 		return false;
 	}
@@ -321,12 +325,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	}
 	
 	protected void performRefresh() {
-		IHandlerService handlerService = (IHandlerService) page.getSite().getService(IHandlerService.class);
-		try {
-			handlerService.executeCommand(REFRESH_PROPERTIES_COMMAND_ID, null );
-		} catch (Exception exception) {
-			PluginLog.error( exception );
-		}
+		((SecurityEditor)page.getEditor()).doRefresh();
 	}
 
 	private Tree createTree(FormToolkit toolkit, Composite client) {
@@ -340,7 +339,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		return tree;
 	}
 
-	private void createTableViewer(final IManagedForm managedForm, final SectionPart sectionPart,
+	private void createTreeViewer(final IManagedForm managedForm, final SectionPart sectionPart,
 			Tree tree) {
 	
 		viewer = new TreeViewer(tree);
@@ -353,6 +352,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		
 		viewer.setLabelProvider( new SecurityLabelProvider() );
 		viewer.setContentProvider( new SecurityContentProvider() );
+		viewer.setSorter( new ViewerSorter() { } );
 		tree.setHeaderVisible(false);
 	}
 
@@ -422,8 +422,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	}
 	
 	public Shell getShell() {
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		return win.getShell();
+		return Display.getCurrent().getActiveShell();
+//		return page.getEditorSite().getShell();
 	}
 }

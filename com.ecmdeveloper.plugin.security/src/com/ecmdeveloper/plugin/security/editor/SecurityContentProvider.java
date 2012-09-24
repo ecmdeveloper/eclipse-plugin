@@ -21,15 +21,11 @@
 package com.ecmdeveloper.plugin.security.editor;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IEditorInput;
 
-import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
@@ -40,20 +36,8 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
  */
 public class SecurityContentProvider implements IStructuredContentProvider,  ITreeContentProvider {
 
-	private TreeViewer viewer;
-	private IObjectStoreItem objectStoreItem;
-	private IAccessControlEntries accessControlEntries2;
-
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
-		this.viewer = (TreeViewer) viewer;
-	
-		if ( newInput != null ) {
-//			objectStoreItem  = (IObjectStoreItem)((IEditorInput) newInput).getAdapter( IObjectStoreItem.class);
-			accessControlEntries2  = (IAccessControlEntries) newInput;
-		}
-		
 	}
 
 	@Override
