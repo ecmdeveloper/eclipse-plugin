@@ -77,61 +77,72 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoresView?after=edit">
-         <command
-               commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+         <menu
                icon="icons/pencil.png"
-               label="Edit..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IFolder">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.editDocumentVersion"
-               icon="icons/versions_edit.png"
-               label="Edit Document Version..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
+               id="com.ecmdeveloper.plugin.views.ObjectStoresView.edit"
+               label="Edit">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <and>
-                              <instanceof
-                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
-                              </instanceof>
-                              <test
-                                    property="com.ecmdeveloper.plugin.canCheckout">
-                              </test>
-                           </and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.ICustomObject">
+                           </instanceof>
                         </or>
-                     </iterate></and>
-               </with>
-            </visibleWhen>
-         </command>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/versions_edit.png"
+               id="com.ecmdeveloper.plugin.views.ObjectStoresView.editVersion"
+               label="Edit Document Version">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editDocumentVersion"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <and>
+                        <count
+                              value="1">
+                        </count>
+                        <iterate
+                              ifEmpty="false">
+                           <or>
+                              <and>
+                                 <instanceof
+                                       value="com.ecmdeveloper.plugin.core.model.IDocument">
+                                 </instanceof>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </and>
+                           </or>
+                        </iterate>
+                     </and>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
@@ -158,62 +169,72 @@
       </menuContribution>
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoreFavorites?after=edit">
-         <command
-               commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+         <menu
                icon="icons/pencil.png"
-               label="Edit..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IFolder">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.editDocumentVersion"
-               icon="icons/versions_edit.png"
-               label="Edit Document Version..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
+               id="com.ecmdeveloper.plugin.views.ObjectStoreFavorites.edit"
+               label="Edit">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <and>
-                              <instanceof
-                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
-                              </instanceof>
-                              <test
-                                    property="com.ecmdeveloper.plugin.canCheckout">
-                              </test>
-                           </and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.ICustomObject">
+                           </instanceof>
                         </or>
                      </iterate>
-                  </and>
-               </with>
-            </visibleWhen>
-         </command>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/versions_edit.png"
+               id="com.ecmdeveloper.plugin.views.ObjectStoreFavorites.editVersion"
+               label="Edit Document Version">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editDocumentVersion"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <and>
+                        <count
+                              value="1">
+                        </count>
+                        <iterate
+                              ifEmpty="false">
+                           <or>
+                              <and>
+                                 <instanceof
+                                       value="com.ecmdeveloper.plugin.core.model.IDocument">
+                                 </instanceof>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </and>
+                           </or>
+                        </iterate>
+                     </and>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
          <menu
                label="New">
             <command
@@ -358,121 +379,141 @@
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.search.ui.views.SearchView?after=additions">
-         <command
-               commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+         <menu
                icon="icons/pencil.png"
-               label="Edit..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IFolder">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.editDocumentVersion"
-               icon="icons/versions_edit.png"
-               label="Edit Document Version..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
+               id="com.ecmdeveloper.plugin.views.SearchView.edit"
+               label="Edit">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <and>
-                              <instanceof
-                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
-                              </instanceof>
-                              <test
-                                    property="com.ecmdeveloper.plugin.canCheckout">
-                              </test>
-                           </and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.ICustomObject">
+                           </instanceof>
                         </or>
                      </iterate>
-                  </and>
-               </with>
-            </visibleWhen>
-         </command>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/versions_edit.png"
+               id="com.ecmdeveloper.plugin.views.SearchView.editVersion"
+               label="Edit Document Version">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editDocumentVersion"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <and>
+                        <count
+                              value="1">
+                        </count>
+                        <iterate
+                              ifEmpty="false">
+                           <or>
+                              <and>
+                                 <instanceof
+                                       value="com.ecmdeveloper.plugin.core.model.IDocument">
+                                 </instanceof>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </and>
+                           </or>
+                        </iterate>
+                     </and>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.ui.parentFolderView?after=additions">
-         <command
-               commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+         <menu
                icon="icons/pencil.png"
-               label="Edit..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IFolder">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.editDocumentVersion"
-               icon="icons/versions_edit.png"
-               label="Edit Document Version..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
+               id="com.ecmdeveloper.plugin.views.ParentFolderView.edit"
+               label="Edit">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <and>
-                              <instanceof
-                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
-                              </instanceof>
-                              <test
-                                    property="com.ecmdeveloper.plugin.canCheckout">
-                              </test>
-                           </and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.ICustomObject">
+                           </instanceof>
                         </or>
                      </iterate>
-                  </and>
-               </with>
-            </visibleWhen>
-         </command>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/versions_edit.png"
+               id="com.ecmdeveloper.plugin.views.ParentFolderView.editVersion"
+               label="Edit Document Version">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editDocumentVersion"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <and>
+                        <count
+                              value="1">
+                        </count>
+                        <iterate
+                              ifEmpty="false">
+                           <or>
+                              <and>
+                                 <instanceof
+                                       value="com.ecmdeveloper.plugin.core.model.IDocument">
+                                 </instanceof>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </and>
+                           </or>
+                        </iterate>
+                     </and>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
          <menu
                label="New">
             <command
@@ -530,62 +571,72 @@
       </menuContribution>
       <menuContribution
             locationURI="menu:com.ecmdeveloper.plugin.security.editor.toolbar">
-         <command
-               commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+         <menu
                icon="icons/pencil.png"
-               label="Edit..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <or>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IFolder">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.IDocument">
-                        </instanceof>
-                        <instanceof
-                              value="com.ecmdeveloper.plugin.core.model.ICustomObject">
-                        </instanceof>
-                     </or>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="com.ecmdeveloper.plugin.editDocumentVersion"
-               icon="icons/versions_edit.png"
-               label="Edit Document Version..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
+               id="com.ecmdeveloper.plugin.security.editor.toolbar.edit"
+               label="Edit">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editObjectStoreItem"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
                      <iterate
                            ifEmpty="false">
                         <or>
-                           <and>
-                              <instanceof
-                                    value="com.ecmdeveloper.plugin.core.model.IDocument">
-                              </instanceof>
-                              <test
-                                    property="com.ecmdeveloper.plugin.canCheckout">
-                              </test>
-                           </and>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IFolder">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.IDocument">
+                           </instanceof>
+                           <instanceof
+                                 value="com.ecmdeveloper.plugin.core.model.ICustomObject">
+                           </instanceof>
                         </or>
                      </iterate>
-                  </and>
-               </with>
-            </visibleWhen>
-         </command>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+         <menu
+               icon="icons/versions_edit.png"
+               id="com.ecmdeveloper.plugin.security.editor.toolbar.editVersion"
+               label="Edit Document Version">
+            <command
+                  commandId="com.ecmdeveloper.plugin.editDocumentVersion"
+                  icon="icons/calendar_edit.png"
+                  label="Properties..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <and>
+                        <count
+                              value="1">
+                        </count>
+                        <iterate
+                              ifEmpty="false">
+                           <or>
+                              <and>
+                                 <instanceof
+                                       value="com.ecmdeveloper.plugin.core.model.IDocument">
+                                 </instanceof>
+                                 <test
+                                       property="com.ecmdeveloper.plugin.canCheckout">
+                                 </test>
+                              </and>
+                           </or>
+                        </iterate>
+                     </and>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
