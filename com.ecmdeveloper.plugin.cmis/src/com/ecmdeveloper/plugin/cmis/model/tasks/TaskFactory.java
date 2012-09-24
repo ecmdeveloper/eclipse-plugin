@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.ecmdeveloper.plugin.cmis.model.Document;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.cmis.model.tasks.security.GetAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
@@ -296,7 +297,7 @@ public class TaskFactory implements ITaskFactory {
 
 	@Override
 	public IGetAccessControlEntriesTask getGetAccessControlEntriesTask(IObjectStoreItem objectStoreItem, Collection<IRealm> realms) {
-		return null;
+		return new GetAccessControlEntriesTask((ObjectStoreItem) objectStoreItem, realms);
 	}
 
 	@Override
