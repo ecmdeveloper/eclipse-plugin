@@ -37,12 +37,12 @@ import com.ecmdeveloper.plugin.core.model.security.IRealm;
 public class SecurityEditorInput implements IEditorInput {
 
 	private final IObjectStoreItem objectStoreItem;
-	private final IAccessControlEntries accessControlEntries;
 	private final Collection<IRealm> realms;
+	private IAccessControlEntries accessControlEntries;
 
 	public SecurityEditorInput(IObjectStoreItem objectStoreItem, IAccessControlEntries accessControlEntries, Collection<IRealm> realms) {
 		this.objectStoreItem = objectStoreItem;
-		this.accessControlEntries = accessControlEntries;
+		this.setAccessControlEntries(accessControlEntries);
 		this.realms = realms;
 	}	
 
@@ -59,7 +59,7 @@ public class SecurityEditorInput implements IEditorInput {
 
 	@Override
 	public String getName() {
-		return objectStoreItem.getDisplayName();
+		return getObjectStoreItem().getDisplayName();
 	}
 
 	@Override
@@ -76,14 +76,26 @@ public class SecurityEditorInput implements IEditorInput {
 	@Override
 	public Object getAdapter(Class adapter) {
 		if ( adapter.equals( IObjectStoreItem.class) ) {
-			return objectStoreItem;
+			return getObjectStoreItem();
 		} else if ( adapter.equals( IAccessControlEntries.class ) ) {
-			return accessControlEntries;
+			return getAccessControlEntries();
 		}
 		return null;
 	}
 
 	public Collection<IRealm> getRealms() {
 		return realms;
+	}
+
+	public IObjectStoreItem getObjectStoreItem() {
+		return objectStoreItem;
+	}
+
+	public void setAccessControlEntries(IAccessControlEntries accessControlEntries) {
+		this.accessControlEntries = accessControlEntries;
+	}
+
+	public IAccessControlEntries getAccessControlEntries() {
+		return accessControlEntries;
 	}
 }

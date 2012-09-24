@@ -20,7 +20,6 @@
 
 package com.ecmdeveloper.plugin.security.dialogs;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -53,13 +52,11 @@ import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.dialogs.SearchPattern;
 
 import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
-import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.editor.SecurityLabelProvider;
-import com.ecmdeveloper.plugin.security.mock.PrincipalMock;
 
 /**
  * @author ricardo.belfor
@@ -416,6 +413,7 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 			super(new SearchPattern(/*SearchPattern.RULE_EXACT_MATCH |*/
 					SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH
 					| SearchPattern.RULE_BLANK_MATCH));
+			patternMatcher.setPattern( patternMatcher.getPattern().toLowerCase() );
 		}
 
 		public boolean matchItem(Object item) {

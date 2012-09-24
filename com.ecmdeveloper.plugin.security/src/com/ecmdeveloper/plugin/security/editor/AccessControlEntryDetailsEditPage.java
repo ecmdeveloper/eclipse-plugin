@@ -42,7 +42,6 @@ import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
 import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
 import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
-import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
  * @author ricardo.belfor

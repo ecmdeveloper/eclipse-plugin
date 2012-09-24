@@ -20,6 +20,7 @@
 
 package com.ecmdeveloper.plugin.security.jobs;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,7 +41,7 @@ import com.ecmdeveloper.plugin.core.util.PluginMessage;
 public class GetMembershipsJob extends Job {
 
 	private static final String TITLE = "Show Memberships";
-	private static final String NO_MEMBERSHIPS_MESSAGE = "This princial has no memberships";
+	private static final String NO_MEMBERSHIPS_MESSAGE = "This {0} has no memberships";
 	private final IPrincipal principal;
 	private final Shell shell;
 	private Collection<IPrincipal> memberships;
@@ -63,6 +64,10 @@ public class GetMembershipsJob extends Job {
 		try {
 			monitor.beginTask("Fetching Memberships", IProgressMonitor.UNKNOWN);
 			memberships = realm.getMemberships(principal);
+			if ( memberships.isEmpty() ) {
+				showNoMembershipsMessage();
+				return Status.CANCEL_STATUS;
+			}
 			monitor.done();
 		} catch (Exception e) {
 			PluginMessage.openErrorFromThread(TITLE, e.getLocalizedMessage(), e);
@@ -76,7 +81,8 @@ public class GetMembershipsJob extends Job {
 		shell.getDisplay().syncExec( new Runnable() {
 			@Override
 			public void run() {
-				MessageDialog.openInformation(shell, TITLE, NO_MEMBERSHIPS_MESSAGE );
+				String message = MessageFormat.format(NO_MEMBERSHIPS_MESSAGE, principal.isGroup() ? "group" : "user" );
+				MessageDialog.openInformation(shell, TITLE, message );
 			}
 		} );
 	}

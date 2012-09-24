@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Image;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
@@ -102,9 +103,16 @@ public class SecurityLabelProvider extends LabelProvider implements ITableLabelP
 			return ((IPrincipal) element).getDisplayName();
 		} else if ( element instanceof IAccessControlEntry ) {
 			IAccessControlEntry accessControlEntry = (IAccessControlEntry) element;
-			String propagation = accessControlEntry.getAccessControlEntryPropagation().getName();
-			String name = accessControlEntry.getAccessLevel().getName();
-			return MessageFormat.format("{0} - {1}", name, propagation) ;
+			IAccessControlEntryPropagation accessControlEntryPropagation = accessControlEntry.getAccessControlEntryPropagation();
+			if ( accessControlEntryPropagation != null) {
+				String propagation = accessControlEntryPropagation.getName();
+				String name = accessControlEntry.getAccessLevel().getName();
+				return MessageFormat.format("{0} - {1}", name, propagation) ;
+			}
+			else 
+			{
+				return accessControlEntry.getAccessLevel().getName();
+			}
 		}
 		return super.getText(element);
 	}
