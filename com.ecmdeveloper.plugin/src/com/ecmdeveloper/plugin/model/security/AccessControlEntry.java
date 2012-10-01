@@ -168,4 +168,9 @@ public class AccessControlEntry implements IAccessControlEntry {
 	void onAccessRightChanged(AccessRight accessRight) {
 		setAccessLevel( getAccessLevel( getAccessMask() ) );
 	}
+
+	@Override
+	public boolean isContentEngine() {
+		return true;
+	}
 }
