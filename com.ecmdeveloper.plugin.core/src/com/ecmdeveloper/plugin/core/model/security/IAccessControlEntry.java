@@ -48,5 +48,5 @@ public interface IAccessControlEntry {
 	List<IAccessRight> getAccessRights();
 	boolean isEditable();
 	boolean canDelete();
-	
+	boolean isContentEngine();
 }
