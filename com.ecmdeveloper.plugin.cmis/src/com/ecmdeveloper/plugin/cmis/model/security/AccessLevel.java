@@ -20,7 +20,15 @@
 
 package com.ecmdeveloper.plugin.cmis.model.security;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+
 import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
+import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
 
 /**
  * @author ricardo.belfor
@@ -28,17 +36,47 @@ import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
  */
 public class AccessLevel implements IAccessLevel {
 
+	public static final String CMIS_READ_PERMISSION = "cmis:read";
+	public static final String CMIS_WRITE_PERMISSION = "cmis:write";
+	public static final String CMIS_ALL_PERMISSION = "cmis:all";
+
 	private final String name;
+	private final String id;
 	private final boolean defaultLevel;
+	private final List<IAccessRight> accessRights;
 	
-	public AccessLevel(String name) {
-		this.name = name;
+	public AccessLevel(PermissionDefinition permissionDefinition, Map<String, PermissionMapping> permissionMappings) {
+		this.id = permissionDefinition.getId();
+		this.name = permissionDefinition.getDescription();
 		this.defaultLevel = false;
+		
+		accessRights = new ArrayList<IAccessRight>();
+		addAccessRights(permissionMappings);
 	}
 
+	private void addAccessRights(Map<String, PermissionMapping> permissionMappings) {
+	    for ( PermissionMapping permissionMapping : permissionMappings.values() ) {
+	    	boolean granted = isGranted(id, permissionMapping);
+	    	AccessRight accessRight = new AccessRight(permissionMapping.getKey(), granted );
+	    	accessRights.add(accessRight);
+	    }
+	}
+
+	private boolean isGranted(String permission, PermissionMapping permissionMapping) {
+		for (String p : permissionMapping.getPermissions() ) {
+			if (p.equalsIgnoreCase(permission)
+					|| (permission.equals(CMIS_ALL_PERMISSION) && 
+							(isGranted(CMIS_READ_PERMISSION, permissionMapping) || 
+							 isGranted(CMIS_WRITE_PERMISSION,permissionMapping)) ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public String getName() {
-		return name;
+		return name != null ? name : id;
 	}
 
 	@Override
@@ -49,5 +87,13 @@ public class AccessLevel implements IAccessLevel {
 	@Override
 	public boolean isDefaultLevel() {
 		return defaultLevel;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public List<IAccessRight> getAccessRights() {
+		return accessRights;
 	}
 }

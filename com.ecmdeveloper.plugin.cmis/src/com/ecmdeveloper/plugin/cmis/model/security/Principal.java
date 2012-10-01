@@ -36,6 +36,10 @@ public class Principal implements IPrincipal {
 		name = internalPrincipal.getId();
 	}
 
+	public Principal(IPrincipal principal) {
+		name = principal.getName();
+	}
+
 	@Override
 	public String getDisplayName() {
 		return name;

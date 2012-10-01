@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
+import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.core.util.collections.AbstractArrayListObserver;
 import com.ecmdeveloper.plugin.core.util.collections.ObservableArrayList;
@@ -47,9 +48,11 @@ public class SecurityPrincipal extends Principal implements ISecurityPrincipal{
 		accessControlEntries.registerObserver( getAccessControlEntriesListener() );
 	}
 
-//	public static PrincipalType getPrincipalType(AccessPermission permission) {
-//		return PrincipalType.UNKNOWN;
-//	}
+	public SecurityPrincipal(IPrincipal principal, PropertyChangeSupport listeners ) {
+		super( principal );
+		this.listeners = listeners;
+		accessControlEntries.registerObserver( getAccessControlEntriesListener() );
+	}
 
 	private AbstractArrayListObserver<IAccessControlEntry> getAccessControlEntriesListener() {
 

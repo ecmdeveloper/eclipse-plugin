@@ -42,7 +42,6 @@ public class AccessControlEntry implements IAccessControlEntry {
 	private static final String ACCESS_LEVEL_CHANGED = "ACCESS_LEVEL";
 	private static final String ACCESS_CONTROL_ENTRY_PROPAGATION_CHANGED = "ACCESS_CONTROL_ENTRY_PROPAGATION";
 	private final ISecurityPrincipal securityPrincipal;
-	private final List<IAccessRight> accessRights;
 	private final AccessControlEntrySource accessControlEntrySource;
 	private AccessControlEntryType accessControlEntryType;
 	private IAccessControlEntryPropagation accessControlEntryPropagation;
@@ -58,7 +57,6 @@ public class AccessControlEntry implements IAccessControlEntry {
 		this.accessControlEntrySource = accessControlEntrySource;
 		this.listeners = listeners;
 		
-		accessRights = new ArrayList<IAccessRight>();
 		accessControlEntryPropagations = new ArrayList<IAccessControlEntryPropagation>();
 	}
 
@@ -74,7 +72,7 @@ public class AccessControlEntry implements IAccessControlEntry {
 
 	@Override
 	public List<IAccessRight> getAccessRights() {
-		return accessRights;
+		return ((AccessLevel)accessLevel).getAccessRights();
 	}
 
 	@Override
@@ -109,10 +107,6 @@ public class AccessControlEntry implements IAccessControlEntry {
 	public void setAccessLevel(IAccessLevel accessLevel) {
 		IAccessLevel oldValue = this.accessLevel;
 		this.accessLevel = accessLevel;
-		
-		for ( IAccessRight accessRight : accessRights ) {
-			accessRight.setGranted(accessLevel);
-		}
 		listeners.firePropertyChange(ACCESS_LEVEL_CHANGED, oldValue, accessLevel );
 	}
 
@@ -141,5 +135,10 @@ public class AccessControlEntry implements IAccessControlEntry {
 
 	void onAccessRightChanged(AccessRight accessRight) {
 //		setAccessLevel( getAccessLevel( getAccessMask() ) );
+	}
+
+	@Override
+	public boolean isContentEngine() {
+		return false;
 	}
 }

@@ -29,7 +29,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.ecmdeveloper.plugin.cmis.model.Document;
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.cmis.model.security.AccessControlEntries;
 import com.ecmdeveloper.plugin.cmis.model.tasks.security.GetAccessControlEntriesTask;
+import com.ecmdeveloper.plugin.cmis.model.tasks.security.SaveAccessControlEntriesTask;
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
@@ -313,7 +315,7 @@ public class TaskFactory implements ITaskFactory {
 	@Override
 	public ISaveAccessControlEntriesTask getSaveAccessControlEntriesTask(
 			IObjectStoreItem objectStoreItem, IAccessControlEntries accessControlEntries) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SaveAccessControlEntriesTask((ObjectStoreItem) objectStoreItem,
+				(AccessControlEntries) accessControlEntries);
 	}
 }
