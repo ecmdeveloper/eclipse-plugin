@@ -64,6 +64,7 @@ public class SaveAccessControlEntriesJob extends Job {
 		} catch (Exception e) {
 			PluginMessage.openErrorFromThread(shell, JOB_NAME, MessageFormat.format(
 					FAILED_MESSAGE, objectStoreItem.getName()), e);
+			return Status.CANCEL_STATUS;
 		}
 		return Status.OK_STATUS;
 	}

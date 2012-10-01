@@ -154,4 +154,9 @@ public class AccessControlEntryMock implements IAccessControlEntry {
 		return accessControlEntryPropagations;
 	}
 
+	@Override
+	public boolean isContentEngine() {
+		return false;
+	}
+
 }

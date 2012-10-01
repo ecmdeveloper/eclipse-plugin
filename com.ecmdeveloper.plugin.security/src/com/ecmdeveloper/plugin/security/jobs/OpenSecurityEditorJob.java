@@ -94,9 +94,7 @@ public class OpenSecurityEditorJob extends Job {
 			Activator.getDefault().getTaskManager().executeTaskSync(getRealmsTask);
 			return getRealmsTask.getRealms();
 		} else {
-			Collection<IRealm> realms = new HashSet<IRealm>();
-			realms.add( new RealmMock("MyRealm", objectStoreItem.getObjectStore() ) );
-			return realms;
+			return null;
 		}
 	}
 

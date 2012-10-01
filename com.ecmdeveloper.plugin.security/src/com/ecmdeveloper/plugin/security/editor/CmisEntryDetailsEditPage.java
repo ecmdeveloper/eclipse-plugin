@@ -29,17 +29,13 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
 import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
 import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
 
@@ -47,31 +43,22 @@ import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
  * @author ricardo.belfor
  *
  */
-public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
+public class CmisEntryDetailsEditPage extends BaseDetailsPage {
 
-	private static final String DENY_LABEL = AccessControlEntryType.DENY.toString();
-	private static final String ALLOW_LABEL = AccessControlEntryType.ALLOW.toString();
-	
-	private Button allowButton;
-	private Button denyButton;
-	private ComboViewer levelCombo;
-	
+	private static final String EMPTY_STRING = "";
 	private IAccessControlEntry accessControlEntry;
 	private AccessRightsTable accessRightsTable;
-	private ComboViewer propagationCombo;
-	private final SecurityEditorBlock securityEditorBlock;
+	private ComboViewer levelCombo;
+	private Label applyToLabel;
+	private Label typeLabel;
 	
-	public AccessControlEntryDetailsEditPage(SecurityEditorBlock securityEditorBlock) {
-		this.securityEditorBlock = securityEditorBlock;
-	}
-
 	protected void createClientContent(Composite client) {
 		super.createClientContent(client);
 		
 		FormToolkit toolkit = form.getToolkit();
 		
-		createTypeControls(client, toolkit);
-		createApplyToControls(client);
+//		createTypeControls(client, toolkit);
+//		createApplyToControls(client);
 		createLevelControls(client);
 		createAccessRightsTable(client);
 	}
@@ -81,48 +68,15 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 		accessRightsTable = new AccessRightsTable(client, form, getNumClientColumns() ) {
 			@Override
 			protected void accessRightChanged(IAccessRight accessRight, boolean checked ) {
-				setDirty(true);
-				accessRight.setGranted( checked );
-				setLevelControlValue();
-				setChecked(accessRight, checked);
 			}
 		};
 	}
 
 	private void createTypeControls(Composite client, FormToolkit toolkit) {
 		toolkit.createLabel(client, "Type: ");
-		createAllowButton(client, toolkit);
-		createDenyButton(client, toolkit);
-		form.getToolkit().createLabel(client, "");
+		typeLabel = toolkit.createLabel(client, EMPTY_STRING);
 	}
 
-	private void createAllowButton(Composite client, FormToolkit toolkit) {
-		allowButton = toolkit.createButton(client, ALLOW_LABEL, SWT.RADIO );
-		allowButton.addSelectionListener( new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleTypeButtonSelection(e, AccessControlEntryType.ALLOW);
-			}
-		} );
-	}
-
-	private void createDenyButton(Composite client, FormToolkit toolkit) {
-		denyButton = toolkit.createButton(client, DENY_LABEL, SWT.RADIO );
-		denyButton.addSelectionListener( new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleTypeButtonSelection(e, AccessControlEntryType.DENY );
-			}
-		} );
-	}
-
-	
-	private void handleTypeButtonSelection(SelectionEvent e, AccessControlEntryType accessControlEntryType) {
-		if ( ((Button)e.widget).getSelection() ) { 
-			accessControlEntry.setType(accessControlEntryType);
-			setDirty(true);
-		}
-	}	
 	private void createLevelControls(Composite container) {
 
 		form.getToolkit().createLabel(container, "Level: ");
@@ -143,6 +97,8 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 				IStructuredSelection selection = (IStructuredSelection) levelCombo.getSelection();
 				if ( !selection.isEmpty() ) {
 					accessControlEntry.setAccessLevel((IAccessLevel) selection.getFirstElement());
+					accessRightsTable.setInput( accessControlEntry.getAccessRights() );
+					
 					for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
 						accessRightsTable.setChecked(accessRight, accessRight.isGranted());
 					}
@@ -151,34 +107,23 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 			}
 		};
 	}
+	
+	@Override
+	protected void setDirty(boolean isDirty) {
 
-	private void createApplyToControls(Composite container) {
+		this.isDirty = isDirty;
 
-		form.getToolkit().createLabel(container, "Apply To: ");
-
-		propagationCombo = new ComboViewer(container, SWT.VERTICAL | SWT.DROP_DOWN
-				| SWT.BORDER | SWT.READ_ONLY);
-		propagationCombo.setContentProvider(new ArrayContentProvider());
-		propagationCombo.setLabelProvider(new LabelProvider());
-		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
-		layoutData.horizontalSpan = 3;
-		propagationCombo.getCombo().setLayoutData(layoutData);
-		propagationCombo.addSelectionChangedListener( getPropagationComboListener() );
+		if ( isDirty ) {
+			form.dirtyStateChanged();
+//			securityEditorBlock.refresh(accessControlEntry);
+			setTitleImage(accessControlEntry);
+			commit(false);
+		}
 	}
-
-	private ISelectionChangedListener getPropagationComboListener() {
-		return new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) propagationCombo.getSelection();
-				if ( !selection.isEmpty() ) {
-					accessControlEntry
-					.setAccessControlEntryPropagation((IAccessControlEntryPropagation) selection
-							.getFirstElement());
-					setDirty(true);
-				}
-			}
-		};
+	
+	private void createApplyToControls(Composite container) {
+		form.getToolkit().createLabel(container, "Apply To: ");
+		applyToLabel = form.getToolkit().createLabel(container, EMPTY_STRING);
 	}
 	
 	@Override
@@ -190,24 +135,16 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 	    	accessControlEntry = (IAccessControlEntry) object;
 	    	setAccessControlEntryInformation(accessControlEntry);
 			setAccessRightsTableValues();
-    		setLevelControlValue();
-			setTypeControlsValue();
-			setPropagationControlValue();
-	    }
-	}
-
-	private void setPropagationControlValue() {
-		propagationCombo.setInput( accessControlEntry.getAllowedAccessControlEntryPropagations() );
-		ISelection propagationSelection = new StructuredSelection( accessControlEntry.getAccessControlEntryPropagation() );
-		propagationCombo.setSelection( propagationSelection  );
-	}
-
-	private void setAccessRightsTableValues() {
-		accessRightsTable.setInput( accessControlEntry.getAccessRights() );
-		for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
-			accessRightsTable.setChecked(accessRight, accessRight.isGranted() );
-		}
-		accessRightsTable.setEnabled( accessControlEntry.isEditable() );
+    		
+			setLevelControlValue();
+			
+//			typeLabel.setText(accessControlEntry.getType() != null ? accessControlEntry.getType()
+//					.toString() : EMPTY_STRING);
+//
+//			applyToLabel.setText(accessControlEntry.getAccessControlEntryPropagation() != null ? 
+//					accessControlEntry.getAccessControlEntryPropagation().toString()
+//							: EMPTY_STRING);
+			}
 	}
 
 	private void setLevelControlValue() {
@@ -215,35 +152,19 @@ public class AccessControlEntryDetailsEditPage extends BaseDetailsPage {
 		ISelection levelSelection = new StructuredSelection( accessControlEntry.getAccessLevel() );
 		levelCombo.setSelection(levelSelection  );
 	}
-
-	private void setTypeControlsValue() {
-		if ( accessControlEntry != null ) {
-			boolean allow = accessControlEntry.getType().equals( AccessControlEntryType.ALLOW );
-			allowButton.setSelection(allow);
-			denyButton.setSelection(!allow);
-		} else {
-			allowButton.setSelection(false);
-			denyButton.setSelection(false);
+	
+	private void setAccessRightsTableValues() {
+		accessRightsTable.setInput( accessControlEntry.getAccessRights() );
+		for ( IAccessRight accessRight : accessControlEntry.getAccessRights() ) {
+			accessRightsTable.setChecked(accessRight, accessRight.isGranted() );
 		}
+		accessRightsTable.setEnabled( false );
 	}
 	
 	
-	@Override
-	protected void setDirty(boolean isDirty) {
-
-		this.isDirty = isDirty;
-
-		if ( isDirty ) {
-			form.dirtyStateChanged();
-			securityEditorBlock.refresh(accessControlEntry);
-			setTitleImage(accessControlEntry);
-			commit(false);
-		}
-	}
-
 	@Override
 	protected int getNumClientColumns() {
-		return 4;
+		return 2;
 	}
 
 	/* (non-Javadoc)

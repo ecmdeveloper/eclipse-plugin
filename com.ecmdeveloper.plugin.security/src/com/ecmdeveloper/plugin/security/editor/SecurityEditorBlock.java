@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -69,6 +70,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
@@ -77,6 +79,7 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.dialogs.PrincipalSelectionDialog;
 import com.ecmdeveloper.plugin.security.jobs.RefreshSecurityEditorJob;
+import com.ecmdeveloper.plugin.security.mock.PrincipalMock;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
 
@@ -206,6 +209,20 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 
 	protected void performAddAccessControlEntry() {
 
+		final IPrincipal principal = getPrincipal();
+
+		if ( principal != null) {
+			IAccessControlEntry accessControlEntry = accessControlEntries.addAccessControlEntry(principal);
+			viewer.refresh();
+			viewer.expandToLevel(accessControlEntry.getPrincipal(), 2);
+			viewer.setSelection( new StructuredSelection( accessControlEntry ) );
+	
+			viewer.refresh();
+		}
+	}
+
+	private IPrincipal getPrincipal() {
+		
 		final IPrincipal initialPrincipal = getInitialPrincipal();
 		final Shell shell = getShell();
 
@@ -213,17 +230,20 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 			final FilteredItemsSelectionDialog dialog = new PrincipalSelectionDialog(shell, realms, initialPrincipal );
 			
 			if ( dialog.open() == Window.OK ) {
-				final IPrincipal principal = (IPrincipal) dialog.getFirstResult();
-				IAccessControlEntry accessControlEntry = accessControlEntries.addAccessControlEntry(principal);
-				viewer.refresh();
-				viewer.expandToLevel(accessControlEntry.getPrincipal(), 2);
-				viewer.setSelection( new StructuredSelection( accessControlEntry ) );
+				return (IPrincipal) dialog.getFirstResult();
 			}
 		} else {
-			MessageDialog.openError(shell, SECURITY_EDITOR_TITLE, "Not yet supported");
+			String oldName = initialPrincipal != null ? initialPrincipal.getName() : "";
+			InputDialog inputDialog = new InputDialog( shell, SECURITY_EDITOR_TITLE, "Enter the name of the principal", oldName, null );
+			int open = inputDialog.open();
+			
+			if ( open == InputDialog.OK ) {
+				// FIXME
+				return new PrincipalMock( inputDialog.getValue(), PrincipalType.UNKNOWN );
+				
+			}
 		}
-		   
-		viewer.refresh();
+		return null;
 	}
 
 	private IPrincipal getInitialPrincipal() {

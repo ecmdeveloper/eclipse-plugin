@@ -33,7 +33,7 @@ import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
  * @author ricardo.belfor
  *
  */
-public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
+public class CmisEntryDetailsViewPage extends BaseDetailsPage {
 
 	private static final String EMPTY_STRING = "";
 	private IAccessControlEntry accessControlEntry;
@@ -47,8 +47,8 @@ public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
 		
 		FormToolkit toolkit = form.getToolkit();
 		
-		createTypeControls(client, toolkit);
-		createApplyToControls(client);
+//		createTypeControls(client, toolkit);
+//		createApplyToControls(client);
 		createLevelControls(client);
 		createAccessRightsTable(client);
 	}
@@ -88,12 +88,13 @@ public class AccessControlEntryDetailsViewPage extends BaseDetailsPage {
 			setAccessRightsTableValues();
     		
     		levelLabel.setText( accessControlEntry.getAccessLevel().getName() );
-			typeLabel.setText(accessControlEntry.getType() != null ? accessControlEntry.getType()
-					.toString() : EMPTY_STRING);
-
-			applyToLabel.setText(accessControlEntry.getAccessControlEntryPropagation() != null ? 
-					accessControlEntry.getAccessControlEntryPropagation().toString()
-							: EMPTY_STRING);
+    		levelLabel.pack();
+//			typeLabel.setText(accessControlEntry.getType() != null ? accessControlEntry.getType()
+//					.toString() : EMPTY_STRING);
+//
+//			applyToLabel.setText(accessControlEntry.getAccessControlEntryPropagation() != null ? 
+//					accessControlEntry.getAccessControlEntryPropagation().toString()
+//							: EMPTY_STRING);
 			}
 	}
 
