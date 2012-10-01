@@ -24,7 +24,6 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 
 /**
@@ -33,12 +32,14 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
  */
 public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 
+	private static final String CMIS_ENTRY_VIEW_PAGE_KEY = "cmisControlEntryPage";
 	private static final String ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY = "accessControlEntryPage";
 	private static final String ACCESS_CONTROL_ENTRY_EDIT_PAGE_KEY = "accessControlEditEntryPage";
 	private static final String PRINCIPAL_PAGE_KEY = "principalPage";
 	private IDetailsPage unknownDetailsPage;
 	private IDetailsPage accessControlEntryDetailsViewPage;
 	private IDetailsPage accessControlEntryDetailsEditPage;
+	private IDetailsPage cmisEntryDetailsViewPage;
 	private final SecurityEditorBlock securityEditorBlock;
 	private IDetailsPage securityPrincipalDetailsPage;
 	
@@ -59,10 +60,20 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 			return getSecurityPrincipalDetailsPage();
 		}
 		
+		if ( CMIS_ENTRY_VIEW_PAGE_KEY.equals(key) ) {
+			return getCmisEntryDetailsViewPage();
+		}
 		if ( unknownDetailsPage == null ) {
 			unknownDetailsPage = new PermissionDetailsPage();
 		}
 		return unknownDetailsPage;
+	}
+
+	private IDetailsPage getCmisEntryDetailsViewPage() {
+		if ( cmisEntryDetailsViewPage == null) {
+			cmisEntryDetailsViewPage = new CmisEntryDetailsEditPage();
+		}
+		return cmisEntryDetailsViewPage;
 	}
 
 	private IDetailsPage getSecurityPrincipalDetailsPage() {
@@ -91,10 +102,15 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 		if (object instanceof ISecurityPrincipal ) {
 			return PRINCIPAL_PAGE_KEY;
 		} else if (object instanceof IAccessControlEntry ) {
-			if ( ((IAccessControlEntry) object).isEditable() ) {
-				return ACCESS_CONTROL_ENTRY_EDIT_PAGE_KEY;
+			IAccessControlEntry accessControlEntry = (IAccessControlEntry) object;
+			if ( accessControlEntry.isContentEngine() ) {
+				if ( accessControlEntry.isEditable() ) {
+					return ACCESS_CONTROL_ENTRY_EDIT_PAGE_KEY;
+				} else {
+					return ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY;
+				}
 			} else {
-				return ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY;
+				return CMIS_ENTRY_VIEW_PAGE_KEY; 
 			}
 		}
 		return null;
