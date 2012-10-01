@@ -32,6 +32,7 @@ import com.ecmdeveloper.plugin.model.Folder;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
+import com.ecmdeveloper.plugin.util.CEIterable;
 import com.ecmdeveloper.plugin.util.ObjectDumper;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.filenet.api.constants.PropertyNames;
@@ -47,13 +48,13 @@ import com.filenet.api.property.PropertyFilter;
  */
 public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 
-	private static final PropertyFilter propertyFilter = new PropertyFilter();
-	{
-		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.CONTAINEES, null);
-		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.SUB_FOLDERS, null);
-		propertyFilter.addIncludeProperty(2, null, true, PropertyNames.HEAD, 1 );
-		propertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
-	}
+//	private static final PropertyFilter propertyFilter = new PropertyFilter();
+//	{
+//		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.CONTAINEES, null);
+//		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.SUB_FOLDERS, null);
+//		propertyFilter.addIncludeProperty(2, null, true, PropertyNames.HEAD, 1 );
+//		propertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
+//	}
 	
 	private ObjectStoreItem objectStoreItem;
 	private ArrayList<IObjectStoreItem> children;
@@ -146,9 +147,10 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 	}
 
 	private ObjectStore addSubFolders(com.filenet.api.core.Folder folder, ObjectStore objectStore) {
-		Iterator<?> iterator = folder.get_SubFolders().iterator();
-		while (iterator.hasNext()) {
-			children.add( ObjectStoreItemFactory.createFolder( iterator.next(), objectStoreItem, objectStore ) );
+		
+		for (com.filenet.api.core.Folder subFolder : new CEIterable<com.filenet.api.core.Folder>(
+				folder.get_SubFolders())) {
+			children.add( ObjectStoreItemFactory.createFolder( subFolder, objectStoreItem, objectStore ) );
 		}
 		return objectStore;
 	}
@@ -165,6 +167,13 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 		} else {
 			return null;
 		}
+
+		PropertyFilter propertyFilter = new PropertyFilter();
+
+		propertyFilter.addIncludeProperty(0, null, true, PropertyNames.CONTAINEES, null);
+		propertyFilter.addIncludeProperty(1, null, false, PropertyNames.SUB_FOLDERS, null);
+		propertyFilter.addIncludeProperty(2, null, null, PropertyNames.HEAD, null );
+		propertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
 
 		folder.fetchProperties( propertyFilter );
 		
