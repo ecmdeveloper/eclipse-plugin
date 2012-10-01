@@ -35,7 +35,6 @@ import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntrySource;
 import com.ecmdeveloper.plugin.core.model.constants.AccessControlEntryType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntry;
-import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntryPropagation;
 import com.ecmdeveloper.plugin.core.model.security.IAccessLevel;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
@@ -48,17 +47,10 @@ import com.ecmdeveloper.plugin.core.util.collections.ObservableArrayList;
  */
 public class AccessControlEntries implements IAccessControlEntries, PropertyChangeListener {
 
-	private static final String CUSTOM_ACCESS_CONTROL_ENTRY_PROPAGATION_LABEL = "Custom ({0})";
-
-	private static final List<IAccessControlEntryPropagation> accessControlEntryPropagations = new ArrayList<IAccessControlEntryPropagation>();
-	{
-	}
-	
 	private ObservableArrayList<ISecurityPrincipal> securityPrincipals;
 	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	private List<IAccessLevel> accessLevels = new ArrayList<IAccessLevel>();
-//	private List<AccessRightDescription> accessRightDescriptions = new ArrayList<AccessRightDescription>();
-	
+
 	public AccessControlEntries() {
 		securityPrincipals = new ObservableArrayList<ISecurityPrincipal>( getArrayListObserver() );
 		listeners.addPropertyChangeListener(this);
@@ -99,18 +91,13 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 
 	@Override
 	public IAccessControlEntry addAccessControlEntry(IPrincipal principal) {
-// FIXME		
-//		SecurityPrincipal securityPrincipal = getSecurityPrincipal(principal);
-//
-//		Integer accessMask = getDefaultAccessMask();
-//		IAccessControlEntryPropagation accessControlEntryPropagation = getAccessControlEntryPropagation(0);
-//		AccessControlEntry accessControlEntry = createAccessControlEntry(securityPrincipal,
-//				AccessControlEntrySource.DIRECT, AccessControlEntryType.ALLOW, accessMask,
-//				accessControlEntryPropagation);
-//		securityPrincipal.getAccessControlEntries().add(accessControlEntry);
-//		
-//		return accessControlEntry;
-		return null;
+
+		SecurityPrincipal securityPrincipal = getSecurityPrincipal(principal);
+		AccessControlEntry accessControlEntry = createAccessControlEntry(securityPrincipal,
+				AccessControlEntrySource.DIRECT, AccessLevel.CMIS_READ_PERMISSION);
+		securityPrincipal.getAccessControlEntries().add(accessControlEntry);
+
+		return accessControlEntry;
 	}
 
 	private SecurityPrincipal getSecurityPrincipal(IPrincipal principal) {
@@ -118,13 +105,12 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		SecurityPrincipal securityPrincipal = getSecurityPrincipalByName(name);
 
 		if ( securityPrincipal == null ) {
-// FIXME			
-//			securityPrincipal = new SecurityPrincipal( principal, listeners );
+			securityPrincipal = new SecurityPrincipal( principal, listeners );
 			securityPrincipals.add(securityPrincipal);
 		}
 		return securityPrincipal;
 	}
-
+	
 	private SecurityPrincipal getSecurityPrincipalByName(String name) {
 		for ( ISecurityPrincipal securityPrincipal : securityPrincipals ) {
 			if ( securityPrincipal.getName().equals(name ) ) {
@@ -149,41 +135,12 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		}
 	}
 
-	private AccessControlEntry createAccessControlEntry(SecurityPrincipal principal,
-			AccessControlEntrySource accessControlEntrySource, String permission ) {
-		
-		AccessControlEntry accessControlEntry = new AccessControlEntry(principal, accessControlEntrySource, listeners );
-		accessControlEntry.setType( AccessControlEntryType.ALLOW );
-		accessControlEntry.setAccessLevel( new AccessLevel(permission));
-		
-//		addAccessRights(accessControlEntry, permissions);
-
-		return accessControlEntry;
-	}
-
 	private AccessControlEntrySource getSource(Ace permission) {
 		if ( permission.isDirect()) {
 			return AccessControlEntrySource.DIRECT;
 		} else {
 			return AccessControlEntrySource.INHERITED;
 		}
-	}
-
-	private void addAccessRights(AccessControlEntry accessControlEntry, List<String> permissions) {
-		
-//		for ( AccessRightDescription accessRightDescription : accessRightDescriptions ) {
-//			boolean granted = (accessMask & accessRightDescription.getAccessMask()) != 0;
-//			AccessRight accessRight = new AccessRight(accessControlEntry, accessRightDescription
-//					.getName(), accessRightDescription.getAccessMask(), granted);
-//			accessControlEntry.getAccessRights().add(accessRight);
-//		}
-		for ( String permission : permissions ) {
-			// FIXME
-			boolean granted = true;
-			AccessRight accessRight = new AccessRight(accessControlEntry, permission, granted);
-			accessControlEntry.getAccessRights().add(accessRight);
-		}
-		
 	}
 
 	private ISecurityPrincipal getPrincipal(Ace ace) {
@@ -224,5 +181,29 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 			AccessControlEntry accessControlEntry = createAccessControlEntry(principal, accessControlEntrySource, permission);
 			principal.getAccessControlEntries().add(accessControlEntry);
 		}
+	}
+
+	private AccessControlEntry createAccessControlEntry(SecurityPrincipal principal,
+			AccessControlEntrySource accessControlEntrySource, String permission ) {
+
+		AccessControlEntry accessControlEntry = new AccessControlEntry(principal, accessControlEntrySource, listeners );
+		accessControlEntry.setType( AccessControlEntryType.ALLOW );
+		accessControlEntry.setAccessLevel( getAccessLevel(permission) );
+		accessControlEntry.getAllowedAccessLevels().addAll(accessLevels);
+
+		return accessControlEntry;
+	}
+
+	private IAccessLevel getAccessLevel(String permission) {
+		for ( IAccessLevel accessLevel : accessLevels) {
+			if ( permission.equalsIgnoreCase( ((AccessLevel)accessLevel).getId() ) ) {
+				return accessLevel;
+			}
+		}
+		return null;
+	}
+
+	public void addAccessLevel(AccessLevel accessLevel) {
+		accessLevels.add(accessLevel);
 	}
 }

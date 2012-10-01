@@ -21,7 +21,6 @@
 package com.ecmdeveloper.plugin.cmis.model.tasks.security;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -30,11 +29,12 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
-import org.apache.chemistry.opencmis.commons.data.Principal;
+import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.cmis.model.security.AccessControlEntries;
-import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
+import com.ecmdeveloper.plugin.cmis.model.security.AccessLevel;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.AbstractTask;
@@ -64,12 +64,13 @@ public class GetAccessControlEntriesTask extends AbstractTask implements IGetAcc
 	public Object call() throws Exception {
 		
 		accessControlEntries = new AccessControlEntries();
-
+	    Session session = objectStoreItem.getObjectStore().getSession();
+		initializeDescription(session);
+		
 		CmisObject cmisObject = objectStoreItem.getCmisObject();
 		
 		OperationContext operationContext = new OperationContextImpl();
-	    operationContext.setIncludeAcls(true);
-	    Session session = objectStoreItem.getObjectStore().getSession();
+	    operationContext.setIncludeAcls(true);	    
 	    
 	    cmisObject = session.getObject(cmisObject, operationContext);
 	    
@@ -79,91 +80,17 @@ public class GetAccessControlEntriesTask extends AbstractTask implements IGetAcc
 				accessControlEntries.addAce(ace);
 			}
 		}
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
-//	@Override
-//	protected Object execute() throws Exception {
-//		
-//		accessControlEntries = new AccessControlEntries();
-//		
-//		PropertyFilter pf = new PropertyFilter();
-//		pf.addIncludeProperty(0, null, null, PropertyNames.CLASS_DESCRIPTION, null);
-//		pf.addIncludeProperty(0, null, null, PropertyNames.PERMISSIONS, null);
-//		objectStoreItem.getObjectStoreObject().refresh(pf);
-//		
-//		intializeDescriptions();
-//		
-//		if ( objectStoreItem instanceof Document || objectStoreItem instanceof Folder || objectStoreItem instanceof CustomObject ) {
-//			Containable containable = (Containable) objectStoreItem.getObjectStoreObject();
-//			AccessPermissionList permissions = containable.get_Permissions();
-//			
-//			for ( AccessPermission permission : getAccessPermissionListIterator(permissions) ) {
-//				Principal principal = getPrincipal(permission);
-//				
-//				accessControlEntries.addPermission(permission, principal );
-//			}
-//		}
-//
-//		return null;
-//	}
-
-//	private Principal getPrincipal(AccessPermission permission) {
-//		for ( IRealm realm : realms) {
-//			Principal principal = ((Realm)realm).getPrincipal( permission );
-//			if ( principal != null ) {
-//				return principal;
-//			}
-//		}
-//		return new Principal(permission.get_GranteeName(), PrincipalType.UNKNOWN, null );
-//	}
-//
-//	private void intializeDescriptions() {
-//		ClassDescription classDescription = objectStoreItem.getObjectStoreObject().get_ClassDescription();
-//		AccessPermissionDescriptionList descriptions = classDescription.get_PermissionDescriptions();
-//		for ( AccessPermissionDescription description : getAccessPermissionDescriptionListIterator(descriptions) ) {
-//			initializeDescription(description);
-//		}
-//	}
-//
-//	private void initializeDescription(AccessPermissionDescription description) {
-//		PermissionType permissionType = description.get_PermissionType();
-//		if (permissionType.equals(PermissionType.LEVEL)
-//				|| permissionType.equals(PermissionType.LEVEL_DEFAULT)) {
-//			AccessLevel accessLevel = new AccessLevel(description);
-//			accessControlEntries.addAccessLevel(accessLevel);
-//		} else {
-//			AccessRightDescription accessRightDescription = new AccessRightDescription(description);
-//			accessControlEntries.addAccessRightDescription(accessRightDescription);
-//		}
-//	}
-//
-//	@Override
-//	protected ContentEngineConnection getContentEngineConnection() {
-//		return objectStoreItem.getObjectStore().getConnection();
-//	}
-//
-//
-//	private Iterable<AccessPermission> getAccessPermissionListIterator(final AccessPermissionList accessPermissionList) {
-//		return new Iterable<AccessPermission>() {
-//
-//			@SuppressWarnings("unchecked")
-//			@Override
-//			public Iterator<AccessPermission> iterator() {
-//				return accessPermissionList.iterator();
-//			}
-//		};
-//	}
-//
-//	private Iterable<AccessPermissionDescription> getAccessPermissionDescriptionListIterator(final AccessPermissionDescriptionList accessPermissionDescriptionList) {
-//		return new Iterable<AccessPermissionDescription>() {
-//
-//			@SuppressWarnings("unchecked")
-//			@Override
-//			public Iterator<AccessPermissionDescription> iterator() {
-//				return accessPermissionDescriptionList.iterator();
-//			}
-//		};
-//	}
+	private void initializeDescription(Session session) {
+		
+	    AclCapabilities aclCapabilities = session.getRepositoryInfo().getAclCapabilities();
+	    List<PermissionDefinition> permissionDefinitions = aclCapabilities.getPermissions();
+	    for (PermissionDefinition permissionDefinition : permissionDefinitions )
+	    {
+			accessControlEntries.addAccessLevel( new AccessLevel(permissionDefinition, aclCapabilities.getPermissionMapping() ) );
+	    }
+	}
 }

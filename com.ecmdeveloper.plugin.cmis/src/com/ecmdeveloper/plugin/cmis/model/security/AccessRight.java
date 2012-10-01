@@ -30,12 +30,9 @@ import com.ecmdeveloper.plugin.core.model.security.IAccessRight;
 public class AccessRight implements IAccessRight {
 
 	private final String name;
-	private final AccessControlEntry parent;
-
 	private boolean granted;
 	
-	public AccessRight(AccessControlEntry parent, String name, boolean granted) {
-		this.parent = parent;
+	public AccessRight(String name, boolean granted) {
 		this.name = name;
 		this.granted = granted;
 	}
