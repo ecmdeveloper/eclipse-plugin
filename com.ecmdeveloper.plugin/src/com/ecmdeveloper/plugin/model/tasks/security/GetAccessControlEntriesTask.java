@@ -40,9 +40,11 @@ import com.ecmdeveloper.plugin.model.security.Realm;
 import com.ecmdeveloper.plugin.model.tasks.BaseTask;
 import com.filenet.api.collection.AccessPermissionDescriptionList;
 import com.filenet.api.collection.AccessPermissionList;
+import com.filenet.api.constants.AccessRight;
 import com.filenet.api.constants.PermissionType;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.Containable;
+import com.filenet.api.core.IndependentlyPersistableObject;
 import com.filenet.api.meta.ClassDescription;
 import com.filenet.api.property.PropertyFilter;
 import com.filenet.api.security.AccessPermission;
@@ -71,18 +73,19 @@ public class GetAccessControlEntriesTask extends BaseTask implements IGetAccessC
 		PropertyFilter pf = new PropertyFilter();
 		pf.addIncludeProperty(0, null, null, PropertyNames.CLASS_DESCRIPTION, null);
 		pf.addIncludeProperty(0, null, null, PropertyNames.PERMISSIONS, null);
-		objectStoreItem.getObjectStoreObject().refresh(pf);
+		IndependentlyPersistableObject objectStoreObject = objectStoreItem.getObjectStoreObject();
+		objectStoreObject.refresh(pf);
+		boolean readOnly = (objectStoreObject.getAccessAllowed() & AccessRight.WRITE_ACL_AS_INT) == 0;
 		
 		intializeDescriptions();
 		
 		if ( objectStoreItem instanceof Document || objectStoreItem instanceof Folder || objectStoreItem instanceof CustomObject ) {
-			Containable containable = (Containable) objectStoreItem.getObjectStoreObject();
+			Containable containable = (Containable) objectStoreObject;
 			AccessPermissionList permissions = containable.get_Permissions();
 			
 			for ( AccessPermission permission : getAccessPermissionListIterator(permissions) ) {
 				Principal principal = getPrincipal(permission);
-				
-				accessControlEntries.addPermission(permission, principal );
+				accessControlEntries.addPermission(permission, principal, readOnly );
 			}
 		}
 
