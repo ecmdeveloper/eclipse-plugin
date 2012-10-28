@@ -114,7 +114,7 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		IAccessControlEntryPropagation accessControlEntryPropagation = getAccessControlEntryPropagation(0);
 		AccessControlEntry accessControlEntry = createAccessControlEntry(securityPrincipal,
 				AccessControlEntrySource.DIRECT, AccessControlEntryType.ALLOW, accessMask,
-				accessControlEntryPropagation);
+				accessControlEntryPropagation, false);
 		securityPrincipal.getAccessControlEntries().add(accessControlEntry);
 		
 		return accessControlEntry;
@@ -166,13 +166,13 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		}
 	}
 
-	public void addPermission(AccessPermission permission, Principal principal2) {
+	public void addPermission(AccessPermission permission, Principal principal2, boolean readOnly) {
 		SecurityPrincipal principal = (SecurityPrincipal) getPrincipal(permission, principal2 );
-		AccessControlEntry accessControlEntry = createAccessControlEntry(permission, principal);
+		AccessControlEntry accessControlEntry = createAccessControlEntry(permission, principal, readOnly);
 		principal.getAccessControlEntries().add(accessControlEntry);
 	}
 
-	private AccessControlEntry createAccessControlEntry(AccessPermission permission, SecurityPrincipal principal) {
+	private AccessControlEntry createAccessControlEntry(AccessPermission permission, SecurityPrincipal principal, boolean readOnly) {
 		
 		AccessControlEntrySource accessControlEntrySource = getSource(permission);
 		AccessControlEntryType accessControlEntryType = getAccessControlEntryType(permission);
@@ -180,14 +180,14 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		IAccessControlEntryPropagation accessControlEntryPropagation = getAccessControlEntryPropagation(permission.get_InheritableDepth() );
 		
 		return createAccessControlEntry(principal, accessControlEntrySource, accessControlEntryType, accessMask,
-				accessControlEntryPropagation);
+				accessControlEntryPropagation, readOnly);
 	}
 
 	private AccessControlEntry createAccessControlEntry(SecurityPrincipal principal,
 			AccessControlEntrySource accessControlEntrySource,
 			AccessControlEntryType accessControlEntryType, Integer accessMask,
-			IAccessControlEntryPropagation accessControlEntryPropagation) {
-		AccessControlEntry accessControlEntry = new AccessControlEntry(principal, accessControlEntrySource, listeners );
+			IAccessControlEntryPropagation accessControlEntryPropagation, boolean readOnly) {
+		AccessControlEntry accessControlEntry = new AccessControlEntry(principal, accessControlEntrySource, listeners, readOnly );
 		accessControlEntry.setType( accessControlEntryType );
 		accessControlEntry.getAllowedAccessLevels().addAll(accessLevels);
 		accessControlEntry.getAllowedAccessLevels().add(

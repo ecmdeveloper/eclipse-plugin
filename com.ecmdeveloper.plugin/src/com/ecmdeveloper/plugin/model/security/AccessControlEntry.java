@@ -50,13 +50,15 @@ public class AccessControlEntry implements IAccessControlEntry {
 	private final Collection<IAccessLevel> allowedAccessLevels = new ArrayList<IAccessLevel>();
 	private final Collection<IAccessControlEntryPropagation> accessControlEntryPropagations;
 	private final PropertyChangeSupport listeners; 
-
+	private final boolean readOnly;
+	
 	public AccessControlEntry(ISecurityPrincipal securityPrincipal,
-			AccessControlEntrySource accessControlEntrySource, PropertyChangeSupport listeners) {
+			AccessControlEntrySource accessControlEntrySource, PropertyChangeSupport listeners, boolean readOnly) {
 		
 		this.securityPrincipal = securityPrincipal;
 		this.accessControlEntrySource = accessControlEntrySource;
 		this.listeners = listeners;
+		this.readOnly = readOnly;
 		
 		accessRights = new ArrayList<IAccessRight>();
 		accessControlEntryPropagations = new ArrayList<IAccessControlEntryPropagation>();
@@ -79,8 +81,8 @@ public class AccessControlEntry implements IAccessControlEntry {
 
 	@Override
 	public boolean isEditable() {
-		return getSource().equals(AccessControlEntrySource.DIRECT)
-				|| getSource().equals(AccessControlEntrySource.DEFAULT);
+		return !readOnly && ( getSource().equals(AccessControlEntrySource.DIRECT)
+				|| getSource().equals(AccessControlEntrySource.DEFAULT) );
 	}
 
 	@Override

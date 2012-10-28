@@ -19,7 +19,6 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -33,7 +32,6 @@ import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.model.ObjectStoreItemFactory;
 import com.ecmdeveloper.plugin.util.CEIterable;
-import com.ecmdeveloper.plugin.util.ObjectDumper;
 import com.ecmdeveloper.plugin.util.PluginLog;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.IndependentObject;
@@ -48,14 +46,14 @@ import com.filenet.api.property.PropertyFilter;
  */
 public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 
-//	private static final PropertyFilter propertyFilter = new PropertyFilter();
-//	{
-//		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.CONTAINEES, null);
-//		propertyFilter.addIncludeProperty(0, null, null, PropertyNames.SUB_FOLDERS, null);
-//		propertyFilter.addIncludeProperty(2, null, true, PropertyNames.HEAD, 1 );
-//		propertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
-//	}
-	
+	private static final PropertyFilter propertyFilter = new PropertyFilter();
+	{
+		propertyFilter.addIncludeProperty(0, null, true, PropertyNames.CONTAINEES, null);
+		propertyFilter.addIncludeProperty(1, null, false, PropertyNames.SUB_FOLDERS, null);
+		propertyFilter.addIncludeProperty(2, null, null, PropertyNames.HEAD, null );
+		propertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
+		
+	}
 	private ObjectStoreItem objectStoreItem;
 	private ArrayList<IObjectStoreItem> children;
 	
@@ -119,7 +117,6 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 		
 		while (iterator.hasNext() ) {
 			ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
-//			relation.fetchProperties( new String[]{ PropertyNames.HEAD, PropertyNames.CONTAINMENT_NAME } );
 			IndependentObject object = relation.get_Head();
 			addContainee(object, objectStore, relation.get_ContainmentName() );
 		}
@@ -168,21 +165,14 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 			return null;
 		}
 
-		PropertyFilter propertyFilter = new PropertyFilter();
-
-		propertyFilter.addIncludeProperty(0, null, true, PropertyNames.CONTAINEES, null);
-		propertyFilter.addIncludeProperty(1, null, false, PropertyNames.SUB_FOLDERS, null);
-		propertyFilter.addIncludeProperty(2, null, null, PropertyNames.HEAD, null );
-		propertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
-
 		folder.fetchProperties( propertyFilter );
 		
-		ObjectDumper od = new ObjectDumper();
-		try {
-			od.dump(folder);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		ObjectDumper od = new ObjectDumper();
+//		try {
+//			od.dump(folder);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		return folder;
 	}
 
