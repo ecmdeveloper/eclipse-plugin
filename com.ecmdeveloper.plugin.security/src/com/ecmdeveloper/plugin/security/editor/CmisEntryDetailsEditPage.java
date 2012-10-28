@@ -51,7 +51,12 @@ public class CmisEntryDetailsEditPage extends BaseDetailsPage {
 	private ComboViewer levelCombo;
 	private Label applyToLabel;
 	private Label typeLabel;
+	private final SecurityEditorBlock securityEditorBlock;
 	
+	public CmisEntryDetailsEditPage(SecurityEditorBlock securityEditorBlock) {
+		this.securityEditorBlock = securityEditorBlock;
+	}
+
 	protected void createClientContent(Composite client) {
 		super.createClientContent(client);
 		
@@ -115,7 +120,7 @@ public class CmisEntryDetailsEditPage extends BaseDetailsPage {
 
 		if ( isDirty ) {
 			form.dirtyStateChanged();
-//			securityEditorBlock.refresh(accessControlEntry);
+			securityEditorBlock.refresh(accessControlEntry);
 			setTitleImage(accessControlEntry);
 			commit(false);
 		}

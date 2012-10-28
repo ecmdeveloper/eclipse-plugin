@@ -45,7 +45,7 @@ public enum AccessControlEntrySource {
 		}
 	};
 
-	private static final String INHERITED_STRING = "inherited entry";
-	private static final String DIRECT_STRING = "direct entry";
-	private static final String DEFAULT_STRING = "direct entry from the default instance security";
+	private static final String INHERITED_STRING = "an inherited entry";
+	private static final String DIRECT_STRING = "a direct entry";
+	private static final String DEFAULT_STRING = "a direct entry from the default instance security";
 }
