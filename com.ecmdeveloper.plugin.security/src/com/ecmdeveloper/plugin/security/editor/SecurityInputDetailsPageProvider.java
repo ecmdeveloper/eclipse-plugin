@@ -33,6 +33,7 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 
 	private static final String CMIS_ENTRY_VIEW_PAGE_KEY = "cmisControlEntryPage";
+	private static final String CMIS_ENTRY_EDIT_PAGE_KEY = "cmisControlEntryEditPage";
 	private static final String ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY = "accessControlEntryPage";
 	private static final String ACCESS_CONTROL_ENTRY_EDIT_PAGE_KEY = "accessControlEditEntryPage";
 	private static final String PRINCIPAL_PAGE_KEY = "principalPage";
@@ -40,6 +41,7 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 	private IDetailsPage accessControlEntryDetailsViewPage;
 	private IDetailsPage accessControlEntryDetailsEditPage;
 	private IDetailsPage cmisEntryDetailsViewPage;
+	private IDetailsPage cmisEntryDetailsEditPage;
 	private final SecurityEditorBlock securityEditorBlock;
 	private IDetailsPage securityPrincipalDetailsPage;
 	
@@ -63,6 +65,11 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 		if ( CMIS_ENTRY_VIEW_PAGE_KEY.equals(key) ) {
 			return getCmisEntryDetailsViewPage();
 		}
+
+		if ( CMIS_ENTRY_EDIT_PAGE_KEY.equals(key) ) {
+			return getCmisEntryDetailsEditPage();
+		}
+
 		if ( unknownDetailsPage == null ) {
 			unknownDetailsPage = new PermissionDetailsPage();
 		}
@@ -71,11 +78,18 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 
 	private IDetailsPage getCmisEntryDetailsViewPage() {
 		if ( cmisEntryDetailsViewPage == null) {
-			cmisEntryDetailsViewPage = new CmisEntryDetailsEditPage();
+			cmisEntryDetailsViewPage = new CmisEntryDetailsViewPage();
 		}
 		return cmisEntryDetailsViewPage;
 	}
 
+	private IDetailsPage getCmisEntryDetailsEditPage() {
+		if ( cmisEntryDetailsEditPage == null) {
+			cmisEntryDetailsEditPage = new CmisEntryDetailsEditPage(securityEditorBlock);
+		}
+		return cmisEntryDetailsEditPage;
+	}
+	
 	private IDetailsPage getSecurityPrincipalDetailsPage() {
 		if (securityPrincipalDetailsPage == null ) {
 			securityPrincipalDetailsPage = new SecurityPrincipalDetailsPage( securityEditorBlock.getShell() );
@@ -110,7 +124,11 @@ public class SecurityInputDetailsPageProvider implements IDetailsPageProvider {
 					return ACCESS_CONTROL_ENTRY_VIEW_PAGE_KEY;
 				}
 			} else {
-				return CMIS_ENTRY_VIEW_PAGE_KEY; 
+				if ( accessControlEntry.isEditable() ) {
+					return CMIS_ENTRY_EDIT_PAGE_KEY; 
+				} else {
+					return CMIS_ENTRY_VIEW_PAGE_KEY; 
+				}
 			}
 		}
 		return null;

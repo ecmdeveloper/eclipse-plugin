@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -72,10 +73,12 @@ public class SecurityPage extends FormPage {
 	private void setFormToolbar(IManagedForm managedForm) {
 		ToolBarManager manager = (ToolBarManager) managedForm.getForm().getToolBarManager();
 		Separator action = new Separator("Actions");
+		Separator action2 = new Separator(IWorkbenchActionConstants.MB_ADDITIONS);
 		IMenuService menuService = (IMenuService) Activator.getDefault().getWorkbench().getService(IMenuService.class);
 		menuService.populateContributionManager(manager, "popup:formsToolBar");
 		manager.update(true);
 		manager.add(action );
+		manager.add(action2);
 	}
 
 

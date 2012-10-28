@@ -628,6 +628,13 @@
          </command>
       </menuContribution>
       <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.views.ObjectStoreFavorites?after=other">
+         <command
+               commandId="org.eclipse.ui.file.properties"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="popup:org.eclipse.search.ui.views.SearchView?after=additions">
          <command
                commandId="com.ecmdeveloper.plugin.delete"
@@ -729,6 +736,13 @@
          </command>
       </menuContribution>
       <menuContribution
+            locationURI="popup:org.eclipse.search.ui.views.SearchView?after=other">
+         <command
+               commandId="org.eclipse.ui.file.properties"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="popup:com.ecmdeveloper.plugin.ui.parentFolderView?after=additions">
          <command
                commandId="com.ecmdeveloper.plugin.delete"
@@ -826,6 +840,13 @@
          <command
                commandId="com.ecmdeveloper.plugin.refresh"
                icon="icons/arrow_refresh.png"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:com.ecmdeveloper.plugin.ui.parentFolderView?after=other">
+         <command
+               commandId="org.eclipse.ui.file.properties"
                style="push">
          </command>
       </menuContribution>
@@ -933,6 +954,13 @@
                   </iterate>
                </with>
             </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:com.ecmdeveloper.plugin.security.editor.toolbar?after=additions">
+         <command
+               commandId="org.eclipse.ui.file.properties"
+               style="push">
          </command>
       </menuContribution>
    </extension>

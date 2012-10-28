@@ -45,7 +45,7 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 public abstract class BaseDetailsPage implements IDetailsPage {
 
 	private static final String PERIOD = ".";
-	private static final String ACE_DESCRIPTION_2 = "'. This is a ";
+	private static final String ACE_DESCRIPTION_2 = "'. This is ";
 	private static final String ACE_DESCRIPTION_1 = "Access Control Entry for principal '";
 	protected IManagedForm form;
 	private Section section;

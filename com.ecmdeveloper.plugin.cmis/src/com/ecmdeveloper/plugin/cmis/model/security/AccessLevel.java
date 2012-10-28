@@ -62,12 +62,17 @@ public class AccessLevel implements IAccessLevel {
 	    }
 	}
 
+	public AccessLevel(String id) {
+		this.id = id;
+		this.name = id;
+		this.defaultLevel = false;
+		
+		accessRights = new ArrayList<IAccessRight>();
+	}
+	
 	private boolean isGranted(String permission, PermissionMapping permissionMapping) {
 		for (String p : permissionMapping.getPermissions() ) {
-			if (p.equalsIgnoreCase(permission)
-					|| (permission.equals(CMIS_ALL_PERMISSION) && 
-							(isGranted(CMIS_READ_PERMISSION, permissionMapping) || 
-							 isGranted(CMIS_WRITE_PERMISSION,permissionMapping)) ) ) {
+			if (p.equalsIgnoreCase(permission) ) {
 				return true;
 			}
 		}

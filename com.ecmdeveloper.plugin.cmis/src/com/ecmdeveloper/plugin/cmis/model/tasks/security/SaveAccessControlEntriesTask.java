@@ -22,7 +22,9 @@ package com.ecmdeveloper.plugin.cmis.model.tasks.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -30,6 +32,7 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
@@ -58,10 +61,100 @@ public class SaveAccessControlEntriesTask extends AbstractTask implements ISaveA
 
 	@Override
 	public Object call() throws Exception {
+		
 	    Session session = objectStoreItem.getObjectStore().getSession();
 	    CmisObject cmisObject = objectStoreItem.getCmisObject();
-		cmisObject.addAcl(createAces(session), AclPropagation.REPOSITORYDETERMINED );
+		Acl acl = getOldAcl(session, cmisObject);
+	
+		List<Ace> aceListAdd = new ArrayList<Ace>();
+		List<Ace> aceListRemove = new ArrayList<Ace>();
+
+		if ( acl != null ) {
+			
+			for (Ace ace : acl.getAces() ) {
+
+				System.out.println( ace.toString() );
+				if ( !ace.isDirect() ) {
+					continue;
+				}
+
+				ISecurityPrincipal principal = getPrincipal( ace );
+				if ( principal == null ) {
+					aceListRemove.add( ace );
+				} else {
+
+					if ( isDifferent(ace, principal) ) {
+						aceListAdd.add( createAce(session, principal) );
+						aceListRemove.add( ace );
+					} 
+				}
+			}
+	
+			for ( ISecurityPrincipal principal : accessControlEntries.getPrincipals() ) {
+				if ( getAce(principal, acl) == null ) {
+					Ace createAce = createAce(session, principal);
+					if ( !createAce.getPermissions().isEmpty() ) {
+						aceListAdd.add(createAce );
+					}
+				}
+			}
+		}
+	
+//		cmisObject.applyAcl(aceListAdd, aceListRemove, AclPropagation.REPOSITORYDETERMINED);
+		cmisObject.applyAcl(aceListAdd, aceListRemove, AclPropagation.OBJECTONLY);
+		
 	    return null;
+	}
+
+	private Acl getOldAcl(Session session, CmisObject cmisObject) {
+		OperationContext operationContext = new OperationContextImpl();
+	    operationContext.setIncludeAcls(true);	    
+	    CmisObject cmisObject2 = session.getObject(cmisObject, operationContext);
+		Acl acl = cmisObject2.getAcl();
+		return acl;
+	}
+
+	private Ace getAce(ISecurityPrincipal principal, Acl acl) {
+		for ( Ace ace : acl.getAces() ) {
+			if ( ace.isDirect() ) {
+				if ( principal.getName().equals( ace.getPrincipalId() ) ) {
+					return ace;
+				}
+			}
+		}
+		return null;
+	}
+
+    private boolean isDifferent(Ace ace, ISecurityPrincipal principal) {
+		Set<String> permissions = getPermissions(principal);
+		if ( permissions.size() != ace.getPermissions().size() ) {
+			return true;
+		}
+		permissions.removeAll( ace.getPermissions() );
+		return !permissions.isEmpty();
+	}
+
+	private Set<String> getPermissions(ISecurityPrincipal principal) {
+		
+		Set<String> permissionSet = new HashSet<String>();
+		
+		for (IAccessControlEntry accessControlEntry : principal.getAccessControlEntries() ) {
+			if ( accessControlEntry.getSource().equals(AccessControlEntrySource.DIRECT ) ) {
+				IAccessLevel accessLevel = accessControlEntry.getAccessLevel();
+				permissionSet.add( ((AccessLevel)accessLevel).getId() );
+			}
+		}
+
+		return permissionSet;
+	}
+		
+	private ISecurityPrincipal getPrincipal(Ace ace) {
+		for ( ISecurityPrincipal principal : accessControlEntries.getPrincipals() ) {
+			if ( principal.getName().equals( ace.getPrincipalId() ) ) {
+				return principal;
+			}
+		}
+		return null;
 	}
 
 	private List<Ace> createAces(Session session) {
@@ -77,6 +170,7 @@ public class SaveAccessControlEntriesTask extends AbstractTask implements ISaveA
 	}
 
 	private Ace createAce(Session session, ISecurityPrincipal principal) {
+		
 		List<String> permissions = new ArrayList<String>();
 		for (IAccessControlEntry accessControlEntry : principal.getAccessControlEntries() ) {
 			if ( accessControlEntry.getSource().equals(AccessControlEntrySource.DIRECT ) ) {

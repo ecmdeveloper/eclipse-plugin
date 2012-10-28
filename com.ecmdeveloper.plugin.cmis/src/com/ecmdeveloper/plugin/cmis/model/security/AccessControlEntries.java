@@ -196,11 +196,14 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 
 	private IAccessLevel getAccessLevel(String permission) {
 		for ( IAccessLevel accessLevel : accessLevels) {
+			System.out.println(((AccessLevel)accessLevel).getId() );
 			if ( permission.equalsIgnoreCase( ((AccessLevel)accessLevel).getId() ) ) {
 				return accessLevel;
 			}
 		}
-		return null;
+		AccessLevel accessLevel = new AccessLevel(permission);
+		accessLevels.add(accessLevel);
+		return accessLevel;
 	}
 
 	public void addAccessLevel(AccessLevel accessLevel) {
