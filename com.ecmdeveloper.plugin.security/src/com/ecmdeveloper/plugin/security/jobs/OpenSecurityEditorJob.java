@@ -22,7 +22,6 @@ package com.ecmdeveloper.plugin.security.jobs;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,8 +41,6 @@ import com.ecmdeveloper.plugin.core.model.tasks.security.IGetRealmsTask;
 import com.ecmdeveloper.plugin.core.util.PluginMessage;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.editor.SecurityEditorInput;
-import com.ecmdeveloper.plugin.security.mock.AccessControlEntriesMock;
-import com.ecmdeveloper.plugin.security.mock.RealmMock;
 
 /**
  * @author Ricardo.Belfor
@@ -99,14 +96,9 @@ public class OpenSecurityEditorJob extends Job {
 	}
 
 	private IAccessControlEntries getAccessControlEntries(Collection<IRealm> realms) throws ExecutionException {
-		IGetAccessControlEntriesTask task = objectStoreItem.getTaskFactory()
-				.getGetAccessControlEntriesTask(objectStoreItem, realms);
-		if ( task != null ) {
-			Activator.getDefault().getTaskManager().executeTaskSync(task);
-			return task.getAccessControlEntries();
-		} else {
-			return new AccessControlEntriesMock(); 
-		}
+		IGetAccessControlEntriesTask task = objectStoreItem.getTaskFactory().getGetAccessControlEntriesTask(objectStoreItem, realms);
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
+		return task.getAccessControlEntries();
 	}
 
 	private void openEditorWindow(final IEditorInput input, final String editorId) {
