@@ -79,7 +79,7 @@ import com.ecmdeveloper.plugin.core.model.security.ISecurityPrincipal;
 import com.ecmdeveloper.plugin.security.Activator;
 import com.ecmdeveloper.plugin.security.dialogs.PrincipalSelectionDialog;
 import com.ecmdeveloper.plugin.security.jobs.RefreshSecurityEditorJob;
-import com.ecmdeveloper.plugin.security.mock.PrincipalMock;
+import com.ecmdeveloper.plugin.security.model.PrincipalMock;
 import com.ecmdeveloper.plugin.security.util.IconFiles;
 import com.ecmdeveloper.plugin.security.util.PluginLog;
 
