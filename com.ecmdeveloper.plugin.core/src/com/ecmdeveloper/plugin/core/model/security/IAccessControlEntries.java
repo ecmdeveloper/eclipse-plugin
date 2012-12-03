@@ -33,4 +33,5 @@ public interface IAccessControlEntries {
 	void addPropertyChangeListener(PropertyChangeListener listener);
 	IAccessControlEntry addAccessControlEntry(IPrincipal principal);
 	Collection<IAccessControlEntry> getAccessControlEntries();
+	boolean isReadOnly();
 }

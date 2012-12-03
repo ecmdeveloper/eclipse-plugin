@@ -2,7 +2,7 @@
 <feature
       id="com.ecmdeveloper.plugin.feature.cmis"
       label="ECM Developer Plug-in for CMIS"
-      version="2.0.0"
+      version="2.1.0"
       provider-name="ECMDEVELOPER">
 
    <description url="http://www.example.com/description">
@@ -267,6 +267,13 @@ Library.
 
    <plugin
          id="com.ecmdeveloper.plugin.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ecmdeveloper.plugin.security"
          download-size="0"
          install-size="0"
          version="0.0.0"

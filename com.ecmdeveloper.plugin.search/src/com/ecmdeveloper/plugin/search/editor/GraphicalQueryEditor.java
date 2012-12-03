@@ -188,7 +188,7 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 			paletteEntry.setVisible( visibility );
 		}
 		searchAllVersionsButton.setEnabled(visibility);
-		maxCountText.setEnabled(visibility);
+	//	maxCountText.setEnabled(visibility);
 	}
 
 	private void setCeEntriesVisibility(PaletteDrawer paletteDrawer, boolean visibility) {
@@ -199,8 +199,8 @@ public class GraphicalQueryEditor extends GraphicalEditorWithFlyoutPalette imple
 		distinctButton.setEnabled( visibility );
 		includeSubClassesButton.setEnabled(visibility);
 		timeLimitText.setEnabled(visibility);
-		searchAllVersionsButton.setEnabled(visibility);
-		maxCountText.setEnabled(visibility);
+//		searchAllVersionsButton.setEnabled(visibility);
+//		maxCountText.setEnabled(visibility);
 	}
 
 	private PaletteEntry getPaletteEntry(PaletteDrawer paletteDrawer, String entryId) {
