@@ -71,7 +71,7 @@ public class SecurityLabelProvider extends LabelProvider implements ITableLabelP
 //				return Activator.getImage(IconFiles.DIRECT_DENY);
 //			}
 //		}
-		if ( ace.isEditable() ) {
+		if ( ace.canDelete() ) {
 			if ( ace.getType().equals(AccessControlEntryType.ALLOW) ) {
 				return Activator.getImage(IconFiles.ALLOW);
 			} else {

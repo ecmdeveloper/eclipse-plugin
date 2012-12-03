@@ -45,6 +45,7 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -110,9 +111,14 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	private IAccessControlEntries accessControlEntries;
 	private Collection<IRealm> realms;
 	private SecurityEditorInput editorInput;
+	private Color activeLinkForeground;
+	private Color inactiveLinkForeground;
+	private ImageHyperlink addEntryLink;
+	private ImageHyperlink deleteEntryLink;
 	
 	public SecurityEditorBlock(FormPage page) {
 		this.page = page;
+		inactiveLinkForeground = new Color(Display.getCurrent(), 128, 128, 128 );
 	}
 
 	public void setInput(Object input) {
@@ -121,8 +127,26 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		realms = editorInput.getRealms();
 		viewer.setInput(accessControlEntries);
 		viewer.expandAll();
+		
+		if ( accessControlEntries.isReadOnly() ) {
+			disableLink(addEntryLink);
+			disableLink(deleteEntryLink);
+		} else {
+			enableLink(addEntryLink);
+			enableLink(deleteEntryLink);
+		}
+	}
+
+	private void disableLink(ImageHyperlink link) {
+		link.setForeground(inactiveLinkForeground);
+		link.setEnabled(false);
 	}
 	
+	private void enableLink(ImageHyperlink link) {
+		link.setForeground(activeLinkForeground);
+		link.setEnabled(true);
+	}
+
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
 
@@ -131,7 +155,7 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		Composite client = createClient(toolkit, section);
 
 		Composite buttons = createLinksClient(client);
-		createAddGroupLink(toolkit, buttons);
+		createAddEntryLink(toolkit, buttons);
 		createDeleteGroupLink(toolkit, buttons);
 		createRefreshLink(toolkit, buttons);
 		
@@ -152,7 +176,10 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 			public void menuShown(MenuEvent e) {
 		        IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				MenuItem item = menu.getItem(1);
-				item.setEnabled( !selection.isEmpty() );
+				item.setEnabled( !selection.isEmpty() && !accessControlEntries.isReadOnly() );
+
+				item = menu.getItem(0);
+				item.setEnabled( !accessControlEntries.isReadOnly() );
 			}
 		} );
 		
@@ -196,15 +223,17 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 		return buttons;
 	}
 
-	private void createAddGroupLink(FormToolkit toolkit, Composite client) {
-		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
-		link.setText(ADD_GROUP_LABEL);
-		link.setImage( Activator.getImage(IconFiles.GROUP_ADD) );
-		link.addHyperlinkListener(new HyperlinkAdapter() {
+	private void createAddEntryLink(FormToolkit toolkit, Composite client) {
+		addEntryLink = toolkit.createImageHyperlink(client, SWT.WRAP);
+		addEntryLink.setText(ADD_GROUP_LABEL);
+		addEntryLink.setImage( Activator.getImage(IconFiles.GROUP_ADD) );
+		addEntryLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				performAddAccessControlEntry();
 			}
 	    });
+		
+		activeLinkForeground = addEntryLink.getForeground();
 	}
 
 	protected void performAddAccessControlEntry() {
@@ -261,10 +290,10 @@ public class SecurityEditorBlock extends MasterDetailsBlock {
 	}
 
 	private void createDeleteGroupLink(FormToolkit toolkit, Composite client) {
-		ImageHyperlink link = toolkit.createImageHyperlink(client, SWT.WRAP);
-		link.setText(DELETE_GROUP_LABEL);
-		link.setImage( Activator.getImage(IconFiles.GROUP_DELETE) );
-		link.addHyperlinkListener(new HyperlinkAdapter() {
+		deleteEntryLink = toolkit.createImageHyperlink(client, SWT.WRAP);
+		deleteEntryLink.setText(DELETE_GROUP_LABEL);
+		deleteEntryLink.setImage( Activator.getImage(IconFiles.GROUP_DELETE) );
+		deleteEntryLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if ( performDeleteSelection() ) {
 					viewer.refresh();

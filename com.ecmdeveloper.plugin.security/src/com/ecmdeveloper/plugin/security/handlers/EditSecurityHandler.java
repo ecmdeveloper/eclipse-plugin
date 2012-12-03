@@ -20,16 +20,19 @@
 
 package com.ecmdeveloper.plugin.security.handlers;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+import com.ecmdeveloper.plugin.core.model.constants.Feature;
 
 /**
  * @author Ricardo.Belfor
@@ -37,6 +40,7 @@ import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
  */
 public class EditSecurityHandler extends AbstractEditSecurityHandler {
 
+	private static final String READING_PERMISSIONS_NOT_SUPPORTED = "Reading permissions is not supported for the Object Store where the object ''{0}'' is stored.";
 	private IWorkbenchWindow window;
 	
 	@Override
@@ -59,7 +63,12 @@ public class EditSecurityHandler extends AbstractEditSecurityHandler {
 		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 		while ( iterator.hasNext() ) {
 			IObjectStoreItem objectStoreItem = (IObjectStoreItem) iterator.next();
-			showEditor( objectStoreItem, window );
+			if ( objectStoreItem.isSupportedFeature(Feature.READ_ACL) ) {
+				showEditor( objectStoreItem, window );
+			} else {
+				String message = MessageFormat.format(READING_PERMISSIONS_NOT_SUPPORTED, objectStoreItem.getDisplayName());
+				MessageDialog.openError(window.getShell(), "Edit Security", message);
+			}
 		}
 	}
 }
