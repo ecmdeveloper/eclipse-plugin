@@ -28,4 +28,6 @@ public enum Feature {
 	CODE_MODULES,
 	CLASS_FILTER,
 	CUSTOM_OBJECTS,
+	READ_ACL,
+	EDIT_ACL,
 }
