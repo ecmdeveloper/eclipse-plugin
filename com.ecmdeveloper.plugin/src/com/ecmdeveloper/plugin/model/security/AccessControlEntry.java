@@ -87,7 +87,7 @@ public class AccessControlEntry implements IAccessControlEntry {
 
 	@Override
 	public boolean canDelete() {
-		return getSource().equals( AccessControlEntrySource.DIRECT);
+		return getSource().equals( AccessControlEntrySource.DIRECT) || getSource().equals(AccessControlEntrySource.DEFAULT);
 	}
 
 	@Override

@@ -138,11 +138,19 @@ public class Realm implements IRealm {
 			LdapName ldapName = new LdapName(granteeName);
 			for ( Rdn rdn : ldapName.getRdns() ) {
 				if ( rdn.getType().equalsIgnoreCase(COMMON_NAME_TYPE) ) {
-					granteeName = (String) rdn.getValue();
+					return (String) rdn.getValue();
 				}
 			}
+			
 		} catch (InvalidNameException e) {
 		}
+		
+		int index = granteeName.indexOf("@");
+		
+		if ( index > 0 ) {
+			granteeName = granteeName.substring(0, index);
+		}
+		
 		return granteeName;
 	}
 

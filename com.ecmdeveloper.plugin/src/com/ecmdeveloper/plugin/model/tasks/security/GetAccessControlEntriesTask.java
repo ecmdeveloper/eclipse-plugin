@@ -76,6 +76,7 @@ public class GetAccessControlEntriesTask extends BaseTask implements IGetAccessC
 		IndependentlyPersistableObject objectStoreObject = objectStoreItem.getObjectStoreObject();
 		objectStoreObject.refresh(pf);
 		boolean readOnly = (objectStoreObject.getAccessAllowed() & AccessRight.WRITE_ACL_AS_INT) == 0;
+		accessControlEntries.setReadOnly(readOnly);
 		
 		intializeDescriptions();
 		

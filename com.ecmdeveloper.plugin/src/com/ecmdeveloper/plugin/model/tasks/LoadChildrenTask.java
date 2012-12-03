@@ -56,6 +56,7 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 	}
 	private ObjectStoreItem objectStoreItem;
 	private ArrayList<IObjectStoreItem> children;
+	private Folder parentFolder;
 	
 	/**
 	 * The constructor of this task is used to pass all the relevant input
@@ -94,6 +95,7 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 
 		try {
 			children = new ArrayList<IObjectStoreItem>();
+			parentFolder = getParentFolder();
 			
 			com.filenet.api.core.Folder folder = getInternalFolder();
 			
@@ -126,20 +128,20 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 		
 		if ( object instanceof com.filenet.api.core.Document )
 		{
-			Document document = ObjectStoreItemFactory.createDocument( object, objectStoreItem, objectStore );
-			document.setParentPath( ((Folder) objectStoreItem).getPathName() );
+			Document document = ObjectStoreItemFactory.createDocument( object, parentFolder, objectStore );
+			document.setParentPath( ((Folder) parentFolder).getPathName() );
 			document.setContainmentName( containmentName );
 			children.add( document );
 		}
 		else if ( object instanceof com.filenet.api.core.Folder )
 		{
-			Folder childFolder = ObjectStoreItemFactory.createFolder( object, objectStoreItem, objectStore );
+			Folder childFolder = ObjectStoreItemFactory.createFolder( object, parentFolder, objectStore );
 			childFolder.setContained(true);
 			children.add( childFolder );
 		}
 		else if ( object instanceof com.filenet.api.core.CustomObject )
 		{
-			children.add( ObjectStoreItemFactory.createCustomObject( object, objectStoreItem, objectStore ) );
+			children.add( ObjectStoreItemFactory.createCustomObject( object, parentFolder, objectStore ) );
 		}
 	}
 
@@ -152,19 +154,20 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 		return objectStore;
 	}
 
-	private com.filenet.api.core.Folder getInternalFolder() {
-		com.filenet.api.core.Folder folder;
+	private Folder getParentFolder() {
 
 		if ( objectStoreItem instanceof ObjectStore ) {
 			com.filenet.api.core.ObjectStore objectStore = (com.filenet.api.core.ObjectStore) objectStoreItem.getObjectStoreObject();
 			objectStore.fetchProperties( new String[] { PropertyNames.ROOT_FOLDER } );
-			folder = objectStore.get_RootFolder();
-		} else if ( objectStoreItem instanceof Folder ) {
-			folder = (com.filenet.api.core.Folder) objectStoreItem.getObjectStoreObject();
-		} else {
-			return null;
+			return ObjectStoreItemFactory.createFolder( objectStore.get_RootFolder(), objectStoreItem, objectStoreItem.getObjectStore() );
 		}
+		
+		return (Folder) objectStoreItem;
+	}
+	
+	private com.filenet.api.core.Folder getInternalFolder() {
 
+		com.filenet.api.core.Folder folder = (com.filenet.api.core.Folder) parentFolder.getObjectStoreObject();
 		folder.fetchProperties( propertyFilter );
 		
 //		ObjectDumper od = new ObjectDumper();
