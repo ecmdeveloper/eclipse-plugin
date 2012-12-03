@@ -44,13 +44,13 @@
                      ifEmpty="false">
                   <or>
                      <instanceof
+                           value="com.ecmdeveloper.plugin.core.model.IFolder">
+                     </instanceof>
+                     <instanceof
                            value="com.ecmdeveloper.plugin.core.model.ICustomObject">
                      </instanceof>
                      <instanceof
                            value="com.ecmdeveloper.plugin.core.model.IDocument">
-                     </instanceof>
-                     <instanceof
-                           value="com.ecmdeveloper.plugin.core.model.IFolder">
                      </instanceof>
                   </or>
                </iterate>
