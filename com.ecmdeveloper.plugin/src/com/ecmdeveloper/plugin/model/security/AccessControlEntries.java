@@ -67,6 +67,8 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	private List<IAccessLevel> accessLevels = new ArrayList<IAccessLevel>();
 	private List<AccessRightDescription> accessRightDescriptions = new ArrayList<AccessRightDescription>();
+
+	private boolean readOnly;
 	
 	public AccessControlEntries() {
 		securityPrincipals = new ObservableArrayList<ISecurityPrincipal>( getArrayListObserver() );
@@ -293,5 +295,14 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		}
 
 		return accessControlEntries;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+	
+	@Override
+	public boolean isReadOnly() {
+		return readOnly;
 	}
 }
