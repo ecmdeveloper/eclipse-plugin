@@ -22,6 +22,7 @@ package com.ecmdeveloper.plugin.cmis.model.tasks.security;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
@@ -30,7 +31,9 @@ import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 
 import com.ecmdeveloper.plugin.cmis.model.ObjectStoreItem;
 import com.ecmdeveloper.plugin.cmis.model.security.AccessControlEntries;
@@ -73,6 +76,7 @@ public class GetAccessControlEntriesTask extends AbstractTask implements IGetAcc
 	    operationContext.setIncludeAcls(true);	    
 	    
 	    cmisObject = session.getObject(cmisObject, operationContext);
+	    accessControlEntries.setReadOnly( isReadOnly(cmisObject) );
 	    
 		Acl acl = cmisObject.getAcl();
 		if ( acl != null ) {
@@ -82,6 +86,12 @@ public class GetAccessControlEntriesTask extends AbstractTask implements IGetAcc
 		}
 
 		return null;
+	}
+
+	private boolean isReadOnly(CmisObject cmisObject) {
+		AllowableActions allowableActions = cmisObject.getAllowableActions();
+	    boolean readOnly = !allowableActions.getAllowableActions().contains( Action.CAN_APPLY_ACL );
+		return readOnly;
 	}
 
 	private void initializeDescription(Session session) {

@@ -73,7 +73,7 @@ public class SaveAccessControlEntriesTask extends AbstractTask implements ISaveA
 			
 			for (Ace ace : acl.getAces() ) {
 
-				System.out.println( ace.toString() );
+//				System.out.println( ace.toString() );
 				if ( !ace.isDirect() ) {
 					continue;
 				}
@@ -100,8 +100,10 @@ public class SaveAccessControlEntriesTask extends AbstractTask implements ISaveA
 			}
 		}
 	
-//		cmisObject.applyAcl(aceListAdd, aceListRemove, AclPropagation.REPOSITORYDETERMINED);
-		cmisObject.applyAcl(aceListAdd, aceListRemove, AclPropagation.OBJECTONLY);
+//		System.out.println( aceListAdd.toString() );
+//		System.out.println( aceListRemove.toString() );
+		
+		cmisObject.applyAcl(aceListAdd, aceListRemove, AclPropagation.REPOSITORYDETERMINED);
 		
 	    return null;
 	}

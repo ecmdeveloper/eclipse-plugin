@@ -50,6 +50,7 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 	private ObservableArrayList<ISecurityPrincipal> securityPrincipals;
 	transient private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	private List<IAccessLevel> accessLevels = new ArrayList<IAccessLevel>();
+	private boolean readOnly;
 
 	public AccessControlEntries() {
 		securityPrincipals = new ObservableArrayList<ISecurityPrincipal>( getArrayListObserver() );
@@ -190,13 +191,13 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 		accessControlEntry.setType( AccessControlEntryType.ALLOW );
 		accessControlEntry.setAccessLevel( getAccessLevel(permission) );
 		accessControlEntry.getAllowedAccessLevels().addAll(accessLevels);
-
+		accessControlEntry.setReadOnly( readOnly);
+		
 		return accessControlEntry;
 	}
 
 	private IAccessLevel getAccessLevel(String permission) {
 		for ( IAccessLevel accessLevel : accessLevels) {
-			System.out.println(((AccessLevel)accessLevel).getId() );
 			if ( permission.equalsIgnoreCase( ((AccessLevel)accessLevel).getId() ) ) {
 				return accessLevel;
 			}
@@ -208,5 +209,14 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 
 	public void addAccessLevel(AccessLevel accessLevel) {
 		accessLevels.add(accessLevel);
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 }

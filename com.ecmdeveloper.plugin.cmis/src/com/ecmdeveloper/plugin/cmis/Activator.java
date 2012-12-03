@@ -71,7 +71,6 @@ public class Activator extends AbstractUIPlugin {
 	private String[] getPathParts() {
 		Dictionary headers = getBundle().getHeaders();
 		String bundleClassPath = (String) headers.get("Bundle-ClassPath");
-		System.out.println( bundleClassPath.toString() );
 		String[] pathParts = bundleClassPath.split(",");
 		return pathParts;
 	}
