@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 
 import com.ecmdeveloper.plugin.cmis.Activator;
 import com.ecmdeveloper.plugin.cmis.model.tasks.LoadChildrenTask;
@@ -45,6 +46,7 @@ import com.ecmdeveloper.plugin.core.model.ObjectStoreItemsModel;
 import com.ecmdeveloper.plugin.core.model.Placeholder;
 import com.ecmdeveloper.plugin.core.model.constants.ClassDescriptionFolderType;
 import com.ecmdeveloper.plugin.core.model.constants.ClassType;
+import com.ecmdeveloper.plugin.core.model.constants.Feature;
 import com.ecmdeveloper.plugin.core.model.constants.PlaceholderType;
 
 /**
@@ -60,7 +62,9 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	private final String id;
 	private String displayName;
 	private Collection<IObjectStoreItem> children;
-
+	private boolean readACL;
+	private boolean editACL;
+	
 	protected ObjectStore(String id, Connection connection ) {
 		super(null, null);
 		
@@ -79,8 +83,20 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 			session = sessionFactory.createSession(parameters);
 			displayName = session.getRepositoryInfo().getName();
 
+			CapabilityAcl aclCapability = getAclCapability();
+			readACL = aclCapability != null && !aclCapability.equals( CapabilityAcl.NONE );
+			editACL = aclCapability != null && aclCapability.equals(CapabilityAcl.MANAGE );
+			 
 			ObjectStoreItemsModel.getInstance().add(this);	
 		}
+	}
+
+	private CapabilityAcl getAclCapability() {
+		RepositoryCapabilities cap = session.getRepositoryInfo().getCapabilities();
+		if ( cap != null ) {
+			return cap.getAclCapability();
+		}
+		return null;
 	}
 
 	@Override
@@ -266,6 +282,7 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	@Override
 	public void assertConnected() {
 		if (!isConnected()) {
+			
 			throw new RuntimeException(MessageFormat.format(NOT_CONNECTED_MESSAGE, getConnection()
 					.toString(), getName()));
 		}
@@ -293,6 +310,14 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 		generalInfoMap.add( getEntry( "Vendor", repInfo.getVendorName() ) );
 		generalInfoMap.add( getEntry( "Product", repInfo.getProductName() + " " + repInfo.getProductVersion() ) );
 		generalInfoMap.add( getEntry( "CMIS Version", repInfo.getCmisVersionSupported() ) );
+		
+		if ( repInfo.getPrincipalIdAnonymous() != null ) {
+			generalInfoMap.add( getEntry("Principal id Anonymous" , repInfo.getPrincipalIdAnonymous() ) );
+		}
+
+		if ( repInfo.getPrincipalIdAnyone() != null ) {
+			generalInfoMap.add( getEntry("Principal id Anyone" , repInfo.getPrincipalIdAnyone() ) );
+		}
 
 		return generalInfoMap;
 	}
@@ -325,4 +350,20 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 		}
 		return capabilitiesMap;
 	}
+
+	@Override
+	public boolean isSupportedFeature(Feature feature) {
+
+		if ( Feature.READ_ACL.equals(feature) ) {
+			return readACL;
+		}
+		
+		if (Feature.EDIT_ACL.equals(feature) ) {
+			return editACL;
+		}
+
+		return super.isSupportedFeature(feature);
+	}
+	
+	
 }
