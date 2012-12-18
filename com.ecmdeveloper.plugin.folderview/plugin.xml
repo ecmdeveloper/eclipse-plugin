@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="com.ecmdeveloper.plugin.folderview.selectColumns"
+            name="Select Columns">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.ecmdeveloper.plugin.folderview.handlers.SelectColumnsHandler"
+            commandId="com.ecmdeveloper.plugin.folderview.selectColumns">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="com.ecmdeveloper.plugin.contentEngine"
+            name="ECM Developer">
+      </category>
+      <view
+            allowMultiple="true"
+            category="com.ecmdeveloper.plugin.contentEngine"
+            class="com.ecmdeveloper.plugin.folderview.views.FolderView"
+            icon="icons/folder_table.png"
+            id="com.ecmdeveloper.plugin.folderview.folderView"
+            name="Folder View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:com.ecmdeveloper.plugin.folderview.folderView?after=additions">
+         <command
+               commandId="com.ecmdeveloper.plugin.folderview.selectColumns"
+               icon="icons/folder_table.png"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
