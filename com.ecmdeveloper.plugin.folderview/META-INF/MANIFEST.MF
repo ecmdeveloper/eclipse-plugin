@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECM Developer Folder View Plug-in
+Bundle-SymbolicName: com.ecmdeveloper.plugin.folderview;singleton:=true
+Bundle-Version: 2.2.0
+Bundle-Activator: com.ecmdeveloper.plugin.folderview.Activator
+Bundle-Vendor: ECMDEVELOPER
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.ecmdeveloper.plugin.core;bundle-version="2.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
