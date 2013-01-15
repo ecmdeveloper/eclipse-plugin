@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,22 +47,25 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ecmdeveloper.plugin.folderview.model.ColumnDescription;
+
 /**
  * @author ricardo.belfor
  *
  */
 public class ConfigureColumnsDialog  extends Dialog {
 
+	private static final String TITLE = "Configure Folder Viewer Columns";
 	private static final String RIGHT = ">>";
 	private static final String LEFT = "<<";
 	private Composite editArea;
 
-	private final ArrayList<String> visible = new ArrayList<String>();
-	private ArrayList<String> hidden = new ArrayList<String>();;
-	private ArrayList<String> groupBy = new ArrayList<String>();;
+	private final ArrayList<ColumnDescription> visible = new ArrayList<ColumnDescription>();
+	private ArrayList<ColumnDescription> hidden = new ArrayList<ColumnDescription>();;
+	private ArrayList<ColumnDescription> groupBy = new ArrayList<ColumnDescription>();;
 	
-	public ConfigureColumnsDialog(Shell parentShell, List<String> visibleColumns,
-			List<String> hiddenColumns, List<String> groupByColumns) {
+	public ConfigureColumnsDialog(Shell parentShell, List<ColumnDescription> visibleColumns,
+			List<ColumnDescription> hiddenColumns, List<ColumnDescription> groupByColumns) {
 
 		super(parentShell);
 		
@@ -70,6 +74,11 @@ public class ConfigureColumnsDialog  extends Dialog {
 		groupBy.addAll(groupByColumns);
 	}
 
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		shell.setText(TITLE);
+	}
+	
 	protected int getShellStyle() {
 		return super.getShellStyle() | SWT.RESIZE;
 	}
@@ -94,7 +103,7 @@ public class ConfigureColumnsDialog  extends Dialog {
 
 		initializeDialogUnits(dialogArea);
 		Group columnsComposite = new Group(dialogArea, SWT.NONE);
-		columnsComposite.setText("Hide/Show Columns");
+		columnsComposite.setText("Configure Columns");
 		FormLayout layout = new FormLayout();
 		columnsComposite.setLayout(layout);
 
@@ -110,6 +119,7 @@ public class ConfigureColumnsDialog  extends Dialog {
 		visibleViewer.setInput(visible);
 		
 		final ListViewer hiddenViewer = createColumnsViewer(columnsComposite, hiddenLabel, rightMargin);
+		hiddenViewer.setComparator(new ViewerComparator() );
 		hiddenViewer.setInput(hidden);
 
 		final ListViewer groupByViewer = createColumnsViewer(columnsComposite, groupByLabel, rightMargin);
@@ -126,8 +136,8 @@ public class ConfigureColumnsDialog  extends Dialog {
 		createFromGroupByButton(columnsComposite, rightMargin, visibleViewer,groupByViewer, toGroupByButton);
 	}
 
-	private IDoubleClickListener getDoubleClickListener(final ListViewer fromViewer, final ArrayList<String> fromList, 
-			final ListViewer toViewer, final ArrayList<String> toList) {
+	private IDoubleClickListener getDoubleClickListener(final ListViewer fromViewer, final ArrayList<ColumnDescription> fromList, 
+			final ListViewer toViewer, final ArrayList<ColumnDescription> toList) {
 		
 		return new IDoubleClickListener() {
 
@@ -141,7 +151,7 @@ public class ConfigureColumnsDialog  extends Dialog {
 
 	private ListViewer createColumnsViewer(Group columnsComposite, Label label, int rightMargin) {
 		
-		final ListViewer columnsViewer = new ListViewer(columnsComposite, SWT.BORDER | SWT.MULTI );
+		final ListViewer columnsViewer = new ListViewer(columnsComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 
 		FormData columnsViewerData = new FormData();
 
@@ -227,7 +237,9 @@ public class ConfigureColumnsDialog  extends Dialog {
 		button.addSelectionListener( getButtonListener(groupByViewer, groupBy, visibleViewer, visible) );
 	}
 	
-	private SelectionAdapter getButtonListener(final ListViewer fromViewer, final ArrayList<String> fromList, final ListViewer toViewer, final ArrayList<String> toList) {
+	private SelectionAdapter getButtonListener(final ListViewer fromViewer,
+			final ArrayList<ColumnDescription> fromList, final ListViewer toViewer,
+			final ArrayList<ColumnDescription> toList) {
 		
 		return new SelectionAdapter() {
 
@@ -238,9 +250,9 @@ public class ConfigureColumnsDialog  extends Dialog {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void updateColumnViewers(final ListViewer fromViewer, final ArrayList<String> fromList,
-			final ListViewer toViewer, final ArrayList<String> toList) {
-		List<String> selection = ((IStructuredSelection) fromViewer.getSelection()).toList();
+	private void updateColumnViewers(final ListViewer fromViewer, final ArrayList<ColumnDescription> fromList,
+			final ListViewer toViewer, final ArrayList<ColumnDescription> toList) {
+		List<ColumnDescription> selection = ((IStructuredSelection) fromViewer.getSelection()).toList();
 		toList.addAll(selection);
 		fromList.removeAll(selection);
 		fromViewer.refresh();
@@ -286,20 +298,20 @@ public class ConfigureColumnsDialog  extends Dialog {
 		return label;
 	}
 	
-	public List<String> getVisibleColumns() {
-		ArrayList<String> visibleColumns = new ArrayList<String>();
+	public List<ColumnDescription> getVisibleColumns() {
+		ArrayList<ColumnDescription> visibleColumns = new ArrayList<ColumnDescription>();
 		visibleColumns.addAll(visible);
 		return visibleColumns;
 	}
 
-	public List<String> getHiddenColumns() {
-		ArrayList<String> hiddenColumns = new ArrayList<String>();
+	public List<ColumnDescription> getHiddenColumns() {
+		ArrayList<ColumnDescription> hiddenColumns = new ArrayList<ColumnDescription>();
 		hiddenColumns.addAll(hidden);
 		return hiddenColumns;
 	}
 
-	public List<String> getGroupByColumns() {
-		ArrayList<String> groupByColumns = new ArrayList<String>();
+	public List<ColumnDescription> getGroupByColumns() {
+		ArrayList<ColumnDescription> groupByColumns = new ArrayList<ColumnDescription>();
 		groupByColumns.addAll(groupBy);
 		return groupByColumns;
 	}

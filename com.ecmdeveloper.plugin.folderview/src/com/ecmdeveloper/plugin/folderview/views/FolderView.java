@@ -20,19 +20,16 @@
 
 package com.ecmdeveloper.plugin.folderview.views;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,11 +41,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.part.ViewPart;
 
-import com.ecmdeveloper.plugin.folderview.Activator;
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.folderview.model.Categories;
 import com.ecmdeveloper.plugin.folderview.model.Category;
-import com.ecmdeveloper.plugin.folderview.model.MockItem;
-import com.ecmdeveloper.plugin.folderview.utils.IconFiles;
+import com.ecmdeveloper.plugin.folderview.model.ColumnDescription;
 
 /**
  * @author ricardo.belfor
@@ -56,50 +52,75 @@ import com.ecmdeveloper.plugin.folderview.utils.IconFiles;
  */
 public class FolderView extends ViewPart {
 
+	public static final String ID = "com.ecmdeveloper.plugin.folderview.folderView";
+	public static final String NAME_COLUMN = "Name";
+
 	private TreeViewer viewer;
-	private final List<String> visibleColumns = new ArrayList<String>();
-	private final List<String> hiddenColumns = new ArrayList<String>();
-	private final List<String> groupByColumns = new ArrayList<String>();
+	private final List<ColumnDescription> visibleColumns = new ArrayList<ColumnDescription>();
+	private final List<ColumnDescription> hiddenColumns = new ArrayList<ColumnDescription>();
+	private final List<ColumnDescription> groupByColumns = new ArrayList<ColumnDescription>();
 	
-	private ArrayList<MockItem> items = new ArrayList<MockItem>();
+//	private ArrayList<MockItem> items = new ArrayList<MockItem>();
 	private Categories categories;
 	private final FolderViewComparator viewerComparator = new FolderViewComparator();
+
+	private IObjectStoreItem folder;
+	private Collection<ColumnDescription> propertyDescriptions;
+
+	private List<IObjectStoreItem> children;
 	
 	public FolderView() {
 
-		items.add( createMockItem("Peter", "Griffin", "Male", 1, new Date(), "Family Guy") );
-		items.add( createMockItem("Lois", "Griffin", "Female", 12, new Date(), "Family Guy") );
-		items.add( createMockItem("Meg", "Griffin", "Female", 122, new Date(), "Family Guy") );
-		items.add( createMockItem("Chris", "Griffin", "Male", 211, new Date(), "Family Guy") );
-		items.add( createMockItem("Stewie", "Griffin", "Male", 21, new Date(), "Family Guy") );
-		items.add( createMockItem("Brian", "Griffin", "Male", 200, new Date(), "Family Guy") );
-		items.add( createMockItem("Glenn", "Quagmire", "Male", 12, new Date(), "Family Guy") );
-		items.add( createMockItem("Cleveland", "Brown", "Male", 12, new Date(), "Family Guy") );
-		items.add( createMockItem("Joe", "Swanson", "Male", 12, new Date(), "Family Guy") );
-		items.add( createMockItem("Homer", "Simpson", "Male", 2, new Date(), "The Simpsons") );
-		items.add( createMockItem("Marge", "Simpson", "Female", 2, new Date(), "The Simpsons") );
-		items.add( createMockItem("Bart", "Simpson", "Male", 2, new Date(), "The Simpsons") );
-		items.add( createMockItem("Lisa", "Simpson", "Female", 2, new Date(), "The Simpsons") );
 		
-		visibleColumns.addAll(items.get(0).getColumnNames() );
-
-		updateModel();
+//		items.add( createMockItem("Peter", "Griffin", "Male", 1, new Date(), "Family Guy") );
+//		items.add( createMockItem("Lois", "Griffin", "Female", 12, new Date(), "Family Guy") );
+//		items.add( createMockItem("Meg", "Griffin", "Female", 122, new Date(), "Family Guy") );
+//		items.add( createMockItem("Chris", "Griffin", "Male", 211, new Date(), "Family Guy") );
+//		items.add( createMockItem("Stewie", "Griffin", "Male", 21, new Date(), "Family Guy") );
+//		items.add( createMockItem("Brian", "Griffin", "Male", 200, new Date(), "Family Guy") );
+//		items.add( createMockItem("Glenn", "Quagmire", "Male", 12, new Date(), "Family Guy") );
+//		items.add( createMockItem("Cleveland", "Brown", "Male", 12, new Date(), "Family Guy") );
+//		items.add( createMockItem("Joe", "Swanson", "Male", 12, new Date(), "Family Guy") );
+//		items.add( createMockItem("Homer", "Simpson", "Male", 2, new Date(), "The Simpsons") );
+//		items.add( createMockItem("Marge", "Simpson", "Female", 2, new Date(), "The Simpsons") );
+//		items.add( createMockItem("Bart", "Simpson", "Male", 2, new Date(), "The Simpsons") );
+//		items.add( createMockItem("Lisa", "Simpson", "Female", 2, new Date(), "The Simpsons") );
+//		
+//		visibleColumns.addAll(items.get(0).getColumnNames() );
+//		visibleColumns.add("Name");
 	}
 
-	private void updateModel() {
-		categories = new Categories(items, groupByColumns);
+	public void show(IObjectStoreItem folder, List<IObjectStoreItem> children, Collection<ColumnDescription> propertyDescriptions) {
+		
+		this.folder = folder;
+		this.children = children;
+		this.propertyDescriptions = propertyDescriptions;
+		
+		for ( ColumnDescription columnDescription : this.propertyDescriptions ) {
+			hiddenColumns.add( columnDescription );
+		}
+		setPartName(this.folder.getDisplayName());
+		
+		updateModel();
 	    viewer.setInput(categories);
-		ArrayList<Object> roots = new ArrayList<Object>();
-		roots.add(categories.getRoot());
-		Categories.printTree(roots, "");
+	}
+	
+	private void updateModel() {
+		categories = new Categories(children, groupByColumns);
+//		ArrayList<Object> roots = new ArrayList<Object>();
+//		roots.add(categories.getRoot());
+//		Categories.printTree(roots, "");
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
 		createTreeViewer(parent);
-		String description = items.size() + " items";
-		setContentDescription(description);
-		viewer.expandAll();
+//		updateModel();
+//		viewer.expandAll();
+
+// FIXME		
+//		String description = items.size() + " items";
+//		setContentDescription(description);
 	}
 
 	private void createTreeViewer(Composite parent) {
@@ -162,24 +183,22 @@ public class FolderView extends ViewPart {
 	    	  
 	      });
 
-	      viewer.setInput(categories);
-
 	      getSite().setSelectionProvider(viewer);
 	}
 
-	private MockItem createMockItem(String firstName, String lastName, String gender, int luckyNumber, Date dayOfBirth, String show) {
-		
-		MockItem item = new MockItem();
-		
-		item.putValue("First Name", firstName);
-		item.putValue("Last Name", lastName);
-		item.putValue("Gender", gender);
-		item.putValue("Lucky Number", new Integer(luckyNumber) );
-		item.putValue("Day of Birth", dayOfBirth);
-		item.putValue("Show", show);
-		
-		return item;
-	}
+//	private MockItem createMockItem(String firstName, String lastName, String gender, int luckyNumber, Date dayOfBirth, String show) {
+//		
+//		MockItem item = new MockItem();
+//		
+//		item.putValue("First Name", firstName);
+//		item.putValue("Last Name", lastName);
+//		item.putValue("Gender", gender);
+//		item.putValue("Lucky Number", new Integer(luckyNumber) );
+//		item.putValue("Day of Birth", dayOfBirth);
+//		item.putValue("Show", show);
+//		
+//		return item;
+//	}
 
 	@Override
 	public void setFocus() {
@@ -187,29 +206,29 @@ public class FolderView extends ViewPart {
 		
 	}
 
-	public List<String> getHiddenColumns() {
+	public List<ColumnDescription> getHiddenColumns() {
 		return hiddenColumns;
 	}
 
-	public List<String> getVisibleColumns() {
+	public List<ColumnDescription> getVisibleColumns() {
 		return visibleColumns;
 	}
 
-	public void setVisibleColumns(List<String> visibleColumns) {
+	public void setVisibleColumns(List<ColumnDescription> visibleColumns) {
 		this.visibleColumns.clear();
 		this.visibleColumns.addAll(visibleColumns);
 	}
 
-	public void setHiddenColumns(List<String> hiddenColumns) {
+	public void setHiddenColumns(List<ColumnDescription> hiddenColumns) {
 		this.hiddenColumns.clear();
 		this.hiddenColumns.addAll(hiddenColumns);
 	}
 
-	public List<String> getGroupByColumns() {
+	public List<ColumnDescription> getGroupByColumns() {
 		return groupByColumns;
 	}
 
-	public void setGroupByColumns(List<String> groupByColumns) {
+	public void setGroupByColumns(List<ColumnDescription> groupByColumns) {
 		this.groupByColumns.clear();
 		this.groupByColumns.addAll(groupByColumns);
 	}
@@ -217,6 +236,7 @@ public class FolderView extends ViewPart {
 	public void updateColumns() {
 		updateModel();
 		updateColumns( viewer.getTree().getColumns() );
+	    viewer.setInput(categories);
 		viewer.refresh();
 		viewer.expandAll();
 	}
@@ -226,15 +246,19 @@ public class FolderView extends ViewPart {
 		Tree tree = viewer.getTree();
 		TableLayout layout = new TableLayout();
 
-		String[] fields = visibleColumns.toArray( new String[visibleColumns.size()] );
+//		String[] fields = visibleColumns.toArray( new String[visibleColumns.size()] );
 		
 //		IMemento columnWidths = null;
 //		if (memento != null)
 //			columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
 
-		for (int i = 0; i < fields.length; i++) {
+		int numberOfColumns = visibleColumns.size() + 1;
+		
+		for (int i = 0; i < numberOfColumns; i++) {
 
-			final String markerField = fields[i];
+			final String columnName = i == 0 ? NAME_COLUMN : visibleColumns.get(i-1).getDisplayName();
+			final String valueName = i == 0 ? NAME_COLUMN : visibleColumns.get(i-1).getName();
+			
 			final int j = i;
 			
 			TreeViewerColumn column;
@@ -249,39 +273,10 @@ public class FolderView extends ViewPart {
 
 //			column.getColumn().setData(MARKER_FIELD, markerField);
 
-			column.setLabelProvider(new CellLabelProvider(){
+			column.setLabelProvider( i == 0? new FolderViewTreeLabelProvider() : new FolderViewColumnLabelProvider(valueName, j));
+			column.getColumn().setText(columnName);
 
-				private final String columnName = markerField;
-				private final int columnIndex = j;
-				
-				@Override
-				public void update(ViewerCell cell) {
-					if ( cell.getElement() instanceof MockItem) {
-						MockItem item = (MockItem) cell.getElement();
-						cell.setText( item.getValue(columnName).toString() );
-					}
-					
-					if ( cell.getElement() instanceof Category) {
-						if ( columnIndex == 0) {
-							Category category = (Category) cell.getElement();
-							String text = MessageFormat.format("{0}: {1}", category.getName(), category.getValueString() );
-							cell.setText( text );
-							int level = category.getLevel();
-							int imageIndex = level % IconFiles.LABELS.length;
-							cell.setImage( Activator.getImage( IconFiles.LABELS[imageIndex] ) );
-						}
-					}
-					
-				}} );
-			
-			column.getColumn().setText(markerField);
-
-			TreeColumn columnControl = column.getColumn();
-
-			removeSelectionListener(columnControl, SWT.Selection);
-			removeSelectionListener(columnControl, SWT.DefaultSelection);
-			
-	        column.getColumn().addSelectionListener( getSelectionAdapter(column.getColumn(), markerField) );
+			addSelectionListener(columnName, column.getColumn());
 	        
 //			column.getColumn().setToolTipText(
 //					markerField.getColumnTooltipText());
@@ -317,23 +312,16 @@ public class FolderView extends ViewPart {
 			layout.addColumnData(new ColumnPixelData(columnWidth, true, i != 0));
 		}
 
-		// Remove extra columns
-		if (currentColumns.length > fields.length) {
-			for (int i = fields.length; i < currentColumns.length; i++) {
-				currentColumns[i].dispose();
-
-			}
-		}
+		removeExtraColumns(currentColumns, numberOfColumns);
 
 		viewer.getTree().setLayout(layout);
 		tree.layout(true);
 	}
 
-	private void removeSelectionListener(TreeColumn columnControl, int eventType) {
-		Listener[] listeners = columnControl.getListeners(eventType);
-		for ( Listener listener : listeners) {
-			columnControl.removeListener(eventType, listener);
-		}
+	private void addSelectionListener(final String columnName, TreeColumn columnControl) {
+		removeSelectionListener(columnControl, SWT.Selection);
+		removeSelectionListener(columnControl, SWT.DefaultSelection);
+		columnControl.addSelectionListener( getSelectionAdapter(columnControl, columnName) );
 	}
 
 	private SelectionAdapter getSelectionAdapter(final TreeColumn column, final String sortValue) {
@@ -356,4 +344,27 @@ public class FolderView extends ViewPart {
 		return selectionAdapter;
 	}
 
+	private void removeSelectionListener(TreeColumn columnControl, int eventType) {
+		Listener[] listeners = columnControl.getListeners(eventType);
+		for ( Listener listener : listeners) {
+			columnControl.removeListener(eventType, listener);
+		}
+	}
+
+	private void removeExtraColumns(TreeColumn[] currentColumns, int numberOfColumns) {
+
+		if (currentColumns.length > numberOfColumns) {
+			for (int i = numberOfColumns; i < currentColumns.length; i++) {
+				currentColumns[i].dispose();
+			}
+		}
+	}
+
+	public IObjectStoreItem getFolder() {
+		return folder;
+	}
+
+	public List<IObjectStoreItem> getChildren() {
+		return children;
+	}
 }
