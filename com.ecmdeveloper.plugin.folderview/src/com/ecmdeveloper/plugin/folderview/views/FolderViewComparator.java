@@ -25,8 +25,8 @@ import java.util.Date;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.folderview.model.Category;
-import com.ecmdeveloper.plugin.folderview.model.MockItem;
 
 /**
  * @author ricardo.belfor
@@ -53,20 +53,19 @@ public class FolderViewComparator extends ViewerComparator {
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		
-
 		Object value1 = null;
 		Object value2 = null;
 
-		if (e1 instanceof MockItem && e2 instanceof MockItem ) {
-			value1 = ((MockItem) e1).getValue(sortValue);
-			value2 = ((MockItem) e2).getValue(sortValue);
+		if (e1 instanceof IObjectStoreItem && e2 instanceof IObjectStoreItem ) {
+			value1 = getObjectStoreItemValue(e1);
+			value2 = getObjectStoreItemValue(e2);
 		} else if (e1 instanceof Category && e2 instanceof Category ) {
 			value1 = ((Category) e1).getValue();
 			value2 = ((Category) e1).getValue();
-		} else if ( e1 instanceof Category && e2 instanceof MockItem ) { 
-			value2 = ((MockItem) e2).getValue(sortValue);
-		} else if ( e1 instanceof MockItem && e2 instanceof Category ) { 
-			value1 = ((MockItem) e1).getValue(sortValue);
+		} else if ( e1 instanceof Category && e2 instanceof IObjectStoreItem ) { 
+			value2 = getObjectStoreItemValue(e2);
+		} else if ( e1 instanceof IObjectStoreItem && e2 instanceof Category ) { 
+			value1 = getObjectStoreItemValue(e1);
 		}
 		
 		int returnCode = compareValues(value1, value2);
@@ -77,6 +76,18 @@ public class FolderViewComparator extends ViewerComparator {
 		return returnCode;
 	}
 
+	private Object getObjectStoreItemValue(Object objectStoreItem) {
+
+		if ( sortValue == null) {
+			return objectStoreItem.toString();
+		}
+
+		if ( FolderView.NAME_COLUMN.equals(sortValue ) ) {
+			return ((IObjectStoreItem) objectStoreItem).getDisplayName();
+		}
+		return ((IObjectStoreItem) objectStoreItem).getSafeValue(sortValue);
+	}
+
 	private int compareValues(Object value1, Object value2) {
 		int returnCode; 
 		if ( value1 == null && value2 == null ) {
@@ -85,9 +96,6 @@ public class FolderViewComparator extends ViewerComparator {
 			returnCode = -1;
 		} else if ( value2 == null ) {
 			returnCode = 1;
-//		} else if ( valueName.equals( THIS_PROPERTY_NAME ) ) {
-//			returnCode = getObjectValue().getDisplayName().compareTo(
-//					searchResultRow.getObjectValue().getDisplayName());
 		} else {
 			
 			if ( value1 instanceof Date ) {

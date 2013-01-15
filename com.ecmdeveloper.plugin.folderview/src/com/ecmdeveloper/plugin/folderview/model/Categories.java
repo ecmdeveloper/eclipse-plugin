@@ -1,17 +1,21 @@
 package com.ecmdeveloper.plugin.folderview.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
+
 public class Categories {
 
 	private final Category root;
 	
-	public Categories(List<MockItem> items, List<String> categoryNames) {
+	public Categories(List<IObjectStoreItem> items, List<ColumnDescription> columnDescriptions) {
 		
 		root = new Category("root", "", 0, items);
 		
@@ -20,12 +24,12 @@ public class Categories {
 		categories.add(root);
 		int categoryLevel = 0;
 		
-		for ( String categoryName : categoryNames ) {
+		for ( ColumnDescription columnDescription : columnDescriptions ) {
 			
 			++categoryLevel;
 			
 			for ( Category category : categories ) {
-				Collection<Category> splitInCategories = splitInCategories(categoryName,
+				Collection<Category> splitInCategories = splitInCategories(columnDescription.getName(),
 						categoryLevel, category.getChildren());
 				category.setChildren(splitInCategories);
 				subCategories.addAll(splitInCategories);
@@ -44,9 +48,19 @@ public class Categories {
 		
 		for ( Object item : items ) {
 
-			if ( item instanceof MockItem ) 
+			if ( item instanceof IObjectStoreItem ) 
 			{
-				Object value = ((MockItem) item).getValue( categoryName );
+				Object value = ((IObjectStoreItem) item).getValue( categoryName );
+				if ( value instanceof Date) {
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime( (Date) value );
+					calendar.set(Calendar.HOUR, 0);
+					calendar.set(Calendar.MINUTE, 0);
+					calendar.set(Calendar.SECOND, 0);
+					calendar.set(Calendar.MILLISECOND, 0);
+					value = calendar.getTime();
+				}
+				
 				System.out.println( value );
 				Category valueCategory = valueToCategory.get(value);;
 				

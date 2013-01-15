@@ -1,5 +1,5 @@
 /**
- * Copyright 2012, Ricardo Belfor
+ * Copyright 2013, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -20,33 +20,24 @@
 
 package com.ecmdeveloper.plugin.folderview.handlers;
 
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.Dialog;
 
-import com.ecmdeveloper.plugin.folderview.dialogs.ConfigureColumnsDialog;
 import com.ecmdeveloper.plugin.folderview.views.FolderView;
 
 /**
  * @author ricardo.belfor
  *
  */
-public class SelectColumnsHandler extends RefreshFolderViewHandler {
+public class RefreshFolderViewHandler extends AbstractFolderViewHandler {
 
 	@Override
 	public void execute(ExecutionEvent event, FolderView folderView) throws ExecutionException {
-
-		ConfigureColumnsDialog dialog = new ConfigureColumnsDialog(folderView.getSite().getShell(),
-				folderView.getVisibleColumns(), folderView.getHiddenColumns(), folderView.getGroupByColumns() );
 		
-		if ( dialog.open() == Dialog.OK ) {
-			folderView.setVisibleColumns( dialog.getVisibleColumns() );
-			folderView.setHiddenColumns( dialog.getHiddenColumns() );
-			folderView.setGroupByColumns( dialog.getGroupByColumns() );
-
-			Job job = getRefreshFolderViewJob();
-			job.schedule();
-		}
+		Job job = getRefreshFolderViewJob();
+		job.schedule();
 	}
 }
