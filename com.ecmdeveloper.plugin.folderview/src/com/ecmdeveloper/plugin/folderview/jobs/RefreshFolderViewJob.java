@@ -60,14 +60,18 @@ public class RefreshFolderViewJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		
 		try {
-			ITaskFactory taskFactory = folder.getTaskFactory();
-			IFetchPropertiesTask task = taskFactory.getFetchPropertiesTask(objectStoreItems, propertyNames
-					.toArray(new String[propertyNames.size()]));
-			Activator.getDefault().getTaskManager().executeTaskSync(task);
+			fetchPropertyValues();
 			return Status.OK_STATUS;
 		} catch (ExecutionException e) {
 			PluginMessage.openErrorFromThread(NAME, "Fetching property values failed.", e);
 			return Status.CANCEL_STATUS;
 		}
+	}
+
+	private void fetchPropertyValues() throws ExecutionException {
+		ITaskFactory taskFactory = folder.getTaskFactory();
+		IFetchPropertiesTask task = taskFactory.getFetchPropertiesTask(objectStoreItems, propertyNames
+				.toArray(new String[propertyNames.size()]));
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 	}
 }

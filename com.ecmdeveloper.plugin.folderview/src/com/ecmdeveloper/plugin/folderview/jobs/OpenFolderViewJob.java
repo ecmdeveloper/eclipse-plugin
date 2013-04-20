@@ -36,6 +36,7 @@ import org.eclipse.ui.PartInitException;
 import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IPropertyDescription;
+import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ILoadChildrenTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetPropertyDescriptionsTask;
@@ -54,7 +55,16 @@ public class OpenFolderViewJob extends Job {
 	private static final String NAME = "Open Folder View";
 	private final IFolder folder;
 	private final IWorkbenchWindow window;
-
+	private static final List<String> defaultColumnNames = new ArrayList<String>();
+	
+	static
+	{
+		defaultColumnNames.add( "DateCreated" );
+		defaultColumnNames.add( "Creator" );
+		defaultColumnNames.add( "DateLastModified" );
+		defaultColumnNames.add( "LastModifier" );
+	}
+	
 	public OpenFolderViewJob(IFolder folder, IWorkbenchWindow window) {
 		super(NAME);
 		this.folder = folder;
@@ -65,7 +75,16 @@ public class OpenFolderViewJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 
 		ArrayList<IObjectStoreItem> children = loadChildren();
+		
+		try {
+			fetchPropertyValues(children);
+		} catch (ExecutionException e) {
+			PluginMessage.openErrorFromThread(window.getShell(), getName(), LOADING_CHILDREN_FAILED_MESSAGE, e);
+			return Status.CANCEL_STATUS;
+		}
+		
 		Collection<IPropertyDescription> propertyDescriptions = getPropertyDescriptions();
+		
 		if ( propertyDescriptions != null) {
 			openFolderView(children, getColumnDescriptions(propertyDescriptions) );
 		} else {
@@ -103,7 +122,7 @@ public class OpenFolderViewJob extends Job {
 	private ArrayList<IObjectStoreItem> loadChildren() {
 		try {
 			ITaskFactory taskFactory = folder.getTaskFactory();
-			ILoadChildrenTask task = taskFactory.getLoadChildrenTask(folder);
+			ILoadChildrenTask task = taskFactory.getLoadChildrenTask(folder, defaultColumnNames );
 			Activator.getDefault().getTaskManager().executeTaskSync(task);
 			return task.getChildren();
 		} catch (ExecutionException e) {
@@ -122,11 +141,19 @@ public class OpenFolderViewJob extends Job {
 				try {
 					view = (FolderView) window.getActivePage().showView(FolderView.ID,
 							folder.getId(), IWorkbenchPage.VIEW_ACTIVATE);
-					view.show(folder, children, columnDescriptions);
+					view.show(folder, children, columnDescriptions, defaultColumnNames );
 				} catch (PartInitException e) {
 					PluginMessage.openErrorFromThread(window.getShell(), getName(), e.getLocalizedMessage(), e);
 				}
 			}} 
 		);
+	}
+
+	private void fetchPropertyValues(Collection<IObjectStoreItem> objectStoreItems) throws ExecutionException {
+		ITaskFactory taskFactory = folder.getTaskFactory();
+		List<String> propertyNames;
+		IFetchPropertiesTask task = taskFactory.getFetchPropertiesTask(objectStoreItems, defaultColumnNames
+				.toArray(new String[defaultColumnNames.size()]));
+		Activator.getDefault().getTaskManager().executeTaskSync(task);
 	}
 }

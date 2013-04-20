@@ -50,7 +50,7 @@ public class Categories {
 
 			if ( item instanceof IObjectStoreItem ) 
 			{
-				Object value = ((IObjectStoreItem) item).getValue( categoryName );
+				Object value = ((IObjectStoreItem) item).getSafeValue( categoryName );
 				if ( value instanceof Date) {
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime( (Date) value );

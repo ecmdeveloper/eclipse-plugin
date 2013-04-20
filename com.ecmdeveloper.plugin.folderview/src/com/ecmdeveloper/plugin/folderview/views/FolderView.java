@@ -90,19 +90,22 @@ public class FolderView extends ViewPart {
 //		visibleColumns.add("Name");
 	}
 
-	public void show(IObjectStoreItem folder, List<IObjectStoreItem> children, Collection<ColumnDescription> propertyDescriptions) {
+	public void show(IObjectStoreItem folder, List<IObjectStoreItem> children, Collection<ColumnDescription> propertyDescriptions, List<String> visibleColumnNames) {
 		
 		this.folder = folder;
 		this.children = children;
 		this.propertyDescriptions = propertyDescriptions;
 		
 		for ( ColumnDescription columnDescription : this.propertyDescriptions ) {
-			hiddenColumns.add( columnDescription );
+			if ( visibleColumnNames.contains( columnDescription.getName() ) ) {
+				visibleColumns.add( columnDescription );
+			} else {
+				hiddenColumns.add( columnDescription );
+			}
 		}
 		setPartName(this.folder.getDisplayName());
 		
-		updateModel();
-	    viewer.setInput(categories);
+		updateColumns();
 	}
 	
 	private void updateModel() {
