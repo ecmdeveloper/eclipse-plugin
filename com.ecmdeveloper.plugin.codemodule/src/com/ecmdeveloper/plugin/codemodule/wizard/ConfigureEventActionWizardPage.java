@@ -45,26 +45,26 @@ import com.ecmdeveloper.plugin.core.util.PluginMessage;
 public class ConfigureEventActionWizardPage extends WizardPage {
 
 	private static final String NO_CLASSES_IMPLEMENTING_INTERFACE = "The Code Module does not contain classes implementing the ''{0}'' interface.";
-	private static final String EVENT_ACTION_HANDLER_INTERFACE = "com.filenet.api.engine.EventActionHandler";
 
 	private static final String NAME_FIELD  = "NAME_FIELD";
 	private static final String CLASS_NAME_FIELD = "CLASS_NAME_FIELD";
 	
-	private static final String TITLE = "Configure Event Action";
-	private static final String DESCRIPTION_FMT = "Configure the new Event Action based on the code module ''{0}''.";
+	private static final String DESCRIPTION_FMT = "Configure the new {1} based on the code module ''{0}''.";
 	
 	private final PreferenceStore preferenceStore = new PreferenceStore();
 	private final CodeModuleFile codeModuleFile;
 
+	private final String handlerInterface;
 	private String name;
 	private String className; 
 	private boolean enabled = true;
 	
-	protected ConfigureEventActionWizardPage(CodeModuleFile codeModuleFile) {
-		super(TITLE);
-		setTitle(TITLE);
-		setDescription(MessageFormat.format(DESCRIPTION_FMT, codeModuleFile.getName()));
+	protected ConfigureEventActionWizardPage(CodeModuleFile codeModuleFile, String title, String handlerInterface, String actionObject ) {
+		super(title);
+		setTitle(title);
+		setDescription(MessageFormat.format(DESCRIPTION_FMT, codeModuleFile.getName(), actionObject ));
 		this.codeModuleFile = codeModuleFile;
+		this.handlerInterface = handlerInterface;
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class ConfigureEventActionWizardPage extends WizardPage {
 	private String[][] getClassNames() {
 		
 		try {
-			Collection<String> classNames = codeModuleFile.getClassNames(EVENT_ACTION_HANDLER_INTERFACE);
+			Collection<String> classNames = codeModuleFile.getClassNames(handlerInterface);
 			String[][] values = new String[classNames.size()][];
 			
 			if ( classNames.size() != 0  ) {
@@ -150,7 +150,7 @@ public class ConfigureEventActionWizardPage extends WizardPage {
 				}
 			} else { 
 				setErrorMessage(MessageFormat.format(NO_CLASSES_IMPLEMENTING_INTERFACE,
-						EVENT_ACTION_HANDLER_INTERFACE));
+						handlerInterface));
 			}
 			
 			return values;
