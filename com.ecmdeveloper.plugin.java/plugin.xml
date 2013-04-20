@@ -33,6 +33,16 @@
             Create a new Document Classifier class.
          </description>
       </wizard>
+      <wizard
+            category="com.ecmdeveloper.plugin.category.main/com.ecmdeveloper.plugin.actionClasses"
+            class="com.ecmdeveloper.plugin.java.wizard.NewChangePreprocessorClassWizard"
+            icon="icons/database_gear.png"
+            id="com.ecmdeveloper.plugin.wizard.newChangePreprocessor"
+            name="Change Preprocessor Class">
+         <description>
+            Create a new Change Preprocessor Class
+         </description>
+      </wizard>
       <category
             id="com.ecmdeveloper.plugin.category.main"
             name="ECM Developer">
