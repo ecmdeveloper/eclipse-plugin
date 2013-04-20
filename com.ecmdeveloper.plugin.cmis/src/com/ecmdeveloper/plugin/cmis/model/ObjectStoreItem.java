@@ -208,6 +208,10 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return convertFromInternalValue(objectValue);
 	}
 
+	public Object getSafeValue(String propertyName) {
+		return getValue(propertyName);
+	}
+	
 	private Object getObjectValue(String propertyName) {
 		Object objectValue = null;
 

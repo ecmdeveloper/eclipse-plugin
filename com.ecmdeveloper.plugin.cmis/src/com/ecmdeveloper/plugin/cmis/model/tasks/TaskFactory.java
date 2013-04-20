@@ -23,6 +23,7 @@ package com.ecmdeveloper.plugin.cmis.model.tasks;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +43,7 @@ import com.ecmdeveloper.plugin.core.model.constants.PrincipalType;
 import com.ecmdeveloper.plugin.core.model.security.IAccessControlEntries;
 import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICancelCheckoutTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckinTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ICheckoutTask;
@@ -58,6 +60,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.IGetContentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IGetCurrentVersionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IGetDocumentVersionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IGetReleasedVersionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.ILoadChildrenTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IMoveTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IRefreshTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ISaveTask;
@@ -66,6 +69,7 @@ import com.ecmdeveloper.plugin.core.model.tasks.IUpdateDocumentContentTask;
 import com.ecmdeveloper.plugin.core.model.tasks.IUpdateTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetPropertyDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateCodeModuleTask;
@@ -150,6 +154,13 @@ public class TaskFactory implements ITaskFactory {
 		return new FetchPropertiesTask(objectStoreItem, propertyNames);
 	}
 
+	@Override
+	public IFetchPropertiesTask getFetchPropertiesTask(
+			Collection<IObjectStoreItem> objectStoreItems, String[] propertyNames) {
+//		return new FetchPropertiesTask(objectStoreItems, propertyNames);
+		return null;
+	}
+	
 	@Override
 	public ICancelCheckoutTask getCancelCheckoutTask(IDocument document) {
 		return new CancelCheckoutTask((Document) document);
@@ -288,6 +299,12 @@ public class TaskFactory implements ITaskFactory {
 	}
 
 	@Override
+	public IBaseTask getCreateChangePreprocessorTask(String id, String name, String className,
+			boolean enabled, IObjectStore objectStore) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public IGetRealmsTask getGetRealmsTask(IObjectStore objectStore) {
 		return null;
 	}
@@ -318,4 +335,21 @@ public class TaskFactory implements ITaskFactory {
 		return new SaveAccessControlEntriesTask((ObjectStoreItem) objectStoreItem,
 				(AccessControlEntries) accessControlEntries);
 	}
+
+	@Override
+	public IGetPropertyDescriptionsTask getGetPropertyDescriptionsTask(IObjectStore objectStore) {
+		return null;
+	}
+
+	@Override
+	public ILoadChildrenTask getLoadChildrenTask(IObjectStoreItem objectStoreItem) {
+		return new LoadChildrenTask((ObjectStoreItem) objectStoreItem);
+	}
+
+	@Override
+	public ILoadChildrenTask getLoadChildrenTask(IObjectStoreItem objectStoreItem, List<String> columnNames) {
+		// FIXME add column names
+		return new LoadChildrenTask((ObjectStoreItem) objectStoreItem);
+	}
+
 }
