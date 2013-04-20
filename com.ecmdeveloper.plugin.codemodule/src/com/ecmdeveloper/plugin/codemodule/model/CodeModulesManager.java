@@ -33,6 +33,7 @@ import com.ecmdeveloper.plugin.core.model.IDocument;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.IObjectStoresManager;
+import com.ecmdeveloper.plugin.core.model.tasks.IBaseTask;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskFactory;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManager;
 import com.ecmdeveloper.plugin.core.model.tasks.ITaskManagerListener;
@@ -339,6 +340,18 @@ public class CodeModulesManager implements ITaskManagerListener {
 		ITaskFactory taskFactory = objectStore.getTaskFactory();
 		
 		ICreateEventActionTask task = taskFactory.getCreateEventActionTask(codeModuleFile.getId(),
+				name, className, enabled, objectStore);
+		
+		getTaskManager().executeTaskSync(task);
+	}
+
+	public void createChangePreprocessor(CodeModuleFile codeModuleFile, String name,
+			String className, boolean enabled) throws ExecutionException {
+		IObjectStore objectStore = getObjectStore(codeModuleFile);
+		objectStore.assertConnected();
+		ITaskFactory taskFactory = objectStore.getTaskFactory();
+		
+		IBaseTask task = taskFactory.getCreateChangePreprocessorTask(codeModuleFile.getId(),
 				name, className, enabled, objectStore);
 		
 		getTaskManager().executeTaskSync(task);

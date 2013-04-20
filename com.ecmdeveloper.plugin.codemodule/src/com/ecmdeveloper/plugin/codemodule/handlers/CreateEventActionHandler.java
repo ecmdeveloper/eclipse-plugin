@@ -20,65 +20,33 @@
 
 package com.ecmdeveloper.plugin.codemodule.handlers;
 
-import java.text.MessageFormat;
-import java.util.Iterator;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.ecmdeveloper.plugin.codemodule.jobs.CreateEventActionJob;
 import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
 import com.ecmdeveloper.plugin.codemodule.wizard.NewEventActionWizard;
-import com.ecmdeveloper.plugin.core.util.PluginMessage;
 
 /**
  * @author Ricardo Belfor
  *
  */
-public class CreateEventActionHandler extends AbstractHandler implements IHandler {
+public class CreateEventActionHandler extends AbstractCreateActionHandler {
 
-	private static final String NOT_SAVED_MESSAGE = "The Code Module ''{0}'' is not saved yet. Please save before trying to add an event action.";
 	private static final String HANDLER_NAME = "Create Event Action";
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	protected String getHandlerName() {
+		return HANDLER_NAME;
+	}
 
-		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if (window == null)	return null;
-
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-
-		if (!(selection instanceof IStructuredSelection) || selection.isEmpty() ) {
-			return null;
+	protected void createAction(final IWorkbenchWindow window, CodeModuleFile codeModuleFile) {
+		NewEventActionWizard wizard = new NewEventActionWizard(codeModuleFile);
+		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		dialog.create();
+		if ( dialog.open() == Dialog.OK ) {
+			scheduleCreateEventActionJob(window, codeModuleFile, wizard);
 		}
-
-		Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
-		
-		while ( iterator.hasNext() ) {
-			CodeModuleFile codeModuleFile = (CodeModuleFile) iterator.next();
-			if ( codeModuleFile.getId() == null ) {
-				PluginMessage.openError(window.getShell(), HANDLER_NAME, MessageFormat.format(
-						NOT_SAVED_MESSAGE, codeModuleFile.getName()), null);
-				return null;
-			}
-			
-			NewEventActionWizard wizard = new NewEventActionWizard(codeModuleFile);
-			WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-			dialog.create();
-			if ( dialog.open() == Dialog.OK ) {
-				scheduleCreateEventActionJob(window, codeModuleFile, wizard);
-			}
-		}
-		
-		return null;
 	}
 
 	private void scheduleCreateEventActionJob(final IWorkbenchWindow window, CodeModuleFile codeModuleFile,

@@ -1,5 +1,5 @@
 /**
- * Copyright 2012, Ricardo Belfor
+ * Copyright 2013, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -36,11 +36,11 @@ import com.ecmdeveloper.plugin.codemodule.util.PluginMessage;
  * @author ricardo.belfor
  *
  */
-public class CreateEventActionJob extends Job {
+public class CreateChangePreprocessorJob extends Job {
 
-	private static final String FAILED_MESSAGE_FMT = "Creating Event Action \"{0}\" failed";
-	private static final String MONITOR_MESSAGE = "Creating Event Action";
-	private static final String JOB_NAME = "Create Event Action";
+	private static final String FAILED_MESSAGE_FMT = "Creating Change Preprocessor \"{0}\" failed";
+	private static final String MONITOR_MESSAGE = "Creating Change Preprocessor";
+	private static final String JOB_NAME = "Create Change Preprocessor";
 
 	private CodeModuleFile codeModuleFile;
 	private String name;
@@ -48,7 +48,7 @@ public class CreateEventActionJob extends Job {
 	private boolean enabled;
 	private Shell shell;
 
-	public CreateEventActionJob(CodeModuleFile codeModuleFile, String name, String className,
+	public CreateChangePreprocessorJob(CodeModuleFile codeModuleFile, String name, String className,
 			boolean enabled, Shell shell) {
 		super(JOB_NAME);
 		this.codeModuleFile = codeModuleFile;
@@ -63,7 +63,7 @@ public class CreateEventActionJob extends Job {
 		try {
 			monitor.beginTask( MONITOR_MESSAGE, 1 );
 			CodeModulesManager codeModulesManager = CodeModulesManager.getManager();
-			codeModulesManager.createEventAction(codeModuleFile, name, className, enabled);
+			codeModulesManager.createChangePreprocessor(codeModuleFile, name, className, enabled);
 			monitor.done();
 			return Status.OK_STATUS;
 		} catch(final Exception e ) {

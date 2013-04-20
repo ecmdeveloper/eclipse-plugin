@@ -1,5 +1,5 @@
 /**
- * Copyright 2012, Ricardo Belfor
+ * Copyright 2013, Ricardo Belfor
  * 
  * This file is part of the ECM Developer plug-in. The ECM Developer plug-in
  * is free software: you can redistribute it and/or modify it under the
@@ -28,25 +28,25 @@ import com.ecmdeveloper.plugin.codemodule.model.CodeModuleFile;
  * @author ricardo.belfor
  *
  */
-public class NewEventActionWizard extends Wizard {
+public class NewChangePreprocessorWizard extends Wizard {
 
-	private static final String EVENT_ACTION_HANDLER_INTERFACE = "com.filenet.api.engine.EventActionHandler";
-	private static final String TITLE = "Configure Event Action";
 	private static final String ACTION_OBJECT = "Change Preprocessor";
+	private static final String CHANGE_PREPROCESSOR_INTERFACE = "com.filenet.api.engine.ChangePreprocessor";
+	private static final String TITLE = "Configure Change Preprocessor";
 
-	private ConfigureEventActionWizardPage configureEventActionWizardPage;
+	private ConfigureEventActionWizardPage configureChangePreprocessorWizardPage;
 	private final CodeModuleFile codeModuleFile;
 
-	public NewEventActionWizard(CodeModuleFile codeModuleFile) {
+	public NewChangePreprocessorWizard(CodeModuleFile codeModuleFile) {
 		this.codeModuleFile = codeModuleFile;
-		setWindowTitle("New Event Action");
+		setWindowTitle("New Change Preprocessor");
 	}
 	
 	@Override
 	public void addPages() {
-		configureEventActionWizardPage = new ConfigureEventActionWizardPage(codeModuleFile, TITLE,
-				EVENT_ACTION_HANDLER_INTERFACE, ACTION_OBJECT );
-		addPage(configureEventActionWizardPage);
+		configureChangePreprocessorWizardPage = new ConfigureEventActionWizardPage(codeModuleFile, TITLE,
+				CHANGE_PREPROCESSOR_INTERFACE, ACTION_OBJECT );
+		addPage(configureChangePreprocessorWizardPage);
 	}
 
 	@Override
@@ -55,14 +55,14 @@ public class NewEventActionWizard extends Wizard {
 	}
 
 	public String getName() {
-		return configureEventActionWizardPage.getName();
+		return configureChangePreprocessorWizardPage.getName();
 	}
 
 	public String getClassName() {
-		return configureEventActionWizardPage.getClassName();
+		return configureChangePreprocessorWizardPage.getClassName();
 	}
 
 	public boolean isEnabled() {
-		return configureEventActionWizardPage.isEnabled();
+		return configureChangePreprocessorWizardPage.isEnabled();
 	}
 }

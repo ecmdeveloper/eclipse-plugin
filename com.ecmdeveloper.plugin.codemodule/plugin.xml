@@ -100,6 +100,12 @@
             id="com.ecmdeveloper.plugin.createEventAction"
             name="Create Event Action">
       </command>
+      <command
+            categoryId="com.ecmdeveloper.plugin.category"
+            description="Create Change Preprocessor"
+            id="com.ecmdeveloper.plugin.createChangePreprocessor"
+            name="Create Change Preprocessor">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -245,6 +251,10 @@
                </iterate>
             </with>
          </enabledWhen>
+      </handler>
+      <handler
+            class="com.ecmdeveloper.plugin.codemodule.handlers.CreateChangePreprocessorHandler"
+            commandId="com.ecmdeveloper.plugin.createChangePreprocessor">
       </handler>
    </extension>
    <extension
