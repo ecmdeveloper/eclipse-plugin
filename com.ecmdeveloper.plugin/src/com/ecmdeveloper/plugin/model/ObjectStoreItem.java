@@ -138,6 +138,7 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		// Stub for childless objects 
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(String propertyName) {
@@ -159,6 +160,20 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		return objectValue;
 	}
 
+	@Override
+	public Object getSafeValue(String propertyName) {
+		
+		if ( !saved ) {
+			return null;
+		}
+		
+		Properties properties = getProperties();
+		if ( properties.isPropertyPresent(propertyName) ) {
+			return getValue(propertyName);
+		}
+		return null;
+	}
+	
 	private Properties getProperties() {
 		IndependentlyPersistableObject objectStoreObject = getObjectStoreObject();
 		Properties properties = objectStoreObject.getProperties();

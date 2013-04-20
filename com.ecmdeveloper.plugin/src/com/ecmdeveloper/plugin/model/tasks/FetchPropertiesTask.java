@@ -19,11 +19,22 @@
  */
 package com.ecmdeveloper.plugin.model.tasks;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
 import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
+import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
+import com.ecmdeveloper.plugin.util.ObjectDumper;
+import com.filenet.api.constants.PropertyNames;
+import com.filenet.api.core.BatchItemHandle;
+import com.filenet.api.core.Domain;
 import com.filenet.api.core.IndependentlyPersistableObject;
+import com.filenet.api.core.RetrievingBatch;
+import com.filenet.api.property.PropertyFilter;
 
 /**
  * @author Ricardo Belfor
@@ -31,26 +42,91 @@ import com.filenet.api.core.IndependentlyPersistableObject;
  */
 public class FetchPropertiesTask extends BaseTask implements IFetchPropertiesTask {
 
-	private ObjectStoreItem objectStoreItem; 
+	private List<IObjectStoreItem> objectStoreItems = new ArrayList<IObjectStoreItem>();
+	
 	private String propertyNames[];
 	
 	public FetchPropertiesTask(IObjectStoreItem objectStoreItem, String[] propertyNames) {
-		this.objectStoreItem = (ObjectStoreItem) objectStoreItem;
+		this.objectStoreItems.add( objectStoreItem );
 		this.propertyNames = propertyNames;
 	}
 
+	public FetchPropertiesTask(Collection<IObjectStoreItem> objectStoreItems, String[] propertyNames) {
+		this.objectStoreItems.addAll( objectStoreItems );
+		this.propertyNames = propertyNames;
+	}
+	
 	@Override
 	protected Object execute() throws Exception {
 
-		IndependentlyPersistableObject objectStoreObject = objectStoreItem.getObjectStoreObject();
-		objectStoreObject.refresh(propertyNames);
+		PropertyFilter pf = getPropertyFilter();
+		RetrievingBatch retrievingBatch = getRetrievingBatch();
+		
+		for ( IObjectStoreItem objectStoreItem : objectStoreItems ) {
+			IndependentlyPersistableObject objectStoreObject = ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
+			retrievingBatch.add(objectStoreObject, pf);
+		}
+
+		retrievingBatch.retrieveBatch();
+
+		checkForErrors(retrievingBatch);
+		
+		ObjectDumper od = new ObjectDumper();
+
+		for ( IObjectStoreItem objectStoreItem : objectStoreItems ) {
+			IndependentlyPersistableObject objectStoreObject = ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
+			od.dump(objectStoreObject);
+			System.out.println();
+		}
+		//objectStoreObject.refresh(propertyNames);
 		//objectStoreObject.fetchProperties(propertyNames);
 
 		return null;
 	}
 
+	private RetrievingBatch getRetrievingBatch() {
+		Domain domain = getDomain();
+		RetrievingBatch retrievingBatch = RetrievingBatch.createRetrievingBatchInstance(domain);
+		return retrievingBatch;
+	}
+
+	private Domain getDomain() {
+		com.filenet.api.core.ObjectStore internalObjectStore = getObjectStore();
+		if ( !internalObjectStore.getProperties().isPropertyPresent( PropertyNames.DOMAIN ) ) {
+			internalObjectStore.refresh( new String[] { PropertyNames.DOMAIN } );
+		}
+		Domain domain = internalObjectStore.get_Domain();
+		return domain;
+	}
+
+	private com.filenet.api.core.ObjectStore getObjectStore() {
+		IObjectStoreItem objectStoreItem = objectStoreItems.get(0);
+		ObjectStore objectStore = (ObjectStore) objectStoreItem.getObjectStore();
+		return (com.filenet.api.core.ObjectStore) objectStore.getObjectStoreObject();
+	}
+
+	private PropertyFilter getPropertyFilter() {
+		PropertyFilter pf = new PropertyFilter();
+		for ( String propertyName : propertyNames) {
+			pf.addIncludeProperty(1, null, null, propertyName, null);
+		}
+		return pf;
+	}
+
+	private void checkForErrors(RetrievingBatch retrievingBatch) throws Exception {
+		if ( retrievingBatch.hasExceptions() ) {
+			for (Object object : retrievingBatch.getBatchItemHandles(null) ) {
+				BatchItemHandle handle = (BatchItemHandle) object;
+				if (handle.hasException() ) {
+					throw new Exception("Fetching properties failed", handle.getException() );
+				}
+			}
+		}
+	}
+
 	@Override
 	protected ContentEngineConnection getContentEngineConnection() {
+		ObjectStoreItem objectStoreItem = (ObjectStoreItem) objectStoreItems.get(0);
 		return objectStoreItem.getObjectStore().getConnection();
 	}
 }

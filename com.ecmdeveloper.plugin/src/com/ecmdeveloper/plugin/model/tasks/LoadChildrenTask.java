@@ -20,6 +20,7 @@
 package com.ecmdeveloper.plugin.model.tasks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
@@ -57,6 +58,7 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 	private ObjectStoreItem objectStoreItem;
 	private ArrayList<IObjectStoreItem> children;
 	private Folder parentFolder;
+	private final Collection<String> extraProperties;
 	
 	/**
 	 * The constructor of this task is used to pass all the relevant input
@@ -64,10 +66,15 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 	 * 
 	 * @param objectStoreItem the object store item
 	 */
-	public LoadChildrenTask( ObjectStoreItem objectStoreItem ) {
+	public LoadChildrenTask( ObjectStoreItem objectStoreItem, Collection<String> extraProperties ) {
 		this.objectStoreItem = objectStoreItem;
+		this.extraProperties = extraProperties;
 	}
 
+	public LoadChildrenTask( ObjectStoreItem objectStoreItem ) {
+		this(objectStoreItem, null);
+	}
+	
 	@Override
 	public ObjectStoreItem getObjectStoreItem() {
 		return objectStoreItem;
@@ -168,15 +175,36 @@ public class LoadChildrenTask extends BaseTask implements ILoadChildrenTask {
 	private com.filenet.api.core.Folder getInternalFolder() {
 
 		com.filenet.api.core.Folder folder = (com.filenet.api.core.Folder) parentFolder.getObjectStoreObject();
-		folder.fetchProperties( propertyFilter );
 		
-//		ObjectDumper od = new ObjectDumper();
+		if ( extraProperties == null) {
+			folder.fetchProperties( propertyFilter );
+		} else {
+			PropertyFilter customPropertyFilter = getCustomPropertyFilter();
+			folder.fetchProperties( customPropertyFilter );
+		}
+		
+//		com.ecmdeveloper.plugin.util.ObjectDumper od = new com.ecmdeveloper.plugin.util.ObjectDumper();
 //		try {
 //			od.dump(folder);
-//		} catch (IOException e) {
+//		} catch (java.io.IOException e) {
 //			e.printStackTrace();
 //		}
 		return folder;
+	}
+
+	private PropertyFilter getCustomPropertyFilter() {
+
+		PropertyFilter customPropertyFilter = new PropertyFilter();
+		
+		customPropertyFilter.addIncludeProperty(0, null, true, PropertyNames.CONTAINEES, null);
+		customPropertyFilter.addIncludeProperty(1, null, false, PropertyNames.SUB_FOLDERS, null);
+		customPropertyFilter.addIncludeProperty(2, null, null, PropertyNames.HEAD, null );
+		customPropertyFilter.addIncludeProperty(1, null, null, PropertyNames.CONTAINMENT_NAME, null );
+		
+		for (String extraProperty : extraProperties ) {
+			customPropertyFilter.addIncludeProperty(1, null, null, extraProperty, null );
+		}
+		return customPropertyFilter;
 	}
 
 	@Override
