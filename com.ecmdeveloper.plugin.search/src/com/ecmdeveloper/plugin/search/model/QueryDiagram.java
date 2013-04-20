@@ -27,6 +27,9 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import com.ecmdeveloper.plugin.search.Activator;
+import com.ecmdeveloper.plugin.search.util.IconFiles;
+
 /**
  * 
  * @author ricardo.belfor
@@ -37,7 +40,6 @@ public class QueryDiagram extends QuerySubpart {
 	static final long serialVersionUID = 1;
 
 	private static int count;
-	private static Image LOGIC_ICON = createImage(QueryDiagram.class, "icons/circuit16.gif"); //$NON-NLS-1$
 	
 	private List<QueryElement> children = new ArrayList<QueryElement>();
 
@@ -84,7 +86,7 @@ public class QueryDiagram extends QuerySubpart {
 	}
 
 	public static Image getIconImage() {
-		return LOGIC_ICON;
+		return Activator.getImage(IconFiles.SEARCH_EDITOR);
 	}
 
 	public String getNewID() {
