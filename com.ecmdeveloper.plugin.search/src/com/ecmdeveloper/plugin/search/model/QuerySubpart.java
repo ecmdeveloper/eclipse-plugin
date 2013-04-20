@@ -47,16 +47,6 @@ public abstract class QuerySubpart extends QueryElement {
 				new PropertyDescriptor(ID_LOCATION, "Location") };
 	}
 
-	protected static Image createImage(Class rsrcClass, String name) {
-		InputStream stream = rsrcClass.getResourceAsStream(name);
-		Image image = new Image(null, stream);
-		try {
-			stream.close();
-		} catch (IOException ioe) {
-		}
-		return image;
-	}
-
 	public QuerySubpart(Query query) {
 		super(query);
 		setID(getNewID());
