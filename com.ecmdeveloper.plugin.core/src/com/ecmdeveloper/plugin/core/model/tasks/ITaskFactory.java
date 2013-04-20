@@ -23,12 +23,14 @@ package com.ecmdeveloper.plugin.core.model.tasks;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.ecmdeveloper.plugin.core.model.IClassDescription;
 import com.ecmdeveloper.plugin.core.model.IDocument;
+import com.ecmdeveloper.plugin.core.model.IFolder;
 import com.ecmdeveloper.plugin.core.model.IGetParentTask;
 import com.ecmdeveloper.plugin.core.model.IObjectStore;
 import com.ecmdeveloper.plugin.core.model.IObjectStoreItem;
@@ -39,6 +41,7 @@ import com.ecmdeveloper.plugin.core.model.security.IPrincipal;
 import com.ecmdeveloper.plugin.core.model.security.IRealm;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetChildClassDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetClassDescriptionTask;
+import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetPropertyDescriptionsTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IGetRequiredClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.classes.IRefreshClassDescriptionTask;
 import com.ecmdeveloper.plugin.core.model.tasks.codemodule.ICreateCodeModuleTask;
@@ -66,6 +69,8 @@ public interface ITaskFactory {
 	IGetDocumentVersionsTask getGetDocumentVersionsTask(IDocument document);
 	
 	IFetchPropertiesTask getFetchPropertiesTask(IObjectStoreItem objectStoreItem, String[] propertyNames);
+
+	IFetchPropertiesTask getFetchPropertiesTask(Collection<IObjectStoreItem> objectStoreItems, String[] propertyNames);
 	
 	IRefreshTask getRefreshTask( IObjectStoreItem[] objectStoreItems, boolean notifyListeners);
 	
@@ -107,6 +112,8 @@ public interface ITaskFactory {
 	IRefreshClassDescriptionTask getRefreshClassDescriptionTask(IClassDescription[] classDescriptions);
 
 	IGetClassDescriptionTask getGetClassDescriptionTask(String className, IObjectStore objectStore, Object parent);
+	
+	IGetPropertyDescriptionsTask getGetPropertyDescriptionsTask(IObjectStore objectStore);
 
 	ICreateFolderTask getCreateFolderTask(IObjectStoreItem parent, String className, Map<String,Object> propertiesMap);
 	
@@ -127,6 +134,8 @@ public interface ITaskFactory {
 	IGetCodeModuleActionsTask getGetCodeModuleActionsTask(String id, IObjectStore objectStore);
 
 	ICreateEventActionTask getCreateEventActionTask(String id, String name, String className, boolean enabled, IObjectStore objectStore);
+
+	IBaseTask getCreateChangePreprocessorTask(String id, String name, String className, boolean enabled, IObjectStore objectStore);
 	
 	IGetRealmsTask getGetRealmsTask(IObjectStore objectStore);
 
@@ -139,4 +148,9 @@ public interface ITaskFactory {
 	IGetMembersTask getGetMembersTask(IPrincipal principal);
 	
 	ISaveAccessControlEntriesTask getSaveAccessControlEntriesTask(IObjectStoreItem objectStoreItem, IAccessControlEntries accessControlEntries);
+	
+	ILoadChildrenTask getLoadChildrenTask(IObjectStoreItem objectStoreItem);
+
+	ILoadChildrenTask getLoadChildrenTask(IObjectStoreItem objectStoreItem, List<String> columnNames);
+	
 }

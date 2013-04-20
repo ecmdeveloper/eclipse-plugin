@@ -146,4 +146,9 @@ public class Placeholder extends AbstractPlaceholder implements IObjectStoreItem
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 	}
+
+	@Override
+	public Object getSafeValue(String propertyName) {
+		return getValue(propertyName);
+	}
 }
