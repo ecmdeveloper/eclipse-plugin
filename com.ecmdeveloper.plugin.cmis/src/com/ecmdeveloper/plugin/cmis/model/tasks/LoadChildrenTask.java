@@ -99,39 +99,6 @@ public class LoadChildrenTask extends AbstractTask implements ILoadChildrenTask 
 		return null;
 	}
 
-//	private void addContainees(com.filenet.api.core.Folder folder, ObjectStore objectStore) {
-//		
-//		Iterator<?> iterator = folder.get_Containees().iterator();
-//		
-//		while (iterator.hasNext() ) {
-//			ReferentialContainmentRelationship relation = (ReferentialContainmentRelationship) iterator.next();
-//			relation.fetchProperties( new String[]{ PropertyNames.HEAD, PropertyNames.CONTAINMENT_NAME } );
-//			IndependentObject object = relation.get_Head();
-//			addContainee(object, objectStore, relation.get_ContainmentName() );
-//		}
-//	}
-
-//	private void addContainee(IndependentObject object, ObjectStore objectStore, String containmentName) {
-//		
-//		if ( object instanceof com.filenet.api.core.Document )
-//		{
-//			Document document = ObjectStoreItemFactory.createDocument( object, objectStoreItem, objectStore );
-//			document.setParentPath( ((Folder) objectStoreItem).getPathName() );
-//			document.setContainmentName( containmentName );
-//			children.add( document );
-//		}
-//		else if ( object instanceof com.filenet.api.core.Folder )
-//		{
-//			Folder childFolder = ObjectStoreItemFactory.createFolder( object, objectStoreItem, objectStore );
-//			childFolder.setContained(true);
-//			children.add( childFolder );
-//		}
-//		else if ( object instanceof com.filenet.api.core.CustomObject )
-//		{
-//			children.add( ObjectStoreItemFactory.createCustomObject( object, objectStoreItem, objectStore ) );
-//		}
-//	}
-
 	private ObjectStore addChildren(org.apache.chemistry.opencmis.client.api.Folder folder, ObjectStore objectStore) {
 
 		folder.refresh();

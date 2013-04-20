@@ -204,6 +204,11 @@ public class ObjectStore extends ObjectStoreItem implements IObjectStore {
 	}
 
 	@Override
+	public Object getSafeValue(String propertyName) {
+		return getValue(propertyName);
+	}
+	
+	@Override
 	public boolean hasChildren() {
 		return isConnected();
 	}
