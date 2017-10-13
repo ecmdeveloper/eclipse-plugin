@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.ecmdeveloper</groupId>
+  <artifactId>com.ecmdeveloper.tycho</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <description>Tycho configuration project</description>
+  
+	<properties>
+		<tycho-version>1.0.0</tycho-version>
+	</properties>
+
+	<repositories>
+		<!-- configure p2 repository to resolve against -->
+		<repository>
+			<id>eclipse-project-mars</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/mars/</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- enable the Tycho build extension -->
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
+  
+	<modules>
+		<module>../com.ecmdeveloper.plugin</module>
+		<module>../com.ecmdeveloper.plugin.lib</module>
+		<module>../com.ecmdeveloper.plugin.core</module>
+		<module>../com.ecmdeveloper.plugin.classes</module>
+		<module>../com.ecmdeveloper.plugin.codemodule</module>
+		<module>../com.ecmdeveloper.plugin.content</module>
+		<module>../com.ecmdeveloper.plugin.diagrams</module>
+		<module>../com.ecmdeveloper.plugin.favorites</module>
+		<module>../com.ecmdeveloper.plugin.java</module>
+		<module>../com.ecmdeveloper.plugin.properties</module>
+		<module>../com.ecmdeveloper.plugin.scripting</module>
+		<module>../com.ecmdeveloper.plugin.search</module>
+		<module>../com.ecmdeveloper.plugin.security</module>
+		<module>../com.ecmdeveloper.plugin.tracker</module>
+		<module>../com.ecmdeveloper.plugin.ui</module>
+	</modules>
+</project>
