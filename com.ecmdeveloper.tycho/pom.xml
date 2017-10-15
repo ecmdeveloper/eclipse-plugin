@@ -47,5 +47,6 @@
 		<module>../com.ecmdeveloper.plugin.security</module>
 		<module>../com.ecmdeveloper.plugin.tracker</module>
 		<module>../com.ecmdeveloper.plugin.ui</module>
+		
 	</modules>
 </project>
