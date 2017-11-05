@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECM Developer Java Plug-in
 Bundle-SymbolicName: com.ecmdeveloper.plugin.java;singleton:=true
-Bundle-Version: 2.2.0
+Bundle-Version: 2.3.0
 Bundle-Activator: com.ecmdeveloper.plugin.java.Activator
 Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.ui,

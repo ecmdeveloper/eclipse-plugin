@@ -2,7 +2,7 @@
 <feature
       id="com.ecmdeveloper.plugin.feature"
       label="ECM Developer Plug-in for IBM P8 Content Engine"
-      version="2.1.0"
+      version="2.3.0"
       provider-name="ECMDEVELOPER">
 
    <description url="http://www.ecmdeveloper.com">
@@ -224,7 +224,7 @@ Library.
          id="com.ecmdeveloper.plugin.lib"
          download-size="0"
          install-size="0"
-         version="2.1.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="com.ecmdeveloper.plugin.properties"

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECM Developer Properties Plug-in
 Bundle-SymbolicName: com.ecmdeveloper.plugin.properties;singleton:=true
-Bundle-Version: 2.1.0
+Bundle-Version: 2.3.0
 Bundle-Activator: com.ecmdeveloper.plugin.properties.Activator
 Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.ui,

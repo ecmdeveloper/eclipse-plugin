@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECM Developer Libraries Plug-in
 Bundle-SymbolicName: com.ecmdeveloper.plugin.lib
-Bundle-Version: 2.1.0
+Bundle-Version: 2.3.0
 Bundle-Activator: com.ecmdeveloper.plugin.lib.Activator
 Bundle-Vendor: ECMDEVELOPER
 Require-Bundle: org.eclipse.core.runtime,
@@ -29,7 +29,6 @@ Export-Package: com.ecmdeveloper.plugin.lib,
  com.filenet.api.util
 Bundle-ClassPath: .,
  lib/Jace.jar,
- lib/stax-api.jar,
  lib/xlxpScanner.jar,
  lib/xlxpScannerUtils.jar,
  lib/log4j.jar
