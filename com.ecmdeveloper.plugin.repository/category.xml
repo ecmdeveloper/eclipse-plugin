@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/com.ecmdeveloper.plugin.feature_2.1.0.jar" id="com.ecmdeveloper.plugin.feature" version="2.1.0">
+      <category name="com.ecmdeveloper.plugin.category"/>
+   </feature>
+   <category-def name="com.ecmdeveloper.plugin.category" label="ECM Developer Plug-in Category"/>
+</site>
