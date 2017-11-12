@@ -25,7 +25,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -48,31 +51,52 @@ public class Activator extends Plugin {
 
 	private static final String INSTALLATION_ERROR_TITLE = "ECM Developer Installation Error";
 
-	private static final String MISSING_JAAS_FILE_MESSAGE = "There was a problem starting the ECM Developer plugin.\n\n" +
-			"The file jaas.conf.WSI is not found in the folder {0}config " +
-			"or the folder {0}config/samples. Make sure it is located at one of these locations.\n\n" +
-			"This could also mean that the Content Engine client libraries are not copied to the folder {0}."; 
-			
-	private static final String INSTALL_LINK_MESSAGE = "Visit <a href=\"http://www.ecmdeveloper.com/install\">http://www.ecmdeveloper.com/install</a> for the plug in installation instructions.";
+	private static final String MISSING_JARS_MESSAGE = "There was a problem starting the ECM Developer plugin.\n\n" +
+			"The following jar files were not found in the folder {0}: {1}\n\n" +
+			"Make sure that the jar-files are copied to this location."; 
+	
+	private static final String INSTALL_LINK_MESSAGE = "Visit <a href=\"http://www.ecmdeveloper.com/plugin/getting-started\">http://www.ecmdeveloper.com/plugin/getting-started/</a> for the plug in installation instructions.";
 	
 	public static final String PLUGIN_ID = "com.ecmdeveloper.plugin.lib";
 	private static Activator plugin;
 
 	public void start(BundleContext context) throws Exception {
+		
 		super.start(context);
 		plugin = this;
 		
 		String installLocation = getInstallLocation();
-		String jaasConfigFile = installLocation + "/config/jaas.conf.WSI";
-		File file = new File( jaasConfigFile );
-		if ( ! file.exists() )
-		{
-			jaasConfigFile = installLocation + "/config/samples/jaas.conf.WSI";
-			if ( ! new File( jaasConfigFile ).exists() ) {
-				showInvalidInstallationMessage(installLocation );
+		Set<String> missingJars = getMissingJars(installLocation);
+		if ( !missingJars.isEmpty() ) {
+			showMissingJarsMessage(installLocation, getMissingJarsList(missingJars) );
+		}
+
+	}
+
+	private Set<String> getMissingJars(String installLocation) {
+		File installFolder = new File(installLocation + "/lib");
+		Set<String> apiFiles = new HashSet<String>();
+		apiFiles.addAll( Arrays.asList("Jace.jar", "stax-api.jar", "xlxpScanner.jar", "xlxpScanner.jar", "log4j.jar") );
+		for (File file : installFolder.listFiles() ) {
+			if ( file.getName().startsWith("log4j-") ) {
+				apiFiles.remove( "log4j.jar" );
+			} else { 
+				apiFiles.remove( file.getName() );
 			}
 		}
-		System.setProperty("java.security.auth.login.config", jaasConfigFile );
+		return apiFiles;
+	}
+
+	private String getMissingJarsList(Set<String> apiFiles) {
+		String concat = "";
+		StringBuilder missingJars = new StringBuilder();
+		
+		for ( String missingJar : apiFiles ) {
+			missingJars.append(concat);
+			missingJars.append(missingJar);
+			concat = ",";
+		}
+		return missingJars.toString();
 	}
 
 	public String getInstallLocation() throws Exception {
@@ -96,7 +120,7 @@ public class Activator extends Plugin {
 		return pathPartsList.toArray( new String[0] );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	private String[] getPathParts() {
 		Dictionary headers = getBundle().getHeaders();
 		String bundleClassPath = (String) headers.get("Bundle-ClassPath");
@@ -121,37 +145,41 @@ public class Activator extends Plugin {
 		return plugin;
 	}
 	
-	private void showInvalidInstallationMessage(String installLocation )
+	private void showMissingJarsMessage(String installLocation, String missingJars )
 	{
-		String message = MessageFormat.format( MISSING_JAAS_FILE_MESSAGE, installLocation );
-		String title = INSTALLATION_ERROR_TITLE;
+		final String message = MessageFormat.format( MISSING_JARS_MESSAGE, installLocation, missingJars );
+		final String title = INSTALLATION_ERROR_TITLE;
 		
-		Display display = Display.getDefault();
-		 
-		MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null,
-				message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0) {
+		final Display display = Display.getDefault();
+		
+		Display.getDefault().syncExec(new Runnable() {
+		    public void run() {
+				MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null,
+						message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0) {
 
-			@Override
-			protected Control createCustomArea(Composite parent) {
+					@Override
+					protected Control createCustomArea(Composite parent) {
 
-				Link link = new Link(parent, SWT.NONE);     
-				String message = INSTALL_LINK_MESSAGE;     
-				link.setText(message);    
-				link.setSize(400, 100);
-				link.addSelectionListener(new SelectionAdapter(){         
-					public void widgetSelected(SelectionEvent event) 
-					{                
-						openLinkInBrowser(event);
-					}
+						Link link = new Link(parent, SWT.NONE);     
+						String message = INSTALL_LINK_MESSAGE;     
+						link.setText(message);    
+						link.setSize(400, 100);
+						link.addSelectionListener(new SelectionAdapter(){         
+							public void widgetSelected(SelectionEvent event) 
+							{                
+								openLinkInBrowser(event);
+							}
 
-				}); 
+						}); 
 
-				return link;
+						return link;
 
-			}}; 
-			dialog.open();
+					}}; 
+					dialog.open();
+		    }
+		});
 	}
-
+	
 	private void openLinkInBrowser(SelectionEvent event) {
 		URL url = getURL(event);
 		if ( url != null) {

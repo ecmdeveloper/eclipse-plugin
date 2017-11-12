@@ -29,6 +29,8 @@ Export-Package: com.ecmdeveloper.plugin.lib,
  com.filenet.api.util
 Bundle-ClassPath: .,
  lib/Jace.jar,
+ lib/log4j.jar,
+ lib/stax-api.jar,
  lib/xlxpScanner.jar,
  lib/xlxpScannerUtils.jar,
- lib/log4j.jar
+ lib/log4j-1.2.14.jar
