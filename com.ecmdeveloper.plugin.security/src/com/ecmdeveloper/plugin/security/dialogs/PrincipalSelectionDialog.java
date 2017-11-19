@@ -263,6 +263,7 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 			public void widgetSelected(SelectionEvent e) {
 				if (showGroups != ((Button) e.widget).getSelection()) {
 					showGroups = ((Button) e.widget).getSelection();
+					showUsers = !showGroups;
 					applyFilter();
 				}
 			}
@@ -279,6 +280,7 @@ public class PrincipalSelectionDialog extends FilteredItemsSelectionDialog {
 			public void widgetSelected(SelectionEvent e) {
 				if (showUsers != ((Button) e.widget).getSelection()) {
 					showUsers = ((Button) e.widget).getSelection();
+					showGroups = !showUsers;
 					applyFilter();
 				}
 			}
