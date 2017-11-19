@@ -43,7 +43,6 @@ import com.ecmdeveloper.plugin.core.util.collections.AbstractArrayListObserver;
 import com.ecmdeveloper.plugin.core.util.collections.ObservableArrayList;
 import com.filenet.api.constants.AccessType;
 import com.filenet.api.constants.PermissionSource;
-import com.filenet.api.constants.SecurityPrincipalType;
 import com.filenet.api.security.AccessPermission;
 
 /**
@@ -55,6 +54,8 @@ public class AccessControlEntries implements IAccessControlEntries, PropertyChan
 	private static final String CUSTOM_ACCESS_CONTROL_ENTRY_PROPAGATION_LABEL = "Custom ({0})";
 
 	private static final List<IAccessControlEntryPropagation> accessControlEntryPropagations = new ArrayList<IAccessControlEntryPropagation>();
+	
+	static
 	{
 		accessControlEntryPropagations.add( new AccessControlEntryPropagation("This object only (no inheritance)", 0 ) );
 		accessControlEntryPropagations.add( new AccessControlEntryPropagation("This object and immediate children only", 1 ) );
