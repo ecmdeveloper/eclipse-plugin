@@ -46,7 +46,10 @@ import com.filenet.api.constants.PrincipalSearchAttribute;
 import com.filenet.api.constants.PrincipalSearchSortType;
 import com.filenet.api.constants.PrincipalSearchType;
 import com.filenet.api.constants.SecurityPrincipalType;
+import com.filenet.api.core.Factory;
 import com.filenet.api.security.AccessPermission;
+import com.filenet.api.security.Group;
+import com.filenet.api.security.User;
 
 /**
  * @author ricardo.belfor
@@ -120,7 +123,6 @@ public class Realm implements IRealm {
 		
 		String granteeName = permission.get_GranteeName();
 		if ( !isSpecialAccountName(granteeName ) ) {
-			granteeName = parseGranteeName(granteeName);
 			if (permission.get_GranteeType().equals(SecurityPrincipalType.GROUP)) {
 				return getGroupPrincipal(granteeName );
 			} else if (permission.get_GranteeType().equals(SecurityPrincipalType.USER)) {
@@ -133,45 +135,25 @@ public class Realm implements IRealm {
 		return null;
 	}
 
-	private String parseGranteeName(String granteeName) {
-		try {
-			LdapName ldapName = new LdapName(granteeName);
-			for ( Rdn rdn : ldapName.getRdns() ) {
-				if ( rdn.getType().equalsIgnoreCase(COMMON_NAME_TYPE) ) {
-					return (String) rdn.getValue();
-				}
-			}
-			
-		} catch (InvalidNameException e) {
-		}
-		
-		int index = granteeName.indexOf("@");
-		
-		if ( index > 0 ) {
-			granteeName = granteeName.substring(0, index);
-		}
-		
-		return granteeName;
-	}
 
 	private Principal getUserPrincipal(String granteeName) {
-		UserSet users = realm.findUsers(granteeName,
-				PrincipalSearchType.EXACT, PrincipalSearchAttribute.SHORT_NAME,
-				PrincipalSearchSortType.NONE, null, null);
-		if (!users.isEmpty()) {
-			return new Principal( users.iterator().next(), this );
+		
+		try {
+			User user = Factory.User.fetchInstance(realm.getConnection(), granteeName, null);
+			return new Principal( user, this );
+		} catch (Exception e) {
+			return null;
 		}
-		return null;
 	}
 
 	private Principal getGroupPrincipal(String granteeName) {
-		GroupSet groups = realm.findGroups(granteeName,
-				PrincipalSearchType.EXACT, PrincipalSearchAttribute.SHORT_NAME,
-				PrincipalSearchSortType.NONE, null, null);
-		if (!groups.isEmpty()) {
-			return new Principal( groups.iterator().next(), this );
+		
+		try {
+			Group group = Factory.Group.fetchInstance(realm.getConnection(), granteeName, null);
+			return new Principal( group, this );
+		} catch (Exception e) {
+			return null;
 		}
-		return null;
 	}
 
 	private boolean isSpecialAccountName(String name) {
