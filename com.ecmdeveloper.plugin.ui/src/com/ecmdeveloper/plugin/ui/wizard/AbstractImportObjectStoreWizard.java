@@ -41,7 +41,9 @@ import com.ecmdeveloper.plugin.ui.Activator;
 public abstract class AbstractImportObjectStoreWizard extends Wizard implements IImportWizard {
 	
 	private static final String CONNECT_FAILED_MESSAGE = "Connect failed";
-	private static final String CONNECT_MESSAGE = "Connecting to \"{0}\"";
+	private static final String NO_CLIENT_LIBRARIES = "The Content Engine client libraries are not installed.\n\n" +
+			"Make sure that the files Jace.jar, stax-api.jar, xlxpScanner.jar, xlxpScanner.jar and log4j.jar "
+			+ "are copied to the plugins/com.ecmdeveloper.plugin.lib_2.3.0/lib folder of your Eclipse installation.";
 	private static final String CONNECT_TITLE = "Connect";
 	private SelectConnectionWizardPage selectConnectionWizardPage;
 	private AbstractConfigureConnectionWizardPage configureConnectionWizardPage;
@@ -149,7 +151,7 @@ public abstract class AbstractImportObjectStoreWizard extends Wizard implements 
 //					} catch (InvocationTargetException e) {
 //						PluginMessage.openError(getShell(), CONNECT_TITLE, e.getLocalizedMessage(), e );
 //					} catch (InterruptedException e) {
-//						// User canceled, so stop but don’t close wizard.
+//						// User canceled, so stop but donï¿½t close wizard.
 //					}
 //					
 //				} });
@@ -180,7 +182,11 @@ public abstract class AbstractImportObjectStoreWizard extends Wizard implements 
 		    				}
 		    			});
 					} catch (ExecutionException e) {
-						PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, CONNECT_FAILED_MESSAGE, e );
+						if ( e.getCause() instanceof java.lang.NoClassDefFoundError) {
+							PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, NO_CLIENT_LIBRARIES, e );
+						} else {
+							PluginMessage.openErrorFromThread(getShell(), CONNECT_TITLE, CONNECT_FAILED_MESSAGE, e );
+						}
 					}
 	            }
 	         });
