@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECM Developer Libraries Plug-in
-Bundle-SymbolicName: com.ecmdeveloper.plugin.lib
+Bundle-SymbolicName: com.ecmdeveloper.plugin.lib;singleton:=true
 Bundle-Version: 2.3.0
 Bundle-Activator: com.ecmdeveloper.plugin.lib.Activator
 Bundle-Vendor: ECMDEVELOPER
@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir
 Export-Package: com.ecmdeveloper.plugin.lib,
  com.filenet.api.action,
  com.filenet.api.admin,
