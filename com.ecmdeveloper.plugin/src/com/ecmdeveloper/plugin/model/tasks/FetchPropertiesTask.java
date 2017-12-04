@@ -28,7 +28,6 @@ import com.ecmdeveloper.plugin.core.model.tasks.IFetchPropertiesTask;
 import com.ecmdeveloper.plugin.model.ContentEngineConnection;
 import com.ecmdeveloper.plugin.model.ObjectStore;
 import com.ecmdeveloper.plugin.model.ObjectStoreItem;
-import com.ecmdeveloper.plugin.util.ObjectDumper;
 import com.filenet.api.constants.PropertyNames;
 import com.filenet.api.core.BatchItemHandle;
 import com.filenet.api.core.Domain;
@@ -68,19 +67,8 @@ public class FetchPropertiesTask extends BaseTask implements IFetchPropertiesTas
 		}
 
 		retrievingBatch.retrieveBatch();
-
 		checkForErrors(retrievingBatch);
 		
-		ObjectDumper od = new ObjectDumper();
-
-		for ( IObjectStoreItem objectStoreItem : objectStoreItems ) {
-			IndependentlyPersistableObject objectStoreObject = ((ObjectStoreItem) objectStoreItem).getObjectStoreObject();
-			od.dump(objectStoreObject);
-			System.out.println();
-		}
-		//objectStoreObject.refresh(propertyNames);
-		//objectStoreObject.fetchProperties(propertyNames);
-
 		return null;
 	}
 

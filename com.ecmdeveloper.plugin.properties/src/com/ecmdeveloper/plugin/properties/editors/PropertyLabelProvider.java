@@ -51,7 +51,7 @@ public class PropertyLabelProvider implements ILabelProvider {
 			return Activator.getImage( IconFiles.REQUIRED );
 		}
 		
-		return null;
+		return Activator.getImage(IconFiles.EMPTY);
 	}
 
 	@Override

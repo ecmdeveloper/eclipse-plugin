@@ -65,7 +65,7 @@ public class PropertiesInputBlock extends MasterDetailsBlock {
 	private FormPage page;
 	private TableViewer viewer;
 	private String className;
-	private boolean filterReadOnly = true;
+	private boolean filterReadOnly = false;
 	
 	public PropertiesInputBlock(FormPage page, String className ) {
 		this.page = page;

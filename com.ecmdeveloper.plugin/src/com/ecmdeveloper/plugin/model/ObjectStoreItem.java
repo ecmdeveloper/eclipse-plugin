@@ -148,7 +148,13 @@ public abstract class ObjectStoreItem implements IObjectStoreItem {
 		}
 		
 		Properties properties = getProperties();
-		Object objectValue = properties.getObjectValue(propertyName);
+		
+		Object objectValue;
+		try {
+			objectValue = properties.getObjectValue(propertyName);
+		} catch (Exception e) {
+			objectValue = "Error fetching value";
+		}
 
 		if ( objectValue instanceof Collection ) {
 			ArrayList<?> values = new ArrayList( (Collection) objectValue );

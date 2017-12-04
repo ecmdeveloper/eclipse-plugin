@@ -195,7 +195,7 @@ public class ClassDescription implements IClassDescription {
 
 		Collection<IPropertyDescription> filteredPropertyDescriptions = new ArrayList<IPropertyDescription>();
 		for (IPropertyDescription propertyDescription : propertyDescriptions) {
-			if (!propertyDescription.isHidden()) {
+			if ( !propertyDescription.getName().equals("This") ) {
 				filteredPropertyDescriptions.add(propertyDescription);
 			}
 		}
