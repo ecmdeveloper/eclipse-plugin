@@ -6,4 +6,4 @@ The basic features are browsing, creating, comparing and modifying objects. Sear
 
 More advanced features are building UML diagrams based on the class definitions, running Java code using object store objects as input and editing Content Engine Code Modules.
 
-See [https://www.ecmdeveloper.com](https://www.ecmdeveloper.com) for more details and find installation instructions at  [https://ecmdeveloper.com/plugin/getting-started](https://ecmdeveloper.com/plugin/getting-started).
+See [http://www.ecmdeveloper.com](http://www.ecmdeveloper.com) for more details and find installation instructions at  [http://ecmdeveloper.com/plugin/getting-started](http://ecmdeveloper.com/plugin/getting-started).
