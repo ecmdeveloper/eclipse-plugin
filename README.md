@@ -1,4 +1,4 @@
-[ ![Download](null/packages/ecmdeveloper/eclipse-plugin/ecmdeveloper/images/download.svg?version=2.3.0) ](https://bintray.com/ecmdeveloper/eclipse-plugin/ecmdeveloper/2.3.0/link)
+[ ![Download](https://api.bintray.com/packages/ecmdeveloper/eclipse-plugin/ecmdeveloper/images/download.svg?version=2.3.0) ](https://bintray.com/ecmdeveloper/eclipse-plugin/ecmdeveloper/2.3.0/link)
 
 ECM Developer is an Eclipse plug-in aimed at supporting the development of applications using the IBM FileNet P8 Content Engine or CMIS compliant repositories.
 
